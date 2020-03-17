@@ -5,7 +5,10 @@ var directionRoute;
 
 
 class Rider {
+<<<<<<< HEAD
 	
+=======
+>>>>>>> 4b1df38c1de1cb17289ee9ca1052b2730e599821
     constructor(ID, Name, Location, type, DistanceToOrganization, Options) {
         this.ID = ID;
         this.Name = Name;
