@@ -5,6 +5,10 @@ var directionRoute;
 
 
 class Rider {
+<<<<<<< HEAD
+	
+=======
+>>>>>>> 4b1df38c1de1cb17289ee9ca1052b2730e599821
     constructor(ID, Name, Location, type, DistanceToOrganization, Options) {
         this.ID = ID;
         this.Name = Name;
@@ -37,6 +41,7 @@ class Driver {
 
 var firstDriver = new Driver(10, "Ahmed", [29.973, 31.28251], 'D', 7000, 'M11');
 var secondDriver = new Driver(11, "Farah", [29.97773, 31.31338], 'D', 5000, 'F01');
+//var thirdDriver = new Driver(12, "khaled", [29.97773, 31.31338], 'D', 5000, 'M11');
 
 var Rider1 = new Rider(1, "Dina", [29.98409, 31.30631], 'R', 1000, 'F01');
 var Rider2 = new Rider(2, "Nariman", [29.9762, 31.28636], 'R', 300, 'M11');
