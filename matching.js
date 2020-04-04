@@ -128,6 +128,8 @@ values3 = new values(10, 5, 5.7);
 values4 = new values(10, 7, 4.9);
 values5 = new values(10, 12, 4.6);
 
+
+//Farah 
 values6 = new values(11, 4, 1);
 values7 = new values(11, 6, 1.1);
 values8 = new values(11, 8, 0.5);
@@ -135,9 +137,27 @@ values9 = new values(11, 9, 3);
 values10 = new values(11, 13, 3);
 
 
+//Youssef
+values11 = new values(14, 1, 1.7)
+values12 = new values(14, 2, 5.8)
+values13 = new values(14, 5, 1.1)
+values14 = new values(14, 7, 8.1)
+values15 = new values(14, 12, 8)
 
-var value = [values1, values2, values3, values4, values5, values6, values7, values8, values9, values10];
-var driversID = [10, 11]
+
+//NarimanDriver //
+values16 = new values(15, 1, 5.6)
+values17 = new values(15, 2, 0.1);
+values18 = new values(15, 5, 5.7);
+values19 = new values(15, 7, 4.9);
+values20 = new values(15, 12, 4.6);
+
+
+var value = [values1, values2, values3, values4, values5,
+    values6, values7, values8, values9, values10,
+    values11, values12, values13, values14, values15, values16, values17, values18, values19, values20
+];
+var driversID = [10, 11, 14, 15]
     ////////////////////////////////////////////////////RiderDatabase//////////// filter options and arrival time(-30,30) ,organization
 values12r = new values(1, 2, 7.3);
 values15r = new values(1, 5, 0.6); //Dina
@@ -166,7 +186,7 @@ values121r = new values(12, 1, 11);
 values122r = new values(12, 2, 4.3); //Khaled
 values125r = new values(12, 5, 11);
 values127r = new values(12, 7, 0.35);
-values123r = new values(12, 3, 8.6)
+values123r = new values(12, 3, 8.2)
 
 
 
@@ -206,7 +226,7 @@ values139r = new values(13, 9, 1.7);
 
 var valuer = [values12r, values15r, values17r, values112r, values21r, values25r,
     values27r, values212r, values51r, values52r, values57r,
-    values512r, values71r, values72r, values73r, values75r, values712r, values121r, values122r, values125r, values127r,
+    values512r, values71r, values72r, values73r, values75r, values712r, values121r, values122r, values123r, values125r, values127r,
     values46r, values48r, values49r, values413r, values64r, values68r, values69r, values613r, values84r, values86r, values89r,
     values813r, values94r, values96r, values98r, values913r, values134r, values136r, values138r, values139r
 ]
@@ -223,17 +243,31 @@ dvalues3 = new values(10, 1, 12);
 dvalues4 = new values(10, 12, 17);
 dvalues5 = new values(10, 7, 16);
 
-
-
 dvalues6 = new values(11, 4, 5);
 dvalues7 = new values(11, 6, 4);
 dvalues8 = new values(11, 8, 2);
 dvalues9 = new values(11, 9, 10);
 dvalues10 = new values(11, 13, 11);
 
+dvalues11 = new values(14, 2, 12);
+dvalues12 = new values(14, 5, 4);
+dvalues13 = new values(14, 1, 6);
+dvalues14 = new values(14, 12, 21);
+dvalues15 = new values(14, 7, 20);
 
 
-var dvalue = [dvalues1, dvalues2, dvalues3, dvalues4, dvalues5, dvalues6, dvalues7, dvalues8, dvalues9, dvalues10];
+dvalues16 = new values(15, 2, 1);
+dvalues17 = new values(15, 5, 13);
+dvalues18 = new values(15, 1, 12);
+dvalues19 = new values(15, 12, 17);
+dvalues20 = new values(15, 7, 16);
+
+
+
+var dvalue = [dvalues1, dvalues2, dvalues3, dvalues4, dvalues5,
+    dvalues6, dvalues7, dvalues8, dvalues9, dvalues10,
+    dvalues11, dvalues12, dvalues13, dvalues14, dvalues15, dvalues16, dvalues17, dvalues18, dvalues19, dvalues20
+];
 
 ////////////////////////////////////////////////////RiderDatabase//////////// filter options and arrival time(-30,30) ,organization
 dvalues12r = new values(1, 2, 21);
@@ -305,13 +339,17 @@ var dvaluer = [dvalues12r, dvalues15r, dvalues17r, dvalues112r, dvalues21r, dval
 
 var firstDriver = new Driver(10, "Ahmed", [29.973, 31.28251], 13, 'M11', [2020, 3, 10, 10, 0, 0], 24, 7);
 var secondDriver = new Driver(11, "Farah", [29.97773, 31.31338], 4.6, 'F01', [2020, 3, 10, 4, 0, 0], 12, 5);
+var thirdDriver = new Driver(14, "Youssef", [29.972, 31.222], 16, 'M11', [2020, 3, 10, 10, 0, 0], 24, 7);
+var fourthDriver = new Driver(15, "NarimanDriver", [29.9762, 31.28636], 13, 'M11', [2020, 3, 10, 10, 0, 0], 24, 5);
 
-var Rider1 = new Rider(1, "Dina", [29.98409, 31.30631], 17, 'F01', [2020, 3, 10, 10, 15, 0], 10);
-var Rider2 = new Rider(2, "Nariman", [29.9762, 31.28636], 13, 'M11', [2020, 3, 10, 10, 15, 0], 20);
-var Rider5 = new Rider(5, "salma", [29.9762, 31.28636], 16, 'M11', [2020, 3, 10, 10, 20, 0], 10);
-var Rider7 = new Rider(7, "karim", [29.98409, 31.30631], 11, 'F01', [2020, 3, 10, 10, 5, 0], 30);
-var Rider12 = new Rider(12, "khaled", [29.98409, 31.30631], 11, 'F01', [2020, 3, 10, 10, 6, 0], 30);
+
+
+var Rider1 = new Rider(1, "Dina", [29.98409, 31.30631], 17, 'F01', [2020, 3, 10, 10, 15, 0], 24);
+var Rider2 = new Rider(2, "Nariman", [29.9762, 31.28636], 13, 'M11', [2020, 3, 10, 10, 15, 0], 24);
 var Rider3 = new Rider(3, "salma", [29.9769, 31.28636], 2.8, 'M11', [2020, 3, 10, 10, 30, 0], 8);
+var Rider5 = new Rider(5, "salma saber ", [29.9762, 31.28636], 16, 'M11', [2020, 3, 10, 10, 20, 0], 23);
+var Rider7 = new Rider(7, "karim", [29.98409, 31.30631], 11, 'F01', [2020, 3, 10, 10, 5, 0], 21);
+var Rider12 = new Rider(12, "khaled", [29.98409, 31.30631], 11, 'F01', [2020, 3, 10, 10, 6, 0], 21);
 
 
 var Rider4 = new Rider(4, "rana", [29.98409, 31.30631], 17, 'F01', [2020, 3, 10, 4, 0, 0], 20); //4.3 ,9
@@ -320,8 +358,11 @@ var Rider8 = new Rider(8, "gam3tdewl", [29.9762, 31.28636], 4.9, 'F01', [2020, 3
 var Rider9 = new Rider(9, "semsema", [29.9769, 31.28636], 1.5, 'M11', [2020, 3, 10, 4, 30, 0], 5);
 var Rider13 = new Rider(13, "msda2", [29.9769, 31.28636], 3.8, 'M11', [2020, 3, 10, 4, 50, 0], 8);
 var Drivers = new Array();
+
 Drivers.push(firstDriver);
 Drivers.push(secondDriver);
+Drivers.push(thirdDriver)
+Drivers.push(fourthDriver)
 var Riders = new Array();
 Riders.push(Rider1);
 Riders.push(Rider2);
