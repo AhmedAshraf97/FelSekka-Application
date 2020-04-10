@@ -45,7 +45,6 @@ class Driver {
         this.ID = ID;
         this.Name = Name;
         this.Location = Location;
-        this.EmptyPlaces = 4;
         this.AssignedRiders = [ID];
         this.TotalDistanceCoveredToDestination = 0;
         this.TotalDurationTaken = 0;
@@ -708,7 +707,6 @@ while (count != Drivers.length) {
             if (maxDurationCurrentRider < Drivers[j].MaxDuration && chosenDistance < DistanceThreshold) {
                 Riders.find(n => n.ID === ChosenRiderID).isAssigned = true;
                 Riders.find(n => n.ID === ChosenRiderID).DriverAssigned = DriverID;
-                Drivers[j].EmptyPlaces--;
                 Drivers[j].AssignedRiders.push(ChosenRiderID)
                 Drivers[j].TotalDistanceCoveredToDestination += chosenDistance;
                 Drivers[j].TotalDurationTaken += chosenDuration;
@@ -738,7 +736,6 @@ while (count != Drivers.length) {
                 if (Delta < 30 && maxDurationCurrentRider < Drivers[j].MaxDuration) {
                     Riders.find(n => n.ID === ChosenRiderID).isAssigned = true;
                     Riders.find(n => n.ID === ChosenRiderID).DriverAssigned = DriverID;
-                    Drivers[j].EmptyPlaces--;
                     Drivers[j].AssignedRiders.push(ChosenRiderID)
                     Drivers[j].TotalDistanceCoveredToDestination += chosenDistance;
                     Drivers[j].TotalDurationTaken += chosenDuration;
@@ -869,3 +866,6 @@ for (var i = 0; i < Drivers.length; i++) {
     }
     console.log(" //////////////////////////////////////////// ")
 }
+
+
+//Sort assigned and then shift between them

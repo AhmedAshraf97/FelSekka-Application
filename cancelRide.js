@@ -46,7 +46,6 @@ class Driver {
         this.ID = ID;
         this.Name = Name;
         this.Location = Location;
-        this.EmptyPlaces = 4;
         this.AssignedRiders = [ID];
         this.TotalDistanceCoveredToDestination = 0;
         this.TotalDurationTaken = 0;
@@ -55,7 +54,7 @@ class Driver {
         this.EarliestStartTime = new Date(EarliestStartTime[0], EarliestStartTime[1], EarliestStartTime[2], EarliestStartTime[3], EarliestStartTime[4], EarliestStartTime[5]);
         this.capacity = capacity
         this.iteration = 0;
-        this.MaxDistance = 1.5 * DistanceToOrganization //removeee
+        this.MaxDistance = 1.5 * DistanceToOrganization //remove
             //options ( GenderSmokingMusic)
         this.Options = Options;
 
@@ -67,7 +66,6 @@ class Driver {
 
     }
 };
-
 
 class distance {
     constructor(from, to, distance) {
@@ -144,19 +142,10 @@ var RidersID = [4, 6, 8, 9]
 
 
 /////////////////////DURATION////
-
-
-
-
 dvalues6 = new values(11, 4, 5);
 dvalues7 = new values(11, 6, 4);
 dvalues8 = new values(11, 8, 2);
 dvalues9 = new values(11, 9, 10);
-
-
-
-
-
 
 var dvalue = [dvalues6, dvalues7, dvalues8, dvalues9];
 
@@ -175,15 +164,9 @@ dvalues7 = new values(8, 4, 6); //10:20 M11
 dvalues8 = new values(8, 6, 3);
 dvalues9 = new values(8, 9, 7); //gam3at dewl
 
-
-
 dvalues10 = new values(9, 4, 8);
 dvalues11 = new values(9, 6, 12); //semsema
 dvalues12 = new values(9, 8, 10);
-
-
-
-
 
 var dvaluer = [dvalues1, dvalues2, dvalues3, dvalues4, dvalues5, dvalues6, dvalues7, dvalues8,
     dvalues9, dvalues10, dvalues11, dvalues12
@@ -192,7 +175,7 @@ var dvaluer = [dvalues1, dvalues2, dvalues3, dvalues4, dvalues5, dvalues6, dvalu
 
 //farah 8 6 4 9
 
-var AvailableDriver = new Driver(11, "Farah", [29.97773, 31.31338], 4.6, 'F01', [2020, 3, 10, 4, 0, 0], 12, 5, [2020, 3, 10, 2, 30, 0]);
+var CurrentDriver = new Driver(11, "Farah", [29.97773, 31.31338], 4.6, 'F01', [2020, 3, 10, 4, 0, 0], 12, 5, [2020, 3, 10, 2, 30, 0]);
 
 
 
@@ -201,10 +184,10 @@ var Rider6 = new Rider(6, "gzrt3arb", [29.9769, 31.28636], 7, 'M11', [2020, 3, 1
 var Rider8 = new Rider(8, "gam3tdewl", [29.9762, 31.28636], 4.9, 'F01', [2020, 3, 10, 4, 0, 0], 12, [2020, 3, 10, 3, 15, 0]);
 var Rider9 = new Rider(9, "semsema", [29.9769, 31.28636], 1.5, 'M11', [2020, 3, 10, 4, 30, 0], 5, [2020, 3, 10, 3, 50, 0]);
 
-AvailableDriver.AssignedRiders.push(8)
-AvailableDriver.AssignedRiders.push(6)
-    //AvailableDriver.AssignedRiders.push(4)
-AvailableDriver.AssignedRiders.push(9)
+CurrentDriver.AssignedRiders.push(8)
+CurrentDriver.AssignedRiders.push(6)
+CurrentDriver.AssignedRiders.push(4)
+CurrentDriver.AssignedRiders.push(9)
 
 var Riders = new Array();
 Riders.push(cancelledRider);
@@ -213,12 +196,7 @@ Riders.push(Rider8);
 Riders.push(Rider9);
 
 
-////////////////////////////////////////////////////////////
-
-
-
-
-
+///////////////////////////////////////////////////////////
 
 var DriversRidersDuration = new Array();
 
@@ -259,3 +237,59 @@ for (var i = 0; i < RidersID.length; i++) {
 
 
 }
+
+CurrentDriver.AssignedRiders = CurrentDriver.AssignedRiders.filter(n => n != cancelledRider.ID);
+var fromIndex;
+var toIndex;
+CurrentDriver.TotalDurationTaken = 0;
+CurrentDriver.TotalDistanceCoveredToDestination = 0;
+
+for (var j = CurrentDriver.AssignedRiders.length - 1; j >= 0; j--) {
+    if (j == 0)
+
+    { // Last iteration ( First Rider )
+
+
+        toIndex = Riders.indexOf(Riders.find(n => n.ID === CurrentDriver.AssignedRiders[1]))
+        DriverIndexinDriverRidersDuration = DriversRidersDuration.indexOf(DriversRidersDuration.find(n => n.ID === CurrentDriver.ID))
+        toRiderID = CurrentDriver.AssignedRiders[1];
+        var datee = new Date(Riders[toIndex].PickupTime);
+
+        CurrentDriver.TotalDurationTaken += DriversRidersDuration[DriverIndexinDriverRidersDuration].data.find(n => n.to === toRiderID).duration
+            //  CurrentDriver.TotalDistanceCoveredToDestination += DriversRider[FromIndexinRiderRiderDuration].data.find(n => n.to === toRiderID).distance
+
+        CurrentDriver.PoolStartTime = datee
+        CurrentDriver.PoolStartTime.setMinutes(Riders[toIndex].PickupTime.getMinutes() - DriversRidersDuration[DriverIndexinDriverRidersDuration].data.find(n => n.to === toRiderID).duration)
+
+        //RiderRiderDuration[FromIndexinRiderRiderDuration].data.find(n => n.to === toID).duration
+
+    } else if (j == CurrentDriver.AssignedRiders.length - 1) { // First iteration ( Last Rider )
+
+        fromIndex = Riders.indexOf(Riders.find(n => n.ID === CurrentDriver.AssignedRiders[j]))
+        CurrentDriver.TotalDistanceCoveredToDestination += Riders[fromIndex].DistanceToOrganization;
+        CurrentDriver.TotalDurationTaken += Riders[fromIndex].TimeToOrganizationMinutes;
+        var datee = new Date(CurrentDriver.ArrivalTime);
+        Riders[fromIndex].PickupTime = datee
+
+        Riders[fromIndex].PickupTime.setMinutes(CurrentDriver.ArrivalTime.getMinutes() - Riders[fromIndex].TimeToOrganizationMinutes)
+
+    } else {
+        fromIndex = Riders.indexOf(Riders.find(n => n.ID === CurrentDriver.AssignedRiders[j]));
+        toIndex = Riders.indexOf(Riders.find(n => n.ID === CurrentDriver.AssignedRiders[j + 1]));
+        toID = CurrentDriver.AssignedRiders[j + 1];
+        fromID = CurrentDriver.AssignedRiders[j]
+        FromIndexinRiderRiderDuration = RiderRiderDuration.indexOf(RiderRiderDuration.find(n => n.ID === fromID));
+        CurrentDriver.TotalDurationTaken += RiderRiderDuration[FromIndexinRiderRiderDuration].data.find(n => n.to === toID).duration
+            //  CurrentDriver.TotalDistanceCoveredToDestination += RiderRider[FromIndexinRiderRiderDuration].data.find(n => n.to === toID).distance
+
+        var datee = new Date(Riders[toIndex].PickupTime);
+
+        Riders[fromIndex].PickupTime = datee
+
+        Riders[fromIndex].PickupTime.setMinutes(Riders[toIndex].PickupTime.getMinutes() - RiderRiderDuration[FromIndexinRiderRiderDuration].data.find(n => n.to === toID).duration)
+
+    }
+
+}
+
+//Return Current Driver with Riders
