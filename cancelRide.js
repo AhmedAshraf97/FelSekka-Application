@@ -196,7 +196,7 @@ var AvailableDriver = new Driver(11, "Farah", [29.97773, 31.31338], 4.6, 'F01', 
 
 
 
-var canceledRider = new Rider(4, "rana", [29.98409, 31.30631], 4.3, 'F01', [2020, 3, 10, 4, 0, 0], 9, [2020, 3, 10, 3, 15, 0]);
+var cancelledRider = new Rider(4, "rana", [29.98409, 31.30631], 4.3, 'F01', [2020, 3, 10, 4, 0, 0], 9, [2020, 3, 10, 3, 15, 0]);
 var Rider6 = new Rider(6, "gzrt3arb", [29.9769, 31.28636], 7, 'M11', [2020, 3, 10, 4, 0, 0], 16, [2020, 3, 10, 3, 15, 0]);
 var Rider8 = new Rider(8, "gam3tdewl", [29.9762, 31.28636], 4.9, 'F01', [2020, 3, 10, 4, 0, 0], 12, [2020, 3, 10, 3, 15, 0]);
 var Rider9 = new Rider(9, "semsema", [29.9769, 31.28636], 1.5, 'M11', [2020, 3, 10, 4, 30, 0], 5, [2020, 3, 10, 3, 50, 0]);
@@ -206,11 +206,8 @@ AvailableDriver.AssignedRiders.push(6)
     //AvailableDriver.AssignedRiders.push(4)
 AvailableDriver.AssignedRiders.push(9)
 
-
-
-
 var Riders = new Array();
-Riders.push(canceledRider);
+Riders.push(cancelledRider);
 Riders.push(Rider6);
 Riders.push(Rider8);
 Riders.push(Rider9);
