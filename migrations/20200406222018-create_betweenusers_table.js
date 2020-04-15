@@ -28,9 +28,10 @@ module.exports = {
       trust:{
           type:Sequelize.INTEGER(255),
           allowNull: false,
-          defaultValue=0
-      }
-
+          defaultValue: 0
+      },
+      createdAt: Sequelize.DATE,
+      updatedAt: Sequelize.DATE
     })
   },
 

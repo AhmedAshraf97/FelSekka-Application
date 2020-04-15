@@ -25,7 +25,7 @@ module.exports = sequelize.define("betweenusers", {
     trust:{
         type:Sequelize.INTEGER(255),
         allowNull: false,
-        defaultValue=0
+        defaultValue: 0
     }
   }
   );
