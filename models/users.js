@@ -27,7 +27,7 @@ module.exports = sequelize.define("users", {
         allowNull: false
     },  
     birthdate:{
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: false
     },
     photo:{
@@ -39,36 +39,13 @@ module.exports = sequelize.define("users", {
         allowNull: false,
         defaultValue: "neutral"
     },
-    pets:{
+
+    smoking:{
         type:Sequelize.STRING(300),
         allowNull: false,
         defaultValue: "neutral"
     },
-    music:{
-        type:Sequelize.STRING(300),
-        allowNull: false,
-        defaultValue: "neutral"
-    },
-    smooking:{
-        type:Sequelize.STRING(300),
-        allowNull: false,
-        defaultValue: "neutral"
-    },
-    luggage:{
-        type:Sequelize.STRING(300),
-        allowNull: false,
-        defaultValue: "neutral"
-    },
-    food:{
-        type:Sequelize.STRING(300),
-        allowNull: false,
-        defaultValue: "neutral"
-    },
-    babyseat:{
-        type:Sequelize.STRING(300),
-        allowNull: false,
-        defaultValue: "neutral"
-    }, 
+
     rating:{
         type:Sequelize.DECIMAL,
         allowNull: false,

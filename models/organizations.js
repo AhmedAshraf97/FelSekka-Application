@@ -21,7 +21,7 @@ module.exports = sequelize.define("organizations", {
       status: {
         type: Sequelize.STRING(300),
         allowNull: false,
-        default: "pending"
+        defaultValue: "pending"
       } 
   }
   );
