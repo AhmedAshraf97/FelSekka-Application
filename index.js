@@ -2,6 +2,7 @@ const express = require ('express');
 const joi = require ('joi');
 const bodyParser = require ('body-parser');
 const app  = express();
+const Sequelize = require("sequelize");
 const betweenusers = require('./models/betweenusers');
 const cars = require('./models/cars');
 const drivers = require('./models/drivers');
