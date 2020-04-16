@@ -1,18 +1,18 @@
 const users = require('../../models/users');
 const express = require ('express');
 const router = express.Router();
-module.exports = router;
+
 
 const members = [
     {
         id:1,
-        name:nariman
+        name:"nariman"
 
     }
 ];
 
 //SignUp
-router.post('/signup' , (req,res)=>{
+router.get('/signup' , (req,res)=>{
 const userData = {
     firstname : req.body.firstname,
     lastname : req.body.lastname,
@@ -29,3 +29,5 @@ const userData = {
 res.json(members);
 
 });
+
+module.exports = router;

@@ -1,5 +1,4 @@
 const Sequelize = require("sequelize");
-
 module.exports = sequelize.define("orgusers", {
     id: {
       type: Sequelize.INTEGER(255),

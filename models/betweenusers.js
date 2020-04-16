@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-module.exports = sequelize.define("betweenusers", {  
+module.exports = sequelize.define ("betweenusers", {  
     id: {
       type: Sequelize.INTEGER(255),
       allowNull: false,
