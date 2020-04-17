@@ -1,7 +1,7 @@
 const graphlib = require('graphlib');
 const ksp = require('k-shortest-path');
-var x = 4;
-//Last
+var Combinatorics = require('js-combinatorics');
+
 
 function diff_minutes(dt2, dt1) {
 
@@ -395,7 +395,7 @@ var fourthDriver = new Driver(15, "NarimanDriver", [29.9762, 31.28636], 13, 'M11
 
 var Rider1 = new Rider(1, "Dina", [29.98409, 31.30631], 17, 'F01', [2020, 3, 10, 10, 15, 0], 24, [2020, 3, 10, 9, 15, 0]);
 var Rider2 = new Rider(2, "Nariman", [29.9762, 31.28636], 13, 'M11', [2020, 3, 10, 10, 15, 0], 24, [2020, 3, 10, 9, 15, 0]);
-var Rider3 = new Rider(3, "salma", [29.9769, 31.28636], 2.8, 'M11', [2020, 3, 10, 10, 30, 0], 8, [2020, 3, 10, 9, 30, 0]);
+var Rider3 = new Rider(3, "salma", [29.9769, 31.28636], 2.8, 'M11', [2020, 3, 10, 6, 30, 0], 8, [2020, 3, 10, 8, 00, 0]);
 var Rider5 = new Rider(5, "salma saber ", [29.9762, 31.28636], 16, 'M11', [2020, 3, 10, 10, 20, 0], 23, [2020, 3, 10, 9, 15, 0]);
 var Rider7 = new Rider(7, "karim", [29.98409, 31.30631], 11, 'F01', [2020, 3, 10, 10, 5, 0], 21, [2020, 3, 10, 9, 5, 0]);
 var Rider12 = new Rider(12, "khaled", [29.98409, 31.30631], 11, 'F01', [2020, 3, 10, 10, 6, 0], 21, [2020, 3, 10, 9, 6, 0]);
@@ -952,13 +952,33 @@ async function main() {
             }
         }
 
+        var n = Drivers[k].AssignedRiders.length - 1;
+        var count = n;
+        var kValue = 0;
 
-        var response = ksp.ksp(g, DriverIDstr, OrganizationID, 100000);
-        console.log(response)
-        for (var d = 0; d < response.length; d++) {
+        while (true) {
+            kValue += Combinatorics.P(n, count)
+            count--;
+            if (count == 0)
+                break;
 
         }
-        var x = 5;
+
+        var response = ksp.ksp(g, DriverIDstr, OrganizationID, kValue);
+        response = response.filter(p => (p.edges.length == n + 1) && p.totalCost <= (Drivers[k].TotalDurationTaken + Drivers[k].TimeToOrganizationMinutes))
+
+        for (var d = 0; d < response.length; d++) {
+            var AssignedTemp = []
+            AssignedTemp.push(DriverID)
+            for (var j = 0; j < response[d].edges.length - 1; j++) {
+                AssignedTemp.push(parseInt(response[d].edges[j].toNode))
+            }
+            Drivers[k].AssignedRiders = AssignedTemp;
+            var ValidDuration = await SetPickUpTime(Drivers[k])
+            if (ValidDuration != -1) {
+                break;
+            }
+        }
 
     }
 
