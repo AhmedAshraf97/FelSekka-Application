@@ -517,6 +517,7 @@ function SetPickUpTime(DriverObj) {
     var fromIndex;
     var toIndex;
     DriverObj.TotalDurationTaken = 0;
+    DriverObj.TotalDistanceCoveredToDestination = 0;
     for (var j = DriverObj.AssignedRiders.length - 1; j >= 0; j--) {
 
         if (j == 0)
@@ -525,12 +526,14 @@ function SetPickUpTime(DriverObj) {
 
             toIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[1]))
             DriverIndexinDriverRidersDuration = DriversRidersDuration.indexOf(DriversRidersDuration.find(n => n.ID === DriverObj.ID))
+            DriverIndexinDriverRiders = DriversRider.indexOf(DriversRider.find(n => n.ID === DriverObj.ID))
             toRiderID = DriverObj.AssignedRiders[1];
             var datee = new Date(Riders[toIndex].PickupTime);
             DriverObj.PoolStartTime = datee
             DriverObj.PoolStartTime.setMinutes(Riders[toIndex].PickupTime.getMinutes() - DriversRidersDuration[DriverIndexinDriverRidersDuration].data.find(n => n.to === toRiderID).duration)
 
             DriverObj.TotalDurationTaken += DriversRidersDuration[DriverIndexinDriverRidersDuration].data.find(n => n.to === toRiderID).duration;
+            DriverObj.TotalDistanceCoveredToDestination += DriversRider[DriverIndexinDriverRiders].data.find(n => n.to === toRiderID).distance;
             if (DriverObj.PoolStartTime < DriverObj.EarliestStartTime)
                 return Promise.resolve(-1);
 
@@ -554,6 +557,7 @@ function SetPickUpTime(DriverObj) {
             toID = DriverObj.AssignedRiders[j + 1];
             fromID = DriverObj.AssignedRiders[j]
             FromIndexinRiderRiderDuration = RiderRiderDuration.indexOf(RiderRiderDuration.find(n => n.ID === fromID));
+            FromIndexinRiderRider = RiderRider.indexOf(RiderRider.find(n => n.ID === fromID));
 
             var datee = new Date(Riders[toIndex].PickupTime);
 
@@ -561,6 +565,7 @@ function SetPickUpTime(DriverObj) {
 
             Riders[fromIndex].PickupTime.setMinutes(Riders[toIndex].PickupTime.getMinutes() - RiderRiderDuration[FromIndexinRiderRiderDuration].data.find(n => n.to === toID).duration)
             DriverObj.TotalDurationTaken += RiderRiderDuration[FromIndexinRiderRiderDuration].data.find(n => n.to === toID).duration;
+            DriverObj.TotalDistanceCoveredToDestination += RiderRider[FromIndexinRiderRider].data.find(n => n.to === toID).distance;
 
             if (Riders[fromIndex].PickupTime < Riders[fromIndex].EarliestPickup)
                 return Promise.resolve(-1);
