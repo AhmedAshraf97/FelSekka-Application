@@ -534,6 +534,81 @@ function SetDropOffTime(DriverObj) {
     return Promise.resolve(DriverObj.TotalDurationTaken);
 }
 
+
+
+
+async function Reorder() {
+
+    //Reordering 
+    for (var k = 0; k < Drivers.length; k++) {
+        DriverID = Drivers[k].ID;
+        DriverIDstr = `${DriverID}`
+        let g = new graphlib.Graph();
+        var OrganizationID = "ORG";
+        g.setNode(DriverIDstr)
+        g.setNode(OrganizationID)
+        for (var l = 1; l < Drivers[k].AssignedRiders.length; l++) {
+            var RiderID = Drivers[k].AssignedRiders[l];
+            RiderIDstr = `${RiderID}`
+            var Durationn = DriversRidersDuration.find(n => n.ID === DriverID).data.find(n => n.from === RiderID).duration;
+            g.setNode(RiderIDstr)
+            g.setEdge(RiderIDstr, DriverIDstr, Durationn)
+            g.setEdge(OrganizationID, RiderIDstr, Riders.find(n => n.ID === RiderID).TimeFromOrganizationMinutes)
+        }
+
+        for (var p = 1; p < Drivers[k].AssignedRiders.length; p++) {
+            for (var m = 1; m < Drivers[k].AssignedRiders.length; m++) {
+
+                if (m != p) {
+                    var SourceID = Drivers[k].AssignedRiders[p]
+                    var DestID = Drivers[k].AssignedRiders[m]
+                    var Durationn = RiderRiderDuration.find(n => n.ID === DestID).data.find(n => n.from === SourceID).duration
+                    SourceID = `${SourceID}`
+                    DestID = `${DestID}`
+                    g.setEdge(SourceID, DestID, Durationn)
+                }
+            }
+        }
+
+        var n = Drivers[k].AssignedRiders.length - 1;
+        var count = n;
+        var kValue = 0;
+
+        while (true) {
+            kValue += Combinatorics.P(n, count)
+            count--;
+            if (count == 0)
+                break;
+
+        }
+
+        //check 
+        fromIndex = Riders.indexOf(Riders.find(n => n.ID === Drivers[k].AssignedRiders[Drivers[k].AssignedRiders.length - 1]))
+        Drivers[k].TotalDistanceCoveredToDestination += Riders[fromIndex].DistanceFromOrganization;
+        Drivers[k].TotalDurationTaken += Riders[fromIndex].TimeFromOrganizationMinutes;
+
+        var response = ksp.ksp(g, OrganizationID, DriverIDstr, kValue);
+        response = response.filter(p => (p.edges.length == n + 1) && p.totalCost <= (Drivers[k].TotalDurationTaken))
+
+        for (var d = 0; d < response.length; d++) {
+            var AssignedTemp = []
+            for (var j = response[d].edges.length - 1; j >= 0; j--) {
+                AssignedTemp.push(parseInt(response[d].edges[j].toNode))
+            }
+            Drivers[k].AssignedRiders = AssignedTemp;
+            var ValidDuration = await SetDropOffTime(Drivers[k])
+            if (ValidDuration != -1) {
+                break;
+            }
+        }
+
+    }
+
+
+    return Promise.resolve();
+}
+
+
 async function main() {
     var NumberOfUnAssignedRiders = Riders.length;
     var count = -1;
@@ -881,83 +956,10 @@ async function main() {
 
     }
 
+    // Reorder and calculate dropOff
+    var x = await Reorder();
 
-    //Reordering 
-    for (var k = 0; k < Drivers.length; k++) {
-        DriverID = Drivers[k].ID;
-        DriverIDstr = `${DriverID}`
-        let g = new graphlib.Graph();
-        var OrganizationID = "ORG";
-        g.setNode(DriverIDstr)
-        g.setNode(OrganizationID)
-        for (var l = 1; l < Drivers[k].AssignedRiders.length; l++) {
-            var RiderID = Drivers[k].AssignedRiders[l];
-            RiderIDstr = `${RiderID}`
-            var Durationn = DriversRidersDuration.find(n => n.ID === DriverID).data.find(n => n.from === RiderID).duration;
-            g.setNode(RiderIDstr)
-            g.setEdge(RiderIDstr, DriverIDstr, Durationn)
-            g.setEdge(OrganizationID, RiderIDstr, Riders.find(n => n.ID === RiderID).TimeFromOrganizationMinutes)
-        }
-
-        for (var p = 1; p < Drivers[k].AssignedRiders.length; p++) {
-            for (var m = 1; m < Drivers[k].AssignedRiders.length; m++) {
-
-                if (m != p) {
-                    var SourceID = Drivers[k].AssignedRiders[p]
-                    var DestID = Drivers[k].AssignedRiders[m]
-                    var Durationn = RiderRiderDuration.find(n => n.ID === DestID).data.find(n => n.from === SourceID).duration
-                    SourceID = `${SourceID}`
-                    DestID = `${DestID}`
-                    g.setEdge(SourceID, DestID, Durationn)
-                }
-            }
-        }
-
-        var n = Drivers[k].AssignedRiders.length - 1;
-        var count = n;
-        var kValue = 0;
-
-        while (true) {
-            kValue += Combinatorics.P(n, count)
-            count--;
-            if (count == 0)
-                break;
-
-        }
-
-        //check 
-        fromIndex = Riders.indexOf(Riders.find(n => n.ID === Drivers[k].AssignedRiders[Drivers[k].AssignedRiders.length - 1]))
-        Drivers[k].TotalDistanceCoveredToDestination += Riders[fromIndex].DistanceFromOrganization;
-        Drivers[k].TotalDurationTaken += Riders[fromIndex].TimeFromOrganizationMinutes;
-
-        var response = ksp.ksp(g, OrganizationID, DriverIDstr, kValue);
-        response = response.filter(p => (p.edges.length == n + 1) && p.totalCost <= (Drivers[k].TotalDurationTaken))
-
-        for (var d = 0; d < response.length; d++) {
-            var AssignedTemp = []
-            for (var j = response[d].edges.length - 1; j >= 0; j--) {
-                AssignedTemp.push(parseInt(response[d].edges[j].toNode))
-            }
-            Drivers[k].AssignedRiders = AssignedTemp;
-            var ValidDuration = await SetDropOffTime(Drivers[k])
-            if (ValidDuration != -1) {
-                break;
-            }
-        }
-
-    }
-
-
-
-
-    /////////////////////////calculate drop off time
-
-    // for (var j = 0; j < Drivers.length; j++) {
-
-
-    // }
-
-
+    //Print
     for (var i = 0; i < Drivers.length; i++) {
 
         console.log(Drivers[i].ID, Drivers[i].Name, Drivers[i].AssignedRiders)
@@ -970,7 +972,6 @@ async function main() {
     }
 
 }
-
 
 
 main()
