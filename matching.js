@@ -599,7 +599,6 @@ async function main() {
                 break;
 
             var DriverID = Drivers[j].ID;
-
             var LastRiderExists = false;
             var chosenDuration = -1
             var chosenDistance = -1
