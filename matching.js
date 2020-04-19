@@ -33,8 +33,8 @@ class Rider {
         this.TrustedDrivers = []
         this.UnTrustedDrivers = [] //todo:block
 
-        this.MaxDistanceToNormalize = 0; //get from database ,, max distance from rider to all other riders
-        this.MaxDurationToNormalize = 0; //get from database ,, max duration from rider to all other riders
+        this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
+        this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
 
         this.EarliestPickup = new Date(EarliestPickup[0], EarliestPickup[1], EarliestPickup[2], EarliestPickup[3], EarliestPickup[4], EarliestPickup[5]);
 
@@ -67,9 +67,9 @@ class Driver {
 
 
 
-        this.MaxDistanceToNormalize = 0; //get from database ,, max distance from rider to all other riders
-        this.MaxDurationToNormalize = 0; //get from database ,, max duration from rider to all other riders
-        this.MaxEarliestDiffToNormalize = 0;
+        this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
+        this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
+        this.MaxEarliestDiffToNormalize = Number.NEGATIVE_INFINITY;
         //options ( GenderSmokingMusic)
         //   this.Options = Options;
 
@@ -471,7 +471,7 @@ for (var i = 0; i < Riders.length; i++) {
     var riderID = Riders[i].ID
     var RiderRow = new userArray(riderID);
     for (var j = 0; j < valuer.length; j++) {
-        if (valuer[j].from === RidersID[i]) {
+        if (valuer[j].from === riderID) {
             var distanceObj = new distance(valuer[j].from, valuer[j].to, valuer[j].distance);
             Riders[i].MaxDistanceToNormalize = Math.max(valuer[j].distance, Riders[i].MaxDistanceToNormalize)
             RiderRow.push(distanceObj);
