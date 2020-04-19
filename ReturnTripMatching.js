@@ -543,8 +543,6 @@ function SetDropOffTime(DriverObj) {
 }
 
 
-
-
 async function Reorder() {
 
     //Reordering 

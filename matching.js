@@ -33,6 +33,9 @@ class Rider {
         this.TrustedDrivers = []
         this.UnTrustedDrivers = [] //todo:block
 
+        this.MaxDistanceToNormalize = 0; //get from database ,, max distance from rider to all other riders
+        this.MaxDurationToNormalize = 0; //get from database ,, max duration from rider to all other riders
+
         this.EarliestPickup = new Date(EarliestPickup[0], EarliestPickup[1], EarliestPickup[2], EarliestPickup[3], EarliestPickup[4], EarliestPickup[5]);
 
         //options ( GenderSmokingMusic)  -- > Remove
@@ -61,6 +64,12 @@ class Driver {
         this.capacity = capacity
         this.MaxDistance = 1.5 * DistanceToOrganization //removeee
 
+
+
+
+        this.MaxDistanceToNormalize = 0; //get from database ,, max distance from rider to all other riders
+        this.MaxDurationToNormalize = 0; //get from database ,, max duration from rider to all other riders
+        this.MaxEarliestDiffToNormalize = 0;
         //options ( GenderSmokingMusic)
         //   this.Options = Options;
 
@@ -180,8 +189,8 @@ var value = [values1, values2, values3, values4, values5,
     values11, values12, values13, values14, values15, values16, values17, values18, values19, values20,
     dvaluesg11
 ];
-var driversID = [10, 11, 14, 15]
-    ////////////////////////////////////////////////////RiderDatabase//////////// filter options and arrival time(-30,30) ,organization
+//var driversID = [10, 11, 14, 15]
+////////////////////////////////////////////////////RiderDatabase//////////// filter options and arrival time(-30,30) ,organization
 values12r = new values(1, 2, 7.3);
 values15r = new values(1, 5, 0.6); //Dina
 values17r = new values(1, 7, 16);
@@ -434,17 +443,22 @@ Riders.push(Rider14)
 
 var DriversRider = new Array();
 
-for (var i = 0; i < driversID.length; i++) { //get id's from offers
-    var DriverRow = new userArray(driversID[i]);
+for (var i = 0; i < Drivers.length; i++) { //get id's from offers
+    var driverID = Drivers[i].ID
+    var DriverRow = new userArray(driverID);
+
 
     for (var j = 0; j < value.length; j++) {
-        if (value[j].from === driversID[i]) {
+        if (value[j].from === driverID) {
             var distanceObj = new distance(value[j].from, value[j].to, value[j].distance);
-
+            Drivers[i].MaxDistanceToNormalize = Math.max(value[j].distance, Drivers[i].MaxDistanceToNormalize)
             DriverRow.push(distanceObj);
         }
 
     }
+
+    if (Drivers[i].MaxDistanceToNormalize === 0)
+        Drivers[i].MaxDistanceToNormalize = 1;
     DriversRider.push(DriverRow);
 
 
@@ -453,19 +467,20 @@ for (var i = 0; i < driversID.length; i++) { //get id's from offers
 
 var RiderRider = new Array();
 
-for (var i = 0; i < RidersID.length; i++) {
-    var RiderRow = new userArray(RidersID[i]);
-
+for (var i = 0; i < Riders.length; i++) {
+    var riderID = Riders[i].ID
+    var RiderRow = new userArray(riderID);
     for (var j = 0; j < valuer.length; j++) {
         if (valuer[j].from === RidersID[i]) {
             var distanceObj = new distance(valuer[j].from, valuer[j].to, valuer[j].distance);
-
+            Riders[i].MaxDistanceToNormalize = Math.max(valuer[j].distance, Riders[i].MaxDistanceToNormalize)
             RiderRow.push(distanceObj);
         }
-
-
-
     }
+
+
+    if (Riders[i].MaxDistanceToNormalize === 0)
+        Riders[i].MaxDistanceToNormalize = 1;
     RiderRider.push(RiderRow);
 
 
@@ -474,17 +489,28 @@ for (var i = 0; i < RidersID.length; i++) {
 
 var DriversRidersDuration = new Array();
 
-for (var i = 0; i < driversID.length; i++) { //get id's from offers
-    var DriverRowDuration = new userArray(driversID[i]);
+for (var i = 0; i < Drivers.length; i++) { //get id's from offers
 
+    var driverID = Drivers[i].ID
+    var DriverRowDuration = new userArray(driverID);
+    var diffEarliest
     for (var j = 0; j < dvalue.length; j++) {
-        if (dvalue[j].from === driversID[i]) {
+        if (dvalue[j].from === driverID) {
             var durationObj = new duration(dvalue[j].from, dvalue[j].to, dvalue[j].distance);
+            Drivers[i].MaxDurationToNormalize = Math.max(dvalue[j].distance, Drivers[i].MaxDurationToNormalize)
+            diffEarliest = diff_minutes(Riders.find(n => n.ID === dvalue[j].to).EarliestPickup, Drivers[i].EarliestStartTime) - dvalue[j].distance
+            Drivers[i].MaxEarliestDiffToNormalize = Math.max(diffEarliest, Drivers[i].MaxEarliestDiffToNormalize)
 
             DriverRowDuration.push(durationObj);
         }
 
     }
+    if (Drivers[i].MaxDurationToNormalize === 0)
+        Drivers[i].MaxDurationToNormalize = 1;
+
+    if (Drivers[i].MaxEarliestDiffToNormalize === 0)
+        Drivers[i].MaxEarliestDiffToNormalize = 1;
+
     DriversRidersDuration.push(DriverRowDuration);
 
 
@@ -493,19 +519,21 @@ for (var i = 0; i < driversID.length; i++) { //get id's from offers
 
 var RiderRiderDuration = new Array();
 
-for (var i = 0; i < RidersID.length; i++) {
-    var RiderRowDuration = new userArray(RidersID[i]);
+for (var i = 0; i < Riders.length; i++) {
+    var riderID = Riders[i].ID
+    var RiderRowDuration = new userArray(riderID);
 
     for (var j = 0; j < dvaluer.length; j++) {
         if (dvaluer[j].from === RidersID[i]) {
             var durationObj = new duration(dvaluer[j].from, dvaluer[j].to, dvaluer[j].distance);
-
+            Riders[i].MaxDurationToNormalize = Math.max(dvaluer[j].distance, Riders[i].MaxDurationToNormalize)
             RiderRowDuration.push(durationObj);
         }
-
-
-
     }
+
+    if (Riders[i].MaxDurationToNormalize === 0)
+        Riders[i].MaxDurationToNormalize = 1;
+
     RiderRiderDuration.push(RiderRowDuration);
 
 
@@ -513,7 +541,7 @@ for (var i = 0; i < RidersID.length; i++) {
 
 
 function SetPickUpTime(DriverObj) {
-    if (DriverObj.AssignedRiders.length == 1) {
+    if (DriverObj.AssignedRiders.length === 1) {
         return; //Driver has no passengers
     }
     var fromIndex;
@@ -522,7 +550,7 @@ function SetPickUpTime(DriverObj) {
     DriverObj.TotalDistanceCoveredToDestination = 0;
     for (var j = DriverObj.AssignedRiders.length - 1; j >= 0; j--) {
 
-        if (j == 0)
+        if (j === 0)
 
         { // Last iteration ( First Rider )
             toIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[1]))
@@ -536,7 +564,7 @@ function SetPickUpTime(DriverObj) {
             DriverObj.TotalDistanceCoveredToDestination += DriversRider[DriverIndexinDriverRidersDistance].data.find(n => n.to === toRiderID).distance;
             if (DriverObj.PoolStartTime < DriverObj.EarliestStartTime)
                 return Promise.resolve(-1);
-        } else if (j == DriverObj.AssignedRiders.length - 1) { // First iteration ( Last Rider )
+        } else if (j === DriverObj.AssignedRiders.length - 1) { // First iteration ( Last Rider )
             fromIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[j]))
             DriverObj.TotalDistanceCoveredToDestination += Riders[fromIndex].DistanceToOrganization;
             DriverObj.TotalDurationTaken += Riders[fromIndex].TimeToOrganizationMinutes;
@@ -605,13 +633,13 @@ async function MatchingReorder() {
         while (true) {
             kValue += Combinatorics.P(n, count)
             count--;
-            if (count == 0)
+            if (count === 0)
                 break;
 
         }
 
         var response = ksp.ksp(g, DriverIDstr, OrganizationID, kValue);
-        response = response.filter(p => (p.edges.length == n + 1) && p.totalCost <= (Drivers[k].TotalDurationTaken + Drivers[k].TimeToOrganizationMinutes))
+        response = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= (Drivers[k].TotalDurationTaken + Drivers[k].TimeToOrganizationMinutes))
 
         for (var d = 0; d < response.length; d++) {
             var AssignedTemp = []
@@ -654,12 +682,12 @@ async function main() {
             var chosenDistance = -1
             var lastRiderID = Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1]
             var ChosenRiderID = -1;
-            var indexinDriverRider = DriversRider.findIndex(n => n.ID == DriverID);
+            var indexinDriverRider = DriversRider.findIndex(n => n.ID === DriverID);
             if (lastRiderID === DriverID) { //First Rider to be assigned
 
-                if (Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1] == Drivers[j].ID) // last rider driver
+                if (Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1] === Drivers[j].ID) // last rider driver
                 {
-                    var indexinDriverRider = DriversRidersDuration.findIndex(n => n.ID == Drivers[j].ID);
+                    var indexinDriverRider = DriversRidersDuration.findIndex(n => n.ID === Drivers[j].ID);
                     if (DriversRidersDuration[indexinDriverRider].checked === DriversRidersDuration[indexinDriverRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
                         continue;
 
@@ -669,35 +697,7 @@ async function main() {
                 }
                 var WeightArray = []
                 var WeightIndex = []
-                var MaxDist2 = DriversRider[indexinDriverRider].data[0].distance
-                var MaxDur2 = DriversRidersDuration[indexinDriverRider].data[0].duration
-                var MaxZ = Number.NEGATIVE_INFINITY,
-                    MaxY2 = Number.NEGATIVE_INFINITY;
-                for (var p = 0; p < DriversRidersDuration[indexinDriverRider].length; p++) {
-                    var RiderID = DriversRidersDuration[indexinDriverRider].data[p].to
-                    var Distance = DriversRider[indexinDriverRider].data[p].distance
-                    var Duration = DriversRidersDuration[indexinDriverRider].data[p].duration;
 
-
-                    MaxZ = Math.max(diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) - Duration, MaxZ)
-                    MaxY2 = Math.max(diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime), MaxY2)
-                    MaxDist2 = Math.max(DriversRider[indexinDriverRider].data[p].distance, MaxDist2)
-                    MaxDur2 = Math.max(DriversRidersDuration[indexinDriverRider].data[p].duration, MaxDur2)
-
-
-                }
-                if (MaxZ == 0) {
-                    MaxZ = 1;
-                }
-                if (MaxY2 == 0) {
-                    MaxY2 = 1;
-                }
-                if (MaxDist2 == 0) {
-                    MaxDist2 = 1;
-                }
-                if (MaxDur2 == 0) {
-                    MaxDur2 = 1;
-                }
                 for (var k = 0; k < DriversRidersDuration[indexinDriverRider].length; k++) {
                     var RiderID = DriversRidersDuration[indexinDriverRider].data[k].to
                     var Distance = DriversRider[indexinDriverRider].data[k].distance
@@ -721,9 +721,9 @@ async function main() {
                     //add duration 
                     if (Riders.find(n => n.ID === RiderID).isAssigned === false) {
 
-                        var WeightFunction = -0.45 * Duration / MaxDur2 - 0.25 * Distance / MaxDist2 + 0.3 * Trust -
-                            0.15 * (diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) - Duration) / MaxZ -
-                            0.04 * diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) / MaxY2; ///arrival time diff
+                        var WeightFunction = -0.45 * Duration / Drivers[j].MaxDurationToNormalize - 0.25 * Distance / Drivers[j].MaxDistanceToNormalize + 0.3 * Trust -
+                            0.15 * (diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) - Duration) / Drivers[j].MaxEarliestDiffToNormalize -
+                            0.04 * diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) / 30; ///arrival time diff
 
                         WeightArray.push(WeightFunction)
                         WeightIndex.push(RiderID)
@@ -744,7 +744,7 @@ async function main() {
 
             } else { // Not First Rider
 
-                var indexinRiderRider = RiderRiderDuration.findIndex(n => n.ID == lastRiderID);
+                var indexinRiderRider = RiderRiderDuration.findIndex(n => n.ID === lastRiderID);
                 if (RiderRiderDuration[indexinRiderRider].checked === RiderRiderDuration[indexinRiderRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
                     continue;
 
@@ -753,36 +753,11 @@ async function main() {
 
                 var WeightArray = []
                 var WeightIndex = []
-                var MaxDist = RiderRider[indexinRiderRider].data[0].distance
-                var MaxDur = RiderRiderDuration[indexinRiderRider].data[0].duration
-                var MaxY = Number.NEGATIVE_INFINITY;
-                for (var p = 0; p < RiderRiderDuration[indexinRiderRider].length; p++) {
-                    var RiderID = RiderRiderDuration[indexinRiderRider].data[p].to
-                    var Distance = RiderRider[indexinRiderRider].data[p].distance
-                    var Duration = RiderRiderDuration[indexinRiderRider].data[p].duration;
-
-
-                    MaxY = Math.max(diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime), MaxY)
-                    MaxDist = Math.max(RiderRider[indexinRiderRider].data[p].distance, MaxDist)
-                    MaxDur = Math.max(RiderRiderDuration[indexinRiderRider].data[p].duration, MaxDur)
-
-
-                }
-
-                if (MaxY == 0) {
-                    MaxY = 1;
-                }
-                if (MaxDist == 0) {
-                    MaxDist = 1;
-                }
-                if (MaxDur == 0) {
-                    MaxDur = 1;
-                }
-
 
 
                 for (var k = 0; k < RiderRiderDuration[indexinRiderRider].length; k++) {
                     var RiderID = RiderRiderDuration[indexinRiderRider].data[k].to
+                    var IndexInRiders = Riders.findIndex(n => n.ID === RiderID)
                     if (diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) > 30 || diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) < 0) {
                         RiderRiderDuration[indexinRiderRider].data.find(n => n.to === RiderID).checked = 1;
                         RiderRiderDuration[indexinRiderRider].checked++;
@@ -809,8 +784,8 @@ async function main() {
 
                     if (Riders.find(n => n.ID === RiderID).isAssigned === false) {
 
-                        var WeightFunction = -0.45 * Duration / MaxDur - 0.25 * Distance / MaxDist + 0.3 * Trust -
-                            0.04 * diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) / MaxY
+                        var WeightFunction = -0.45 * Duration / Riders[IndexInRiders].MaxDurationToNormalize - 0.25 * Distance / Riders[IndexInRiders].MaxDistanceToNormalize + 0.3 * Trust -
+                            0.04 * diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) / 30
                         WeightArray.push(WeightFunction)
                         WeightIndex.push(RiderID)
                     } else {
@@ -912,9 +887,9 @@ async function main() {
         for (var j = 0; j < Drivers.length; j++) {
 
 
-            if (Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1] == Drivers[j].ID) // last rider driver
+            if (Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1] === Drivers[j].ID) // last rider driver
             {
-                var indexinDriverRider = DriversRidersDuration.findIndex(n => n.ID == Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1]);
+                var indexinDriverRider = DriversRidersDuration.findIndex(n => n.ID === Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1]);
                 if (DriversRidersDuration[indexinDriverRider].checked === DriversRidersDuration[indexinDriverRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
                     count++;
 
@@ -922,7 +897,7 @@ async function main() {
 
 
             } else {
-                var indexinRiderRider = RiderRiderDuration.findIndex(n => n.ID == Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1]);
+                var indexinRiderRider = RiderRiderDuration.findIndex(n => n.ID === Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1]);
                 if (RiderRiderDuration[indexinRiderRider].checked === RiderRiderDuration[indexinRiderRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
                     count++;
 
