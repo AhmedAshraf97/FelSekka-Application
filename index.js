@@ -1,5 +1,4 @@
 const express = require ('express');
-const joi = require ('joi');
 const bodyParser = require ('body-parser');
 const app  = express();
 const PORT = process.env.PORT || 3000;

@@ -15,7 +15,7 @@ module.exports = sequelize.define("users", {
         allowNull: false
     },
     phonenumber: {
-        type: Sequelize.INTEGER(255),
+        type: Sequelize.STRING(300),
         allowNull: false
     },
     password: {
@@ -54,6 +54,23 @@ module.exports = sequelize.define("users", {
         type:Sequelize.STRING(300),
         allowNull: false,
         defaultValue: "existing"
+    },
+    email:{
+        type:Sequelize.STRING(300),
+        allowNull: false,
+    },
+    latitude:{
+        type:Sequelize.DECIMAL,
+        allowNull: false  
+    },
+    longitude:{
+        type:Sequelize.DECIMAL,
+        allowNull: false  
+    },
+    username:{
+        type:Sequelize.STRING(300),
+        allowNull: false,
     }
+
   }
   );
