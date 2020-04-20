@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">felsekka</string>
+
+    <string name="facebook_app_id">230717121337783</string>
+
+    <string name="fb_login_protocol_scheme">fb230717121337783</string>
+</resources>

@@ -19,7 +19,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_signin_button: ^1.0.0
+  flutter_auth_buttons: ^0.8.0
+  flutter_facebook_login: ^3.0.0
+  http: ^0.12.0+4
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
@@ -44,6 +47,7 @@ flutter:
   assets:
   - images/felsekkalogo2nobg.png
   - images/felsekkalogo3nobg.png
+  - images/felsekkalogowhitenobg.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -57,12 +61,16 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+  fonts:
+   - family: Kodchasan
+     fonts:
+       - asset: fonts/Kodchasan-Light.ttf
+       - asset: fonts/Kodchasan-LightItalic.ttf
+       - asset: fonts/Kodchasan-Medium.ttf
+       - asset: fonts/Kodchasan-MediumItalic.ttf
+       - asset: fonts/Kodchasan-Bold.ttf
+       - asset: fonts/Kodchasan-BoldItalic.ttf
+    #         style: italic
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
