@@ -5,6 +5,8 @@ const Joi = require('joi');
 const jwt = require('jsonwebtoken');
 const regex = require('regex');
 const bcrypt = require('bcrypt')
+var Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 process.env.SECRET_KEY = 'secret'
 
@@ -182,9 +184,6 @@ router.post('/signup', (req, res) => {
 
     }
 
-
-
-
 });
 
 //Sign in 
@@ -201,12 +200,13 @@ router.post('/signin', (req, res) => {
                 let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
                     expiresIn: 1440
                 })
-                res.json({ token: token })
+                res.json({ token: token, userInfo: user.dataValues })
+                console.log("User data ", user.dataValues)
             } else
-                res.status(401).send("User doesn't exist, Please Enter valid data")
+                res.status(401).send({ message: "Invalid Password, Please try again" })
         })
         .catch(err => {
-            res.send('error: ' + err)
+            res.status(400).send({ message: ' Invalid Email or Phone number ' })
         })
 })
 
