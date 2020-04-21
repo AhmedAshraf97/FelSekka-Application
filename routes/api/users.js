@@ -4,32 +4,22 @@ const router = express.Router();
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
 const regex = require('regex');
-<<<<<<< HEAD
-const bcrypt = require('bcrypt');
-=======
 const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 process.env.SECRET_KEY = 'secret'
->>>>>>> 42a27fcf810f320b0a155fc3a5e4c8b312e8df39
 
 //Error handler
 const errHandler = err => {
     //Catch and log any error.
-<<<<<<< HEAD
-    console.error("Errorr: ", err);
-  };
-=======
     console.error("Error: ", err);
 };
->>>>>>> 42a27fcf810f320b0a155fc3a5e4c8b312e8df39
 
 //SignUp (na2es verification by email)
 router.post('/signup', (req, res) => {
     //Object added to database
     const userData = {
-<<<<<<< HEAD
         firstname : req.body.firstname,
         lastname : req.body.lastname,
         username: req.body.username,
@@ -62,35 +52,6 @@ router.post('/signup', (req, res) => {
     }
     else if((req.body.firstname).trim().length > 15){
         res.status(400).send( {error: "First name", message: "First name has maximum length of 15 letters"});
-=======
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-            username: req.body.username,
-            email: req.body.email,
-            phonenumber: req.body.phonenumber,
-            password: req.body.password,
-            gender: req.body.gender,
-            birthdate: req.body.birthdate,
-            ridewith: req.body.ridewith,
-            smoking: req.body.smoking,
-            longitude: req.body.longitude,
-            latitude: req.body.latitude,
-            rating: 5.0,
-            status: "existing",
-            photo: req.body.photo,
-        }
-        // First name validation 
-    if (req.body.firstname == null) {
-        res.status(400).send({ error: "First name", message: "First name paramter is missing" });
-    } else if (!((typeof(req.body.firstname) === 'string') || ((req.body.firstname) instanceof String))) {
-        res.status(400).send({ error: "First name", message: "First name must be a string" });
-    } else if ((req.body.firstname).trim().length === 0) {
-        res.status(400).send({ error: "First name", message: "First name can't be empty" });
-    } else if (!(/^[a-zA-Z ]*$/.test(req.body.firstname))) {
-        res.status(400).send({ error: "First name", message: "First name can only contain letters" });
-    } else if ((req.body.firstname).trim().length > 15) {
-        res.status(400).send({ error: "First name", message: "First name has maximum length of 15 letters" });
->>>>>>> 42a27fcf810f320b0a155fc3a5e4c8b312e8df39
     }
     //Last name validation
     else if (req.body.lastname == null) {
@@ -199,7 +160,6 @@ router.post('/signup', (req, res) => {
         res.status(400).send({ error: "Latitude", message: "Latitude must be a decimal" });
     }
     //Longitude validation
-<<<<<<< HEAD
      else if(req.body.longitude==null){
         res.status(400).send( {error: "Longitude", message: "Longitude paramter is missing"});
     }
@@ -243,34 +203,6 @@ router.post('/signup', (req, res) => {
         res.end();
         console.log(userData);
         }).catch(errHandler);  
-=======
-    else if (req.body.longitude == null) {
-        res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
-    } else if (((req.body.longitude).toString()).trim().length === 0) {
-        res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
-    } else if ((typeof(req.body.longitude) === 'string') || ((req.body.confirmpassword) instanceof String)) {
-        res.status(400).send({ error: "Longitude", message: "Longitude must be a decimal" });
-    } else {
-        //Check wether username already exists
-        const usernameExists = /*await*/ User.findOne({ where: { username: req.body.username } });
-        //Check wether email already exists
-        const emailExists = /*await*/ User.findOne({ where: { email: req.body.email } });
-        //Check wether phone number already exists
-        const phonenumberExists = /*await*/ User.findOne({ where: { phonenumber: req.body.phonenumber } });
-        if (!(usernameExists === null)) {
-            console.log(usernameExists instanceof User);
-            console.log(usernameExists.username);
-            res.status(409).send({ error: "Username", message: "This username already exists" });
-        } else if (!(emailExists === null)) {
-            res.status(409).send({ error: "Email", message: "This email already exists" });
-        } else if (!(phonenumberExists === null)) {
-            res.status(409).send({ error: "Phone number", message: "This phone number already exists" });
-        } else {
-            res.status(201).send({ message: "User is created" });
-            console.log(userData);
-        }
-
->>>>>>> 42a27fcf810f320b0a155fc3a5e4c8b312e8df39
     }
 
 });
