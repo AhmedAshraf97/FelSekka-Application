@@ -16,28 +16,28 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
-
 //SignUp (na2es verification by email)
 router.post('/signup', (req, res) => {
     //Object added to database
     const userData = {
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-            username: req.body.username,
-            email: req.body.email,
-            phonenumber: req.body.phonenumber,
-            password: req.body.password,
-            gender: req.body.gender,
-            birthdate: req.body.birthdate,
-            ridewith: req.body.ridewith,
-            smoking: req.body.smoking,
-            longitude: req.body.longitude,
-            latitude: req.body.latitude,
-            rating: 5.0,
-            status: "existing",
-            photo: req.body.photo,
-        }
-        // First name validation 
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        username: req.body.username,
+        email: req.body.email,
+        phonenumber: req.body.phonenumber,
+        password: bcrypt.hashSync(req.body.password, 10),
+        gender: req.body.gender,
+        birthdate: req.body.birthdate,
+        ridewith: req.body.ridewith,
+        smoking: req.body.smoking,
+        longitude: req.body.longitude,
+        latitude: req.body.latitude,
+        rating: 5.0,
+        status: "existing",
+        photo: req.body.photo,
+    }
+    var userExists = 0;
+    // First name validation 
     if (req.body.firstname == null) {
         res.status(400).send({ error: "First name", message: "First name paramter is missing" });
     } else if (!((typeof(req.body.firstname) === 'string') || ((req.body.firstname) instanceof String))) {
@@ -164,24 +164,38 @@ router.post('/signup', (req, res) => {
         res.status(400).send({ error: "Longitude", message: "Longitude must be a decimal" });
     } else {
         //Check wether username already exists
-        const usernameExists = /*await*/ User.findOne({ where: { username: req.body.username } });
-        //Check wether email already exists
-        const emailExists = /*await*/ User.findOne({ where: { email: req.body.email } });
-        //Check wether phone number already exists
-        const phonenumberExists = /*await*/ User.findOne({ where: { phonenumber: req.body.phonenumber } });
-        if (!(usernameExists === null)) {
-            console.log(usernameExists instanceof User);
-            console.log(usernameExists.username);
-            res.status(409).send({ error: "Username", message: "This username already exists" });
-        } else if (!(emailExists === null)) {
-            res.status(409).send({ error: "Email", message: "This email already exists" });
-        } else if (!(phonenumberExists === null)) {
-            res.status(409).send({ error: "Phone number", message: "This phone number already exists" });
-        } else {
-            res.status(201).send({ message: "User is created" });
-            console.log(userData);
-        }
+        User.findOne({ where: { username: req.body.username } }).then(user => {
+            if (user) {
+                userExists = 1;
+                res.status(409).send({ error: "Username", message: "This username already exists" });
+                res.end();
+            }
 
+        }).catch(errHandler);
+        //Check wether email already exists
+        User.findOne({ where: { email: req.body.email } }).then(user => {
+            if (user) {
+                userExists = 1;
+                res.status(409).send({ error: "Email", message: "This email already exists" });
+                res.end();
+            }
+        }).catch(errHandler);
+        //Check wether phone number already exists
+        User.findOne({ where: { phonenumber: req.body.phonenumber } }).then(user => {
+            if (user) {
+                userExists = 1;
+                res.status(409).send({ error: "Phone number", message: "This phone number already exists" });
+                res.end();
+
+            }
+        }).catch(errHandler)
+    }
+    if (userExists == 0) {
+        User.create(userData).then(user => {
+            res.status(201).send({ message: "User is created" });
+            res.end();
+            console.log(userData);
+        }).catch(errHandler);
     }
 
 });
@@ -196,17 +210,21 @@ router.post('/signin', (req, res) => {
                 ]
             }
         }).then(user => {
-            if (bcrypt.compareSync(req.body.password, user.password)) {
-                let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
-                    expiresIn: 1440
-                })
-                res.json({ token: token, userInfo: user.dataValues })
-                console.log("User data ", user.dataValues)
+            if (user) {
+                if (bcrypt.compareSync(req.body.password, user.password)) {
+                    let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
+                        expiresIn: 1440
+                    })
+                    res.json({ token: token, userInfo: user.dataValues })
+                    console.log("User data ", user.dataValues)
+                } else
+                    res.status(401).send({ message: "Invalid Password, Please try again" })
             } else
-                res.status(401).send({ message: "Invalid Password, Please try again" })
+                res.status(400).send({ message: "Invalid Email or Phone number, Please try again" })
         })
         .catch(err => {
-            res.status(400).send({ message: ' Invalid Email or Phone number ' })
+            console.log('error: ' + err)
+                //res.status(400).send({ message: ' Invalid Email or Phone number ' })
         })
 })
 
