@@ -212,7 +212,7 @@ router.post('/signin', (req, res) => {
 
 
 router.put('/editprofile', (req, res) => {
-    var decoded = jwt.verify(req.headers['authorixation'], process.env.SECRET_KEY)
+    var decoded = jwt.verify(req.headers['token'], process.env.SECRET_KEY)
     let isvalid = false
     User.findOne({
             where: {
