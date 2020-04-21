@@ -220,7 +220,8 @@ router.put('/editprofile', (req, res) => {
             }
         }).then(user => {
             if (user) {
-                if (req.body.firstname !== null) {
+
+                if (req.body.firstname !== undefined) {
 
                     if (!((typeof(req.body.firstname) === 'string') || ((req.body.firstname) instanceof String))) {
                         isvalid = true
@@ -236,7 +237,7 @@ router.put('/editprofile', (req, res) => {
                         res.status(400).send({ error: "First name", message: "First name has maximum length of 15 letters" });
                     }
                 }
-                if (req.body.lastname !== null && isvalid === false) {
+                if (req.body.lastname !== undefined && isvalid === false) {
                     //Last name validation 
                     if (!((typeof(req.body.lastname) === 'string') || ((req.body.lastname) instanceof String))) {
                         isvalid = true
@@ -254,7 +255,7 @@ router.put('/editprofile', (req, res) => {
                 }
 
                 //Password validation
-                if (req.body.oldpassword !== null && req.body.newpassword !== null && req.body.confirmpassword && invalid === false) {
+                if (req.body.oldpassword !== undefined && req.body.newpassword !== undefined && req.body.confirmpassword && invalid === false) {
                     if (req.body.oldpassword !== user.password) {
                         invalid = true
                         res.status(400).send({ error: "Old password ", message: "Old password is incorrect" });
@@ -272,7 +273,7 @@ router.put('/editprofile', (req, res) => {
 
 
                     //Confirm password validation
-                    else if (req.body.confirmpassword == null) {
+                    else if (req.body.confirmpassword == undefined) {
                         invalid = true
                         res.status(400).send({ error: "Confirm password", message: "Confirm password paramter is missing" });
                     } else if (!((typeof(req.body.confirmpassword) === 'string') || ((req.body.confirmpassword) instanceof String))) {
@@ -287,7 +288,7 @@ router.put('/editprofile', (req, res) => {
                     }
                 }
                 //Gender validation
-                if (req.body.gender !== null && isvalid === false) {
+                if (req.body.gender !== undefined && isvalid === false) {
                     if (!((typeof(req.body.gender) === 'string') || ((req.body.lastname) instanceof String))) {
                         invalid = true
                         res.status(400).send({ error: "Gender", message: "Gender must be a string" });
@@ -297,7 +298,7 @@ router.put('/editprofile', (req, res) => {
                         res.status(400).send({ error: "Gender", message: "Gender can't be empty" });
                     }
                 }
-                if (req.body.birthdate !== null && isvalid === false) {
+                if (req.body.birthdate !== undefined && isvalid === false) {
                     //Birthdate validation
                     if (!((typeof(req.body.birthdate) === 'string') || ((req.body.birthdate) instanceof String))) {
                         invalid = true
@@ -311,7 +312,7 @@ router.put('/editprofile', (req, res) => {
                     }
                 }
                 //Ride with validation
-                if (req.body.ridewith !== null && isvalid === false) {
+                if (req.body.ridewith !== undefined && isvalid === false) {
                     if (!((typeof(req.body.ridewith) === 'string') || ((req.body.lastname) instanceof String))) {
                         invalid = true
                         res.status(400).send({ error: "Ride with", message: "Ride with must be a string" });
@@ -320,7 +321,7 @@ router.put('/editprofile', (req, res) => {
                         res.status(400).send({ error: "Ride with", message: "Ride with can't be empty" });
                     }
                 }
-                if (req.body.smoking !== null && isvalid === false) {
+                if (req.body.smoking !== undefined && isvalid === false) {
                     if (!((typeof(req.body.smoking) === 'string') || ((req.body.lastname) instanceof String))) {
                         invalid = true
                         res.status(400).send({ error: "Smoking", message: "Smoking must be a string" });
@@ -330,7 +331,7 @@ router.put('/editprofile', (req, res) => {
                     }
                     //Latitude validation
                 }
-                if (req.body.latitude !== null && isvalid === false) {
+                if (req.body.latitude !== undefined && isvalid === false) {
                     if (((req.body.latitude).toString()).trim().length === 0) {
                         invalid = true
                         res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
@@ -340,7 +341,7 @@ router.put('/editprofile', (req, res) => {
                     }
                 }
 
-                if (req.body.longitude !== null && isvalid === false) {
+                if (req.body.longitude !== undefined && isvalid === false) {
                     if (((req.body.longitude).toString()).trim().length === 0) {
                         invalid = true
                         res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
@@ -353,42 +354,25 @@ router.put('/editprofile', (req, res) => {
 
 
 
-                if (invalid === false) {
-                    if (req.body.firstname !== null) {
-                        user.firstname = req.body.firstname
-
-                    }
-                    if (req.body.lastname != null && isvalid === false) {
-                        user.lastname = req.body.lastname
-
-                    }
+                if (isvalid === false) {
+                    user.update({
+                            firstname: req.body.firstname
 
 
-                    if (req.body.newpassword !== null && req.body.oldpassword !== null && req.body.confirmpassword !== null) {
-                        user.password = req.body.newpassword
-                    }
-                    if (req.body.gender !== null) {
-                        user.gender = req.body.gender
+                        }, {
+                            where: { id: decoded.id }
+                        }).then(res.status(200).send("OK"))
+                        /* 
+                                            lastname: req.body.lastname | user.lastname,
+                                            password: req.body.newpassword | user.password,
+                                            gender: req.body.gender | user.gender,
+                                            birthdate: req.body.birthdate | user.birthdate,
+                                            ridewith: req.body.ridewith | user.ridewith,
+                                            smoking: req.body.smoking | user.smoking,
+                                            latitude: req.body.latitude | user.latitude,
+                                            longitude: req.body.longitude | user.longitude */
 
-                    }
-
-                    if (req.body.birthdate !== null) {
-                        user.birthdate = req.body.birthdate
-                    }
-                    if (req.body.ridewith !== null) {
-                        user.ridewith = req.body.ridewith
-                    }
-                    if (req.body.smoking !== null) {
-                        user.smoking = req.body.smoking
-                    }
-                    if (req.body.latitude !== null) {
-                        user.latitude = req.body.latitude
-                    }
-                    if (req.body.longitude !== null) {
-                        user.longitude = req.body.longitude
-                    }
                 }
-
 
             } else
                 res.status(401).send("User doesn't exist, Please Enter valid ID")
