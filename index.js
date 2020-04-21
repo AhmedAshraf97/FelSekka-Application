@@ -10,7 +10,8 @@ require("./database/connection");
 //Uers API route
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/editprofile', require('./routes/api/editprofile'));
-
+app.use('/api/changepassword', require('./routes/api/changepassword'));
+app.use('/api/forgetpassword', require('./routes/api/forgetpassword'));
 
 
 /*const betweenusers = require('./models/betweenusers');

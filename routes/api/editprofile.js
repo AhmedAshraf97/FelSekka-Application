@@ -167,6 +167,7 @@ router.post('/', (req, res) => {
                     bcryptPass = user.password
 
                 }
+                /////check if all paramters empty dont update
 
                 if (isvalid === false) {
 
