@@ -210,17 +210,20 @@ router.post('/signin', (req, res) => {
                 ]
             }
         }).then(user => {
-            if (bcrypt.compareSync(req.body.password, user.password)) {
-                let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
-                    expiresIn: 1440
-                })
-                res.json({ token: token, userInfo: user.dataValues })
-                console.log("User data ", user.dataValues)
+            if (user) {
+                if (bcrypt.compareSync(req.body.password, user.password)) {
+                    let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
+                        expiresIn: 1440
+                    })
+                    res.json({ token: token, userInfo: user.dataValues })
+                    console.log("User data ", user.dataValues)
+                } else
+                    res.status(401).send({ message: "Invalid Password, Please try again" })
             } else
-                res.status(401).send({ message: "Invalid Password, Please try again" })
+                res.status(400).send({ message: "Invalid Email or Phone number, Please try again" })
         })
         .catch(err => {
-            res.send('error: ' + err)
+            console.log('error: ' + err)
                 //res.status(400).send({ message: ' Invalid Email or Phone number ' })
         })
 })
