@@ -4,13 +4,13 @@ const router = express.Router();
 const Joi = require ('joi');
 const jwt = require('jsonwebtoken');
 const regex = require('regex');
+const bcrypt = require('bcrypt');
 
 //Error handler
 const errHandler = err => {
     //Catch and log any error.
-    console.error("Error: ", err);
+    console.error("Errorr: ", err);
   };
-
 
 //SignUp (na2es verification by email)
 router.post('/signup' , (req,res)=>{
@@ -21,7 +21,7 @@ router.post('/signup' , (req,res)=>{
         username: req.body.username,
         email: req.body.email,
         phonenumber : req.body.phonenumber,
-        password : req.body.password,
+        password :  bcrypt.hashSync(req.body.password, 10),
         gender : req.body.gender,
         birthdate : req.body.birthdate,
         ridewith : req.body.ridewith,
@@ -32,6 +32,7 @@ router.post('/signup' , (req,res)=>{
         status : "existing",
         photo : req.body.photo,
     }
+    var userExists = 0;
     // First name validation 
     if(req.body.firstname==null){
         res.status(400).send( {error: "First name", message: "First name paramter is missing"});
@@ -195,33 +196,41 @@ router.post('/signup' , (req,res)=>{
     else if( (typeof (req.body.longitude) === 'string') || ((req.body.confirmpassword) instanceof String)){
         res.status(400).send( {error: "Longitude", message: "Longitude must be a decimal"});
     }
-    else{
+    else{  
          //Check wether username already exists
-        const usernameExists = /*await*/ User.findOne({ where: { username: req.body.username }});
+        User.findOne({ where: { username: req.body.username }}).then(user=>{
+            if(user){
+                userExists =1;
+                res.status(409).send( {error: "Username", message: "This username already exists"});
+                res.end();
+            }
+        
+        }).catch(errHandler);
         //Check wether email already exists
-        const emailExists = /*await*/ User.findOne({ where: { email: req.body.email }});
+        User.findOne({ where: { email: req.body.email }}).then(user=>{
+            if(user){
+                userExists =1;
+                res.status(409).send( {error: "Email", message: "This email already exists"});
+                res.end();
+            }
+        }).catch(errHandler); 
         //Check wether phone number already exists
-        const phonenumberExists = /*await*/ User.findOne({ where: { phonenumber: req.body.phonenumber }}); 
-        if( ! (usernameExists === null) ){
-            console.log(usernameExists instanceof User);
-            console.log(usernameExists.username);
-            res.status(409).send( {error: "Username", message: "This username already exists"});
-        }
-        else if( !(emailExists === null) ){
-            res.status(409).send( {error: "Email", message: "This email already exists"});
-        }
-        else if( !(phonenumberExists === null) ){
-            res.status(409).send( {error: "Phone number", message: "This phone number already exists"});
-        }
-        else {
-            res.status(201).send( {message:"User is created"});
-            console.log(userData);
-        }
-
+        User.findOne({ where: { phonenumber: req.body.phonenumber }}).then(user=>{
+            if(user){
+                userExists =1;
+                res.status(409).send( {error: "Phone number", message: "This phone number already exists"});
+                res.end();
+               
+            }
+        }).catch(errHandler) 
+    }    
+    if(userExists == 0) {
+        User.create(userData).then(user =>{
+        res.status(201).send( {message:"User is created"});
+        res.end();
+        console.log(userData);
+        }).catch(errHandler);  
     }
-   
-
-    
 
 });
 
