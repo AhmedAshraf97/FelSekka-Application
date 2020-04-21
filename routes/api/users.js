@@ -206,7 +206,8 @@ router.post('/signin', (req, res) => {
                 res.status(401).send({ message: "Invalid Password, Please try again" })
         })
         .catch(err => {
-            res.status(400).send({ message: ' Invalid Email or Phone number ' })
+            res.send('error: ' + err)
+                //res.status(400).send({ message: ' Invalid Email or Phone number ' })
         })
 })
 
