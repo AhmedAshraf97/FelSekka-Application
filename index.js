@@ -8,10 +8,8 @@ app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 //DB connection
 require("./database/connection");
 //Uers API route
-app.use('/api/users', require('./routes/api/users'));
+app.use('/api/signup', require('./routes/api/sign_up'));
 app.use('/api/editprofile', require('./routes/api/editprofile'));
-
-
 app.use('/api/getreviews', require('./routes/api/get_user_reviews'));
 app.use('/api/showprofile', require('./routes/api/show_profile'));
 app.use('/api/showprofileextra', require('./routes/api/show_profile_extra'));
@@ -22,9 +20,9 @@ app.use('/api/deletecar', require('./routes/api/delete_car'));
 app.use('/api/showmycars', require('./routes/api/show_my_cars'));
 
 
-
 /*const betweenusers = require('./models/betweenusers');
 const cars = require('./models/cars');
+const organizations = require('./models/organizations');
 const drivers = require('./models/drivers');
 const offerridefrom = require('./models/offerridefrom');
 const offerrideto = require('./models/offerrideto');
