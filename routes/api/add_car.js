@@ -38,7 +38,7 @@ router.post('/', (req, res) => {
         res.status(400).send({ message: "Model must be a string of (1-300) characters" });
         res.end();
     }
-    if (!((typeof(req.body.year) === 'number') || (req.body.year).trim().length === 0)) {
+    if (!((typeof(req.body.year) === 'number')) || ((req.body.year).toString().trim().length !== 4)) {
         validChecks = false
         res.status(400).send({ message: "year must be a number of 4 digits" });
         res.end();
@@ -48,19 +48,19 @@ router.post('/', (req, res) => {
         res.status(400).send({ message: "Type must be a string of (1-300) characters" });
         res.end();
     }
-    if (!((typeof(req.body.plateletters) === 'string') || ((req.body.plateletters) instanceof String)) || (req.body.phonenumber).trim().length === 0) {
+    if (!((typeof(req.body.plateletters) === 'string') || ((req.body.plateletters) instanceof String)) || (req.body.plateletters).trim().length === 0) {
         validChecks = false
 
         res.status(400).send({ message: "Plateletters must be a string of (1-300) characters" });
         res.end();
     }
-    if (!((typeof(req.body.platenumbers) === 'number') || (req.body.phonenumber).trim().length === 0)) {
+    if (!((typeof(req.body.platenumbers) === 'number') || (req.body.platenumbers).toString().trim().length === 0)) {
         validChecks = false
         res.status(400).send({ message: "Plate numbers must be a number of (1-300) digits" });
         res.end();
     }
 
-    if (!((typeof(req.body.nationalid) === 'number') || (req.body.nationalid).trim().length === 0)) {
+    if (!((typeof(req.body.nationalid) === 'number') || (req.body.nationalid).toString().trim().length === 0)) {
         validChecks = false
         res.status(400).send({ message: "National ID must be a number of (1-300) digits" });
         res.end();
@@ -99,7 +99,7 @@ router.post('/', (req, res) => {
         res.end();
     }
 
-    if (!((typeof(req.body.numberofseats) === 'number') || (req.body.numberofseats).trim().length === 0)) {
+    if (!((typeof(req.body.numberofseats) === 'number') || (req.body.numberofseats).toString().trim().length === 0)) {
         validChecks = false
         res.status(400).send({ message: "Number of seats be a number of (1-300) digits" });
         res.end();
