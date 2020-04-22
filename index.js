@@ -16,7 +16,10 @@ app.use('/api/getreviews', require('./routes/api/get_user_reviews'));
 app.use('/api/showprofile', require('./routes/api/show_profile'));
 app.use('/api/showprofileextra', require('./routes/api/show_profile_extra'));
 app.use('/api/signin', require('./routes/api/sign_in'));
-
+app.use('/api/addreview', require('./routes/api/add_review'));
+app.use('/api/addcar', require('./routes/api/add_car'));
+app.use('/api/deletecar', require('./routes/api/delete_car'));
+app.use('/api/showmycars', require('./routes/api/show_my_cars'));
 
 
 

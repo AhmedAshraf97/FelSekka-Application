@@ -12,6 +12,13 @@ var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 
+
+//Error handler
+const errHandler = err => {
+    //Catch and log any error.
+    console.error("Error: ", err);
+};
+
 router.post('/', (req, res) => {
     var decoded;
     try {
@@ -46,14 +53,10 @@ router.post('/', (req, res) => {
                         } else
                             res.status(404).send({ message: "User not found" })
                     })
-                    .catch(err => {
-                        console.log('error: ' + err)
-                    })
+                    .catch(errHandler)
             }
         })
-        .catch(err => {
-            console.log('error: ' + err)
-        })
+        .catch(errHandler)
 })
 
 

@@ -12,6 +12,12 @@ var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 
+//Error handler
+const errHandler = err => {
+    //Catch and log any error.
+    console.error("Error: ", err);
+};
+
 router.post('/', async(req, res) => {
     var ReviewsArr = {}
     var count = 0
@@ -46,7 +52,6 @@ router.post('/', async(req, res) => {
                                             ReviewsArr[count] = ({ type: "driver", "review": review.review })
                                             count++;
                                             if (count === reviews.length) {
-                                                console.log("COUNT", count)
                                                 res.send(ReviewsArr)
                                             }
 
@@ -75,18 +80,14 @@ router.post('/', async(req, res) => {
                             res.end()
                         }
                     })
-                    .catch(err => {
-                        console.log('error: ' + err)
-                    })
+                    .catch(errHandler)
             } else {
                 res.status(404).send({ message: "User not found" })
                 res.end()
             }
         }
 
-    ).catch(err => {
-        console.log('error :' + err)
-    })
+    ).catch(errHandler)
 })
 
 module.exports = router
