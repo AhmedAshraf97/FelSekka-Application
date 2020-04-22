@@ -13,6 +13,13 @@ app.use('/api/editprofile', require('./routes/api/editprofile'));
 app.use('/api/changepassword', require('./routes/api/changepassword'));
 app.use('/api/forgetpassword', require('./routes/api/forgetpassword'));
 
+app.use('/api/getreviews', require('./routes/api/get_user_reviews'));
+app.use('/api/showprofile', require('./routes/api/show_profile'));
+app.use('/api/showprofileextra', require('./routes/api/show_profile_extra'));
+app.use('/api/signin', require('./routes/api/sign_in'));
+
+
+
 
 /*const betweenusers = require('./models/betweenusers');
 const cars = require('./models/cars');
