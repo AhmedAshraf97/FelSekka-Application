@@ -1,12 +1,9 @@
 const User = require('../../models/users');
-<<<<<<< HEAD
 const OrgUser = require('../../models/orgusers');
 const BetweenUsers = require('../../models/betweenusers');
-=======
 const Review = require('../../models/reviews')
 const Driver = require('../../models/drivers');
 const Rider = require('../../models/riders');
->>>>>>> 81e343828f67c9c49d73f198f24836ee31b0ad51
 const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
@@ -22,21 +19,12 @@ const errHandler = err => {
     //Catch and log any error.
     console.error("Error: ", err);
 };
-<<<<<<< HEAD
-=======
-
->>>>>>> 81e343828f67c9c49d73f198f24836ee31b0ad51
 //SignUp (na2es verification by email)
-router.post('/signup', async (req, res) => {
+router.post('/', async (req, res) => {
     //Object added to database
     const userData = {
-<<<<<<< HEAD
         firstname : req.body.firstname,
         lastname : req.body.lastname,
-=======
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
->>>>>>> 81e343828f67c9c49d73f198f24836ee31b0ad51
         username: req.body.username,
         email: req.body.email,
         phonenumber: req.body.phonenumber,
@@ -76,7 +64,6 @@ router.post('/signup', async (req, res) => {
         }
     }).catch(errHandler);}
     // First name validation 
-<<<<<<< HEAD
     if(req.body.firstname==null){
         res.status(400).send( {error: "First name", message: "First name paramter is missing"});
     }
@@ -91,18 +78,6 @@ router.post('/signup', async (req, res) => {
     }
     else if((req.body.firstname).trim().length > 15){
         res.status(400).send( {error: "First name", message: "First name has maximum length of 15 letters"});
-=======
-    if (req.body.firstname == null) {
-        res.status(400).send({ error: "First name", message: "First name paramter is missing" });
-    } else if (!((typeof(req.body.firstname) === 'string') || ((req.body.firstname) instanceof String))) {
-        res.status(400).send({ error: "First name", message: "First name must be a string" });
-    } else if ((req.body.firstname).trim().length === 0) {
-        res.status(400).send({ error: "First name", message: "First name can't be empty" });
-    } else if (!(/^[a-zA-Z ]*$/.test(req.body.firstname))) {
-        res.status(400).send({ error: "First name", message: "First name can only contain letters" });
-    } else if ((req.body.firstname).trim().length > 15) {
-        res.status(400).send({ error: "First name", message: "First name has maximum length of 15 letters" });
->>>>>>> 81e343828f67c9c49d73f198f24836ee31b0ad51
     }
     //Last name validation 
     else if (req.body.lastname == null) {
@@ -211,7 +186,6 @@ router.post('/signup', async (req, res) => {
         res.status(400).send({ error: "Latitude", message: "Latitude must be a decimal" });
     }
     //Longitude validation
-<<<<<<< HEAD
      else if(req.body.longitude==null){
         res.status(400).send( {error: "Longitude", message: "Longitude paramter is missing"});
     }
@@ -281,49 +255,6 @@ router.post('/signup', async (req, res) => {
                     }); 
             }
         }).catch(errHandler);  
-        var x = 4;
-=======
-    else if (req.body.longitude == null) {
-        res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
-    } else if (((req.body.longitude).toString()).trim().length === 0) {
-        res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
-    } else if ((typeof(req.body.longitude) === 'string') || ((req.body.confirmpassword) instanceof String)) {
-        res.status(400).send({ error: "Longitude", message: "Longitude must be a decimal" });
-    } else {
-        //Check wether username already exists
-        User.findOne({ where: { username: req.body.username } }).then(user => {
-            if (user) {
-                userExists = 1;
-                res.status(409).send({ error: "Username", message: "This username already exists" });
-                res.end();
-            }
-
-        }).catch(errHandler);
-        //Check wether email already exists
-        User.findOne({ where: { email: req.body.email } }).then(user => {
-            if (user) {
-                userExists = 1;
-                res.status(409).send({ error: "Email", message: "This email already exists" });
-                res.end();
-            }
-        }).catch(errHandler);
-        //Check wether phone number already exists
-        User.findOne({ where: { phonenumber: req.body.phonenumber } }).then(user => {
-            if (user) {
-                userExists = 1;
-                res.status(409).send({ error: "Phone number", message: "This phone number already exists" });
-                res.end();
-
-            }
-        }).catch(errHandler)
-    }
-    if (userExists == 0) {
-        User.create(userData).then(user => {
-            res.status(201).send({ message: "User is created" });
-            res.end();
-            console.log(userData);
-        }).catch(errHandler);
->>>>>>> 81e343828f67c9c49d73f198f24836ee31b0ad51
     }
 });
 
