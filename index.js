@@ -18,6 +18,7 @@ app.use('/api/addreview', require('./routes/api/add_review'));
 app.use('/api/addcar', require('./routes/api/add_car'));
 app.use('/api/deletecar', require('./routes/api/delete_car'));
 app.use('/api/showmycars', require('./routes/api/show_my_cars'));
+app.use('/api/addrating', require('./routes/api/add_rating'));
 
 
 /*const betweenusers = require('./models/betweenusers');

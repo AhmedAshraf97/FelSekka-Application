@@ -26,7 +26,7 @@ router.post('/', async(req, res) => {
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        res.status(401).send({ message: "You aren't authorized to add a review" })
+        res.status(401).send({ message: "You aren't authorized to show any cars" })
         res.end();
     }
     await User.findOne({
@@ -51,7 +51,7 @@ router.post('/', async(req, res) => {
                     });
 
                 } else {
-                    res.send({ message: "No Cars for this user" })
+                    res.send({ message: "No Cars to be shown" })
                     res.end()
                 }
             }).catch(errHandler)
@@ -63,3 +63,5 @@ router.post('/', async(req, res) => {
     }).catch(errHandler)
 
 })
+
+module.exports = router

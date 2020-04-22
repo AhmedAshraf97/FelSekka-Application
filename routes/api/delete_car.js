@@ -19,20 +19,36 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
+
+
 router.post('/', async(req, res) => {
     var decoded;
+    var ValidChecks = true;
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        res.status(401).send({ message: "You aren't authorized to add a review" })
+        res.status(401).send({ message: "You aren't authorized to delete any car" })
         res.end();
     }
+
+    await Car.findOne({
+        where: {
+            id: req.body.carid
+        }
+    }).then(car => {
+        if (!car) {
+            ValidChecks = false;
+            res.status(404).send({ message: "Car not found" })
+            res.end()
+        }
+    }).catch(errHandler)
+
     await User.findOne({
         where: {
             id: decoded.id
         }
     }).then(user => {
-        if (user) {
+        if (user && ValidChecks) {
             Car.update({
                 status: 'unavailable'
             }, {
@@ -40,12 +56,9 @@ router.post('/', async(req, res) => {
                     id: req.body.carid,
                     status: 'existing'
                 }
-            }).then(car => {
-                if (car) {
+            }).then(carupdate => {
+                if (carupdate) {
                     res.status(200).send({ message: "Car is deleted successfully" })
-                    res.end()
-                } else {
-                    res.status(404).send({ message: "Car not found" })
                     res.end()
                 }
             }).catch(errHandler)
@@ -57,3 +70,5 @@ router.post('/', async(req, res) => {
     }).catch(errHandler)
 
 })
+
+module.exports = router

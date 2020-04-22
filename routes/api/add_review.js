@@ -1,6 +1,8 @@
 const User = require('../../models/users');
 const Review = require('../../models/reviews')
 const Driver = require('../../models/drivers');
+
+const Trip = require('../../models/trips');
 const Rider = require('../../models/riders');
 const express = require('express');
 const router = express.Router();
@@ -18,7 +20,7 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
-router.post('/', (req, res) => {
+router.post('/', async(req, res) => {
     var decoded;
     var ValidChecks = true;
     try {
@@ -27,20 +29,55 @@ router.post('/', (req, res) => {
         res.status(401).send({ message: "You aren't authorized to add a review" })
         res.end();
     }
-    if ((req.body.review).trim().length > 300) {
+
+    if (req.body.review === undefined || (req.body.review).trim().length > 300 || (req.body.review).trim().length === 0) {
         ValidChecks = false;
-        res.status(400).send({ message: "Review Size must be less than 300 characters" });
+        res.status(400).send({ message: "Review size must be between (1-300) characters" });
         res.end();
     }
 
-    User.findOne({
+    await Trip.findOne({
+        where: {
+            id: req.body.tripid
+        }
+    }).then(trip => {
+        if (!trip) {
+            ValidChecks = false;
+            res.status(400).send({ message: "Invalid trip id" })
+            res.end();
+        }
+    })
+
+
+    await User.findOne({
+        where: {
+            id: req.body.reviewedid
+        }
+    }).then(user => {
+        if (!user) {
+            ValidChecks = false;
+            res.status(400).send({ message: "Reviewed user doesn't exist" });
+            res.end();
+        }
+    }).catch(errHandler)
+
+
+
+    if ((req.body.datetime) === "") {
+        ValidChecks = false
+        res.status(400).send({ message: "You must enter datetime" });
+        res.end();
+
+    }
+
+    await User.findOne({
         where: {
             id: decoded.id
         }
     }).then(user => {
         if (user) {
             if (ValidChecks) {
-                Review.create({ userid: user.id, revieweduserid: req.body.reviewedid, review: req.body.review, tripid: req.body.tripid })
+                Review.create({ userid: user.id, revieweduserid: req.body.reviewedid, review: req.body.review, tripid: req.body.tripid, datetime: req.body.datetime })
                     .then(review => {
                         res.status(201).send({ message: "review is added" });
                         res.end();

@@ -123,7 +123,7 @@ router.post('/', (req, res) => {
                 }).then(
                     car => {
                         if (car) {
-                            res.status(409).send({ error: "Phone number", message: "This phone number already exists" });
+                            res.status(409).send({ error: "Car information", message: "This Car already exists with same platenumbers and letters" });
                             res.end();
                         } else {
                             Car.create({
