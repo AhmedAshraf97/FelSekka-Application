@@ -52,7 +52,7 @@ router.post('/signup', (req, res) => {
     } else if ((req.body.firstname).trim().length > 15) {
         res.status(400).send({ error: "First name", message: "First name has maximum length of 15 letters" });
     }
-    //Last name validation
+    //Last name validation 
     else if (req.body.lastname == null) {
         res.status(400).send({ error: "Last name", message: "Last name paramter is missing" });
     } else if (!((typeof(req.body.lastname) === 'string') || ((req.body.lastname) instanceof String))) {
@@ -202,6 +202,8 @@ router.post('/signup', (req, res) => {
     }
 
 });
+
+
 
 
 module.exports = router;
