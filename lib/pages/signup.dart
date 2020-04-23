@@ -500,11 +500,15 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin{
                           {
                              void getData() async{
                                Map<String, String> body = {
-                               'username': username,
-                               'email' : email,
-                               'phonenumber' : phonenumber
+                                 'firstname': firstname,
+                                 'lastname': lastname,
+                                 'username': username,
+                                 'email' : email,
+                                 'phonenumber' : phonenumber,
+                                 'password': password,
+                                 'confirmpassword':confirmpassword
                                };
-                               String url="http://3.81.22.120:3000/api/userexists";
+                               String url="http://3.81.22.120:3000/api/verifyone";
                                Response response =await post(url, body: body);
                                if(response.statusCode != 200)
                                  {

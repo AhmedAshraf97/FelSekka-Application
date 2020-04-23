@@ -1,4 +1,6 @@
 import 'package:felsekka/pages/AnimatedPage%20Route.dart';
+import 'package:felsekka/pages/signup.dart';
+import 'package:felsekka/pages/signup2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:felsekka/pages/signin.dart';
@@ -26,7 +28,7 @@ class _LoadingScreenState extends State<LoadingScreen>
     Future.delayed(const Duration(seconds: 4), () {
       setState(() {
         Navigator.pop(context);
-        Navigator.push(context, AnimatedPageRoute(widget: SignIn())
+        Navigator.push(context, AnimatedPageRoute(widget: SignUp())
         );
       });
     });
