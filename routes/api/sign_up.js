@@ -71,23 +71,11 @@ router.post('/', async(req, res) => {
         res.status(400).send({ error: "First name", message: "First name paramter is missing" });
     } else if (!((typeof(req.body.firstname) === 'string') || ((req.body.firstname) instanceof String))) {
         res.status(400).send({ error: "First name", message: "First name must be a string" });
-    }
-    //Check wether email already exists
-    if (req.body.email != null) {
-        await User.findOne({ where: { email: req.body.email } }).then(user => {
-            if (user) {
-                emailExists = 1;
-            }
-        }).catch(errHandler);
-    }
-    //Check wether phone number already exists
-    if (req.body.phonenumber != null) {
-        await User.findOne({ where: { phonenumber: req.body.phonenumber } }).then(user => {
-            if (user) {
-                phonenumberExists = 1;
-            }
-        }).catch(errHandler);
-    } else if ((req.body.firstname).trim().length > 15) {
+    }else if ((req.body.firstname).trim().length === 0) {
+        res.status(400).send({ error: "First name", message: "First name can't be empty" });
+    } else if (!(/^[a-zA-Z ]*$/.test(req.body.firstname))) {
+        res.status(400).send({ error: "First name", message: "First name can only contain letters" });
+    }else if ((req.body.firstname).trim().length > 15) {
         res.status(400).send({ error: "First name", message: "First name has maximum length of 15 letters" });
     }
     //Last name validation 

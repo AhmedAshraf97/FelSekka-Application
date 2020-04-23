@@ -14,6 +14,9 @@ app.use('/api/userexists', require('./routes/api/userexists'));
 app.use('/api/addorg', require('./routes/api/addorg'));
 app.use('/api/acceptorg', require('./routes/api/acceptorg'));
 app.use('/api/showpendingorg', require('./routes/api/showpendingorg'));
+app.use('/api/showexistingorg', require('./routes/api/showexistingorg'));
+app.use('/api/verifyone', require('./routes/api/verifyone'));
+
 app.use('/api/editprofile', require('./routes/api/editprofile'));
 app.use('/api/changepassword', require('./routes/api/changepassword'));
 app.use('/api/forgetpassword', require('./routes/api/forgetpassword'));
