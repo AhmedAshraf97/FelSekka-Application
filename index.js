@@ -16,12 +16,14 @@ app.use('/api/acceptorg', require('./routes/api/acceptorg'));
 app.use('/api/showpendingorg', require('./routes/api/showpendingorg'));
 app.use('/api/showexistingorg', require('./routes/api/showexistingorg'));
 app.use('/api/verifyone', require('./routes/api/verifyone'));
-
+app.use('/api/verifytwo', require('./routes/api/verifytwo'));
+app.use('/api/verifythree', require('./routes/api/verifythree'));
+app.use('/api/peopletrustme', require('./routes/api/peopletrustme'));
+app.use('/api/peopleItrust', require('./routes/api/peopleItrust'));
 app.use('/api/editprofile', require('./routes/api/editprofile'));
 app.use('/api/changepassword', require('./routes/api/changepassword'));
 app.use('/api/forgetpassword', require('./routes/api/forgetpassword'));
 app.use('/api/showpasttrips', require('./routes/api/ShowPastTrips'));
-
 app.use('/api/getreviews', require('./routes/api/get_user_reviews'));
 app.use('/api/showprofile', require('./routes/api/show_profile'));
 app.use('/api/showprofileextra', require('./routes/api/show_profile_extra'));
