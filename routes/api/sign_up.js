@@ -205,7 +205,6 @@ router.post('/', async(req, res) => {
         res.status(400).send({ error: "Longitude", message: "Longitude must be a decimal" });
     }
     //Organization ID check
-<<<<<<< HEAD
     else if(req.body.organizationid==null){
         res.status(400).send( {error: "Organization ID", message: "Organization ID paramter is missing"});
     }
@@ -265,65 +264,6 @@ router.post('/', async(req, res) => {
                     BetweenUsers.create(betweenUsersData1).then().catch(errHandler); 
                     BetweenUsers.create(betweenUsersData2).then().catch(errHandler); 
                     }); 
-=======
-    else if (req.body.organizationid == null) {
-        res.status(400).send({ error: "Organization ID", message: "Organization ID paramter is missing" });
-    } else if (usernameExists === 1) {
-        res.status(409).send({ error: "Username", message: "This username already exists" });
-    } else if (emailExists === 1) {
-        res.status(409).send({ error: "Email", message: "This email already exists" });
-    } else if (phonenumberExists === 1) {
-        res.status(409).send({ error: "Phone number", message: "This phone number already exists" });
-    } else {
-        //Insert user 
-        const createdUser = await User.create(userData);
-        res.status(201).send({ message: "User is created" });
-        res.end();
-        //Insert org user 
-        const orgUserData = {
-            orgid: req.body.organizationid,
-            userid: createdUser.id,
-            distancetoorg: 0.0,
-            timetoorg: 0.0,
-            distancefromorg: 0.0,
-            timefromorg: 0.0,
-            status: 'existing'
-        }
-        await OrgUser.create(orgUserData);
-
-        //Insert users in betweenusers
-        await User.findAll({
-            where: {
-                [Op.and]: [{
-                        id: {
-                            [Op.ne]: createdUser.id
-                        }
-                    },
-                    { status: 'existing' }
-                ]
-            }
-        }).then(users => {
-            if (users) {
-                console.log(users);
-                users.forEach(user => {
-                    const betweenUsersData1 = {
-                        user1id: user.id,
-                        user2id: createdUser.id,
-                        distance: 0.0,
-                        time: 0.0,
-                        trust: 0
-                    }
-                    const betweenUsersData2 = {
-                        user1id: createdUser.id,
-                        user2id: user.id,
-                        distance: 0.0,
-                        time: 0.0,
-                        trust: 0
-                    }
-                    BetweenUsers.create(betweenUsersData1);
-                    BetweenUsers.create(betweenUsersData2);
-                });
->>>>>>> a6d3eb912646f608151ff39642fe1db5331135f4
             }
         }).catch(errHandler);
     }
