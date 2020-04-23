@@ -12,6 +12,13 @@ var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 
+//Error handler
+const errHandler = err => {
+    //Catch and log any error.
+    console.error("Error: ", err);
+};
+
+
 //Sign in 
 router.post('/', (req, res) => {
     User.findOne({
@@ -24,9 +31,7 @@ router.post('/', (req, res) => {
         }).then(user => {
             if (user) {
                 if (bcrypt.compareSync(req.body.password, user.password)) {
-                    let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
-                        expiresIn: 1440
-                    })
+                    let token = jwt.sign(user.dataValues, process.env.SECRET_KEY)
                     res.json({ token: token, userInfo: user.dataValues })
                     console.log("User data ", user.dataValues)
                 } else
@@ -34,9 +39,7 @@ router.post('/', (req, res) => {
             } else
                 res.status(400).send({ message: "Invalid Email or Phone number, Please try again" })
         })
-        .catch(err => {
-            console.log('error: ' + err)
-        })
+        .catch(errHandler)
 })
 
 module.exports = router;
