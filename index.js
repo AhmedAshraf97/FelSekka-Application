@@ -12,6 +12,7 @@ app.use('/api/users', require('./routes/api/users'));
 app.use('/api/editprofile', require('./routes/api/editprofile'));
 app.use('/api/changepassword', require('./routes/api/changepassword'));
 app.use('/api/forgetpassword', require('./routes/api/forgetpassword'));
+app.use('/api/showpasttrips', require('./routes/api/ShowPastTrips'));
 
 app.use('/api/getreviews', require('./routes/api/get_user_reviews'));
 app.use('/api/showprofile', require('./routes/api/show_profile'));
