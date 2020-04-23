@@ -12,13 +12,16 @@ const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
+const ExpiredToken = require('../../models/expiredtokens');
+
+
 
 //Error handler
 const errHandler = err => {
     //Catch and log any error.
     console.error("Error: ", err);
 };
-router.post('/', (req, res) => {
+router.post('/', async(req, res) => {
     var decoded;
     var validChecks = true;
     try {
@@ -107,8 +110,23 @@ router.post('/', (req, res) => {
     }
 
 
+    await ExpiredToken.findOne({
+        where: {
+            token: req.headers["authorization"]
+        }
+    }).then(expired => {
+        if (expired) {
+            validChecks = false;
+            res.status(401).send({ message: "You aren't authorized to add any car" })
+            res.end();
+        }
+    }).catch(errHandler)
 
-    User.findOne({
+
+
+
+
+    await User.findOne({
         where: {
             id: decoded.id
         }
