@@ -192,10 +192,6 @@ router.post('/', async(req, res) => {
     } else if ((typeof(req.body.longitude) === 'string') || ((req.body.confirmpassword) instanceof String)) {
         res.status(400).send({ error: "Longitude", message: "Longitude must be a decimal" });
     }
-    //Organization ID check
-    else if(req.body.organizationid==null){
-        res.status(400).send( {error: "Organization ID", message: "Organization ID paramter is missing"});
-    }
     else if(usernameExists === 1){
         res.status(409).send( {error: "Username", message: "This username already exists"});   
     }
@@ -206,30 +202,18 @@ router.post('/', async(req, res) => {
         res.status(409).send( {error: "Phone number", message: "This phone number already exists"});
     }
     else {
-        var createdUser=0;
+        var createdUserID=0;
         //Insert user 
         await User.create(userData).then(user=>{
             res.status(201).send( {message:"User is created"});
-            createdUser = user.id;
-        }).catch(errHandler);
-        
-        //Insert org user 
-        const orgUserData = {
-        orgid: req.body.organizationid,
-        userid: createdUser,
-        distancetoorg: 0.0,
-        timetoorg: 0.0,	
-        distancefromorg: 0.0,	
-        timefromorg: 0.0,	
-        status: 'existing'	
-        }
-        await OrgUser.create(orgUserData).then().catch(errHandler); 
+            createdUserID = user.id;
+        }).catch(errHandler); 
 
         //Insert users in betweenusers
         await User.findAll({
         where: {
             [Op.and]: [
-            {id:{[Op.ne]:createdUser}},
+            {id:{[Op.ne]:createdUserID}},
             {status: 'existing'}
             ]
         }}).then(users=>{
@@ -237,13 +221,13 @@ router.post('/', async(req, res) => {
                 users.forEach(user => { 
                     const betweenUsersData1 = {
                     user1id: user.id,
-                    user2id:createdUser,	
+                    user2id:createdUserID,	
                     distance: 0.0,	
                     time: 0.0,
                     trust:0
                     }
                     const betweenUsersData2 = {
-                    user1id:createdUser,
+                    user1id:createdUserID,
                     user2id:user.id,	
                     distance:0.0,	
                     time:0.0,

@@ -11,6 +11,8 @@ const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
+const ExpiredToken = require('../../models/expiredtokens');
+
 
 
 //Error handler
@@ -19,41 +21,61 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
-router.post('/', (req, res) => {
+router.post('/', async(req, res) => {
     var decoded;
+    var ValidChecks = true;
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
+        ValidChecks = false;
         res.status(401).send({ message: "You aren't authorized to view user profile" })
         res.end();
     }
-    User.findOne({
+
+    await ExpiredToken.findOne({
+        where: {
+            token: req.headers["authorization"]
+        }
+    }).then(expired => {
+        if (expired) {
+            ValidChecks = false;
+            res.status(401).send({ message: "You aren't authorized to view any reviews " })
+            res.end();
+        }
+    }).catch(errHandler)
+
+
+
+    await User.findOne({
             where: {
                 id: decoded.id
             }
         }).then(user => {
+
             if (user) {
-                User.findOne({
-                        where: {
-                            username: req.body.username
-                        }
-                    }).then(founduser => {
-                        if (founduser) {
-                            res.json({
-                                firstname: founduser.getDataValue('firstname'),
-                                lastname: founduser.getDataValue('lastname'),
-                                gender: founduser.getDataValue('gender'),
-                                birthdate: founduser.getDataValue('birthdate'),
-                                photo: founduser.getDataValue('photo'),
-                                ridewith: founduser.getDataValue('ridewith'),
-                                smoking: founduser.getDataValue('smoking'),
-                                rating: founduser.getDataValue('rating'),
-                                username: founduser.getDataValue('username')
-                            })
-                        } else
-                            res.status(404).send({ message: "User not found" })
-                    })
-                    .catch(errHandler)
+                if (ValidChecks) {
+                    User.findOne({
+                            where: {
+                                username: req.body.username
+                            }
+                        }).then(founduser => {
+                            if (founduser) {
+                                res.json({
+                                    firstname: founduser.getDataValue('firstname'),
+                                    lastname: founduser.getDataValue('lastname'),
+                                    gender: founduser.getDataValue('gender'),
+                                    birthdate: founduser.getDataValue('birthdate'),
+                                    photo: founduser.getDataValue('photo'),
+                                    ridewith: founduser.getDataValue('ridewith'),
+                                    smoking: founduser.getDataValue('smoking'),
+                                    rating: founduser.getDataValue('rating'),
+                                    username: founduser.getDataValue('username')
+                                })
+                            } else
+                                res.status(404).send({ message: "User not found" })
+                        })
+                        .catch(errHandler)
+                }
             }
         })
         .catch(errHandler)

@@ -12,6 +12,9 @@ const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
+const ExpiredToken = require('../../models/expiredtokens');
+
+
 
 //Error handler
 const errHandler = err => {
@@ -22,6 +25,7 @@ const errHandler = err => {
 router.post('/', async(req, res) => {
     var CarsArray = {}
     var count = 0;
+    var ValidChecks = true;
     var decoded;
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
@@ -29,33 +33,49 @@ router.post('/', async(req, res) => {
         res.status(401).send({ message: "You aren't authorized to show any cars" })
         res.end();
     }
+
+    await ExpiredToken.findOne({
+        where: {
+            token: req.headers["authorization"]
+        }
+    }).then(expired => {
+        if (expired) {
+            ValidChecks = false;
+            res.status(401).send({ message: "You aren't authorized to show any cars" })
+            res.end();
+        }
+    }).catch(errHandler)
+
+
     await User.findOne({
         where: {
             id: decoded.id
         }
     }).then(user => {
         if (user) {
-            Car.findAll({
-                where: {
-                    userid: user.id,
-                    status: 'existing'
-                }
-            }).then(cars => {
-                if (cars.length > 0) {
-                    cars.forEach(car => {
-                        CarsArray[count] = car.dataValues;
-                        count++;
-                        if (count === cars.length) {
-                            res.send(CarsArray)
-                        }
-                    });
+            if (ValidChecks) {
+                Car.findAll({
+                    where: {
+                        userid: user.id,
+                        status: 'existing'
+                    }
+                }).then(cars => {
+                    if (cars.length > 0) {
+                        cars.forEach(car => {
+                            CarsArray[count] = car.dataValues;
+                            count++;
+                            if (count === cars.length) {
+                                res.send(CarsArray)
+                            }
+                        });
 
-                } else {
-                    res.send({ message: "No Cars to be shown" })
-                    res.end()
-                }
-            }).catch(errHandler)
+                    } else {
+                        res.send({ message: "No Cars to be shown" })
+                        res.end()
+                    }
+                }).catch(errHandler)
 
+            }
         } else {
             res.status(404).send({ message: "User not found" })
             res.end()
