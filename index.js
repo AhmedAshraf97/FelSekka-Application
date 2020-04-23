@@ -9,6 +9,11 @@ app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 require("./database/connection");
 //Uers API route
 app.use('/api/signup', require('./routes/api/sign_up'));
+app.use('/api/chooseorg', require('./routes/api/chooseorg'));
+app.use('/api/userexists', require('./routes/api/userexists'));
+app.use('/api/addorg', require('./routes/api/addorg'));
+app.use('/api/acceptorg', require('./routes/api/acceptorg'));
+app.use('/api/showpendingorg', require('./routes/api/showpendingorg'));
 app.use('/api/editprofile', require('./routes/api/editprofile'));
 app.use('/api/getreviews', require('./routes/api/get_user_reviews'));
 app.use('/api/showprofile', require('./routes/api/show_profile'));

@@ -15,7 +15,7 @@ module.exports = sequelize.define("ratings", {
         allowNull: false
     },
     rating:{
-        type:Sequelize.STRING(300),
+        type:Sequelize.DECIMAL,
         allowNull: false
     },
     datetime:{

@@ -209,56 +209,55 @@ router.post('/', async (req, res) => {
         res.status(409).send( {error: "Phone number", message: "This phone number already exists"});
     }
     else {
+        var createdUser=0;
         //Insert user 
-        const createdUser = await User.create(userData);
-        res.status(201).send( {message:"User is created"});
-        res.end();
+        await User.create(userData).then(user=>{
+            res.status(201).send( {message:"User is created"});
+            createdUser = user.id;
+        }).catch(errHandler);
+        
         //Insert org user 
         const orgUserData = {
         orgid: req.body.organizationid,
-        userid: createdUser.id	,
+        userid: createdUser,
         distancetoorg: 0.0,
         timetoorg: 0.0,	
         distancefromorg: 0.0,	
         timefromorg: 0.0,	
         status: 'existing'	
         }
-        await OrgUser.create(orgUserData); 
+        await OrgUser.create(orgUserData).then().catch(errHandler); 
 
         //Insert users in betweenusers
         await User.findAll({
         where: {
             [Op.and]: [
-            {id:{[Op.ne]:createdUser.id}},
+            {id:{[Op.ne]:createdUser}},
             {status: 'existing'}
             ]
         }}).then(users=>{
             if(users){
-                console.log(users);
                 users.forEach(user => { 
                     const betweenUsersData1 = {
                     user1id: user.id,
-                    user2id:createdUser.id,	
+                    user2id:createdUser,	
                     distance: 0.0,	
                     time: 0.0,
                     trust:0
                     }
                     const betweenUsersData2 = {
-                    user1id:createdUser.id,
+                    user1id:createdUser,
                     user2id:user.id,	
                     distance:0.0,	
                     time:0.0,
                     trust:0
                     }
-                    BetweenUsers.create(betweenUsersData1); 
-                    BetweenUsers.create(betweenUsersData2); 
+                    BetweenUsers.create(betweenUsersData1).then().catch(errHandler); 
+                    BetweenUsers.create(betweenUsersData2).then().catch(errHandler); 
                     }); 
             }
         }).catch(errHandler);  
     }
 });
-
-
-
 
 module.exports = router;
