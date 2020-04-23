@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 class AnimatedPageRoute extends PageRouteBuilder{
   final Widget widget;
   AnimatedPageRoute({this.widget}):super(
-        transitionDuration: Duration(seconds: 3),
+        transitionDuration: Duration(seconds: 1),
         pageBuilder: (BuildContext context,
             Animation<double> animation, Animation<double> secanimation) {
           return widget;

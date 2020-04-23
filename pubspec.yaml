@@ -23,6 +23,7 @@ dependencies:
   flutter_auth_buttons: ^0.8.0
   flutter_facebook_login: ^3.0.0
   http: ^0.12.0+4
+  nice_button: ^0.1.7
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
@@ -48,6 +49,7 @@ flutter:
   - images/felsekkalogo2nobg.png
   - images/felsekkalogo3nobg.png
   - images/felsekkalogowhitenobg.png
+  - images/errorsign.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

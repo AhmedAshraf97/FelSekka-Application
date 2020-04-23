@@ -1,7 +1,10 @@
+import 'package:felsekka/pages/signup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
+
+import 'AnimatedPage Route.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -170,13 +173,19 @@ class _SignInState extends State<SignIn> {
                         // call authentication logic
                       }),
                       SizedBox(
-                        height: 45.0,
+                        height: 15.0,
                       ),
-                      Text(
-                        "Don't have an account? Sign Up.",
-                        style: TextStyle(
-                          color: Colors.indigo,
-                          fontFamily: "Kodchasan",
+                      new FlatButton(
+                        onPressed: () {
+                          Navigator.push(context, AnimatedPageRoute(widget: SignUp()));
+                        },
+                        child: Text(
+                          "Don't have an account? Sign Up.",
+                          style: TextStyle(
+                            color: Colors.indigo,
+                            fontFamily: "Kodchasan",
+                            decoration: TextDecoration.underline,
+                          ),
                         ),
                       ),
                     ],
