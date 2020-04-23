@@ -16,7 +16,7 @@ app.use('/api/acceptorg', require('./routes/api/acceptorg'));
 app.use('/api/showpendingorg', require('./routes/api/showpendingorg'));
 app.use('/api/showexistingorg', require('./routes/api/showexistingorg'));
 app.use('/api/verifyone', require('./routes/api/verifyone'));
-
+app.use('/api/verifytwo', require('./routes/api/verifytwo'));
 app.use('/api/editprofile', require('./routes/api/editprofile'));
 app.use('/api/changepassword', require('./routes/api/changepassword'));
 app.use('/api/forgetpassword', require('./routes/api/forgetpassword'));
