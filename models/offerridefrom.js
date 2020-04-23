@@ -1,59 +1,61 @@
 const Sequelize = require("sequelize");
-module.exports = sequelize.define("offerridefrom", {  
+module.exports = sequelize.define("offerridefrom", {
     id: {
-      type: Sequelize.INTEGER(255),
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true
+        type: Sequelize.INTEGER(255),
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true
     },
     userid: {
         type: Sequelize.INTEGER(255),
         allowNull: false
-      },
-    carid:{
+    },
+    carid: {
         type: Sequelize.INTEGER(255),
         allowNull: false
     },
-    numberofseats:{
-        type:Sequelize.INTEGER(255),
+    numberofseats: {
+        type: Sequelize.INTEGER(255),
         allowNull: false
     },
-    tolatitude:{
-        type:Sequelize.DECIMAL,
+    tolatitude: {
+        type: Sequelize.DECIMAL,
         allowNull: false
     },
-    tolongitude:{
-        type:Sequelize.DECIMAL,
+    tolongitude: {
+        type: Sequelize.DECIMAL,
         allowNull: false,
     },
-    fromorgid:{
-        type:Sequelize.INTEGER(255),
+    fromorgid: {
+        type: Sequelize.INTEGER(255),
         allowNull: false,
     },
-    date:{
-        type:Sequelize.DATEONLY,
+    date: {
+        type: Sequelize.DATEONLY,
         allowNull: false,
     },
-    departuretime:{
-        type:Sequelize.TIME,
+    departuretime: {
+        type: Sequelize.TIME,
         allowNull: false,
     },
-    ridewith:{
-        type:Sequelize.STRING(300),
+    ridewith: {
+        type: Sequelize.STRING(300),
         allowNull: false,
     },
-    smoking:{
-        type:Sequelize.STRING(300),
+    smoking: {
+        type: Sequelize.STRING(300),
         allowNull: false,
     },
-    latesttime:{
-        type:Sequelize.TIME,
+    latesttime: {
+        type: Sequelize.TIME,
         allowNull: false,
     },
-    status:{
-        type:Sequelize.STRING(300),
+    status: {
+        type: Sequelize.STRING(300),
         allowNull: false,
         defaultValue: "pending"
     }
-  }
-  );
+}, {
+    freezeTableName: true,
+    modelName: "offerridefrom",
+});

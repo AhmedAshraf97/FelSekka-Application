@@ -20,11 +20,11 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 //SignUp (na2es verification by email)
-router.post('/', async (req, res) => {
+router.post('/', async(req, res) => {
     //Object added to database
     const userData = {
-        firstname : req.body.firstname,
-        lastname : req.body.lastname,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
         username: req.body.username,
         email: req.body.email,
         phonenumber: req.body.phonenumber,
@@ -40,44 +40,55 @@ router.post('/', async (req, res) => {
         photo: req.body.photo,
     }
     let usernameExists = 0;
-    let  emailExists = 0;
+    let emailExists = 0;
     let phonenumberExists = 0;
     //Check wether username already exists
-    if(req.body.username != null) {
-    await User.findOne({ where: { username: req.body.username }}).then(user=>{
-        if(user){
-            usernameExists =1;
-        } 
-    }).catch(errHandler);}
+    if (req.body.username != null) {
+        await User.findOne({ where: { username: req.body.username } }).then(user => {
+            if (user) {
+                usernameExists = 1;
+            }
+        }).catch(errHandler);
+    }
     //Check wether email already exists
-    if(req.body.email != null) {
-    await User.findOne({ where: { email: req.body.email }}).then(user=>{
-        if(user){
-            emailExists =1;
-        }
-    }).catch(errHandler);}
+    if (req.body.email != null) {
+        await User.findOne({ where: { email: req.body.email } }).then(user => {
+            if (user) {
+                emailExists = 1;
+            }
+        }).catch(errHandler);
+    }
     //Check wether phone number already exists
-    if(req.body.phonenumber != null) {
-    await  User.findOne({ where: { phonenumber: req.body.phonenumber }}).then(user=>{
-        if(user){
-            phonenumberExists =1; 
-        }
-    }).catch(errHandler);}
+    if (req.body.phonenumber != null) {
+        await User.findOne({ where: { phonenumber: req.body.phonenumber } }).then(user => {
+            if (user) {
+                phonenumberExists = 1;
+            }
+        }).catch(errHandler);
+    }
     // First name validation 
-    if(req.body.firstname==null){
-        res.status(400).send( {error: "First name", message: "First name paramter is missing"});
+    if (req.body.firstname == null) {
+        res.status(400).send({ error: "First name", message: "First name paramter is missing" });
+    } else if (!((typeof(req.body.firstname) === 'string') || ((req.body.firstname) instanceof String))) {
+        res.status(400).send({ error: "First name", message: "First name must be a string" });
     }
-    else if(!((typeof (req.body.firstname) === 'string') || ((req.body.firstname) instanceof String))){
-        res.status(400).send( {error: "First name", message: "First name must be a string"});
+    //Check wether email already exists
+    if (req.body.email != null) {
+        await User.findOne({ where: { email: req.body.email } }).then(user => {
+            if (user) {
+                emailExists = 1;
+            }
+        }).catch(errHandler);
     }
-    else if( (req.body.firstname).trim().length === 0){
-        res.status(400).send( {error: "First name", message: "First name can't be empty"});
-    }
-    else if(!(/^[a-zA-Z ]*$/.test(req.body.firstname))){
-        res.status(400).send( {error: "First name", message: "First name can only contain letters"});
-    }
-    else if((req.body.firstname).trim().length > 15){
-        res.status(400).send( {error: "First name", message: "First name has maximum length of 15 letters"});
+    //Check wether phone number already exists
+    if (req.body.phonenumber != null) {
+        await User.findOne({ where: { phonenumber: req.body.phonenumber } }).then(user => {
+            if (user) {
+                phonenumberExists = 1;
+            }
+        }).catch(errHandler);
+    } else if ((req.body.firstname).trim().length > 15) {
+        res.status(400).send({ error: "First name", message: "First name has maximum length of 15 letters" });
     }
     //Last name validation 
     else if (req.body.lastname == null) {
@@ -92,7 +103,7 @@ router.post('/', async (req, res) => {
         res.status(400).send({ error: "Last name", message: "Last name has maximum length of 15 letters" });
     }
     //Username validation
-   else if (req.body.username == null) {
+    else if (req.body.username == null) {
         res.status(400).send({ error: "Username", message: "Username paramter is missing" });
     } else if (!((typeof(req.body.username) === 'string') || ((req.body.firstname) instanceof String))) {
         res.status(400).send({ error: "Username", message: "Username must be a string" });
@@ -186,16 +197,15 @@ router.post('/', async (req, res) => {
         res.status(400).send({ error: "Latitude", message: "Latitude must be a decimal" });
     }
     //Longitude validation
-     else if(req.body.longitude==null){
-        res.status(400).send( {error: "Longitude", message: "Longitude paramter is missing"});
-    }
-    else if(((req.body.longitude).toString()).trim().length === 0){
-        res.status(400).send( {error: "Longitude", message: "Longitude can't be empty"});
-    }
-    else if( (typeof (req.body.longitude) === 'string') || ((req.body.confirmpassword) instanceof String)){
-        res.status(400).send( {error: "Longitude", message: "Longitude must be a decimal"});
+    else if (req.body.longitude == null) {
+        res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
+    } else if (((req.body.longitude).toString()).trim().length === 0) {
+        res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
+    } else if ((typeof(req.body.longitude) === 'string') || ((req.body.confirmpassword) instanceof String)) {
+        res.status(400).send({ error: "Longitude", message: "Longitude must be a decimal" });
     }
     //Organization ID check
+<<<<<<< HEAD
     else if(req.body.organizationid==null){
         res.status(400).send( {error: "Organization ID", message: "Organization ID paramter is missing"});
     }
@@ -255,8 +265,67 @@ router.post('/', async (req, res) => {
                     BetweenUsers.create(betweenUsersData1).then().catch(errHandler); 
                     BetweenUsers.create(betweenUsersData2).then().catch(errHandler); 
                     }); 
+=======
+    else if (req.body.organizationid == null) {
+        res.status(400).send({ error: "Organization ID", message: "Organization ID paramter is missing" });
+    } else if (usernameExists === 1) {
+        res.status(409).send({ error: "Username", message: "This username already exists" });
+    } else if (emailExists === 1) {
+        res.status(409).send({ error: "Email", message: "This email already exists" });
+    } else if (phonenumberExists === 1) {
+        res.status(409).send({ error: "Phone number", message: "This phone number already exists" });
+    } else {
+        //Insert user 
+        const createdUser = await User.create(userData);
+        res.status(201).send({ message: "User is created" });
+        res.end();
+        //Insert org user 
+        const orgUserData = {
+            orgid: req.body.organizationid,
+            userid: createdUser.id,
+            distancetoorg: 0.0,
+            timetoorg: 0.0,
+            distancefromorg: 0.0,
+            timefromorg: 0.0,
+            status: 'existing'
+        }
+        await OrgUser.create(orgUserData);
+
+        //Insert users in betweenusers
+        await User.findAll({
+            where: {
+                [Op.and]: [{
+                        id: {
+                            [Op.ne]: createdUser.id
+                        }
+                    },
+                    { status: 'existing' }
+                ]
             }
-        }).catch(errHandler);  
+        }).then(users => {
+            if (users) {
+                console.log(users);
+                users.forEach(user => {
+                    const betweenUsersData1 = {
+                        user1id: user.id,
+                        user2id: createdUser.id,
+                        distance: 0.0,
+                        time: 0.0,
+                        trust: 0
+                    }
+                    const betweenUsersData2 = {
+                        user1id: createdUser.id,
+                        user2id: user.id,
+                        distance: 0.0,
+                        time: 0.0,
+                        trust: 0
+                    }
+                    BetweenUsers.create(betweenUsersData1);
+                    BetweenUsers.create(betweenUsersData2);
+                });
+>>>>>>> a6d3eb912646f608151ff39642fe1db5331135f4
+            }
+        }).catch(errHandler);
     }
 });
 
