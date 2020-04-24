@@ -11,7 +11,6 @@ const regex = require('regex');
 const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-
 const ExpiredToken = require('../../models/expiredtokens');
 
 
@@ -22,17 +21,18 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
+
+
 router.post('/', async(req, res) => {
-    var CarsArray = {}
-    var count = 0;
-    var ValidChecks = true;
     var decoded;
+    var ValidChecks = true;
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        res.status(401).send({ message: "You aren't authorized to show any cars" })
+        res.status(401).send({ message: "You aren't authorized to delete any car" })
         res.end();
     }
+
 
     await ExpiredToken.findOne({
         where: {
@@ -41,7 +41,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to show any cars" })
+            res.status(401).send({ message: "You aren't authorized to delete any car" })
             res.end();
         }
     }).catch(errHandler)
@@ -55,23 +55,16 @@ router.post('/', async(req, res) => {
     }).then(user => {
         if (user) {
             if (ValidChecks) {
-                Car.findAll({
+                User.update({
+                    status: 'unavailable'
+                }, {
                     where: {
-                        userid: user.id,
+                        id: decoded.id,
                         status: 'existing'
                     }
-                }).then(cars => {
-                    if (cars.length > 0) {
-                        cars.forEach(car => {
-                            CarsArray[count] = car.dataValues;
-                            count++;
-                            if (count === cars.length) {
-                                res.send(CarsArray)
-                            }
-                        });
-
-                    } else {
-                        res.send({ message: "No Cars to be shown" })
+                }).then(carupdate => {
+                    if (carupdate) {
+                        res.status(200).send({ message: "User Account is deleted successfully" })
                         res.end()
                     }
                 }).catch(errHandler)

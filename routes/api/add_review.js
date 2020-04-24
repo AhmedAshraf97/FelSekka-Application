@@ -54,7 +54,8 @@ router.post('/', async(req, res) => {
 
     await User.findOne({
         where: {
-            id: req.body.reviewedid
+            id: req.body.reviewedid,
+            status: 'existing'
         }
     }).then(user => {
         if (!user) {
@@ -90,7 +91,8 @@ router.post('/', async(req, res) => {
 
     await User.findOne({
         where: {
-            id: decoded.id
+            id: decoded.id,
+            status: 'existing'
         }
     }).then(user => {
         if (user) {
