@@ -11,6 +11,8 @@ const regex = require('regex');
 const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
+const ExpiredToken = require('../../models/expiredtokens');
+
 
 
 //Error handler
@@ -43,26 +45,43 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler)
 
+
+    await ExpiredToken.findOne({
+        where: {
+            token: req.headers["authorization"]
+        }
+    }).then(expired => {
+        if (expired) {
+            ValidChecks = false;
+            res.status(401).send({ message: "You aren't authorized to delete any car" })
+            res.end();
+        }
+    }).catch(errHandler)
+
+
     await User.findOne({
         where: {
-            id: decoded.id
+            id: decoded.id,
+            status: 'existing'
         }
     }).then(user => {
-        if (user && ValidChecks) {
-            Car.update({
-                status: 'unavailable'
-            }, {
-                where: {
-                    id: req.body.carid,
-                    status: 'existing'
-                }
-            }).then(carupdate => {
-                if (carupdate) {
-                    res.status(200).send({ message: "Car is deleted successfully" })
-                    res.end()
-                }
-            }).catch(errHandler)
+        if (user) {
+            if (ValidChecks) {
+                Car.update({
+                    status: 'unavailable'
+                }, {
+                    where: {
+                        id: req.body.carid,
+                        status: 'existing'
+                    }
+                }).then(carupdate => {
+                    if (carupdate) {
+                        res.status(200).send({ message: "Car is deleted successfully" })
+                        res.end()
+                    }
+                }).catch(errHandler)
 
+            }
         } else {
             res.status(404).send({ message: "User not found" })
             res.end()

@@ -13,6 +13,8 @@ const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
+const ExpiredToken = require('../../models/expiredtokens');
+
 
 //Error handler
 const errHandler = err => {
@@ -33,7 +35,8 @@ router.post('/', async(req, res) => {
 
     await User.findOne({
         where: {
-            id: req.body.rateduserid
+            id: req.body.rateduserid,
+            status: 'existing'
         }
     }).then(user => {
         if (!user) {
@@ -43,6 +46,21 @@ router.post('/', async(req, res) => {
 
         }
     })
+
+
+    await ExpiredToken.findOne({
+        where: {
+            token: req.headers["authorization"]
+        }
+    }).then(expired => {
+        if (expired) {
+            ValidChecks = false;
+            res.status(401).send({ message: "You aren't authorized to add any rating" })
+            res.end();
+        }
+    }).catch(errHandler)
+
+
 
     await Trip.findOne({
         where: {
@@ -72,7 +90,8 @@ router.post('/', async(req, res) => {
 
     await User.findOne({
         where: {
-            id: decoded.id
+            id: decoded.id,
+            status: 'existing'
         }
     }).then(user => {
         if (user) {

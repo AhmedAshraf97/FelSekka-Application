@@ -6,6 +6,8 @@ const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
+
+//var jwt = require('express-jwt');
 const regex = require('regex');
 const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
@@ -26,7 +28,8 @@ router.post('/', (req, res) => {
                 [Op.or]: [
                     { email: req.body.EmailOrPhone },
                     { phonenumber: req.body.EmailOrPhone }
-                ]
+                ],
+                status: 'existing'
             }
         }).then(user => {
             if (user) {
