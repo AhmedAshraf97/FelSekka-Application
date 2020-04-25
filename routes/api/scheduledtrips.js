@@ -1,3 +1,6 @@
+//status:sch,pick ,arr
+//no actual,time,distance,
+
 const User = require('../../models/users');
 const Trips = require('../../models/trips')
 const Driver = require('../../models/drivers');
@@ -33,9 +36,8 @@ router.post('/', async(req, res) => {
     var ValidChecks = true;
     var c = 0;
     var count = 0
-    countcheck = 0;
-
     var decoded;
+    var countcheck = 0;
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
@@ -66,7 +68,7 @@ router.post('/', async(req, res) => {
                 Rider.findAll({
                     where: {
                         riderid: decoded.id,
-                        status: "done"
+                        status: "scheduled"
                     }
                 }).then(RiderRides => {
 
@@ -80,12 +82,13 @@ router.post('/', async(req, res) => {
                                 Trips.findOne({
                                     where: {
                                         id: RiderRide.tripid,
-                                        status: "done"
+                                        status: "scheduled"
 
                                     }
                                 }).then(trip => {
                                     if (trip) {
                                         countcheck++;
+
 
                                         if (RiderRide.tofrom === "to") {
                                             RequestRideTo.findOne({
@@ -104,18 +107,19 @@ router.post('/', async(req, res) => {
                                                         Car.findOne({
                                                             where: {
                                                                 id: OfferRideToDetails.carid
-
                                                             }
                                                         }).then(carDetails => {
+
                                                             User.findOne({
                                                                 where: {
                                                                     id: OfferRideToDetails.userid
                                                                 }
                                                             }).then(DriverOftrip => {
-                                                                ///
+
                                                                 Rider.findAll({
                                                                     where: {
-                                                                        tripid: trip.id
+                                                                        tripid: trip.id,
+                                                                        status: "scheduled"
                                                                     }
 
                                                                 }).then(AllRidersTrip => {
@@ -151,12 +155,10 @@ router.post('/', async(req, res) => {
                                                                                         "pickuplatitude": RequestRideToDetails.fromlatitude,
                                                                                         "arrivalloclatitude": trip.endloclatitude,
                                                                                         "arrivalloclongitude": trip.endloclongitude,
-                                                                                        "actualpickuptime": RiderRide.actualpickuptime,
-                                                                                        "actualarrivaltime": RiderRide.actualarrivaltime,
+                                                                                        "pickuptime": RiderRide.pickuptime,
+                                                                                        "arrivaltime": RiderRide.arrivaltime,
                                                                                         "date": trip.date,
-                                                                                        "starttime": trip.starttime,
                                                                                         "fare": RiderRide.fare,
-                                                                                        "total time": RiderRide.time,
                                                                                         "Driverusername": DriverOftrip.username,
                                                                                         "Driverfirstname": DriverOftrip.firstname,
                                                                                         "Driverlastname": DriverOftrip.lastname,
@@ -244,7 +246,8 @@ router.post('/', async(req, res) => {
                                                                 ///
                                                                 Rider.findAll({
                                                                     where: {
-                                                                        tripid: trip.id
+                                                                        tripid: trip.id,
+                                                                        status: "scheduled"
                                                                     }
 
                                                                 }).then(AllRidersTrip => {
@@ -283,11 +286,9 @@ router.post('/', async(req, res) => {
                                                                                         "pickuploclatitude": trip.endloclatitude,
                                                                                         "pickuploclongitude": trip.endloclongitude,
                                                                                         "date": trip.date,
-                                                                                        "starttime": trip.starttime,
-                                                                                        "actualpickuptime": RiderRide.actualpickuptime,
-                                                                                        "actualarrivaltime": RiderRide.actualarrivaltime,
+                                                                                        "pickuptime": RiderRide.pickuptime,
+                                                                                        "arrivaltime": RiderRide.aarrivaltime,
                                                                                         "fare": RiderRide.fare,
-                                                                                        "total time": RiderRide.time,
                                                                                         "Driverusername": DriverOftrip.username,
                                                                                         "Driverfirstname": DriverOftrip.firstname,
                                                                                         "Driverlastname": DriverOftrip.lastname,
@@ -349,12 +350,12 @@ router.post('/', async(req, res) => {
 
 
                                         }
+
                                     } else if (countcheck == RiderRides.length) {
                                         res.send({ message: "No Trips for this user" })
                                         res.end()
 
                                     }
-
                                 }).catch(errHandler)
                             }
                         })
@@ -363,7 +364,7 @@ router.post('/', async(req, res) => {
                         Driver.findAll({
                             where: {
                                 driverid: decoded.id,
-                                status: "done"
+                                status: "scheduled"
                             }
                         }).then(DriverRides => {
 
@@ -372,15 +373,15 @@ router.post('/', async(req, res) => {
 
                                 DriverRides.forEach(DriverRide => {
                                     if (DriverRide) {
+                                        countcheck++;
                                         Trips.findOne({
                                             where: {
                                                 id: DriverRide.tripid,
-                                                status: "done"
+                                                status: "scheduled"
 
                                             }
                                         }).then(trip => {
                                             if (trip) {
-                                                countcheck++;
 
                                                 if (DriverRide.tofrom === "to") {
 
@@ -400,7 +401,8 @@ router.post('/', async(req, res) => {
                                                         }).then(carDetails => {
                                                             Rider.findAll({
                                                                 where: {
-                                                                    offerid: DriverRide.offerid
+                                                                    offerid: DriverRide.offerid,
+                                                                    status: "scheduled"
                                                                 }
 
                                                             }).then(AllRidersTrip => {
@@ -427,20 +429,21 @@ router.post('/', async(req, res) => {
                                                                                 c++;
 
 
+
                                                                             }
 
 
                                                                             if (c === AllRidersTrip.length) {
+
 
                                                                                 TripsDetailsArr[count] = ({
                                                                                     type: "driver",
                                                                                     "carDetails.model": carDetails.model,
                                                                                     "carDetails.brand": carDetails.brand,
                                                                                     "date": trip.date,
-                                                                                    "actualpickuptime": DriverRide.actualpickuptime,
-                                                                                    "actualarrivaltime": DriverRide.actualarrivaltime,
+                                                                                    "pickuptime": DriverRide.pickuptime,
+                                                                                    "arrivaltime": DriverRide.arrivaltime,
                                                                                     "fare": DriverRide.fare,
-                                                                                    "total time": DriverRide.time,
                                                                                     "startloclatitude": trip.startloclatitude,
                                                                                     "startloclongitude": trip.startloclongitude,
                                                                                     "endloclatitude": trip.endloclatitude,
@@ -502,7 +505,8 @@ router.post('/', async(req, res) => {
                                                         }).then(carDetails => {
                                                             Rider.findAll({
                                                                 where: {
-                                                                    offerid: DriverRide.offerid
+                                                                    offerid: DriverRide.offerid,
+                                                                    status: "scheduled"
                                                                 }
 
                                                             }).then(AllRidersTrip => {
@@ -537,10 +541,9 @@ router.post('/', async(req, res) => {
                                                                                     "carDetails.model": carDetails.model,
                                                                                     "carDetails.brand": carDetails.brand,
                                                                                     "date": trip.date,
-                                                                                    "actualpickuptime": DriverRide.actualpickuptime,
-                                                                                    "actualarrivaltime": DriverRide.actualarrivaltime,
+                                                                                    "pickuptime": DriverRide.pickuptime,
+                                                                                    "arrivaltime": DriverRide.arrivaltime,
                                                                                     "fare": DriverRide.fare,
-                                                                                    "total time": DriverRide.time,
                                                                                     "startloclatitude": trip.startloclatitude,
                                                                                     "startloclongitude": trip.startloclongitude,
                                                                                     "endloclatitude": trip.endloclatitude,
@@ -586,6 +589,7 @@ router.post('/', async(req, res) => {
                                                 res.end()
 
                                             }
+
                                         }).catch(errHandler)
 
 

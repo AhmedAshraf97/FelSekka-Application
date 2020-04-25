@@ -7,14 +7,28 @@ const regex = require('regex');
 const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 nodeMailer = require('nodemailer')
+const ExpiredToken = require('../../models/expiredtokens');
 
-router.post('/', (req, res) => {
+router.post('/', async(req, res) => {
     var decoded = jwt.verify(req.headers['authorization'], process.env.SECRET_KEY)
     let isvalid = false
+    var ValidChecks = true;
 
-    User.findOne({
+    await ExpiredToken.findOne({
+        where: {
+            token: req.headers["authorization"]
+        }
+    }).then(expired => {
+        if (expired) {
+            ValidChecks = false;
+            res.status(401).send({ message: "You aren't authorized to delete any car" })
+            res.end();
+        }
+    }).catch(errHandler)
+    await User.findOne({
             where: {
-                id: decoded.id
+                id: decoded.id,
+                "status": "existing"
             }
         }).then(user => {
             if (user) {
