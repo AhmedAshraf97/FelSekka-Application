@@ -47,7 +47,8 @@ router.post('/', async(req, res) => {
 
     await User.findOne({
         where: {
-            username: req.body.username
+            username: req.body.username,
+            status: 'existing'
         }
     }).then(user => {
 

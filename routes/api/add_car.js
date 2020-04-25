@@ -128,7 +128,8 @@ router.post('/', async(req, res) => {
 
     await User.findOne({
         where: {
-            id: decoded.id
+            id: decoded.id,
+            status: 'existing'
         }
     }).then(user => {
         if (user) {

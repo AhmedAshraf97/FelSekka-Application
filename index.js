@@ -20,6 +20,7 @@ app.use('/api/verifytwo', require('./routes/api/verifytwo'));
 app.use('/api/verifythree', require('./routes/api/verifythree'));
 app.use('/api/peopletrustme', require('./routes/api/peopletrustme'));
 app.use('/api/peopleItrust', require('./routes/api/peopleItrust'));
+app.use('/api/updatetrust', require('./routes/api/updatetrust'));
 app.use('/api/editprofile', require('./routes/api/editprofile'));
 app.use('/api/changepassword', require('./routes/api/changepassword'));
 app.use('/api/forgetpassword', require('./routes/api/forgetpassword'));
@@ -36,6 +37,7 @@ app.use('/api/addrating', require('./routes/api/add_rating'));
 app.use('/api/scheduledtrips', require('./routes/api/scheduledtrips'));
 
 app.use('/api/signout', require('./routes/api/sign_out'));
+app.use('/api/deleteaccount', require('./routes/api/delete_account'));
 
 
 /*const betweenusers = require('./models/betweenusers');
