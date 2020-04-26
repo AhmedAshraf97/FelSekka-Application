@@ -41,7 +41,7 @@ router.post('/', async(req, res) => {
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        res.status(401).send({ message: "You aren't authorized to view user past trips" })
+        res.status(401).send({ message: "You aren't authorized to view user scheduled trips" })
         res.end();
     }
 
@@ -52,7 +52,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to delete any car" })
+            res.status(401).send({ message: "You aren't authorized to view user scheduled trips" })
             res.end();
         }
     }).catch(errHandler)
@@ -168,6 +168,9 @@ router.post('/', async(req, res) => {
 
                                                                                     })
                                                                                     count++;
+                                                                                    c = 0;
+                                                                                    RiderTrip = {}
+
 
                                                                                     if (count === RiderRides.length) {
                                                                                         res.send(TripsDetailsArr)
@@ -262,6 +265,7 @@ router.post('/', async(req, res) => {
                                                                             }).then(AllRidersTripDetails => {
 
                                                                                 if (AllRidersTripDetails) {
+
                                                                                     if (AllRidersTripDetails.id !== RiderRide.riderid) {
                                                                                         RiderTrip[c] = ({
                                                                                             "username": AllRidersTripDetails.username,
@@ -298,6 +302,9 @@ router.post('/', async(req, res) => {
 
                                                                                     })
                                                                                     count++;
+                                                                                    c = 0;
+                                                                                    RiderTrip = {}
+
 
                                                                                     if (count === RiderRides.length) {
 
@@ -384,8 +391,6 @@ router.post('/', async(req, res) => {
                                             if (trip) {
 
                                                 if (DriverRide.tofrom === "to") {
-
-
                                                     OfferRideTo.findOne({
                                                         where: {
                                                             id: DriverRide.offerid
@@ -407,6 +412,7 @@ router.post('/', async(req, res) => {
 
                                                             }).then(AllRidersTrip => {
                                                                 if (AllRidersTrip.length > 0) {
+                                                                    c = 0
                                                                     AllRidersTrip.forEach(AllRidersTripEach => {
 
                                                                         User.findOne({
@@ -415,7 +421,6 @@ router.post('/', async(req, res) => {
                                                                             }
 
                                                                         }).then(AllRidersTripDetails => {
-
                                                                             if (AllRidersTripDetails) {
 
                                                                                 RiderTrip[c] = ({
@@ -431,7 +436,7 @@ router.post('/', async(req, res) => {
 
 
                                                                             }
-
+                                                                            var x = 5;
 
                                                                             if (c === AllRidersTrip.length) {
 
@@ -451,8 +456,9 @@ router.post('/', async(req, res) => {
                                                                                     "Riders in the trip": RiderTrip
 
                                                                                 })
+                                                                                c = 0;
+                                                                                RiderTrip = {}
                                                                                 count++;
-
                                                                                 if (count === DriverRides.length) {
 
                                                                                     res.send(TripsDetailsArr)
@@ -487,9 +493,6 @@ router.post('/', async(req, res) => {
                                                     }).catch(errHandler)
 
                                                 } else {
-
-
-
                                                     OfferRideFrom.findOne({
                                                         where: {
                                                             id: DriverRide.offerid
@@ -551,7 +554,11 @@ router.post('/', async(req, res) => {
                                                                                     "Riders in the trip": RiderTrip
 
                                                                                 })
+
+                                                                                c = 0;
+                                                                                RiderTrip = {}
                                                                                 count++;
+
 
                                                                                 if (count === DriverRides.length) {
 

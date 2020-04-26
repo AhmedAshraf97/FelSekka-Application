@@ -8,25 +8,14 @@ const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const ExpiredToken = require('../../models/expiredtokens');
 router.post('/', async(req, res) => {
-    var decoded = jwt.verify(req.headers['authorization'], process.env.SECRET_KEY)
-    let isvalid = false
-    var ValidChecks = true;
 
-    await ExpiredToken.findOne({
-        where: {
-            token: req.headers["authorization"]
-        }
-    }).then(expired => {
-        if (expired) {
-            ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to delete any car" })
-            res.end();
-        }
-    }).catch(errHandler)
+    let isvalid = false
+
+
 
     await User.findOne({
             where: {
-                id: decoded.id,
+                email: req.body.email,
                 "status": "existing"
             }
         }).then(user => {

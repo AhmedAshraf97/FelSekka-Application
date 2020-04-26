@@ -1,59 +1,59 @@
 const Sequelize = require("sequelize");
-module.exports = sequelize.define("trips", {  
+module.exports = sequelize.define("trips", {
     id: {
-      type: Sequelize.INTEGER(255),
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true
+        type: Sequelize.INTEGER(255),
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true
     },
     starttime: {
         type: Sequelize.TIME,
         allowNull: false
-      },
+    },
     endtime: {
         type: Sequelize.TIME,
         allowNull: false
-      },
-    startloclatitude:{
-        type:Sequelize.DECIMAL,
+    },
+    startloclatitude: {
+        type: Sequelize.DECIMAL,
         allowNull: false
     },
-    date:{
-        type:Sequelize.DATEONLY,
+    date: {
+        type: Sequelize.DATEONLY,
         allowNull: false,
     },
-    startloclongitude:{
-        type:Sequelize.DECIMAL,
+    startloclongitude: {
+        type: Sequelize.DECIMAL,
         allowNull: false,
     },
-    endloclatitude:{
-        type:Sequelize.DECIMAL,
+    endloclatitude: {
+        type: Sequelize.DECIMAL,
         allowNull: false,
     },
-    endloclongitude:{
-        type:Sequelize.DECIMAL,
+    endloclongitude: {
+        type: Sequelize.DECIMAL,
         allowNull: false,
     },
-    totaldistance:{
-        type:Sequelize.DECIMAL,
-        allowNull: false,
-    }, 
-    totaltime:{
-        type:Sequelize.DECIMAL,
-        allowNull: false,
-    },  
-    totalfare:{
-        type:Sequelize.DECIMAL,
+    totaldistance: {
+        type: Sequelize.DECIMAL,
         allowNull: false,
     },
-    numberofseats:{
-        type:Sequelize.INTEGER(255),
+    totaltime: {
+        type: Sequelize.DECIMAL,
         allowNull: false,
-    },   
-    status:{
-        type:Sequelize.STRING(300),
+    },
+    totalfare: {
+        type: Sequelize.DECIMAL,
         allowNull: false,
-        defaultValue: "pending"
+    },
+    numberofseats: {
+        type: Sequelize.INTEGER(255),
+        allowNull: false,
+    },
+    status: {
+        type: Sequelize.STRING(300),
+        allowNull: false,
+        defaultValue: "scheduled"
+
     }
-  }
-  );
+});

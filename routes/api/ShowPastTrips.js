@@ -166,6 +166,9 @@ router.post('/', async(req, res) => {
 
                                                                                     })
                                                                                     count++;
+                                                                                    c = 0;
+                                                                                    RiderTrip = {}
+
 
                                                                                     if (count === RiderRides.length) {
                                                                                         res.send(TripsDetailsArr)
@@ -297,6 +300,9 @@ router.post('/', async(req, res) => {
 
                                                                                     })
                                                                                     count++;
+                                                                                    c = 0;
+                                                                                    RiderTrip = {}
+
 
                                                                                     if (count === RiderRides.length) {
 
@@ -449,6 +455,9 @@ router.post('/', async(req, res) => {
 
                                                                                 })
                                                                                 count++;
+                                                                                c = 0;
+                                                                                RiderTrip = {}
+
 
                                                                                 if (count === DriverRides.length) {
 
@@ -549,6 +558,8 @@ router.post('/', async(req, res) => {
 
                                                                                 })
                                                                                 count++;
+                                                                                c = 0;
+                                                                                RiderTrip = {}
 
                                                                                 if (count === DriverRides.length) {
 

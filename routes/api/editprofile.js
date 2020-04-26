@@ -20,7 +20,13 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 router.post('/', async(req, res) => {
-    var decoded = jwt.verify(req.headers['authorization'], process.env.SECRET_KEY)
+    var decoded;
+    try {
+        decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
+    } catch (e) {
+        res.status(401).send({ message: "You aren't authorized to edit your profile" })
+        res.end();
+    }
     let isvalid = false
     let loc = false
     var ValidChecks = true;
@@ -31,7 +37,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to delete any car" })
+            res.status(401).send({ message: "You aren't authorized to edit your profile" })
             res.end();
         }
     }).catch(errHandler)
