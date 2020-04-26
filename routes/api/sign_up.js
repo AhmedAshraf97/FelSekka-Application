@@ -33,12 +33,13 @@ router.post('/', async(req, res) => {
         birthdate: req.body.birthdate,
         ridewith: req.body.ridewith,
         smoking: req.body.smoking,
-        longitude: req.body.longitude,
-        latitude: req.body.latitude,
+        longitude: parseFloat(req.body.longitude) ,
+        latitude: parseFloat(req.body.latitude),
         rating: 5.0,
         status: "existing",
         photo: req.body.photo,
     }
+    console.log(userData);
     let usernameExists = 0;
     let emailExists = 0;
     let phonenumberExists = 0;
@@ -181,17 +182,13 @@ router.post('/', async(req, res) => {
         res.status(400).send({ error: "Latitude", message: "Latitude paramter is missing" });
     } else if (((req.body.latitude).toString()).trim().length === 0) {
         res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
-    } else if ((typeof(req.body.latitude) === 'string') || ((req.body.latitude) instanceof String)) {
-        res.status(400).send({ error: "Latitude", message: "Latitude must be a decimal" });
-    }
+    } 
     //Longitude validation
     else if (req.body.longitude == null) {
         res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
     } else if (((req.body.longitude).toString()).trim().length === 0) {
         res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
-    } else if ((typeof(req.body.longitude) === 'string') || ((req.body.longitude) instanceof String)) {
-        res.status(400).send({ error: "Longitude", message: "Longitude must be a decimal" });
-    }
+    } 
     else if(usernameExists === 1){
         res.status(409).send( {error: "Username", message: "This username already exists"});   
     }
