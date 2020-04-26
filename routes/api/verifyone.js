@@ -66,7 +66,7 @@ router.post('/', async (req, res) => {
     //Username validation
     else if (req.body.username == null) {
         res.status(400).send({ error: "Username", message: "Username paramter is missing" });
-    } else if (!((typeof(req.body.username) === 'string') || ((req.body.firstname) instanceof String))) {
+    } else if (!((typeof(req.body.username) === 'string') || ((req.body.username) instanceof String))) {
         res.status(400).send({ error: "Username", message: "Username must be a string" });
     } else if ((req.body.username).trim().length === 0) {
         res.status(400).send({ error: "Username", message: "Username can't be empty" });

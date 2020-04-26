@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
     //Gender validation
      if (req.body.gender == null) {
         res.status(400).send({ error: "Gender", message: "Gender paramter is missing" });
-    } else if (!((typeof(req.body.gender) === 'string') || ((req.body.lastname) instanceof String))) {
+    } else if (!((typeof(req.body.gender) === 'string') || ((req.body.gender) instanceof String))) {
         res.status(400).send({ error: "Gender", message: "Gender must be a string" });
     } else if ((req.body.gender).trim().length === 0) {
         res.status(400).send({ error: "Gender", message: "Gender can't be empty" });
@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
     //Ride with validation
     else if (req.body.ridewith == null) {
         res.status(400).send({ error: "Ride with", message: "Ride with paramter is missing" });
-    } else if (!((typeof(req.body.ridewith) === 'string') || ((req.body.lastname) instanceof String))) {
+    } else if (!((typeof(req.body.ridewith) === 'string') || ((req.body.ridewith) instanceof String))) {
         res.status(400).send({ error: "Ride with", message: "Ride with must be a string" });
     } else if ((req.body.ridewith).trim().length === 0) {
         res.status(400).send({ error: "Ride with", message: "Ride with can't be empty" });
@@ -44,7 +44,7 @@ router.post('/', async (req, res) => {
     //Smoking validation
     else if (req.body.smoking == null) {
         res.status(400).send({ error: "Smoking", message: "Smoking paramter is missing" });
-    } else if (!((typeof(req.body.smoking) === 'string') || ((req.body.lastname) instanceof String))) {
+    } else if (!((typeof(req.body.smoking) === 'string') || ((req.body.smoking) instanceof String))) {
         res.status(400).send({ error: "Smoking", message: "Smoking must be a string" });
     } else if ((req.body.smoking).trim().length === 0) {
         res.status(400).send({ error: "Smoking", message: "Smoking can't be empty" });
