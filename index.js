@@ -41,6 +41,8 @@ app.use('/api/showAvailableRides', require('./routes/api/showAvailableRides'));
 app.use('/api/signout', require('./routes/api/sign_out'));
 app.use('/api/deleteaccount', require('./routes/api/delete_account'));
 
+app.use('/api/searchTrip', require('./routes/api/searchTrip'));
+
 
 /*const betweenusers = require('./models/betweenusers');
 const cars = require('./models/cars');

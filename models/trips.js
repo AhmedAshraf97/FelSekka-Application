@@ -6,6 +6,10 @@ module.exports = sequelize.define("trips", {
         autoIncrement: true,
         primaryKey: true
     },
+    tofrom: {
+        type: Sequelize.STRING(300),
+        allowNull: false
+    },
     starttime: {
         type: Sequelize.TIME,
         allowNull: false
