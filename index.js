@@ -43,6 +43,7 @@ app.use('/api/deleteaccount', require('./routes/api/delete_account'));
 
 app.use('/api/searchTrip', require('./routes/api/searchTrip'));
 
+app.use('/api/matching', require('./routes/api/matching'));
 
 /*const betweenusers = require('./models/betweenusers');
 const cars = require('./models/cars');
