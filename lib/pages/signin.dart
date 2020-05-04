@@ -146,7 +146,7 @@ class _SignInState extends State<SignIn> {
                         ),
                       ),
                       SizedBox(
-                        height: 10.0,
+                        height: 70.0,
                       ),
                       Container(
                         height: 50.0,
@@ -165,15 +165,6 @@ class _SignInState extends State<SignIn> {
                             ),
                           ),
                         ),
-                      ),
-                      FacebookSignInButton(
-                          borderRadius: 20,
-                          splashColor: Colors.white,
-                          onPressed: () {
-                        // call authentication logic
-                      }),
-                      SizedBox(
-                        height: 15.0,
                       ),
                       new FlatButton(
                         onPressed: () {
