@@ -72,7 +72,8 @@ router.post('/', async(req, res) => {
                 "ridewith": offer.ridewith,
                 "smoking": offer.smoking,
                 "toorgid": offer.toorgid,
-                "date": offer.date
+                "date": offer.date,
+                "offerid": offer.id
             })
             driversCount++;
         }
@@ -116,7 +117,8 @@ router.post('/', async(req, res) => {
                 "ridewith": request.ridewith,
                 "smoking": request.smoking,
                 "toorgid": request.toorgid,
-                "date": request.date
+                "date": request.date,
+                "requestid": request.id
             });
             ridersCount++;
 
@@ -158,11 +160,46 @@ router.post('/', async(req, res) => {
 
         }
     }
+    //difference arrivaltime -30
+
+    if (Object.keys(Riders).length > 0) {
+        for (riderFrom in Riders) {
+            for (riderTo in Riders) {
+                if (Riders[riderFrom].id !== Riders[riderTo].id && Riders[riderFrom].toorgid === Riders[riderTo].toorgid && Riders[riderFrom].ridewith === Riders[driver].ridewith &&
+                    Riders[riderFrom].smoking === Riders[riderTo].smoking &&
+                    diff_minutes((new Date(Riders[riderFrom].date + " " + Riders[riderFrom].ArrivalTime)), (new Date(Riders[riderTo].date + " " + Riders[riderTo].ArrivalTime))) >= -30 &&
+                    diff_minutes((new Date(Riders[riderFrom].date + " " + Riders[riderFrom].ArrivalTime)), (new Date(Riders[riderTo].date + " " + Riders[riderTo].ArrivalTime))) <= 30
+
+                ) {
+
+                    const FromRiderToRider = await BetweenUsers.findOne({
+                        where: {
+                            user1id: Riders[riderFrom].id,
+                            user2id: Riders[riderTo].id
+
+                        }
+
+                    })
+                    if (FromRiderToRider) {
+                        var valueDuration = new values(FromRiderToRider.user1id, FromRiderToRider.user2id, parseFloat(FromRiderToRider.time))
+                        var valueDistance = new values(FromRiderToRider.user1id, FromRiderToRider.user2id, parseFloat(FromRiderToRider.distance))
+
+                        RRdurationValue.push(valueDuration)
+                        RRdistanceValue.push(valueDistance)
+                    }
+
+                }
+
+            }
+
+        }
+    }
 
 
 
-    console.log("Drivers heeehh ", Drivers)
-    console.log("Riderss heeehh ", Riders)
+    //    console.log("Drivers heeehh ", Drivers)
+    //  console.log("Riderss heeehh ", Riders)
+
 
 });
 
