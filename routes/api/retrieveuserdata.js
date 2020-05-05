@@ -17,7 +17,7 @@ const errHandler = err => {
 };
 router.post('/', async (req, res) => {
     var userExists = false;
-    var decoded = jwt.verify(req.headers['authorization'], process.env.SECRET_KEY);
+    var decoded = jwt.verify(req.headers['Authorization'], process.env.SECRET_KEY);
     await User.findOne({ where: { id: decoded.id }}).then(user=>{
         if(user){
             userExists =true;
