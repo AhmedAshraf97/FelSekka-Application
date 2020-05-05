@@ -13,11 +13,12 @@ process.env.SECRET_KEY = 'secret';
 //Error handler
 const errHandler = err => {
     //Catch and log any error.
+    res.send("Error: ", err);
     console.error("Error: ", err);
 };
 router.post('/', async (req, res) => {
     var userExists = false;
-    var decoded = jwt.verify(req.body.token, process.env.SECRET_KEY);
+    var decoded = jwt.verify(req.headers['authorization'], process.env.SECRET_KEY);
     await User.findOne({ where: { id: decoded.id }}).then(user=>{
         if(user){
             userExists =true;
