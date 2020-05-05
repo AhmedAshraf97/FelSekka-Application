@@ -1,7 +1,8 @@
 import 'package:felsekka/pages/AnimatedPage%20Route.dart';
+import 'package:felsekka/pages/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
-import 'package:felsekka/pages/signin.dart';
+import 'package:felsekka/pages/signup3.dart';
 
 class LoadingScreen extends StatefulWidget {
   @override

@@ -2,7 +2,6 @@ import 'package:felsekka/pages/signup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 
 import 'AnimatedPage Route.dart';
 

@@ -519,7 +519,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin{
                                    );
                                  }
                                else{
-                                 Navigator.push(context, AnimatedPageRoute(widget: SignUp2()));
+                                 Navigator.push(context, AnimatedPageRoute(widget: SignUp2(firstname, lastname, username, email, phonenumber, password, confirmpassword)));
                                }
                              }
                              getData();

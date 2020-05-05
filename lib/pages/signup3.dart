@@ -1,3 +1,4 @@
+import 'package:felsekka/pages/homepage.dart';
 import 'package:felsekka/pages/signin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,18 @@ import 'dart:convert';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 
 class SignUp3 extends StatefulWidget {
+  final String firstname;
+  final String lastname;
+  final String username;
+  final String email;
+  final String phonenumber;
+  final String password;
+  final String confirmpassword;
+  final String selectedGender;
+  final String dateSelected;
+  final String ridewithSelected;
+  final String smokingSelected;
+  SignUp3(this.firstname, this.lastname, this.username, this.email, this.phonenumber, this.password, this.confirmpassword, this.selectedGender, this.dateSelected, this.ridewithSelected, this.smokingSelected);
   @override
   _SignUp3State createState() => _SignUp3State();
 }
@@ -117,15 +130,12 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                                 return PlacePicker(
                                   apiKey: "AIzaSyC6NQ_ODwiORDBTsuB5k9J8prDQ_MTZgB4",
                                   useCurrentLocation: true,
-                                  //usePlaceDetailSearch: true,
                                   onPlacePicked: (result) {
-                                  selectedPlace = result;
-                                  latitude=selectedPlace.geometry.location.lat.toString();
-                                  longitude=selectedPlace.geometry.location.lng.toString();
-                                  print(latitude);
-                                  print(longitude);
-                                  Navigator.of(context).pop();
-                                  setState(() {});
+                                    selectedPlace = result;
+                                    latitude=selectedPlace.geometry.location.lat.toString();
+                                    longitude=selectedPlace.geometry.location.lng.toString();
+                                    Navigator.of(context).pop();
+                                    setState(() {});
                                   },
                                 );
                               },
@@ -141,7 +151,7 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                         height: 70.0,
                       ),
                       MaterialButton(
-                        child: Text("Next",
+                        child: Text("Done",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20.0,
@@ -160,23 +170,35 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                         onPressed: (){
                           bool valid=true;
                           if(selectedPlace==null)
-                            {
-                              valid = false;
-                              showDialog(
-                                context: context,
-                                builder: (_) => FunkyOverlay(text: "Home location is required",image: "images/errorsign.png"),
-                              );
-                            }
+                          {
+                            valid = false;
+                            showDialog(
+                              context: context,
+                              builder: (_) => FunkyOverlay(text: "Home location is required",image: "images/errorsign.png"),
+                            );
+                          }
                           if(valid==true)
                           {
                             void getData() async{
                               Map<String,String> body = {
+                                'firstname': widget.firstname,
+                                'lastname': widget.lastname,
+                                'username': widget.username,
+                                'email' : widget.email,
+                                'phonenumber' : widget.phonenumber,
+                                'password': widget.password,
+                                'confirmpassword':widget.confirmpassword,
+                                'gender': widget.selectedGender,
+                                'birthdate': widget.dateSelected,
+                                'ridewith': widget.ridewithSelected,
+                                'smoking' : widget.smokingSelected,
                                 'latitude': latitude,
                                 'longitude': longitude,
+                                'photo': "",
                               };
-                              String url="http://3.81.22.120:3000/api/verifythree";
+                              String url="http://3.81.22.120:3000/api/signup";
                               Response response =await post(url, body: body);
-                              if(response.statusCode != 200)
+                              if(response.statusCode != 201)
                               {
                                 Map data= jsonDecode(response.body);
                                 showDialog(
@@ -185,7 +207,7 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                                 );
                               }
                               else{
-                                Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
+                                Navigator.push(context, AnimatedPageRoute(widget: HomePage()));
                               }
                             }
                             getData();

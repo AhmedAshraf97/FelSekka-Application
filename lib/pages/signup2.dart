@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gender_selector/gender_selector.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'AnimatedPage Route.dart';
 import 'funkyoverlay.dart';
@@ -12,6 +11,14 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 
 class SignUp2 extends StatefulWidget {
+  final String firstname;
+  final String lastname;
+  final String username;
+  final String email;
+  final String phonenumber;
+  final String password;
+  final String confirmpassword;
+  SignUp2(this.firstname, this.lastname, this.username, this.email, this.phonenumber, this.password, this.confirmpassword);
   @override
   _SignUp2State createState() => _SignUp2State();
 }
@@ -372,7 +379,7 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                                   );
                                 }
                                 else{
-                                  Navigator.push(context, AnimatedPageRoute(widget: SignUp3()));
+                                  Navigator.push(context, AnimatedPageRoute(widget: SignUp3( widget.firstname, widget.lastname, widget.username, widget.email, widget.phonenumber, widget.password, widget.confirmpassword,this.selectedGender, this.dateSelected, this.ridewithSelected, this.smokingSelected)));
                                 }
                               }
                               getData();
