@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:felsekka/pages/signup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-
+import 'package:http/http.dart';
 import 'AnimatedPage Route.dart';
+import 'funkyoverlay.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -11,6 +14,8 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  TextEditingController emailorphoneController = new TextEditingController();
+  TextEditingController passwordController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,6 +103,7 @@ class _SignInState extends State<SignIn> {
                                 border: Border(bottom: BorderSide(color: Colors.grey[200])),
                               ),
                               child: TextField(
+                                controller: emailorphoneController,
                                 decoration: InputDecoration(
                                   hintText: "E-mail or Phone Number",
                                   hintStyle: TextStyle(color:Colors.grey),
@@ -126,6 +132,8 @@ class _SignInState extends State<SignIn> {
                             border: Border(bottom: BorderSide(color: Colors.grey[200])),
                           ),
                           child: TextField(
+                            obscureText: true,
+                            controller: passwordController,
                             decoration: InputDecoration(
                               hintText: "Password",
                               hintStyle: TextStyle(color:Colors.grey),
@@ -147,23 +155,71 @@ class _SignInState extends State<SignIn> {
                       SizedBox(
                         height: 70.0,
                       ),
-                      Container(
-                        height: 50.0,
-                        margin: EdgeInsets.symmetric(horizontal: 50.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(70),
-                          color: Colors.indigo,
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Login",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20.0,
-                              fontFamily: "Kodchasan",
-                            ),
+                      MaterialButton(
+                        child: Text("Login",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontFamily: "Kodchasan",
                           ),
                         ),
+                        height:40,
+                        minWidth:100,
+                        color: Colors.indigo,
+                        elevation: 15,
+                        highlightColor: Colors.grey,
+                        splashColor: Colors.blueGrey,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        onPressed: (){
+                          String EmailOrPhone= emailorphoneController.text;
+                          String password= passwordController.text;
+                          bool Valid= true;
+                          //E-mail validations:
+                          if(EmailOrPhone.isEmpty)
+                          {
+                            Valid = false;
+                            showDialog(
+                              context: context,
+                              builder: (_) => FunkyOverlay(text: "E-mail is required",image: "images/errorsign.png"),
+                            );
+                          }
+                          //Password validations:
+                          else if(password.isEmpty)
+                          {
+                            Valid = false;
+                            showDialog(
+                              context: context,
+                              builder: (_) => FunkyOverlay(text: "Password is required",image: "images/errorsign.png"),
+                            );
+                          }
+                          if(Valid==true)
+                          {
+                            void getData() async{
+                              Map<String, String> body = {
+                                'EmailOrPhone' : EmailOrPhone,
+                                'password': password,
+                              };
+                              String url="http://3.81.22.120:3000/api/signin";
+                              Response response =await post(url, body: body);
+                              print(response.statusCode);
+                              print(response.body);
+                              /*if(response.statusCode != 200)
+                              {
+                                Map data= jsonDecode(response.body);
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => FunkyOverlay(text: data['message'],image: "images/errorsign.png"),
+                                );
+                              }
+                              else{
+                                Navigator.push(context, AnimatedPageRoute(widget: SignUp2(firstname, lastname, username, email, phonenumber, password, confirmpassword)));
+                              }*/
+                            }
+                            getData();
+                          }
+                        },
                       ),
                       new FlatButton(
                         onPressed: () {

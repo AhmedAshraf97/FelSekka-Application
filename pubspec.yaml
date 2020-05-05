@@ -49,6 +49,7 @@ flutter:
   - images/felsekkalogowhitenobg.png
   - images/errorsign.png
   - images/location.png
+  - images/donesign.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

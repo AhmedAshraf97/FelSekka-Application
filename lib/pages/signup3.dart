@@ -1,4 +1,3 @@
-import 'package:felsekka/pages/homepage.dart';
 import 'package:felsekka/pages/signin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -207,7 +206,11 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                                 );
                               }
                               else{
-                                Navigator.push(context, AnimatedPageRoute(widget: HomePage()));
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => FunkyOverlay(text: "Done!",image: "images/donesign.png"),
+                                );
+                                Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
                               }
                             }
                             getData();
