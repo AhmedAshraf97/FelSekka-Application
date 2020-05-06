@@ -183,11 +183,18 @@ module.exports = async function main() {
             var lastRiderID = Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1]
             var ChosenRiderID = -1;
             var indexinDriverRider = DriversRider.findIndex(n => n.ID === DriverID);
+            if (DriversRidersDuration.findIndex(n => n.ID === Drivers[j].ID) === -1) {
+                continue;
+            }
             if (lastRiderID === DriverID) { //First Rider to be assigned
 
                 if (Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1] === Drivers[j].ID) // last rider driver
                 {
+
                     var indexinDriverRider = DriversRidersDuration.findIndex(n => n.ID === Drivers[j].ID);
+                    if (indexinDriverRider === -1) {
+                        continue;
+                    }
                     if (DriversRidersDuration[indexinDriverRider].checked === DriversRidersDuration[indexinDriverRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
                         continue;
 
@@ -245,6 +252,9 @@ module.exports = async function main() {
             } else { // Not First Rider
 
                 var indexinRiderRider = RiderRiderDuration.findIndex(n => n.ID === lastRiderID);
+                if (indexinRiderRider === -1) {
+                    continue;
+                }
                 if (RiderRiderDuration[indexinRiderRider].checked === RiderRiderDuration[indexinRiderRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
                     continue;
 
@@ -390,7 +400,9 @@ module.exports = async function main() {
             if (Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1] === Drivers[j].ID) // last rider driver
             {
                 var indexinDriverRider = DriversRidersDuration.findIndex(n => n.ID === Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1]);
-                if (DriversRidersDuration[indexinDriverRider].checked === DriversRidersDuration[indexinDriverRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
+                if (indexinDriverRider === -1) {
+                    count++;
+                } else if (DriversRidersDuration[indexinDriverRider].checked === DriversRidersDuration[indexinDriverRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
                     count++;
 
                 }
@@ -398,7 +410,9 @@ module.exports = async function main() {
 
             } else {
                 var indexinRiderRider = RiderRiderDuration.findIndex(n => n.ID === Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1]);
-                if (RiderRiderDuration[indexinRiderRider].checked === RiderRiderDuration[indexinRiderRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
+                if (indexinRiderRider) {
+                    count++;
+                } else if (RiderRiderDuration[indexinRiderRider].checked === RiderRiderDuration[indexinRiderRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
                     count++;
 
                 }

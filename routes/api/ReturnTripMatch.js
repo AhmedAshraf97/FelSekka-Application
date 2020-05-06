@@ -2,8 +2,8 @@ const OrgUser = require('../../models/orgusers');
 const BetweenUsers = require('../../models/betweenusers');
 const Organization = require('../../models/organizations');
 const User = require('../../models/users');
-const Offer = require('../../models/offerrideto')
-const Request = require('../../models/requestrideto')
+const Offer = require('../../models/offerridefrom')
+const Request = require('../../models/requestridefrom')
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -12,7 +12,7 @@ const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 process.env.SECRET_KEY = 'secret';
-const matching = require('../../matching');
+const ReturnTripMatching = require('../../ReturnTripMatching');
 const Trips = require('../../models/trips')
 const DriverDB = require('../../models/drivers');
 const RiderDB = require('../../models/riders');
@@ -27,62 +27,65 @@ class values {
 }
 
 class Rider {
-    constructor(ID, DistanceToOrganization, ArrivalTime, TimeToOrganizationMinutes,
-        EarliestPickup, capacity, ridewith, smoking, toorgid, date, requestid) {
+    constructor(ID, DistanceFromOrganization, DepartureTime, TimeFromOrganizationMinutes,
+        LatestDropOff, capacity, ridewith, smoking, fromorgid, date, requestid) {
 
         this.userID = ID
         this.ID = requestid;
 
         this.isAssigned = false;
         this.DriverAssigned = -1;
-        this.DistanceToOrganization = DistanceToOrganization;
-        this.TimeToOrganizationMinutes = TimeToOrganizationMinutes;
+        this.DistanceFromOrganization = DistanceFromOrganization;
+        this.TimeFromOrganizationMinutes = TimeFromOrganizationMinutes;
         this.TrustedDrivers = []
         this.UnTrustedDrivers = [] //todo:block
         this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
         this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
 
-        this.EarliestPickup = EarliestPickup
+        this.LatestDropOff = LatestDropOff
             //Timing
-        this.ArrivalTime = ArrivalTime
-        this.PickupTime = this.ArrivalTime
+        this.DepartureTime = DepartureTime
+        this.DropOffTime = this.DepartureTime
+
         this.capacity = capacity
         this.ridewith = ridewith
         this.smoking = smoking
-        this.toorgid = toorgid
+        this.fromorgid = fromorgid
         this.date = date
         this.requestid = requestid
 
     }
 };
 class Driver {
-    constructor(ID, DistanceToOrganization, ArrivalTime, TimeToOrganizationMinutes, capacity,
-        EarliestStartTime, ridewith, smoking, toorgid, date, offerid, latitude, longitude) {
+    constructor(ID, DistanceFromOrganization, PoolStartTime, TimeFromOrganizationMinutes, capacity,
+        LatestDropOff, ridewith, smoking, fromorgid, date, offerid, latitude, longitude) {
 
         this.userID = ID
         this.ID = offerid;
         this.AssignedRiders = [offerid];
         this.TotalDistanceCoveredToDestination = 0;
         this.TotalDurationTaken = 0;
-        this.DistanceToOrganization = DistanceToOrganization;
-        this.TimeToOrganizationMinutes = TimeToOrganizationMinutes;
-        this.EarliestStartTime = EarliestStartTime
+        this.DistanceFromOrganization = DistanceFromOrganization;
+        this.TimeFromOrganizationMinutes = TimeFromOrganizationMinutes;
+
+        this.LatestDropOff = LatestDropOff
         this.capacity = capacity
-        this.MaxDistance = 1.5 * DistanceToOrganization //removeee
+        this.MaxDistance = 1.5 * DistanceFromOrganization //removeee
 
         this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
         this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
-        this.MaxEarliestDiffToNormalize = Number.NEGATIVE_INFINITY;
+        this.MaxDropoffDiffToNormalize = Number.NEGATIVE_INFINITY;
 
         //Timing
-        this.PoolStartTime = new Date();
-        this.ArrivalTime = ArrivalTime
-        this.MaxDuration = diff_minutes(this.ArrivalTime, this.EarliestStartTime)
+        this.DropOffTime = this.PoolStartTime
+        this.PoolStartTime = PoolStartTime
+        this.MaxDuration = diff_minutes(this.LatestDropOff, this.PoolStartTime)
+
 
 
         this.ridewith = ridewith;
         this.smoking = smoking
-        this.toorgid = toorgid
+        this.fromorgid = fromorgid
         this.date = date
         this.offerid = offerid
         this.latitude = latitude
@@ -174,8 +177,6 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 router.post('/', async(req, res) => {
-
-    //    console.log(" Fil awal ", JSON.parse(JSON.stringify(Riders)))
     var DRdistanceValue = []
     var DRdurationValue = []
     var RRdistanceValue = []
@@ -190,30 +191,29 @@ router.post('/', async(req, res) => {
         for (offer of offers) {
             const orguser = await OrgUser.findOne({
                 where: {
-                    orgid: offer.toorgid,
+                    orgid: offer.fromorgid,
                     userid: offer.userid,
                     status: "existing"
                 }
 
             }).catch(errHandler)
 
-            var driver = new Driver(offer.userid, parseFloat(orguser.distancetoorg), new Date(offer.date + " " + offer.arrivaltime),
-                parseFloat(orguser.timetoorg),
+            var driver = new Driver(offer.userid, parseFloat(orguser.distancefromorg), new Date(offer.date + " " + offer.departuretime),
+                parseFloat(orguser.timefromorg),
                 offer.numberofseats,
-                new Date(offer.date + " " + offer.earliesttime),
+                new Date(offer.date + " " + offer.latesttime),
                 offer.ridewith,
                 offer.smoking,
-                offer.toorgid,
+                offer.fromorgid,
                 new Date(offer.date),
-                offer.id, parseFloat(offer.fromlatitude), parseFloat(offer.fromlongitude))
+                offer.id, parseFloat(offer.tolatitude), parseFloat(offer.tolongitude))
 
             Drivers.push(driver)
         }
         const requests = await Request.findAll({
             where: {
                 status: 'pending'
-            },
-            attributes: ['id', 'userid', 'toorgid', 'arrivaltime', 'date', 'ridewith', 'smoking', 'earliesttime']
+            }
         }).catch(errHandler);
 
         if (requests.length > 0) {
@@ -221,46 +221,49 @@ router.post('/', async(req, res) => {
             for (const request of requests) {
                 const orguser = await OrgUser.findOne({
                     where: {
-                        orgid: request.toorgid,
+                        orgid: request.fromorgid,
                         userid: request.userid,
                         status: "existing"
                     }
                 }).catch(errHandler);
 
+
                 var rider = new Rider(request.userid,
-                    parseFloat(orguser.distancetoorg),
-                    new Date(request.date + " " + request.arrivaltime),
-                    parseFloat(orguser.timetoorg),
-                    new Date(request.date + " " + request.earliesttime),
+                    parseFloat(orguser.distancefromorg),
+                    new Date(request.date + " " + request.departuretime),
+                    parseFloat(orguser.timefromorg),
+                    new Date(request.date + " " + request.latesttime),
                     request.numberofseats,
                     request.ridewith,
                     request.smoking,
-                    request.toorgid,
+                    request.fromorgid,
                     new Date(request.date),
                     request.id)
 
                 Riders.push(rider);
             }
+
+
             if (Drivers.length > 0) {
                 for (driver in Drivers) {
                     for (rider in Riders) {
-                        if (Riders[rider].toorgid === Drivers[driver].toorgid && Riders[rider].ridewith === Drivers[driver].ridewith &&
+                        if (Riders[rider].fromorgid === Drivers[driver].fromorgid && Riders[rider].ridewith === Drivers[driver].ridewith &&
                             Riders[rider].smoking === Drivers[driver].smoking &&
-                            diff_minutes((Riders[rider].ArrivalTime), (Drivers[driver].ArrivalTime)) >= 0 &&
-                            diff_minutes((Riders[rider].ArrivalTime), (Drivers[driver].ArrivalTime)) <= 30
-
+                            diff_minutes((Drivers[driver].PoolStartTime), (Riders[rider].DepartureTime)) >= 0 &&
+                            diff_minutes((Drivers[driver].PoolStartTime), (Riders[rider].DepartureTime)) <= 30
                         ) {
-                            const FromDriverToRider = await BetweenUsers.findOne({
+                            const ToDriverFromRider = await BetweenUsers.findOne({
                                 where: {
-                                    user1id: Drivers[driver].userID,
-                                    user2id: Riders[rider].userID
+
+                                    user1id: Riders[rider].userID,
+                                    user2id: Drivers[driver].userID
 
                                 }
 
                             }).catch(errHandler)
-                            if (FromDriverToRider) {
-                                var valueDuration = new values(Drivers[driver].ID, Riders[rider].ID, parseFloat(FromDriverToRider.time))
-                                var valueDistance = new values(Drivers[driver].ID, Riders[rider].ID, parseFloat(FromDriverToRider.distance))
+                            if (ToDriverFromRider) {
+                                var valueDuration = new values(Riders[rider].ID, Drivers[driver].ID, parseFloat(ToDriverFromRider.time))
+                                var valueDistance = new values(Riders[rider].ID, Drivers[driver].ID, parseFloat(ToDriverFromRider.distance))
 
                                 DRdurationValue.push(valueDuration)
                                 DRdistanceValue.push(valueDistance)
@@ -275,12 +278,12 @@ router.post('/', async(req, res) => {
 
 
             if (Riders.length > 0) {
-                for (riderFrom in Riders) {
-                    for (riderTo in Riders) {
+                for (riderTo in Riders) {
+                    for (riderFrom in Riders) {
                         if (Riders[riderFrom].userID !== Riders[riderTo].userID && Riders[riderFrom].toorgid === Riders[riderTo].toorgid && Riders[riderFrom].ridewith === Riders[riderTo].ridewith &&
                             Riders[riderFrom].smoking === Riders[riderTo].smoking &&
-                            diff_minutes((Riders[riderFrom].ArrivalTime), (Riders[riderTo].ArrivalTime)) >= -30 &&
-                            diff_minutes((Riders[riderFrom].ArrivalTime), (Riders[riderTo].ArrivalTime)) <= 30
+                            diff_minutes((Riders[riderFrom].DepartureTime), (Riders[riderTo].DepartureTime)) >= -30 &&
+                            diff_minutes((Riders[riderFrom].DepartureTime), (Riders[riderTo].DepartureTime)) <= 30
 
                         ) {
 
@@ -312,7 +315,7 @@ router.post('/', async(req, res) => {
                 var DriverRow = new userArray(driverID);
 
                 for (var j = 0; j < DRdistanceValue.length; j++) {
-                    if (DRdistanceValue[j].from === driverID) {
+                    if (DRdistanceValue[j].to === driverID) {
                         var distanceObj = new distance(DRdistanceValue[j].from, DRdistanceValue[j].to, DRdistanceValue[j].value);
                         Drivers[i].MaxDistanceToNormalize = Math.max(DRdistanceValue[j].value, Drivers[i].MaxDistanceToNormalize)
                         DriverRow.push(distanceObj);
@@ -332,10 +335,11 @@ router.post('/', async(req, res) => {
 
 
             for (var i = 0; i < Riders.length; i++) {
+
                 var riderID = Riders[i].ID
                 var RiderRow = new userArray(riderID);
                 for (var j = 0; j < RRdistanceValue.length; j++) {
-                    if (RRdistanceValue[j].from === riderID) {
+                    if (RRdistanceValue[j].to === riderID) {
                         var distanceObj = new distance(RRdistanceValue[j].from, RRdistanceValue[j].to, RRdistanceValue[j].value);
                         Riders[i].MaxDistanceToNormalize = Math.max(RRdistanceValue[j].value, Riders[i].MaxDistanceToNormalize)
                         RiderRow.push(distanceObj);
@@ -355,13 +359,14 @@ router.post('/', async(req, res) => {
 
                 var driverID = Drivers[i].ID
                 var DriverRowDuration = new userArray(driverID);
-                var diffEarliest
+                var diffDropOff
                 for (var j = 0; j < DRdurationValue.length; j++) {
-                    if (DRdurationValue[j].from === driverID) {
+                    if (DRdurationValue[j].to === driverID) {
                         var durationObj = new duration(DRdurationValue[j].from, DRdurationValue[j].to, DRdurationValue[j].value);
                         Drivers[i].MaxDurationToNormalize = Math.max(DRdurationValue[j].value, Drivers[i].MaxDurationToNormalize)
-                        diffEarliest = diff_minutes(Riders.find(n => n.ID === DRdurationValue[j].to).EarliestPickup, Drivers[i].EarliestStartTime) - DRdurationValue[j].value
-                        Drivers[i].MaxEarliestDiffToNormalize = Math.max(diffEarliest, Drivers[i].MaxEarliestDiffToNormalize)
+                        diffDropOff = diff_minutes(Drivers[i].LatestDropOff, Riders.find(n => n.ID === DRdurationValue[j].from).LatestDropOff) - DRdurationValue[j].value
+
+                        Drivers[i].MaxEarliestDiffToNormalize = Math.max(diffDropOff, Drivers[i].MaxEarliestDiffToNormalize)
 
                         DriverRowDuration.push(durationObj);
                     }
@@ -386,7 +391,7 @@ router.post('/', async(req, res) => {
                 var RiderRowDuration = new userArray(riderID);
 
                 for (var j = 0; j < RRdurationValue.length; j++) {
-                    if (RRdurationValue[j].from === riderID) {
+                    if (RRdurationValue[j].to === riderID) {
                         var durationObj = new duration(RRdurationValue[j].from, RRdurationValue[j].to, RRdurationValue[j].value);
                         Riders[i].MaxDurationToNormalize = Math.max(RRdurationValue[j].value, Riders[i].MaxDurationToNormalize)
                         RiderRowDuration.push(durationObj);
@@ -396,7 +401,6 @@ router.post('/', async(req, res) => {
                 if (Riders[i].MaxDurationToNormalize === 0)
                     Riders[i].MaxDurationToNormalize = 1;
                 if (RiderRowDuration.length > 0) {
-
                     RiderRiderDuration.push(RiderRowDuration);
                 }
 
@@ -404,26 +408,28 @@ router.post('/', async(req, res) => {
             }
 
 
-            var z = await matching();
-            var countAssigned = 0;
+            var z = await ReturnTripMatching();
 
+
+
+            var countAssigned = 0;
             for (var i = 0; i < Drivers.length; i++) {
                 if (Drivers[i].AssignedRiders.length > 1) {
                     countAssigned++;
                     const organization = await Organization.findOne({
                         where: {
-                            id: Drivers[i].toorgid,
+                            id: Drivers[i].fromorgid,
                             status: "existing"
                         }
                     }).catch(errHandler);
                     const trip = await Trips.create({
-                        tofrom: "to",
+                        tofrom: "from",
                         starttime: 0,
                         endtime: 0,
                         startloclatitude: organization.latitude,
                         startloclongitude: organization.longitude,
-                        endloclatitude: 0,
-                        endloclongitude: 0,
+                        endloclatitude: Drivers[i].latitude,
+                        endloclongitude: Drivers[i].longitude,
                         totaldistance: 0,
                         totaltime: 0,
                         totalfare: 0,
@@ -432,13 +438,14 @@ router.post('/', async(req, res) => {
                         status: "scheduled"
 
                     }).catch(errHandler)
+
                     await DriverDB.create({
                         tripid: trip.id,
-                        tofrom: "to",
+                        tofrom: "from",
                         offerid: Drivers[i].offerid,
                         driverid: Drivers[i].userID,
                         pickuptime: Drivers[i].PoolStartTime,
-                        arrivaltime: Drivers[i].ArrivalTime,
+                        arrivaltime: Drivers[i].DropOffTime,
                         actualpickuptime: 0,
                         actualarrivaltime: 0,
                         distance: 0,
@@ -457,12 +464,12 @@ router.post('/', async(req, res) => {
                         await RiderDB.create({
 
                             tripid: trip.id,
-                            tofrom: "to",
+                            tofrom: "from",
                             offerid: Drivers[i].offerid,
                             requestid: Drivers[i].AssignedRiders[j],
                             riderid: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).userID,
-                            pickuptime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).PickupTime,
-                            arrivaltime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).ArrivalTime,
+                            pickuptime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).DepartureTime,
+                            arrivaltime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).DropOffTime,
                             actualpickuptime: 0,
                             actualarrivaltime: 0,
                             distance: 0,
@@ -486,14 +493,17 @@ router.post('/', async(req, res) => {
                 res.send("No secheduled trips")
             }
 
-
         } else {
             res.send("No secheduled trips")
         }
 
     } else {
-        res.send("No secheduled trips")
+        res.send("no secheduled trips")
     }
+
+
+
+
 
 
 
