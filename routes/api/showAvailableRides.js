@@ -81,6 +81,7 @@ router.post('/', async(req, res) => {
 
                                                 if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
                                                     availableTrips[count] = {
+                                                        "tripid": scheduledTrip.id,
                                                         "startloclatitude": scheduledTrip.startloclatitude,
                                                         "startloclongitude": scheduledTrip.startloclongitude,
                                                         "endloclatitude": scheduledTrip.endloclatitude,
@@ -113,6 +114,7 @@ router.post('/', async(req, res) => {
                                                 countAll++;
                                                 if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
                                                     availableTrips[count] = {
+                                                        "tripid": scheduledTrip.id,
                                                         "startloclatitude": scheduledTrip.startloclatitude,
                                                         "startloclongitude": scheduledTrip.startloclongitude,
                                                         "endloclatitude": scheduledTrip.endloclatitude,

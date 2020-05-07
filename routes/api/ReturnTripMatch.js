@@ -28,7 +28,7 @@ class values {
 
 class Rider {
     constructor(ID, DistanceFromOrganization, DepartureTime, TimeFromOrganizationMinutes,
-        LatestDropOff, capacity, ridewith, smoking, fromorgid, date, requestid) {
+        LatestDropOff, ridewith, smoking, fromorgid, date, requestid) {
 
         this.userID = ID
         this.ID = requestid;
@@ -46,8 +46,6 @@ class Rider {
             //Timing
         this.DepartureTime = DepartureTime
         this.DropOffTime = this.DepartureTime
-
-        this.capacity = capacity
         this.ridewith = ridewith
         this.smoking = smoking
         this.fromorgid = fromorgid
@@ -233,7 +231,6 @@ router.post('/', async(req, res) => {
                     new Date(request.date + " " + request.departuretime),
                     parseFloat(orguser.timefromorg),
                     new Date(request.date + " " + request.latesttime),
-                    request.numberofseats,
                     request.ridewith,
                     request.smoking,
                     request.fromorgid,

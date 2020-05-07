@@ -13,10 +13,10 @@ const Driver = require('../../models/drivers');
 const OfferRideTo = require('../../models/offerrideto');
 const OfferRideFrom = require('../../models/offerridefrom');
 const errHandler = err => {
-    //Catch and log any error.
+
     console.error("Error: ", err);
 };
-// declare our query options
+
 
 
 
@@ -79,118 +79,113 @@ router.post('/', async(req, res) => {
                     if (scheduledTrips.length > 0) {
                         scheduledTrips.forEach(scheduledTrip => {
 
-                                Driver.findOne({
-                                    where: {
-                                        tripid: scheduledTrip.id
-                                    }
-                                }).then(driverTrip => {
+                            Driver.findOne({
+                                where: {
+                                    tripid: scheduledTrip.id
+                                }
+                            }).then(driverTrip => {
 
-                                    if (driverTrip) {
+                                if (driverTrip) {
 
-                                        if (driverTrip.tofrom === "to") {
-                                            const optionsTo = {
-                                                where: {}
-                                            };
-                                            optionsTo.where.id = driverTrip.offerid
-                                            if (req.body.arrivaltime !== undefined)
-                                                optionsTo.where.arrivaltime = req.body.arrivaltime;
-                                            if (req.body.ridewith !== undefined)
-                                                optionsTo.where.ridewith = req.body.ridewith;
-                                            if (req.body.smoking !== undefined)
-                                                optionsTo.where.smoking = req.body.smoking;
-                                            if (req.body.date !== undefined)
-                                                optionsTo.where.date = req.body.date;
-                                            if (req.body.toorgid !== undefined)
-                                                optionsTo.where.toorgid = req.body.toorgid;
-
-
-
-                                            OfferRideTo.findOne(optionsTo).then(offerTrip => {
-                                                countAll++;
-                                                if (offerTrip) {
-
-
-                                                    if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
-                                                        availableTrips[count] = {
-                                                            "startloclatitude": scheduledTrip.startloclatitude,
-                                                            "startloclongitude": scheduledTrip.startloclongitude,
-                                                            "endloclatitude": scheduledTrip.endloclatitude,
-                                                            "endloclongitude": scheduledTrip.endloclongitude,
-                                                            "arrivaltime": offerTrip.arrivaltime,
-                                                            "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats
-                                                        }
-                                                        count++;
+                                    if (driverTrip.tofrom === "to") {
+                                        const optionsTo = {
+                                            where: {}
+                                        };
+                                        optionsTo.where.id = driverTrip.offerid
+                                        if (req.body.arrivaltime !== undefined)
+                                            optionsTo.where.arrivaltime = req.body.arrivaltime;
+                                        if (req.body.ridewith !== undefined)
+                                            optionsTo.where.ridewith = req.body.ridewith;
+                                        if (req.body.smoking !== undefined)
+                                            optionsTo.where.smoking = req.body.smoking;
+                                        if (req.body.date !== undefined)
+                                            optionsTo.where.date = req.body.date;
+                                        if (req.body.toorgid !== undefined)
+                                            optionsTo.where.toorgid = req.body.toorgid;
 
 
 
+                                        OfferRideTo.findOne(optionsTo).then(offerTrip => {
+                                            countAll++;
+                                            if (offerTrip) {
+
+
+                                                if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
+                                                    availableTrips[count] = {
+                                                        "tripid": scheduledTrip.id,
+                                                        "startloclatitude": scheduledTrip.startloclatitude,
+                                                        "startloclongitude": scheduledTrip.startloclongitude,
+                                                        "endloclatitude": scheduledTrip.endloclatitude,
+                                                        "endloclongitude": scheduledTrip.endloclongitude,
+                                                        "arrivaltime": offerTrip.arrivaltime,
+                                                        "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats
                                                     }
+                                                    count++;
+
+
 
                                                 }
-                                                if (countAll === scheduledTrips.length) {
-                                                    res.send(availableTrips)
-                                                }
-                                            }).catch(errHandler)
 
-                                        } else {
-                                            //from
-                                            const optionsFrom = {
-                                                where: {}
-                                            };
-                                            optionsFrom.where.id = driverTrip.offerid
-                                            if (req.body.departuretime !== undefined)
-                                                optionsFrom.where.departuretime = req.body.departuretime;
-                                            if (req.body.ridewith !== undefined)
-                                                optionsFrom.where.ridewith = req.body.ridewith;
-                                            if (req.body.smoking !== undefined)
-                                                optionsFrom.where.smoking = req.body.smoking;
+                                            }
+                                            if (countAll === scheduledTrips.length) {
+                                                res.send(availableTrips)
+                                            }
+                                        }).catch(errHandler)
 
-                                            if (req.body.date !== undefined)
-                                                optionsFrom.where.date = req.body.date;
-                                            if (req.body.fromorgid !== undefined)
-                                                optionsFrom.where.fromorgid = req.body.fromorgid;
+                                    } else {
+                                        //from
+                                        const optionsFrom = {
+                                            where: {}
+                                        };
+                                        optionsFrom.where.id = driverTrip.offerid
+                                        if (req.body.departuretime !== undefined)
+                                            optionsFrom.where.departuretime = req.body.departuretime;
+                                        if (req.body.ridewith !== undefined)
+                                            optionsFrom.where.ridewith = req.body.ridewith;
+                                        if (req.body.smoking !== undefined)
+                                            optionsFrom.where.smoking = req.body.smoking;
 
-                                            OfferRideFrom.findOne(optionsFrom).then(offerTrip => {
-                                                countAll++;
-                                                if (offerTrip) {
+                                        if (req.body.date !== undefined)
+                                            optionsFrom.where.date = req.body.date;
+                                        if (req.body.fromorgid !== undefined)
+                                            optionsFrom.where.fromorgid = req.body.fromorgid;
 
-
-                                                    if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
-                                                        availableTrips[count] = {
-                                                            "startloclatitude": scheduledTrip.startloclatitude,
-                                                            "startloclongitude": scheduledTrip.startloclongitude,
-                                                            "endloclatitude": scheduledTrip.endloclatitude,
-                                                            "endloclongitude": scheduledTrip.endloclongitude,
-                                                            "departuretime": offerTrip.departuretime,
-                                                            "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats
-                                                        }
-                                                        count++;
+                                        OfferRideFrom.findOne(optionsFrom).then(offerTrip => {
+                                            countAll++;
+                                            if (offerTrip) {
 
 
+                                                if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
+                                                    availableTrips[count] = {
+                                                        "tripid": scheduledTrip.id,
+                                                        "startloclatitude": scheduledTrip.startloclatitude,
+                                                        "startloclongitude": scheduledTrip.startloclongitude,
+                                                        "endloclatitude": scheduledTrip.endloclatitude,
+                                                        "endloclongitude": scheduledTrip.endloclongitude,
+                                                        "departuretime": offerTrip.departuretime,
+                                                        "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats
                                                     }
+                                                    count++;
+
+
                                                 }
-                                                console.log(countAll)
-                                                if (countAll === scheduledTrips.length) {
-                                                    res.send(availableTrips)
-                                                }
-                                            }).catch(errHandler)
+                                            }
 
-                                        }
-
-
+                                            if (countAll === scheduledTrips.length) {
+                                                res.send(availableTrips)
+                                            }
+                                        }).catch(errHandler)
 
                                     }
 
-                                }).catch(errHandler)
 
-                            })
-                            /*   .then(() => {
-                                  if (!res.headersSent) {
-                                      console.log("hi")
 
-                                      // res.status(404).send("No trips are found")
-                                      //res.end()
-                                  }
-                              }) */
+                                }
+
+                            }).catch(errHandler)
+
+                        })
+
 
 
 

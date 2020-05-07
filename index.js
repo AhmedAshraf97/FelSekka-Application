@@ -47,18 +47,18 @@ app.use('/api/searchTrip', require('./routes/api/searchTrip'));
 app.use('/api/matching', require('./routes/api/matching').router);
 
 app.use('/api/ReturnTripMatch', require('./routes/api/ReturnTripMatch').router);
-
-/*const betweenusers = require('./models/betweenusers');
-const cars = require('./models/cars');
-const organizations = require('./models/organizations');
-const drivers = require('./models/drivers');
-const offerridefrom = require('./models/offerridefrom');
-const offerrideto = require('./models/offerrideto');
-const organizations = require('./models/organizations');
-const orgusers = require('./models/orgusers');
-const ratings = require('./models/ratings');
-const requestridefrom = require('./models/requestridefrom');
-const requestrideto = require('./models/requestrideto');
-const reviews = require('./models/reviews');
-const riders = require('./models/riders');
-const trips = require('./models/trips');*/
+app.use('/api/chooseFromAvailableRides', require('./routes/api/chooseFromAvailableRidesApi').router)
+    /*const betweenusers = require('./models/betweenusers');
+    const cars = require('./models/cars');
+    const organizations = require('./models/organizations');
+    const drivers = require('./models/drivers');
+    const offerridefrom = require('./models/offerridefrom');
+    const offerrideto = require('./models/offerrideto');
+    const organizations = require('./models/organizations');
+    const orgusers = require('./models/orgusers');
+    const ratings = require('./models/ratings');
+    const requestridefrom = require('./models/requestridefrom');
+    const requestrideto = require('./models/requestrideto');
+    const reviews = require('./models/reviews');
+    const riders = require('./models/riders');
+    const trips = require('./models/trips');*/
