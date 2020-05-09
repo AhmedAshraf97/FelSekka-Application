@@ -206,10 +206,10 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                                 );
                               }
                               else{
-                                showDialog(
+                                /*showDialog(
                                   context: context,
                                   builder: (_) => FunkyOverlay(text: "Done!",image: "images/donesign.png"),
-                                );
+                                );*/
                                 Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
                               }
                             }

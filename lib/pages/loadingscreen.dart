@@ -1,8 +1,9 @@
 import 'package:felsekka/pages/AnimatedPage%20Route.dart';
+import 'package:felsekka/pages/homepage.dart';
 import 'package:felsekka/pages/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
-import 'package:felsekka/pages/signup3.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -13,9 +14,16 @@ class _LoadingScreenState extends State<LoadingScreen>
     with TickerProviderStateMixin {
   AnimationController controller;
   Animation animation;
-
+  String token="";
+  _loadToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = (prefs.getString('token')??'');
+    });
+  }
   @override
   void initState() {
+    _loadToken();
     controller = AnimationController(
         vsync: this,
         duration: Duration(seconds: 2)
@@ -27,8 +35,14 @@ class _LoadingScreenState extends State<LoadingScreen>
     Future.delayed(const Duration(seconds: 4), () {
       setState(() {
         Navigator.pop(context);
-        Navigator.push(context, AnimatedPageRoute(widget: SignIn())
-        );
+        if(token!="")
+        {
+          Navigator.push(context, AnimatedPageRoute(widget: HomePage()));
+        }
+        else
+        {
+          Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
+        }
       });
     });
   }

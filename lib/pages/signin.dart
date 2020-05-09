@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:felsekka/pages/homepage.dart';
 import 'package:felsekka/pages/signup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:http/http.dart';
 import 'AnimatedPage Route.dart';
 import 'funkyoverlay.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -205,7 +206,7 @@ class _SignInState extends State<SignIn> {
                               Response response =await post(url, body: body);
                               print(response.statusCode);
                               print(response.body);
-                              /*if(response.statusCode != 200)
+                              if(response.statusCode != 200)
                               {
                                 Map data= jsonDecode(response.body);
                                 showDialog(
@@ -214,8 +215,27 @@ class _SignInState extends State<SignIn> {
                                 );
                               }
                               else{
-                                Navigator.push(context, AnimatedPageRoute(widget: SignUp2(firstname, lastname, username, email, phonenumber, password, confirmpassword)));
-                              }*/
+                                Map data= jsonDecode(response.body);
+                                String token= data['token'];
+                                /*Map userinfo = data['userInfo'];
+                                String firstname = userinfo['firstname'];
+                                String lastname = userinfo['lastname'];
+                                String phonenumber = userinfo['phonenumber'];
+                                String gender = userinfo['gender'];
+                                String password = userinfo['password'];
+                                String birthdate = userinfo['birthdate'];
+                                String ridewith = userinfo['ridewith'];
+                                String smoking = userinfo['smoking'];
+                                String rating = userinfo['rating'];
+                                String status = userinfo['status'];
+                                String email = userinfo['email'];
+                                String latitude = userinfo['latitude'];
+                                String longitude = userinfo['longitude'];
+                                String username = userinfo['username'];*/
+                                SharedPreferences prefs = await SharedPreferences.getInstance();
+                                await prefs.setString('token', token);
+                                Navigator.push(context, AnimatedPageRoute(widget: HomePage()));
+                              }
                             }
                             getData();
                           }

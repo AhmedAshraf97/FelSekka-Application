@@ -156,7 +156,7 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                             },
                           ),
                           Text(
-                            "Men",
+                            "Male",
                             style: TextStyle(
                               color: Colors.blueGrey,
                               fontFamily: "Kodchasan",
@@ -174,7 +174,7 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                             },
                           ),
                           Text(
-                            "Women",
+                            "Female",
                             style: TextStyle(
                               color: Colors.blueGrey,
                               fontFamily: "Kodchasan",
@@ -292,11 +292,11 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                           //ridewith
                           if(ridewith==1)
                             {
-                              ridewithSelected="men";
+                              ridewithSelected="male";
                             }
                           else if(ridewith==2)
                             {
-                              ridewithSelected="women";
+                              ridewithSelected="female";
                             }
                           else if(ridewith==3)
                             {

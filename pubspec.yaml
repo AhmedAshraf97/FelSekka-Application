@@ -23,6 +23,7 @@ dependencies:
   gender_selector: ^1.0.6
   intl: ^0.16.1
   google_maps_place_picker: ^0.9.4
+  shared_preferences: ^0.5.7
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
@@ -50,6 +51,8 @@ flutter:
   - images/errorsign.png
   - images/location.png
   - images/donesign.png
+  - images/avatarmale.png
+  - images/avatarfemale.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
