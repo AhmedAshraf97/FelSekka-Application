@@ -481,24 +481,35 @@ router.post('/', async(req, res) => {
                 }
             }
             if (countAssigned === 0) {
-                res.send("No secheduled trips")
+                res.send("No trips will be scheduled")
             }
 
 
         } else {
-            res.send("No secheduled trips")
+            res.send("no requests")
         }
 
     } else {
-        res.send("No secheduled trips")
+        res.send("no offers")
     }
 
 
 
 
+    DriversRider = []
+    RiderRider = []
+    DriversRidersDuration = []
+    RiderRiderDuration = []
+    Drivers = []
+    Riders = []
+
 });
 
+function getters() {
+    return { Riders, Drivers, RiderRider, RiderRiderDuration, DriversRidersDuration, DriversRider }
+}
 
 
 
-module.exports = { router, Riders: Riders, Drivers: Drivers, RiderRider, RiderRiderDuration, DriversRidersDuration, DriversRider };
+
+module.exports = { router, getters: getters }

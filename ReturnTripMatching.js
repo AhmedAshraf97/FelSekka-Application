@@ -1,6 +1,8 @@
 const graphlib = require('graphlib');
 const ksp = require('k-shortest-path');
 var Combinatorics = require('js-combinatorics');
+var decache = require('decache');
+
 var Riders;
 var Drivers
 var RiderRider
@@ -9,6 +11,10 @@ var DriversRidersDuration
 var DriversRider
 
 
+function requireUncached(module) {
+    delete require.cache[require.resolve(module)];
+    return require(module);
+}
 
 
 function diff_minutes(dt2, dt1) {
@@ -172,12 +178,17 @@ async function Reorder() {
 
 
 module.exports = async function main() {
-    Riders = require('./routes/api/ReturnTripMatch').Riders
-    Drivers = require('./routes/api/ReturnTripMatch').Drivers
-    RiderRider = require('./routes/api/ReturnTripMatch').RiderRider
-    RiderRiderDuration = require('./routes/api/ReturnTripMatch').RiderRiderDuration
-    DriversRidersDuration = require('./routes/api/ReturnTripMatch').DriversRidersDuration
-    DriversRider = require('./routes/api/ReturnTripMatch').DriversRider
+
+    var f = require('./routes/api/ReturnTripMatch').getters
+    obj = f();
+
+    Riders = obj.Riders;
+    Drivers = obj.Drivers;
+    RiderRider = obj.RiderRider;
+    RiderRiderDuration = obj.RiderRiderDuration;
+    DriversRidersDuration = obj.DriversRidersDuration;
+    DriversRider = obj.DriversRider;
+
     var NumberOfUnAssignedRiders = Riders.length;
     var count = -1;
     while (count != Drivers.length) {
@@ -436,18 +447,5 @@ module.exports = async function main() {
     // Reorder and calculate dropOff
     var x = await Reorder();
 
-    //Print
-    for (var i = 0; i < Drivers.length; i++) {
-        if (Drivers[i].AssignedRiders.length !== 1) {
-
-            console.log(Drivers[i].ID, Drivers[i].Name, Drivers[i].AssignedRiders)
-            console.log("Total Covered = ", Drivers[i].TotalDistanceCoveredToDestination, " max duration ", Drivers[i].MaxDuration, "total time taken", Drivers[i].TotalDurationTaken, "dropoff", Drivers[i].DropOffTime)
-            for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
-                index1 = Riders.indexOf(Riders.find(n => n.ID === Drivers[i].AssignedRiders[j]));
-                console.log(Drivers[i].AssignedRiders[j], "Drop off", Riders[index1].DropOffTime)
-            }
-            console.log(" //////////////////////////////////////////// ")
-        }
-    }
 
 }

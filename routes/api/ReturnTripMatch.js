@@ -153,9 +153,7 @@ class userArray {
 
 var DriversRider = new Array();
 var RiderRider = new Array();
-
 var DriversRidersDuration = new Array();
-
 var RiderRiderDuration = new Array();
 
 var Drivers = []
@@ -179,6 +177,7 @@ router.post('/', async(req, res) => {
     var DRdurationValue = []
     var RRdistanceValue = []
     var RRdurationValue = []
+
 
     const offers = await Offer.findAll({
         where: {
@@ -408,7 +407,6 @@ router.post('/', async(req, res) => {
             var z = await ReturnTripMatching();
 
 
-
             var countAssigned = 0;
             for (var i = 0; i < Drivers.length; i++) {
                 if (Drivers[i].AssignedRiders.length > 1) {
@@ -487,27 +485,37 @@ router.post('/', async(req, res) => {
                 }
             }
             if (countAssigned === 0) {
-                res.send("No secheduled trips")
+                res.send("No trips will be scheduled")
             }
 
         } else {
-            res.send("No secheduled trips")
+            res.send("no requests")
         }
 
     } else {
-        res.send("no secheduled trips")
+        res.send("no offers")
     }
 
 
 
 
-
-
-
+    Drivers = []
+    Riders = []
+    DriversRider = []
+    RiderRider = []
+    DriversRidersDuration = new Array();
+    RiderRiderDuration = [];
+    DRdistanceValue = []
+    DRdurationValue = []
+    RRdistanceValue = []
+    RRdurationValue = []
 
 });
 
 
+function getterss() {
+    return { Riders, Drivers, RiderRider, RiderRiderDuration, DriversRidersDuration, DriversRider };
+}
 
 
-module.exports = { router, Riders: Riders, Drivers: Drivers, RiderRider, RiderRiderDuration, DriversRidersDuration, DriversRider };
+module.exports = { router, getters: getterss };

@@ -7,6 +7,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "decache": "^4.5.1",
     "nodemon": "^2.0.3",
     "sequelize-cli": "^5.5.1"
   },
@@ -15,12 +16,14 @@
     "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",
     "date-and-time": "^0.13.1",
+    "deep-cleaner": "^1.2.1",
     "express": "^4.17.1",
     "express-jwt": "^5.3.3",
     "express-jwt-blacklist": "^1.1.0",
     "express-validator": "^6.4.0",
     "forEachAsync": "^3.0.0",
     "graphlib": "^2.1.8",
+    "import-fresh": "^3.2.1",
     "joi": "^14.3.1",
     "js-combinatorics": "^0.5.5",
     "jsonwebtoken": "^8.5.1",

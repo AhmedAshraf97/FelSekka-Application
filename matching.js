@@ -151,12 +151,15 @@ async function MatchingReorder() {
 }
 
 module.exports = async function main() {
-    Riders = require('./routes/api/matching').Riders
-    Drivers = require('./routes/api/matching').Drivers
-    RiderRider = require('./routes/api/matching').RiderRider
-    RiderRiderDuration = require('./routes/api/matching').RiderRiderDuration
-    DriversRidersDuration = require('./routes/api/matching').DriversRidersDuration
-    DriversRider = require('./routes/api/matching').DriversRider
+    var f = require('./routes/api/matching').getters
+    obj = f();
+
+    Riders = obj.Riders;
+    Drivers = obj.Drivers;
+    RiderRider = obj.RiderRider;
+    RiderRiderDuration = obj.RiderRiderDuration;
+    DriversRidersDuration = obj.DriversRidersDuration;
+    DriversRider = obj.DriversRider;
 
     var DistanceThreshold = 8;
 

@@ -38,7 +38,7 @@ app.use('/api/deletecar', require('./routes/api/delete_car'));
 app.use('/api/showmycars', require('./routes/api/show_my_cars'));
 app.use('/api/addrating', require('./routes/api/add_rating'));
 app.use('/api/scheduledtrips', require('./routes/api/scheduledtrips'));
-app.use('/api/showAvailableRides', require('./routes/api/showAvailableRides'));
+//app.use('/api/showAvailableRides', require('./routes/api/NotUsedshowAvailableRides'));
 app.use('/api/signout', require('./routes/api/sign_out'));
 app.use('/api/deleteaccount', require('./routes/api/delete_account'));
 
@@ -48,17 +48,3 @@ app.use('/api/matching', require('./routes/api/matching').router);
 
 app.use('/api/ReturnTripMatch', require('./routes/api/ReturnTripMatch').router);
 app.use('/api/chooseFromAvailableRides', require('./routes/api/chooseFromAvailableRidesApi').router)
-    /*const betweenusers = require('./models/betweenusers');
-    const cars = require('./models/cars');
-    const organizations = require('./models/organizations');
-    const drivers = require('./models/drivers');
-    const offerridefrom = require('./models/offerridefrom');
-    const offerrideto = require('./models/offerrideto');
-    const organizations = require('./models/organizations');
-    const orgusers = require('./models/orgusers');
-    const ratings = require('./models/ratings');
-    const requestridefrom = require('./models/requestridefrom');
-    const requestrideto = require('./models/requestrideto');
-    const reviews = require('./models/reviews');
-    const riders = require('./models/riders');
-    const trips = require('./models/trips');*/
