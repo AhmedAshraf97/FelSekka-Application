@@ -181,7 +181,7 @@ router.post('/', async(req, res) => {
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        res.status(401).send({ message: "You aren't authorized to edit your profile" })
+        res.status(401).send({ message: "You aren't authorized to choose from avilable rides" })
         res.end();
     }
     let isvalid = false

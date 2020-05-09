@@ -1,7 +1,6 @@
 const graphlib = require('graphlib');
 const ksp = require('k-shortest-path');
 var Combinatorics = require('js-combinatorics');
-var decache = require('decache');
 
 var Riders;
 var Drivers
@@ -11,10 +10,6 @@ var DriversRidersDuration
 var DriversRider
 
 
-function requireUncached(module) {
-    delete require.cache[require.resolve(module)];
-    return require(module);
-}
 
 
 function diff_minutes(dt2, dt1) {

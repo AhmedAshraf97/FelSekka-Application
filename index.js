@@ -48,3 +48,4 @@ app.use('/api/matching', require('./routes/api/matching').router);
 
 app.use('/api/ReturnTripMatch', require('./routes/api/ReturnTripMatch').router);
 app.use('/api/chooseFromAvailableRides', require('./routes/api/chooseFromAvailableRidesApi').router)
+app.use('/api/chooseFromReturnTripsApi', require('./routes/api/chooseFromReturnTripsApi').router)
