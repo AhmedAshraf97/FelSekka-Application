@@ -208,7 +208,7 @@ router.post('/', async(req, res) => {
             }
 
         } else
-            res.status(401).send("User doesn't exist, Please Enter valid ID")
+            res.status(404).send("User doesn't exist, Please Enter valid ID")
         res.end();
     }
 })
