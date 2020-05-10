@@ -151,12 +151,15 @@ async function MatchingReorder() {
 }
 
 module.exports = async function main() {
-    Riders = require('./routes/api/matching').Riders
-    Drivers = require('./routes/api/matching').Drivers
-    RiderRider = require('./routes/api/matching').RiderRider
-    RiderRiderDuration = require('./routes/api/matching').RiderRiderDuration
-    DriversRidersDuration = require('./routes/api/matching').DriversRidersDuration
-    DriversRider = require('./routes/api/matching').DriversRider
+    var f = require('./routes/api/matchingApi').getters
+    obj = f();
+
+    Riders = obj.Riders;
+    Drivers = obj.Drivers;
+    RiderRider = obj.RiderRider;
+    RiderRiderDuration = obj.RiderRiderDuration;
+    DriversRidersDuration = obj.DriversRidersDuration;
+    DriversRider = obj.DriversRider;
 
     var DistanceThreshold = 8;
 
@@ -410,7 +413,7 @@ module.exports = async function main() {
 
             } else {
                 var indexinRiderRider = RiderRiderDuration.findIndex(n => n.ID === Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1]);
-                if (indexinRiderRider) {
+                if (indexinRiderRider === -1) {
                     count++;
                 } else if (RiderRiderDuration[indexinRiderRider].checked === RiderRiderDuration[indexinRiderRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
                     count++;
@@ -425,17 +428,7 @@ module.exports = async function main() {
 
     //Setting Pickup Time and Pool Start Time
     var x = await MatchingReorder()
-    for (var i = 0; i < Drivers.length; i++) {
-        if (Drivers[i].AssignedRiders.length !== 1) {
 
-            console.log(Drivers[i].ID, Drivers[i].Name, Drivers[i].AssignedRiders, "Start ", Drivers[i].PoolStartTime)
-            console.log("Total Covered = ", Drivers[i].TotalDistanceCoveredToDestination, " max duration ", Drivers[i].MaxDuration, "total time taken", Drivers[i].TotalDurationTaken, "arrival", Drivers[i].ArrivalTime)
-            for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
-                index1 = Riders.indexOf(Riders.find(n => n.ID === Drivers[i].AssignedRiders[j]));
-                console.log(Drivers[i].AssignedRiders[j], Riders[index1].PickupTime)
-            }
-            console.log(" //////////////////////////////////////////// ")
-        }
-    }
+
 
 }

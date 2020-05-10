@@ -4,6 +4,7 @@ const Organization = require('../../models/organizations');
 const User = require('../../models/users');
 const Offer = require('../../models/offerrideto')
 const Request = require('../../models/requestrideto')
+
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -12,7 +13,9 @@ const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 process.env.SECRET_KEY = 'secret';
+
 const chooseFromAvailableRides = require('../../chooseFromAvailableRides');
+
 const Trips = require('../../models/trips')
 const DriverDB = require('../../models/drivers');
 const RiderDB = require('../../models/riders');
@@ -178,7 +181,7 @@ router.post('/', async(req, res) => {
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        res.status(401).send({ message: "You aren't authorized to edit your profile" })
+        res.status(401).send({ message: "You aren't authorized to choose from avilable rides" })
         res.end();
     }
     let isvalid = false
@@ -312,6 +315,7 @@ router.post('/', async(req, res) => {
                                     offer.toorgid,
                                     new Date(offer.date))
                                 Riders.push(rider);
+                                driver.AssignedRiders.push(user.id)
                                 for (rider in Riders) {
 
                                     const FromDriverToRider = await BetweenUsers.findOne({
@@ -547,6 +551,21 @@ router.post('/', async(req, res) => {
     }
 
 
+
+    DriversRider = []
+    RiderRider = []
+    DriversRidersDuration = []
+    RiderRiderDuration = []
+    Riders = []
+    Drivers = []
+    driver = {}
+
+
 })
 
-module.exports = { router, Riders: Riders, Drivers: Drivers, RiderRider, RiderRiderDuration, DriversRidersDuration, DriversRider };
+function getters() {
+    return { Riders, driver, RiderRider, RiderRiderDuration, DriversRidersDuration, DriversRider }
+}
+
+
+module.exports = { router, getters: getters };

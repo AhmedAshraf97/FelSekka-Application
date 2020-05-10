@@ -1,63 +1,62 @@
 const Sequelize = require("sequelize");
-module.exports = sequelize.define("riders", {  
+module.exports = sequelize.define("riders", {
     id: {
-      type: Sequelize.INTEGER(255),
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true
+        type: Sequelize.INTEGER(255),
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true
     },
     tripid: {
         type: Sequelize.INTEGER(255),
         allowNull: false
-      },
+    },
     tofrom: {
         type: Sequelize.STRING(300),
         allowNull: false
-      },
-    offerid:{
-        type:Sequelize.INTEGER(255),
+    },
+    offerid: {
+        type: Sequelize.INTEGER(255),
         allowNull: false
     },
-    requestid:{
-        type:Sequelize.INTEGER(255),
+    requestid: {
+        type: Sequelize.INTEGER(255),
         allowNull: false,
     },
-    riderid:{
-        type:Sequelize.INTEGER(255),
+    riderid: {
+        type: Sequelize.INTEGER(255),
         allowNull: false,
     },
-    pickuptime:{
-        type:Sequelize.TIME,
+    pickuptime: {
+        type: Sequelize.TIME,
         allowNull: false,
     },
-    arrivaltime:{
-        type:Sequelize.TIME,
+    arrivaltime: {
+        type: Sequelize.TIME,
         allowNull: false,
     },
-    actualpickuptime:{
-        type:Sequelize.TIME,
+    actualpickuptime: {
+        type: Sequelize.TIME,
         allowNull: false,
     },
-    actualarrivaltime:{
-        type:Sequelize.TIME,
+    actualarrivaltime: {
+        type: Sequelize.TIME,
         allowNull: false,
     },
-    distance:{
-        type:Sequelize.DECIMAL,
-        allowNull: false,
-    }, 
-    time:{
-        type:Sequelize.DECIMAL,
-        allowNull: false,
-    },  
-    fare:{
-        type:Sequelize.DECIMAL,
+    distance: {
+        type: Sequelize.DECIMAL,
         allowNull: false,
     },
-    status:{
-        type:Sequelize.STRING(300),
+    time: {
+        type: Sequelize.DECIMAL,
+        allowNull: false,
+    },
+    fare: {
+        type: Sequelize.DECIMAL,
+        allowNull: false,
+    },
+    status: {
+        type: Sequelize.STRING(300),
         allowNull: false,
         defaultValue: "pending"
     }
-  }
-  );
+});
