@@ -1,19 +1,3 @@
-function diff_minutes(dt2, dt1) {
-
-    var diff = (dt2.getTime() - dt1.getTime()) / 1000;
-    diff /= 60;
-    return (Math.round(diff));
-
-}
-
-
-function add_minutes(d1, miuntes) {
-
-    var d2 = new Date(d1);
-    d2.setMinutes(d1.getMinutes() + miuntes);
-    return d2
-}
-
 module.exports = async function main() {
 
         var f = require('./routes/api/cancelRiderToApi').getters
