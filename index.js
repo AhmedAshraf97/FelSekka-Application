@@ -44,8 +44,10 @@ app.use('/api/deleteaccount', require('./routes/api/delete_account'));
 
 app.use('/api/searchTrip', require('./routes/api/searchTrip'));
 
-app.use('/api/matching', require('./routes/api/matching').router);
+app.use('/api/matching', require('./routes/api/matchingApi').router);
 
 app.use('/api/ReturnTripMatch', require('./routes/api/ReturnTripMatch').router);
 app.use('/api/chooseFromAvailableRides', require('./routes/api/chooseFromAvailableRidesApi').router)
 app.use('/api/chooseFromReturnTripsApi', require('./routes/api/chooseFromReturnTripsApi').router)
+
+app.use('/api/cancelRiderTo', require('./routes/api/cancelRiderToApi').router)

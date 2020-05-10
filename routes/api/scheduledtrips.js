@@ -73,7 +73,6 @@ router.post('/', async(req, res) => {
                         }
                     }).then(RiderRides => {
 
-
                         if (RiderRides.length > 0) {
 
                             RiderRides.forEach(RiderRide => {
@@ -150,6 +149,7 @@ router.post('/', async(req, res) => {
                                                                                     if (c === AllRidersTrip.length - 1) {
                                                                                         TripsDetailsArr[count] = ({
                                                                                             type: "Rider",
+                                                                                            "tripid": trip.id,
                                                                                             "carDetails.model": carDetails.model,
                                                                                             "carDetails.brand": carDetails.brand,
                                                                                             "pickuplongitude": RequestRideToDetails.fromlongitude,
@@ -284,6 +284,7 @@ router.post('/', async(req, res) => {
                                                                                     if (c === AllRidersTrip.length - 1) {
                                                                                         TripsDetailsArr[count] = ({
                                                                                             type: "Rider",
+                                                                                            "tripid": trip.id,
                                                                                             "carDetails.model": carDetails.model,
                                                                                             "carDetails.brand": carDetails.brand,
                                                                                             "arrivallongitude": RequestRideFromDetails.tolongitude,
@@ -444,6 +445,7 @@ router.post('/', async(req, res) => {
 
                                                                                     TripsDetailsArr[count] = ({
                                                                                         type: "driver",
+                                                                                        "tripid": trip.id,
                                                                                         "carDetails.model": carDetails.model,
                                                                                         "carDetails.brand": carDetails.brand,
                                                                                         "date": trip.date,
@@ -542,6 +544,7 @@ router.post('/', async(req, res) => {
                                                                                 if (c === AllRidersTrip.length) {
                                                                                     TripsDetailsArr[count] = ({
                                                                                         type: "driver",
+                                                                                        "tripid": trip.id,
                                                                                         "carDetails.model": carDetails.model,
                                                                                         "carDetails.brand": carDetails.brand,
                                                                                         "date": trip.date,
