@@ -9,6 +9,7 @@ const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 process.env.SECRET_KEY = 'secret';
+const ExpiredToken = require('../../models/expiredtokens');
 
 //Error handler
 const errHandler = err => {
@@ -17,7 +18,7 @@ const errHandler = err => {
 };
 router.post('/', async (req, res) => {
     var decoded = jwt.verify(req.headers['authorization'], process.env.SECRET_KEY);
-    await User.findOne({ where: { id: decoded.id }}).then(user=>{
+    await User.findOne({ where: { id: decoded.id , status: 'existing'}}).then(user=>{
         if(user){
             userExists =true;
         } 
@@ -26,6 +27,13 @@ router.post('/', async (req, res) => {
             res.end()
         }
     }).catch(errHandler);
+    await ExpiredToken.findOne({where: {token: req.headers["authorization"]}}).then(expired => {
+        if (expired) {
+            userExists = false;
+            res.status(401).send({ message: "You aren't authorized" })
+            res.end();
+        }
+    }).catch(errHandler)
     if(userExists){
         //Name validation
         if(req.body.name==null){
