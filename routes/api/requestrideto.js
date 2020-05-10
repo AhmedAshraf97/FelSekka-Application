@@ -55,11 +55,10 @@ router.post('/', async (req, res) => {
         res.status(400).send({ error: "Date", message: "Date can't be empty" });
     } else if (!(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(req.body.date))) {
         res.status(400).send({ error: "Date", message: "Date is unvalid" });
-    }else if(! (Date.parse(req.body.date)-Date.parse(new Date())>= 0)  && (!(isToday(req.body.date)))){ 
-        console.log("hi")  
+    }else if(! (Date.parse(req.body.date)-Date.parse(new Date())>= 0)  && (!(isToday(req.body.date)))){  
         res.status(400).send({ error: "Date", message: "Date can't be in the past" });
     }
-    //Departure time validation
+    //Arrival time validation
     else if (req.body.arrivaltime == null) {
     res.status(400).send({ error: "Arrival time", message: "Arrival time paramter is missing" });
     } else if (!((typeof(req.body.arrivaltime) === 'string') || ((req.body.arrivaltime) instanceof String))) {
@@ -88,7 +87,7 @@ router.post('/', async (req, res) => {
     } else if ((req.body.smoking).trim().length === 0) {
         res.status(400).send({ error: "Smoking", message: "Smoking can't be empty" });
     }
-    //Latest time 
+    //Earliest time 
     else if (req.body.earliesttime == null) {
     res.status(400).send({ error: "Earliest time", message: "Earliest time paramter is missing" });
     } else if (!((typeof(req.body.earliesttime) === 'string') || ((req.body.earliesttime) instanceof String))) {
