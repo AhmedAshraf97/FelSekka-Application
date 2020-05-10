@@ -2,8 +2,8 @@ const OrgUser = require('../../models/orgusers');
 const BetweenUsers = require('../../models/betweenusers');
 const Organization = require('../../models/organizations');
 const User = require('../../models/users');
-const Offer = require('../../models/offerrideto')
-const Request = require('../../models/requestrideto')
+const Offer = require('../../models/offerridefrom')
+const Request = require('../../models/requestridefrom')
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -18,7 +18,7 @@ const DriverDB = require('../../models/drivers');
 const RiderDB = require('../../models/riders');
 
 
-const CancelRiderTo = require('../../CancelRiderTo');
+const CancelRiderFrom = require('../../CancelRiderFrom');
 
 const ExpiredToken = require('../../models/expiredtokens');
 
@@ -32,58 +32,63 @@ class values {
 }
 
 class Rider {
-    constructor(ID, DistanceToOrganization, ArrivalTime, TimeToOrganizationMinutes,
-        EarliestPickup, ridewith, smoking, toorgid, date) {
+    constructor(ID, DistanceFromOrganization, DepartureTime, TimeFromOrganizationMinutes,
+        LatestDropOff, ridewith, smoking, fromorgid, date) {
 
 
         this.ID = ID;
 
         this.isAssigned = false;
         this.DriverAssigned = -1;
-        this.DistanceToOrganization = DistanceToOrganization;
-        this.TimeToOrganizationMinutes = TimeToOrganizationMinutes;
+        this.DistanceFromOrganization = DistanceFromOrganization;
+        this.TimeFromOrganizationMinutes = TimeFromOrganizationMinutes;
         this.TrustedDrivers = []
         this.UnTrustedDrivers = [] //todo:block
 
-        this.EarliestPickup = EarliestPickup
+        this.LatestDropOff = LatestDropOff
             //Timing
-        this.ArrivalTime = ArrivalTime
-        this.PickupTime = this.ArrivalTime
+        this.DepartureTime = DepartureTime
+        this.DropOffTime = this.DepartureTime
         this.ridewith = ridewith
         this.smoking = smoking
-        this.toorgid = toorgid
+        this.fromorgid = fromorgid
         this.date = date
 
     }
 };
 class Driver {
-    constructor(ID, DistanceToOrganization, ArrivalTime, TimeToOrganizationMinutes, capacity,
-        EarliestStartTime, ridewith, smoking, toorgid, date, latitude, longitude) {
+    constructor(ID, DistanceFromOrganization, PoolStartTime, TimeFromOrganizationMinutes, capacity,
+        LatestDropOff, ridewith, smoking, fromorgid, date, latitude, longitude) {
+
 
         this.ID = ID
         this.AssignedRiders = [ID];
         this.TotalDistanceCoveredToDestination = 0;
         this.TotalDurationTaken = 0;
-        this.DistanceToOrganization = DistanceToOrganization;
-        this.TimeToOrganizationMinutes = TimeToOrganizationMinutes;
-        this.EarliestStartTime = EarliestStartTime
+        this.DistanceFromOrganization = DistanceFromOrganization;
+        this.TimeFromOrganizationMinutes = TimeFromOrganizationMinutes;
+
+        this.LatestDropOff = LatestDropOff
         this.capacity = capacity
-        this.MaxDistance = 1.5 * DistanceToOrganization //removeee
+        this.MaxDistance = 1.5 * DistanceFromOrganization //removeee
+
 
         //Timing
-        this.PoolStartTime = new Date();
-        this.ArrivalTime = ArrivalTime
-        this.MaxDuration = diff_minutes(this.ArrivalTime, this.EarliestStartTime)
+        this.DropOffTime = this.PoolStartTime
+        this.PoolStartTime = PoolStartTime
+        this.MaxDuration = diff_minutes(this.LatestDropOff, this.PoolStartTime)
+
 
 
         this.ridewith = ridewith;
         this.smoking = smoking
-        this.toorgid = toorgid
+        this.fromorgid = fromorgid
         this.date = date
         this.latitude = latitude
         this.longitude = longitude
     }
 };
+
 
 
 class distance {
@@ -184,7 +189,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to cancel trip" })
+        res.status(401).send({ message: "You aren't authorized to view user scheduled trips" })
         res.end();
     }
 
@@ -195,7 +200,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to cancel trips" })
+            res.status(401).send({ message: "You aren't authorized to view user scheduled trips" })
             res.end();
         }
     }).catch(errHandler)
@@ -232,7 +237,7 @@ router.post('/', async(req, res) => {
                 },
                 order: [
                     [
-                        'pickuptime'
+                        'arrivaltime', 'DESC'
                     ]
                 ]
             }).catch(errHandler)
@@ -307,21 +312,21 @@ router.post('/', async(req, res) => {
             } else {
                 const orguserDriver = await OrgUser.findOne({
                     where: {
-                        orgid: offer.toorgid,
+                        orgid: offer.fromorgid,
                         userid: offer.userid,
                         status: "existing"
                     }
 
                 }).catch(errHandler)
-                var driver = new Driver(offer.userid, parseFloat(orguserDriver.distancetoorg), new Date(offer.date + " " + offer.arrivaltime),
-                    parseFloat(orguserDriver.timetoorg),
+                var driver = new Driver(offer.userid, parseFloat(orguserDriver.distancefromorg), new Date(offer.date + " " + offer.departuretime),
+                    parseFloat(orguserDriver.timefromorg),
                     offer.numberofseats,
-                    new Date(offer.date + " " + offer.earliesttime),
+                    new Date(offer.date + " " + offer.latesttime),
                     offer.ridewith,
                     offer.smoking,
                     offer.toorgid,
                     new Date(offer.date),
-                    offer.id, parseFloat(offer.fromlatitude), parseFloat(offer.fromlongitude))
+                    offer.id, parseFloat(offer.tolatitude), parseFloat(offer.tolongitude))
                 Drivers.push(driver)
 
 
@@ -339,7 +344,7 @@ router.post('/', async(req, res) => {
                         DeletedRequest = request.id
                     const orguserRider = await OrgUser.findOne({
                         where: {
-                            orgid: request.toorgid,
+                            orgid: request.fromorgid,
                             userid: request.userid,
                             status: "existing"
                         }
@@ -347,13 +352,13 @@ router.post('/', async(req, res) => {
                     if (RiderTrip.riderid !== user.id) {
 
                         var rider = new Rider(request.userid,
-                            parseFloat(orguserRider.distancetoorg),
-                            new Date(request.date + " " + request.arrivaltime),
-                            parseFloat(orguserRider.timetoorg),
-                            new Date(request.date + " " + request.earliesttime),
+                            parseFloat(orguserRider.distancefromorg),
+                            new Date(request.date + " " + request.departuretime),
+                            parseFloat(orguserRider.timefromorg),
+                            new Date(request.date + " " + request.latesttime),
                             request.ridewith,
                             request.smoking,
-                            request.toorgid,
+                            request.fromorgid,
                             new Date(request.date),
                             request.id)
 
@@ -363,16 +368,17 @@ router.post('/', async(req, res) => {
                 }
 
                 for (rider in Riders) {
-                    const FromDriverToRider = await BetweenUsers.findOne({
+                    const FromRiderToDriver = await BetweenUsers.findOne({
                         where: {
-                            user1id: driver.ID,
-                            user2id: Riders[rider].ID
+                            user1id: Riders[rider].ID,
+                            user2id: driver.ID
+
                         }
 
                     }).catch(errHandler)
-                    if (FromDriverToRider) {
-                        var valueDuration = new values(driver.ID, Riders[rider].ID, parseFloat(FromDriverToRider.time))
-                        var valueDistance = new values(driver.ID, Riders[rider].ID, parseFloat(FromDriverToRider.distance))
+                    if (FromRiderToDriver) {
+                        var valueDuration = new values(Riders[rider].ID, driver.ID, parseFloat(FromRiderToDriver.time))
+                        var valueDistance = new values(Riders[rider].ID, driver.ID, parseFloat(FromRiderToDriver.distance))
                         DRdurationValue.push(valueDuration)
                         DRdistanceValue.push(valueDistance)
                     }
@@ -407,7 +413,7 @@ router.post('/', async(req, res) => {
 
 
                 for (var j = 0; j < DRdistanceValue.length; j++) {
-                    if (DRdistanceValue[j].from === driverID) {
+                    if (DRdistanceValue[j].to === driverID) {
                         var distanceObj = new distance(DRdistanceValue[j].from, DRdistanceValue[j].to, DRdistanceValue[j].value);
                         DriverRow.push(distanceObj);
                     }
@@ -421,7 +427,7 @@ router.post('/', async(req, res) => {
                     var riderID = Riders[i].ID
                     var RiderRow = new userArray(riderID);
                     for (var j = 0; j < RRdistanceValue.length; j++) {
-                        if (RRdistanceValue[j].from === riderID) {
+                        if (RRdistanceValue[j].to === riderID) {
                             var distanceObj = new distance(RRdistanceValue[j].from, RRdistanceValue[j].to, RRdistanceValue[j].value);
 
                             RiderRow.push(distanceObj);
@@ -435,7 +441,7 @@ router.post('/', async(req, res) => {
                 }
                 var DriverRowDuration = new userArray(driverID);
                 for (var j = 0; j < DRdurationValue.length; j++) {
-                    if (DRdurationValue[j].from === driverID) {
+                    if (DRdurationValue[j].to === driverID) {
                         var durationObj = new duration(DRdurationValue[j].from, DRdurationValue[j].to, DRdurationValue[j].value);
                         DriverRowDuration.push(durationObj);
                     }
@@ -452,7 +458,7 @@ router.post('/', async(req, res) => {
                     var RiderRowDuration = new userArray(riderID);
 
                     for (var j = 0; j < RRdurationValue.length; j++) {
-                        if (RRdurationValue[j].from === riderID) {
+                        if (RRdurationValue[j].to === riderID) {
                             var durationObj = new duration(RRdurationValue[j].from, RRdurationValue[j].to, RRdurationValue[j].value);
                             RiderRowDuration.push(durationObj);
                         }
@@ -466,7 +472,7 @@ router.post('/', async(req, res) => {
 
                 }
 
-                var z = await CancelRiderTo();
+                var z = await CancelRiderFrom();
                 await Trips.update({
                     numberofseats: driver.AssignedRiders.length - 1,
                 }, {
@@ -477,7 +483,7 @@ router.post('/', async(req, res) => {
                 }).catch(errHandler)
 
                 await DriverDB.update({
-                    pickuptime: driver.PoolStartTime,
+                    arrivaltime: driver.DropOffTime,
                 }, {
                     where: {
                         driverid: driver.ID,
@@ -509,7 +515,7 @@ router.post('/', async(req, res) => {
 
                 for (var i = 1; i < driver.AssignedRiders.length; i++) {
                     await RiderDB.update({
-                        pickuptime: Riders.find(n => n.ID === driver.AssignedRiders[i]).PickupTime,
+                        arrivaltime: Riders.find(n => n.ID === driver.AssignedRiders[i]).DropOffTime,
                     }, {
                         where: {
                             riderid: driver.AssignedRiders[i],

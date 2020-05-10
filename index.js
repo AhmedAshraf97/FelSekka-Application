@@ -27,6 +27,8 @@ app.use('/api/retrieveuserdata', require('./routes/api/retrieveuserdata'));
 app.use('/api/offerrideto', require('./routes/api/offerrideto'));
 app.use('/api/offerridefrom', require('./routes/api/offerridefrom'));
 
+app.use('/api/editcar', require('./routes/api/edit_car'));
+
 app.use('/api/editprofile', require('./routes/api/editprofile'));
 app.use('/api/changepassword', require('./routes/api/changepassword'));
 app.use('/api/forgetpassword', require('./routes/api/forgetpassword'));
@@ -54,3 +56,7 @@ app.use('/api/chooseFromAvailableRides', require('./routes/api/chooseFromAvailab
 app.use('/api/chooseFromReturnTripsApi', require('./routes/api/chooseFromReturnTripsApi').router)
 
 app.use('/api/cancelRiderTo', require('./routes/api/cancelRiderToApi').router)
+app.use('/api/cancelRiderFrom', require('./routes/api/cancelRiderFromApi').router)
+app.use('/api/canceldriverTo', require('./routes/api/canceldriverToApi').router)
+
+app.use('/api/canceldriverFrom', require('./routes/api/canceldriverFromApi').router)
