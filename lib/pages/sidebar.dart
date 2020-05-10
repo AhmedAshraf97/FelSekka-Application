@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:felsekka/pages/AnimatedPage%20Route.dart';
 import 'package:felsekka/pages/homepage.dart';
 import 'package:felsekka/pages/sidebar_layout.dart';
+import 'package:felsekka/pages/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:felsekka/pages/signup3.dart';
@@ -60,8 +61,8 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
       token = (prefs.getString('token')??'');
       String url="http://3.81.22.120:3000/api/retrieveuserdata";
       Response response =await post(url, headers:{'authorization': token});
-      print(response.statusCode);
-      print(response.body);
+      //print(response.statusCode);
+      //print(response.body);
       if(response.statusCode != 200)
       {
         Map data= jsonDecode(response.body);
@@ -366,8 +367,26 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                 MenuItem(
                                   icon: Icons.exit_to_app,
                                   title: "Logout",
+                                  onTap: () async{
+                                    String url="http://3.81.22.120:3000/api/signout";
+                                    Response response =await post(url, headers:{'authorization': token});
+                                    print(response.statusCode);
+                                    print(response.body);
+                                    if(response.statusCode != 200)
+                                    {
+                                      Map data= jsonDecode(response.body);
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => FunkyOverlay(text: data['message'],image: "images/errorsign.png"),
+                                      );
+                                    }
+                                    else{
+                                      final pref = await SharedPreferences.getInstance();
+                                      await pref.clear();
+                                      Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
+                                    }
+                                  },
                                 ),
-
                                 Divider(
                                   height: 5,
                                   thickness: 0.4,

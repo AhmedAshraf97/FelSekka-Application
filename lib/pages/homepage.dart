@@ -23,8 +23,6 @@ class _HomePageState extends State<HomePage> {
       token = (prefs.getString('token')??'');
       String url="http://3.81.22.120:3000/api/retrieveuserdata";
       Response response =await post(url, headers:{'authorization': token});
-      print(response.statusCode);
-      print(response.body);
       if(response.statusCode != 200)
       {
         Map data= jsonDecode(response.body);

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:felsekka/pages/homepage.dart';
+import 'package:felsekka/pages/sidebar_layout.dart';
 import 'package:felsekka/pages/signup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -219,7 +220,7 @@ class _SignInState extends State<SignIn> {
                                 String token= data['token'];
                                 SharedPreferences prefs = await SharedPreferences.getInstance();
                                 await prefs.setString('token', token);
-                                Navigator.push(context, AnimatedPageRoute(widget: HomePage()));
+                                Navigator.push(context, AnimatedPageRoute(widget: SideBarLayout()));
                               }
                             }
                             getData();
