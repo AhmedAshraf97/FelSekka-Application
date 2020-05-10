@@ -217,21 +217,6 @@ class _SignInState extends State<SignIn> {
                               else{
                                 Map data= jsonDecode(response.body);
                                 String token= data['token'];
-                                /*Map userinfo = data['userInfo'];
-                                String firstname = userinfo['firstname'];
-                                String lastname = userinfo['lastname'];
-                                String phonenumber = userinfo['phonenumber'];
-                                String gender = userinfo['gender'];
-                                String password = userinfo['password'];
-                                String birthdate = userinfo['birthdate'];
-                                String ridewith = userinfo['ridewith'];
-                                String smoking = userinfo['smoking'];
-                                String rating = userinfo['rating'];
-                                String status = userinfo['status'];
-                                String email = userinfo['email'];
-                                String latitude = userinfo['latitude'];
-                                String longitude = userinfo['longitude'];
-                                String username = userinfo['username'];*/
                                 SharedPreferences prefs = await SharedPreferences.getInstance();
                                 await prefs.setString('token', token);
                                 Navigator.push(context, AnimatedPageRoute(widget: HomePage()));

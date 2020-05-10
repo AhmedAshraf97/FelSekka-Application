@@ -1,5 +1,6 @@
 import 'package:felsekka/pages/AnimatedPage%20Route.dart';
 import 'package:felsekka/pages/homepage.dart';
+import 'package:felsekka/pages/sidebar_layout.dart';
 import 'package:felsekka/pages/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
@@ -37,7 +38,7 @@ class _LoadingScreenState extends State<LoadingScreen>
         Navigator.pop(context);
         if(token!="")
         {
-          Navigator.push(context, AnimatedPageRoute(widget: HomePage()));
+          Navigator.push(context, AnimatedPageRoute(widget: SideBarLayout()));
         }
         else
         {
