@@ -262,6 +262,22 @@ router.post('/', async(req, res) => {
 
                                 DRdurationValue.push(valueDuration)
                                 DRdistanceValue.push(valueDistance)
+                                    /////////////////////////////////////////////////////////////
+                                const FromRiderToDriver = await BetweenUsers.findOne({
+                                    where: {
+
+                                        user1id: Riders[rider].userID,
+                                        user2id: Drivers[driver].userID
+
+                                    }
+
+                                }).catch(errHandler)
+                                if (FromRiderToDriver.trust === 1) {
+                                    Riders[rider].TrustedDrivers.push(Drivers[driver].ID)
+                                } else if (FromRiderToDriver.trust === -1) {
+                                    Riders[rider].UnTrustedDrivers.push(Drivers[driver].ID)
+                                }
+
                             }
 
                         }

@@ -263,6 +263,11 @@ router.post('/', async(req, res) => {
 
                                 DRdurationValue.push(valueDuration)
                                 DRdistanceValue.push(valueDistance)
+                                if (ToDriverFromRider.trust === 1) {
+                                    Riders[rider].TrustedDrivers.push(Drivers[driver].ID)
+                                } else if (ToDriverFromRider.trust === -1) {
+                                    Riders[rider].UnTrustedDrivers.push(Drivers[driver].ID)
+                                }
                             }
 
                         }
