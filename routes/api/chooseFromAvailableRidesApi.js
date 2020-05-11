@@ -194,7 +194,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to edit your profile" })
+            res.status(401).send({ message: "You aren't authorized to choose from avilable rides" })
             res.end();
         }
     }).catch(errHandler)
@@ -233,7 +233,7 @@ router.post('/', async(req, res) => {
 
         res.status(400).send({ error: "RideWith", message: "RideWith can't be empty" });
         res.end()
-            //   
+
     }
 
     if (req.body.smoking == null) {
@@ -556,24 +556,19 @@ router.post('/', async(req, res) => {
                                             }
 
                                         }
-                                        res.status(200).send("OK")
+                                        res.status(200).send("Ride is chosen successfully")
                                     } else {
-                                        res.send("you can't be assigned in this trip")
+                                        res.status(400).send("you can't be assigned in this trip")
                                         res.end()
                                     }
 
-
-
-
-
-
                                 } else {
-                                    res.send("you are already assigned in this trip")
+                                    res.status(400).send("you are already assigned in this trip")
                                     res.end();
 
                                 }
                             } else {
-                                res.send("trip option isn't stuiable for you")
+                                res.status(400).send("trip option isn't stuiable for you")
                                 res.end();
                             }
 
@@ -581,17 +576,17 @@ router.post('/', async(req, res) => {
                         }
                     }
                     if (countorg == 0) {
-                        res.send("you aren't a member in this organization")
+                        res.status(400).send("You aren't a member in this organization")
                         res.end();
                     }
 
                 } else {
-                    res.send("you aren't a member in this organization")
+                    res.status(400).send("You aren't a member in this organization")
                     res.end();
 
                 }
             } else {
-                res.send("you are a driver in this trip")
+                res.status(400).send("You are a driver in this trip")
                 res.end();
 
             }

@@ -11,8 +11,6 @@ router.post('/', async(req, res) => {
 
     let isvalid = false
 
-
-
     await User.findOne({
             where: {
                 email: req.body.email,
@@ -28,6 +26,7 @@ router.post('/', async(req, res) => {
 
                     isvalid = true
                     res.status(400).send({ error: "Old password ", message: "Old password is missing" });
+                    res.end()
 
 
                 }
@@ -36,26 +35,29 @@ router.post('/', async(req, res) => {
 
 
                     if (!bcrypt.compareSync(req.body.oldpassword, user.password)) {
-
-
                         isvalid = true
                         res.status(400).send({ error: "Old password ", message: "Old password is incorrect" });
-
+                        res.end()
                     } else if (req.body.newpassword == undefined) {
                         isvalid = true
                         res.status(400).send({ error: "New password", message: "New password paramter is missing" });
+                        res.end()
                     } else if (!((typeof(req.body.newpassword) === 'string') || ((req.body.newpassword) instanceof String))) {
                         isvalid = true
                         res.status(400).send({ error: "Password", message: "Password must be a string" });
+                        res.end()
                     } else if ((req.body.newpassword).trim().length === 0) {
                         isvalid = true
                         res.status(400).send({ error: "Password", message: "Password can't be empty" });
+                        res.end()
                     } else if (!(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&.-])[A-Za-z\d@$!%*#?&.-]{8,15}$/.test(req.body.newpassword))) {
                         isvalid = true
                         res.status(400).send({ error: "Password", message: "Password must be minimum eight characters,maximum 15 characters and should include at least one letter, one number and one special character" });
+                        res.end()
                     } else if (req.body.confirmpassword == undefined) {
                         isvalid = true
                         res.status(400).send({ error: "Confirm password", message: "Confirm password paramter is missing" });
+                        res.end()
                     }
 
 
@@ -63,6 +65,7 @@ router.post('/', async(req, res) => {
                     else if ((req.body.confirmpassword).trim().length === 0) { /////////askk, string
                         isvalid = true
                         res.status(400).send({ error: "Confirm password", message: "Password can't be empty" });
+                        res.end()
                     } else if (!(req.body.newpassword === req.body.confirmpassword)) {
                         isvalid = true
                         res.status(400).send({ error: "Confirm password ", message: "Passwords don't match" });
@@ -86,12 +89,11 @@ router.post('/', async(req, res) => {
 
                         password: bcryptPass
 
-
-
-
                     }, {
                         where: { id: decoded.id }
-                    }).then(res.status(200).send("OK"))
+                    }).then(res.status(200).send("Password is changed")).catch(err => {
+                        console.log(err)
+                    })
 
 
                 }
@@ -100,7 +102,7 @@ router.post('/', async(req, res) => {
                 res.status(401).send("User doesn't exist, Please Enter valid ID")
         })
         .catch(err => {
-            res.send('error: ' + err)
+            console.log(err)
         })
 })
 module.exports = router;

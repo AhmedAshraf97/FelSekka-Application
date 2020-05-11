@@ -43,7 +43,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to cancel trips" })
+            res.status(401).send({ message: "You aren't authorized to cancel trip" })
             res.end();
         }
     }).catch(errHandler)
@@ -138,18 +138,47 @@ router.post('/', async(req, res) => {
                     }
 
 
-
-
-
-                    res.send("The whole trip is cancelled")
+                    res.status(200).send("The whole trip is cancelled")
                     res.end()
 
 
+                } else {
 
+                    await Trips.update({
+                        status: "cancelled"
+                    }, {
+                        where: {
+                            id: trip.id
 
+                        }
+                    }).catch(errHandler)
+
+                    await DriverDB.update({
+                        status: "cancelled"
+                    }, {
+                        where: {
+                            driverid: driverTrip.driverid,
+                            tripid: trip.id
+
+                        }
+                    }).catch(errHandler)
+
+                    await Offer.update({
+                        status: "cancelled",
+
+                    }, {
+                        where: {
+                            userid: driverTrip.driverid,
+                            id: offer.id
+
+                        }
+                    }).catch(errHandler)
+
+                    res.status(200).send("The whole trip is cancelled")
+                    res.end()
                 }
             } else {
-                res.send("you are not driver of this trip")
+                res.status(400).send("you are not the driver of this trip")
                 res.end()
 
             }

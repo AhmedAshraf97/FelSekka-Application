@@ -186,7 +186,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false
-        res.status(401).send({ message: "You aren't authorized to choose from avilable rides " })
+        res.status(401).send({ message: "You aren't authorized to choose from available rides " })
         res.end();
     }
 
@@ -197,7 +197,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to choose from avilable rides " })
+            res.status(401).send({ message: "You aren't authorized to choose from available rides " })
             res.end();
         }
     }).catch(errHandler)
@@ -245,7 +245,7 @@ router.post('/', async(req, res) => {
 
         res.status(400).send({ error: "RideWith", message: "RideWith can't be empty" });
         res.end()
-            //   
+
     }
 
     if (req.body.smoking == null) {
@@ -568,24 +568,19 @@ router.post('/', async(req, res) => {
                                                 }
 
                                             }
-                                            res.status(200).send("OK")
+                                            res.status(200).send("Ride is chosen successfully")
                                         } else {
-                                            res.send("you can't be assigned in this trip")
+                                            res.status(400).send("You can't be assigned in this trip")
                                             res.end()
                                         }
 
-
-
-
-
-
                                     } else {
-                                        res.send("you are already assigned in this trip")
+                                        res.status(400).send("You are already assigned in this trip")
                                         res.end();
 
                                     }
                                 } else {
-                                    res.send("trip option isn't stuiable for you")
+                                    res.status(400).send("Trip options aren't stuiable for you")
                                     res.end();
                                 }
 
@@ -593,22 +588,22 @@ router.post('/', async(req, res) => {
                             }
                         }
                         if (countfromorg == 0) {
-                            res.send("you aren't a member in this organization")
+                            res.status(400).send("You aren't a member in this organization")
                             res.end();
                         }
 
                     } else {
-                        res.send("you aren't a member in this organization")
+                        res.status(400).send("You aren't a member in this organization")
                         res.end();
 
                     }
                 } else {
-                    res.send("you are a driver in this trip")
+                    res.status(400).send("You are a driver in this trip")
                     res.end();
 
                 }
             } else {
-                res.status(400).send({ error: "tripid", message: "enter valid trip id" });
+                res.status(400).send({ error: "tripid", message: "Invalid trip id, Enter a valid trip id" });
                 res.end()
             }
 

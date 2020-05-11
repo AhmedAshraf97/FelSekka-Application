@@ -43,7 +43,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to cancel trips" })
+            res.status(401).send({ message: "You aren't authorized to cancel trip" })
             res.end();
         }
     }).catch(errHandler)
@@ -151,7 +151,7 @@ router.post('/', async(req, res) => {
 
                 }
             } else {
-                res.send("you are not driver of this trip")
+                res.status(400).send("you are not the driver of this trip")
                 res.end()
 
             }

@@ -33,11 +33,27 @@ router.post('/', async(req, res) => {
         res.end();
     }
 
+
+    await ExpiredToken.findOne({
+        where: {
+            token: req.headers["authorization"]
+        }
+    }).then(expired => {
+        if (expired) {
+            ValidChecks = false;
+            res.status(401).send({ message: "You aren't authorized to add any review" })
+            res.end();
+        }
+    }).catch(errHandler)
+
+
     if (req.body.review === undefined || (req.body.review).trim().length > 300 || (req.body.review).trim().length === 0) {
         ValidChecks = false;
         res.status(400).send({ message: "Review size must be between (1-300) characters" });
         res.end();
     }
+
+
 
     await Trip.findOne({
         where: {
@@ -65,28 +81,25 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler)
 
+    //2008-09-01 12:35:45
 
-
-    if ((req.body.datetime) === "") {
-        ValidChecks = false
-        res.status(400).send({ message: "You must enter datetime" });
+    if (req.body.datetime == null) {
+        res.status(400).send({ error: "datetime", message: "datetime paramter is missing" });
+        ValidChecks = false;
+        res.end()
+    } else if (!((typeof(req.body.datetime) === 'string') || ((req.body.datetime) instanceof String))) {
+        ValidChecks = false;
+        res.status(400).send({ error: "datetime", message: "datetime must be a string" });
+        res.end()
+    } else if ((req.body.datetime).trim().length === 0) {
+        ValidChecks = false;
+        res.status(400).send({ error: "datetime", message: "datetime can't be empty" });
+        res.end()
+    } else if (!(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/.test(req.body.datetime))) {
+        res.status(400).send({ error: "datetime", message: "datetime is unvalid" });
+        ValidChecks = false;
         res.end();
-
     }
-
-
-    await ExpiredToken.findOne({
-        where: {
-            token: req.headers["authorization"]
-        }
-    }).then(expired => {
-        if (expired) {
-            ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to add any review" })
-            res.end();
-        }
-    }).catch(errHandler)
-
 
 
     await User.findOne({
@@ -99,7 +112,7 @@ router.post('/', async(req, res) => {
             if (ValidChecks) {
                 Review.create({ userid: user.id, revieweduserid: req.body.reviewedid, review: req.body.review, tripid: req.body.tripid, datetime: req.body.datetime })
                     .then(review => {
-                        res.status(201).send({ message: "review is added" });
+                        res.status(200).send({ message: "Review is added" });
                         res.end();
                     }).catch(errHandler);
             }

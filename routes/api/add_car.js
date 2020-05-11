@@ -31,6 +31,22 @@ router.post('/', async(req, res) => {
         res.end();
     }
 
+
+
+    await ExpiredToken.findOne({
+        where: {
+            token: req.headers["authorization"]
+        }
+    }).then(expired => {
+        if (expired) {
+            validChecks = false;
+            res.status(401).send({ message: "You aren't authorized to add any car" })
+            res.end();
+        }
+    }).catch(errHandler)
+
+
+
     if (!((typeof(req.body.brand) === 'string') || ((req.body.brand) instanceof String)) || (req.body.brand).trim().length === 0) {
         validChecks = false
         res.status(400).send({ message: "Brand must be a string of (1-300) characters" });
@@ -110,20 +126,6 @@ router.post('/', async(req, res) => {
     }
 
 
-    await ExpiredToken.findOne({
-        where: {
-            token: req.headers["authorization"]
-        }
-    }).then(expired => {
-        if (expired) {
-            validChecks = false;
-            res.status(401).send({ message: "You aren't authorized to add any car" })
-            res.end();
-        }
-    }).catch(errHandler)
-
-
-
 
 
     await User.findOne({
@@ -162,7 +164,7 @@ router.post('/', async(req, res) => {
                                 numberofseats: req.body.numberofseats,
                                 status: 'existing'
                             }).then(created => {
-                                res.status(201).send({ message: "Car is created" })
+                                res.status(200).send({ message: "Car is created" })
                                 res.end()
                             }).catch(errHandler)
                         }

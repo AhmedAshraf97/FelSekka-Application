@@ -189,7 +189,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to view user scheduled trips" })
+        res.status(401).send({ message: "You aren't authorized to cancel trip" })
         res.end();
     }
 
@@ -200,7 +200,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to view user scheduled trips" })
+            res.status(401).send({ message: "You aren't authorized to cancel trip" })
             res.end();
         }
     }).catch(errHandler)
@@ -242,7 +242,7 @@ router.post('/', async(req, res) => {
                 ]
             }).catch(errHandler)
             if (RidersTrip.length === 0) {
-                res.send("no trips found")
+                res.status(401).send("No trips found")
                 res.end()
 
             } else if (RidersTrip.length === 1) { // one rider in the trip
@@ -302,7 +302,7 @@ router.post('/', async(req, res) => {
                     res.end()
 
                 } else {
-                    res.send("you aren't assigned in this trip")
+                    res.status(401).send("You aren't assigned in this trip")
                     res.end()
 
                 }
@@ -528,12 +528,12 @@ router.post('/', async(req, res) => {
 
                 }
 
-                res.send("The trip is cancelled for the user and updated for other users")
+                res.status(200).send("The trip is cancelled")
                 res.end()
             }
 
         } else {
-            res.send("no trips found")
+            res.status(401).send("No trip found")
             res.end()
         }
 
