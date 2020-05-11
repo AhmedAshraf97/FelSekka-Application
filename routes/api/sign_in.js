@@ -38,9 +38,9 @@ router.post('/', (req, res) => {
                     res.json({ token: token, userInfo: user.dataValues })
                     console.log("User data ", user.dataValues)
                 } else
-                    res.status(401).send({ message: "Invalid Password, Please try again" })
+                    res.status(401).send({error: "Password", message: "Invalid Password, Please try again" })
             } else
-                res.status(400).send({ message: "Invalid Email or Phone number, Please try again" })
+                res.status(400).send({ error: "User doesn't exist", message: "Invalid Email or Phone number, Please try again" })
         })
         .catch(errHandler)
 })

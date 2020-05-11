@@ -25,6 +25,7 @@ app.use('/api/requestridefrom', require('./routes/api/requestridefrom'));
 app.use('/api/requestrideto', require('./routes/api/requestrideto'));
 app.use('/api/retrieveuserdata', require('./routes/api/retrieveuserdata'));
 app.use('/api/offerrideto', require('./routes/api/offerrideto'));
+app.use('/api/offerridefrom', require('./routes/api/offerridefrom'));
 
 app.use('/api/editcar', require('./routes/api/edit_car'));
 
@@ -60,8 +61,15 @@ app.use('/api/canceldriverTo', require('./routes/api/canceldriverToApi').router)
 
 app.use('/api/canceldriverFrom', require('./routes/api/canceldriverFromApi').router)
 
+<<<<<<< HEAD
 app.use('/api/endRiderTripTo', require('./routes/api/endRiderTriptTo'))
 app.use('/api/startRiderTripTo', require('./routes/api/startRiderTripTo'))
 
 app.use('/api/endRiderTripFrom', require('./routes/api/endRiderTripFrom'))
 app.use('/api/startRiderTripFrom', require('./routes/api/startRiderTripFrom'))
+=======
+app.use('/api/startDriverTripFrom', require('./routes/api/startDriverTripFrom'))
+app.use('/api/startDriverTripTo', require('./routes/api/startDriverTripTo'))
+app.use('/api/endDriverTripFrom', require('./routes/api/endDriverTripFrom'))
+app.use('/api/endDriverTripTo', require('./routes/api/endDriverTripTo'))
+>>>>>>> 1a5f75146a531a26f1a545aa34874cd2ff5476f9
