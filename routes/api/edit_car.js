@@ -198,7 +198,7 @@ router.post('/', async(req, res) => {
                 }
             }).catch(errHandler)
 
-            if (updated && Object.keys(options).length > 0) {
+            if (updated[0] === 1 && Object.keys(options).length > 0) {
                 res.status(200).send("Car edited successfully")
                 res.end()
 
@@ -207,9 +207,12 @@ router.post('/', async(req, res) => {
                 res.end()
             }
 
-        } else
+        } else {
+
             res.status(404).send("User doesn't exist, Please Enter valid ID")
-        res.end();
+            res.end();
+        }
+
     }
 })
 module.exports = router;

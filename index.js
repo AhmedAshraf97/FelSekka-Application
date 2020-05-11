@@ -59,3 +59,8 @@ app.use('/api/cancelRiderFrom', require('./routes/api/cancelRiderFromApi').route
 app.use('/api/canceldriverTo', require('./routes/api/canceldriverToApi').router)
 
 app.use('/api/canceldriverFrom', require('./routes/api/canceldriverFromApi').router)
+
+app.use('/api/startDriverTripFrom', require('./routes/api/startDriverTripFrom'))
+app.use('/api/startDriverTripTo', require('./routes/api/startDriverTripTo'))
+app.use('/api/endDriverTripFrom', require('./routes/api/endDriverTripFrom'))
+app.use('/api/endDriverTripTo', require('./routes/api/endDriverTripTo'))
