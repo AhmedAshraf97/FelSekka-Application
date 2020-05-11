@@ -184,6 +184,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.16.1"
+  jiffy:
+    dependency: "direct main"
+    description:
+      name: jiffy
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.1"
   location_permissions:
     dependency: transitive
     description:
@@ -254,6 +261,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
+  rich_alert:
+    dependency: "direct main"
+    description:
+      name: rich_alert
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.32"
   rxdart:
     dependency: "direct main"
     description:

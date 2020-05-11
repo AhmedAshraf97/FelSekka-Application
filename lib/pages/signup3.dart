@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart';
+import 'package:rich_alert/rich_alert.dart';
 import 'AnimatedPage Route.dart';
-import 'funkyoverlay.dart';
 import 'dart:convert';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 
@@ -172,9 +172,32 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                           {
                             valid = false;
                             showDialog(
-                              context: context,
-                              builder: (_) => FunkyOverlay(text: "Home location is required",image: "images/errorsign.png"),
-                            );
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return RichAlertDialog(
+                                    alertTitle: richTitle("Home location"),
+                                    alertSubtitle: richSubtitle("Home location is required"),
+                                    alertType: RichAlertType.WARNING,
+                                    dialogIcon: Icon(
+                                      Icons.warning,
+                                      color: Colors.red,
+                                      size: 80,
+                                    ),
+                                    actions: <Widget>[
+                                      new OutlineButton(
+                                        shape: StadiumBorder(),
+                                        textColor: Colors.blue,
+                                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                        borderSide: BorderSide(
+                                            color: Colors.indigo[400], style: BorderStyle.solid,
+                                            width: 1),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
                           }
                           if(valid==true)
                           {
@@ -201,15 +224,34 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                               {
                                 Map data= jsonDecode(response.body);
                                 showDialog(
-                                  context: context,
-                                  builder: (_) => FunkyOverlay(text: data['message'],image: "images/errorsign.png"),
-                                );
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return RichAlertDialog(
+                                        alertTitle: richTitle(data['error']),
+                                        alertSubtitle: richSubtitle(data['message']),
+                                        alertType: RichAlertType.WARNING,
+                                        dialogIcon: Icon(
+                                          Icons.warning,
+                                          color: Colors.red,
+                                          size: 80,
+                                        ),
+                                        actions: <Widget>[
+                                          new OutlineButton(
+                                            shape: StadiumBorder(),
+                                            textColor: Colors.blue,
+                                            child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                            borderSide: BorderSide(
+                                                color: Colors.indigo[400], style: BorderStyle.solid,
+                                                width: 1),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
                               }
                               else{
-                                /*showDialog(
-                                  context: context,
-                                  builder: (_) => FunkyOverlay(text: "Done!",image: "images/donesign.png"),
-                                );*/
                                 Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
                               }
                             }

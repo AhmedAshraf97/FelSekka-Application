@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gender_selector/gender_selector.dart';
 import 'package:http/http.dart';
+import 'package:rich_alert/rich_alert.dart';
 import 'AnimatedPage Route.dart';
-import 'funkyoverlay.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 
@@ -320,44 +320,159 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                           {
                             Valid = false;
                             showDialog(
-                              context: context,
-                              builder: (_) => FunkyOverlay(text: "Gender is required",image: "images/errorsign.png"),
-                            );
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return RichAlertDialog(
+                                    alertTitle: richTitle("Gender"),
+                                    alertSubtitle: richSubtitle("Gender is required"),
+                                    alertType: RichAlertType.WARNING,
+                                    dialogIcon: Icon(
+                                      Icons.warning,
+                                      color: Colors.red,
+                                      size: 80,
+                                    ),
+                                    actions: <Widget>[
+                                      new OutlineButton(
+                                        shape: StadiumBorder(),
+                                        textColor: Colors.blue,
+                                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                        borderSide: BorderSide(
+                                            color: Colors.indigo[400], style: BorderStyle.solid,
+                                            width: 1),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
                           }
                           //Birthdate validations:
                           else if(dateSelected.isEmpty)
                           {
                             Valid = false;
                             showDialog(
-                              context: context,
-                              builder: (_) => FunkyOverlay(text: "Birth date is required",image: "images/errorsign.png"),
-                            );
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return RichAlertDialog(
+                                    alertTitle: richTitle("Birth date"),
+                                    alertSubtitle: richSubtitle("Birth date is required"),
+                                    alertType: RichAlertType.WARNING,
+                                    dialogIcon: Icon(
+                                      Icons.warning,
+                                      color: Colors.red,
+                                      size: 80,
+                                    ),
+                                    actions: <Widget>[
+                                      new OutlineButton(
+                                        shape: StadiumBorder(),
+                                        textColor: Colors.blue,
+                                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                        borderSide: BorderSide(
+                                            color: Colors.indigo[400], style: BorderStyle.solid,
+                                            width: 1),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
                           }
                           else if(!regExpBirthdate.hasMatch(dateSelected))
                           {
                             Valid = false;
                             showDialog(
-                              context: context,
-                              builder: (_) => FunkyOverlay(text: "Invalid Birth date",image: "images/errorsign.png"),
-                            );
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return RichAlertDialog(
+                                    alertTitle: richTitle("Birth date"),
+                                    alertSubtitle: richSubtitle("Invalid birth date"),
+                                    alertType: RichAlertType.WARNING,
+                                    dialogIcon: Icon(
+                                      Icons.warning,
+                                      color: Colors.red,
+                                      size: 80,
+                                    ),
+                                    actions: <Widget>[
+                                      new OutlineButton(
+                                        shape: StadiumBorder(),
+                                        textColor: Colors.blue,
+                                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                        borderSide: BorderSide(
+                                            color: Colors.indigo[400], style: BorderStyle.solid,
+                                            width: 1),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
                           }
                           //Ridewith validation
                           else if(ridewithSelected.isEmpty)
                           {
                             Valid = false;
                             showDialog(
-                              context: context,
-                              builder: (_) => FunkyOverlay(text: "Ride with is required",image: "images/errorsign.png"),
-                            );
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return RichAlertDialog(
+                                    alertTitle: richTitle("Ride with"),
+                                    alertSubtitle: richSubtitle("Ride with is required"),
+                                    alertType: RichAlertType.WARNING,
+                                    dialogIcon: Icon(
+                                      Icons.warning,
+                                      color: Colors.red,
+                                      size: 80,
+                                    ),
+                                    actions: <Widget>[
+                                      new OutlineButton(
+                                        shape: StadiumBorder(),
+                                        textColor: Colors.blue,
+                                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                        borderSide: BorderSide(
+                                            color: Colors.indigo[400], style: BorderStyle.solid,
+                                            width: 1),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
                           }
                           //Smoking validation
                           else if(smokingSelected.isEmpty)
                           {
                             Valid = false;
                             showDialog(
-                              context: context,
-                              builder: (_) => FunkyOverlay(text: "Smoking is required",image: "images/errorsign.png"),
-                            );
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return RichAlertDialog(
+                                    alertTitle: richTitle("Smoking"),
+                                    alertSubtitle: richSubtitle("Smoking is required"),
+                                    alertType: RichAlertType.WARNING,
+                                    dialogIcon: Icon(
+                                      Icons.warning,
+                                      color: Colors.red,
+                                      size: 80,
+                                    ),
+                                    actions: <Widget>[
+                                      new OutlineButton(
+                                        shape: StadiumBorder(),
+                                        textColor: Colors.blue,
+                                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                        borderSide: BorderSide(
+                                            color: Colors.indigo[400], style: BorderStyle.solid,
+                                            width: 1),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
                           }
                           if(Valid==true)
                             {
@@ -374,9 +489,32 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                                 {
                                   Map data= jsonDecode(response.body);
                                   showDialog(
-                                    context: context,
-                                    builder: (_) => FunkyOverlay(text: data['message'],image: "images/errorsign.png"),
-                                  );
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return RichAlertDialog(
+                                          alertTitle: richTitle(data['error']),
+                                          alertSubtitle: richSubtitle(data['message']),
+                                          alertType: RichAlertType.WARNING,
+                                          dialogIcon: Icon(
+                                            Icons.warning,
+                                            color: Colors.red,
+                                            size: 80,
+                                          ),
+                                          actions: <Widget>[
+                                            new OutlineButton(
+                                              shape: StadiumBorder(),
+                                              textColor: Colors.blue,
+                                              child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                              borderSide: BorderSide(
+                                                  color: Colors.indigo[400], style: BorderStyle.solid,
+                                                  width: 1),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      });
                                 }
                                 else{
                                   Navigator.push(context, AnimatedPageRoute(widget: SignUp3( widget.firstname, widget.lastname, widget.username, widget.email, widget.phonenumber, widget.password, widget.confirmpassword,this.selectedGender, this.dateSelected, this.ridewithSelected, this.smokingSelected)));

@@ -8,11 +8,10 @@ import 'package:flutter/animation.dart';
 import 'package:felsekka/pages/signup3.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
+import 'package:rich_alert/rich_alert.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
-
-import 'funkyoverlay.dart';
 import 'menu_item.dart';
 import 'navigation_bloc.dart';
 
@@ -22,6 +21,7 @@ class SideBar extends StatefulWidget {
 }
 
 class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<SideBar> {
+  int Logout=0;
   String token;
   int id;
   String firstname="";
@@ -41,6 +41,8 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
   String fullname="";
   double doubleRating=0;
   String trimRating="";
+  String countTrust="";
+  int countTrustint=10;
   AnimationController _animationController;
   StreamController<bool> isSidebarOpenedStreamController;
   Stream<bool> isSidebarOpenedStream;
@@ -54,24 +56,44 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
     if (str.endsWith('0')) return str.substring(0, str.length -1);
     return str;
   }
-  @override
-  void initState() {
-    void getData() async{
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      token = (prefs.getString('token')??'');
-      String url="http://3.81.22.120:3000/api/retrieveuserdata";
-      Response response =await post(url, headers:{'authorization': token});
-      //print(response.statusCode);
-      //print(response.body);
-      if(response.statusCode != 200)
-      {
-        Map data= jsonDecode(response.body);
-        showDialog(
+  void getData() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = (prefs.getString('token')??'');
+    String url="http://3.81.22.120:3000/api/retrieveuserdata";
+    Response response =await post(url, headers:{'authorization': token});
+    if(response.statusCode != 200)
+    {
+      Map data= jsonDecode(response.body);
+      showDialog(
           context: context,
-          builder: (_) => FunkyOverlay(text: data['message'],image: "images/errorsign.png"),
-        );
-      }
-      else{
+          builder: (BuildContext context) {
+            return RichAlertDialog(
+              alertTitle: richTitle("User error"),
+              alertSubtitle: richSubtitle(data['message']),
+              alertType: RichAlertType.WARNING,
+              dialogIcon: Icon(
+                Icons.warning,
+                color: Colors.red,
+                size: 80,
+              ),
+              actions: <Widget>[
+                new OutlineButton(
+                  shape: StadiumBorder(),
+                  textColor: Colors.blue,
+                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                  borderSide: BorderSide(
+                      color: Colors.indigo[400], style: BorderStyle.solid,
+                      width: 1),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          });
+    }
+    else{
+      setState(() {
         Map data= jsonDecode(response.body);
         Map userInfo = data['decoded'];
         id = userInfo['id'];
@@ -92,8 +114,51 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
         fullname = firstname + " "+ lastname;
         doubleRating = double.parse(rating);
         trimRating = getDisplayRating(doubleRating);
-      }
+      });
     }
+    String urltrust = "http://3.81.22.120:3000/api/peopletrustme";
+    Response responsetrust = await post(urltrust, headers:{'authorization': token});
+    if(responsetrust.statusCode != 200)
+    {
+      Map data= jsonDecode(responsetrust.body);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return RichAlertDialog(
+              alertTitle: richTitle("User error"),
+              alertSubtitle: richSubtitle(data['message']),
+              alertType: RichAlertType.WARNING,
+              dialogIcon: Icon(
+                Icons.warning,
+                color: Colors.red,
+                size: 80,
+              ),
+              actions: <Widget>[
+                new OutlineButton(
+                  shape: StadiumBorder(),
+                  textColor: Colors.blue,
+                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                  borderSide: BorderSide(
+                      color: Colors.indigo[400], style: BorderStyle.solid,
+                      width: 1),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          });
+    }
+    else{
+      setState(() {
+        Map data= jsonDecode(responsetrust.body);
+        countTrustint = data['count'];
+        countTrust = countTrustint.toString();
+      });
+    }
+  }
+  @override
+  void initState() {
     getData();
     super.initState();
     _animationController = AnimationController(vsync: this, duration: _animationDuration);
@@ -111,6 +176,10 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
   }
 
   void onIconPressed() {
+    getData();
+    setState(() {
+      int x=0;
+    });
     final animationStatus = _animationController.status;
     final isAnimationCompleted = animationStatus == AnimationStatus.completed;
 
@@ -126,7 +195,6 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
     return StreamBuilder<bool>(
       initialData: false,
       stream: isSidebarOpenedStream,
@@ -136,7 +204,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
           top: 0,
           bottom: 0,
           left: isSideBarOpenedAsync.data ? 0 : -screenWidth,
-          right: isSideBarOpenedAsync.data ? 0 : screenWidth - 42,
+          right: isSideBarOpenedAsync.data ? 0 : screenWidth - 40,
           child: Row(
             children: <Widget>[
               Expanded(
@@ -161,10 +229,11 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                       ),
                       GestureDetector(
                         onTap: (){
-                          //BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.HomePageClickedEvent);
+                          BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.ProfileClickedEvent);
+                          onIconPressed();
                         },
                         child: CircleAvatar(
-                          child: Image.asset("images/avatarfemale.png"),
+                          child: gender == "female"? Image.asset("images/avatarfemale.png") : Image.asset("images/avatarmale.png"),
                           radius: 35,
                         ),
                       ),
@@ -173,8 +242,8 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                       ),
                       GestureDetector(
                         onTap: (){
-                          print("Dodo amar");
-                          //BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.HomePageClickedEvent);
+                          BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.ProfileClickedEvent);
+                          onIconPressed();
                         },
                         child: Text(
                           fullname,
@@ -206,14 +275,14 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                               width: 10,
                             ),
                             Text(
-                              "5",
+                              countTrust,
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 18,
                               ),
                             ),
                             Icon(
-                              Icons.group,
+                              Icons.check_box,
                               color: Colors.grey,
                               size: 18,
                             ),
@@ -367,24 +436,85 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                 MenuItem(
                                   icon: Icons.exit_to_app,
                                   title: "Logout",
-                                  onTap: () async{
-                                    String url="http://3.81.22.120:3000/api/signout";
-                                    Response response =await post(url, headers:{'authorization': token});
-                                    print(response.statusCode);
-                                    print(response.body);
-                                    if(response.statusCode != 200)
-                                    {
-                                      Map data= jsonDecode(response.body);
-                                      showDialog(
+                                  onTap: (){
+                                    showDialog(
                                         context: context,
-                                        builder: (_) => FunkyOverlay(text: data['message'],image: "images/errorsign.png"),
-                                      );
-                                    }
-                                    else{
-                                      final pref = await SharedPreferences.getInstance();
-                                      await pref.clear();
-                                      Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
-                                    }
+                                        builder: (BuildContext context) {
+                                          return RichAlertDialog(
+                                            alertTitle: richTitle("Logout"),
+                                            alertSubtitle: richSubtitle("Are you sure you want to logout?"),
+                                            alertType: RichAlertType.WARNING,
+                                            dialogIcon: Icon(
+                                              Icons.warning,
+                                              color: Colors.red,
+                                              size: 80,
+                                            ),
+                                            actions: <Widget>[
+                                              new OutlineButton(
+                                                shape: StadiumBorder(),
+                                                textColor: Colors.blue,
+                                                child: Text('Yes', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                borderSide: BorderSide(
+                                                    color: Colors.indigo[400], style: BorderStyle.solid,
+                                                    width: 1),
+                                                onPressed: () async{
+                                                  String url="http://3.81.22.120:3000/api/signout";
+                                                  Response response =await post(url, headers:{'authorization': token});
+                                                  if(response.statusCode != 200)
+                                                  {
+                                                    Map data= jsonDecode(response.body);
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext context) {
+                                                          return RichAlertDialog(
+                                                            alertTitle: richTitle("User error"),
+                                                            alertSubtitle: richSubtitle(data['message']),
+                                                            alertType: RichAlertType.WARNING,
+                                                            dialogIcon: Icon(
+                                                              Icons.warning,
+                                                              color: Colors.red,
+                                                              size: 80,
+                                                            ),
+                                                            actions: <Widget>[
+                                                              new OutlineButton(
+                                                                shape: StadiumBorder(),
+                                                                textColor: Colors.blue,
+                                                                child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                borderSide: BorderSide(
+                                                                    color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                    width: 1),
+                                                                onPressed: () {
+                                                                  Navigator.pop(context);
+                                                                },
+                                                              ),
+                                                            ],
+                                                          );
+                                                        });
+                                                    Navigator.pop(context);
+                                                  }
+                                                  else{
+                                                    final pref = await SharedPreferences.getInstance();
+                                                    await pref.clear();
+                                                    Logout=1;
+                                                    Navigator.push(context,AnimatedPageRoute(widget: SignIn()));
+                                                     }
+                                                },
+                                              ),
+                                              SizedBox(width: 20,),
+                                              new OutlineButton(
+                                                shape: StadiumBorder(),
+                                                textColor: Colors.blue,
+                                                child: Text('No', style: TextStyle(color: Colors.red[400],fontSize: 30),),
+                                                borderSide: BorderSide(
+                                                    color: Colors.red[400], style: BorderStyle.solid,
+                                                    width: 1),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        });
                                   },
                                 ),
                                 Divider(
