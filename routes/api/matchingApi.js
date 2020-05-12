@@ -262,6 +262,22 @@ router.post('/', async(req, res) => {
 
                                 DRdurationValue.push(valueDuration)
                                 DRdistanceValue.push(valueDistance)
+                                    /////////////////////////////////////////////////////////////
+                                const FromRiderToDriver = await BetweenUsers.findOne({
+                                    where: {
+
+                                        user1id: Riders[rider].userID,
+                                        user2id: Drivers[driver].userID
+
+                                    }
+
+                                }).catch(errHandler)
+                                if (FromRiderToDriver.trust === 1) {
+                                    Riders[rider].TrustedDrivers.push(Drivers[driver].ID)
+                                } else if (FromRiderToDriver.trust === -1) {
+                                    Riders[rider].UnTrustedDrivers.push(Drivers[driver].ID)
+                                }
+
                             }
 
                         }
@@ -417,10 +433,10 @@ router.post('/', async(req, res) => {
                             tofrom: "to",
                             starttime: 0,
                             endtime: 0,
-                            startloclatitude: organization.latitude,
-                            startloclongitude: organization.longitude,
-                            endloclatitude: 0,
-                            endloclongitude: 0,
+                            startloclatitude: Drivers[i].latitude,
+                            startloclongitude: Drivers[i].longitude,
+                            endloclatitude: organization.latitude,
+                            endloclongitude: organization.longitude,
                             totaldistance: 0,
                             totaltime: 0,
                             totalfare: 0,
@@ -474,22 +490,22 @@ router.post('/', async(req, res) => {
                                 }
                             }).catch(errHandler)
                         }
-                        res.status(200).send("OK")
+                        res.status(200).send("Matching Done")
 
 
                     }
                 }
                 if (countAssigned === 0) {
-                    res.send("No trips will be scheduled")
+                    res.status(400).send("No trips will be scheduled")
                 }
             } else {
-                res.send("No trips will be scheduled")
+                res.status(400).send("No trips will be scheduled")
             }
         } else {
-            res.send("no requests")
+            res.status(400).send("no requests")
         }
     } else {
-        res.send("no offers")
+        res.status(400).send("no offers")
     }
 
     DriversRider = []

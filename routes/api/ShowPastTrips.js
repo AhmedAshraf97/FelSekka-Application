@@ -40,7 +40,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to view user past trips" })
+        res.status(401).send({ message: "You aren't authorized to show past trips" })
         res.end();
     }
 
@@ -51,7 +51,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to delete any car" })
+            res.status(401).send({ message: "You aren't authorized to show past trips" })
             res.end();
         }
     }).catch(errHandler)
@@ -172,7 +172,7 @@ router.post('/', async(req, res) => {
 
 
                                                                                         if (count === RiderRides.length) {
-                                                                                            res.send(TripsDetailsArr)
+                                                                                            res.status(200).send(TripsDetailsArr)
                                                                                         }
 
 
@@ -307,7 +307,7 @@ router.post('/', async(req, res) => {
 
                                                                                         if (count === RiderRides.length) {
 
-                                                                                            res.send(TripsDetailsArr)
+                                                                                            res.status(200).send(TripsDetailsArr)
                                                                                         }
 
 
@@ -352,14 +352,10 @@ router.post('/', async(req, res) => {
 
                                                 ).catch(errHandler)
 
-
-
-
                                             }
                                         } else if (countcheck == RiderRides.length) {
-                                            res.send({ message: "No Trips for this user" })
+                                            res.status(409).send({ message: "No Trips for this user" })
                                             res.end()
-
                                         }
 
                                     }).catch(errHandler)
@@ -462,7 +458,7 @@ router.post('/', async(req, res) => {
 
                                                                                     if (count === DriverRides.length) {
 
-                                                                                        res.send(TripsDetailsArr)
+                                                                                        res.status(200).send(TripsDetailsArr)
                                                                                     }
 
 
@@ -564,7 +560,7 @@ router.post('/', async(req, res) => {
 
                                                                                     if (count === DriverRides.length) {
 
-                                                                                        res.send(TripsDetailsArr)
+                                                                                        res.status(200).send(TripsDetailsArr)
                                                                                     }
 
 
@@ -594,7 +590,7 @@ router.post('/', async(req, res) => {
 
                                                     }
                                                 } else if (countcheck == DriverRides.length) {
-                                                    res.send({ message: "No Trips for this user" })
+                                                    res.status(409).send({ message: "No Trips for this user" })
                                                     res.end()
 
                                                 }
@@ -605,7 +601,7 @@ router.post('/', async(req, res) => {
                                     })
                                 } else {
 
-                                    res.send({ message: "No Trips for this user" })
+                                    res.status(409).send({ message: "No Trips for this user" })
                                     res.end()
                                 }
                             })

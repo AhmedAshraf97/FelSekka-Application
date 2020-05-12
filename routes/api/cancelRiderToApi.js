@@ -171,8 +171,6 @@ const errHandler = err => {
 
 
 router.post('/', async(req, res) => {
-
-    //    console.log(" Fil awal ", JSON.parse(JSON.stringify(Riders)))
     var DRdistanceValue = []
     var DRdurationValue = []
     var RRdistanceValue = []
@@ -199,13 +197,20 @@ router.post('/', async(req, res) => {
             res.end();
         }
     }).catch(errHandler)
+    const user = await User.findOne({
+        where: {
+            id: decoded.id,
+            status: "existing"
+        }
+    }).catch(errHandler)
+    if (!user) {
+        ValidChecks = false;
+        res.status(404).send({ message: "User not found" })
+        res.end()
+    }
 
     if (ValidChecks) {
-        const user = await User.findOne({
-            where: {
-                id: decoded.id
-            }
-        }).catch(errHandler)
+
         const trip = await Trips.findOne({
             where: {
                 id: req.body.tripid,
@@ -237,7 +242,7 @@ router.post('/', async(req, res) => {
                 ]
             }).catch(errHandler)
             if (RidersTrip.length === 0) {
-                res.send("no trips found")
+                res.status(401).send("no trips found")
                 res.end()
 
             } else if (RidersTrip.length === 1) { // one rider in the trip
@@ -293,16 +298,14 @@ router.post('/', async(req, res) => {
                         }
                     }).catch(errHandler)
 
-                    res.send("The whole trip is cancelled")
+                    res.status(200).send("The trip is cancelled")
                     res.end()
 
                 } else {
-                    res.send("you aren't assigned in this trip")
+                    res.status(401).send("you aren't assigned in this trip")
                     res.end()
 
                 }
-
-
 
             } else {
                 const orguserDriver = await OrgUser.findOne({
@@ -522,12 +525,12 @@ router.post('/', async(req, res) => {
 
                 }
 
-                res.send("The trip is cancelled for the user and updated for other users")
+                res.status(200).send("The trip is cancelled ")
                 res.end()
             }
 
         } else {
-            res.send("no trips found")
+            res.status(401).send("No trips found")
             res.end()
         }
 

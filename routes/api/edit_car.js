@@ -17,28 +17,33 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 router.post('/', async(req, res) => {
-    var decoded;
-    let ValidChecks = true
+    var ValidChecks = true;
+
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to edit a car" })
+        res.status(401).send({ message: "You aren't authorized to show available trips" })
         res.end();
     }
 
 
-    await ExpiredToken.findOne({
-        where: {
-            token: req.headers["authorization"]
-        }
-    }).then(expired => {
+    await ExpiredToken.findOne({ where: { token: req.headers["authorization"] } }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to edit ya car, your token expired" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
+
+
+    await User.findOne({ where: { id: decoded.id, status: 'existing' } }).then(user => {
+        if (!user) {
+            ValidChecks = false;
+            res.status(404).send({ message: "User not found" })
+            res.end()
+        }
+    }).catch(errHandler);
 
 
     const options = {};
@@ -79,7 +84,7 @@ router.post('/', async(req, res) => {
     if (req.body.year !== undefined && ValidChecks) {
         if (!((typeof(req.body.year) === 'number')) || ((req.body.year).toString().trim().length !== 4)) {
             ValidChecks = false
-            res.status(400).send({ message: "year must be a number of 4 digits" });
+            res.status(400).send({ message: "Year must be a number of 4 digits" });
             res.end();
         } else {
             options.year = req.body.year
@@ -198,18 +203,21 @@ router.post('/', async(req, res) => {
                 }
             }).catch(errHandler)
 
-            if (updated && Object.keys(options).length > 0) {
+            if (updated[0] === 1 && Object.keys(options).length > 0) {
                 res.status(200).send("Car edited successfully")
                 res.end()
 
             } else {
-                res.send("No parameters to be edited")
+                res.status(404).send("No parameters to be edited")
                 res.end()
             }
 
-        } else
+        } else {
+
             res.status(404).send("User doesn't exist, Please Enter valid ID")
-        res.end();
+            res.end();
+        }
+
     }
 })
 module.exports = router;

@@ -15,44 +15,51 @@ const errHandler = err => {
     //Catch and log any error.
     console.error("Error: ", err);
 };
-router.post('/', async (req, res) => {
-    var userExists = false;
-    var decoded = jwt.verify(req.headers['authorization'], process.env.SECRET_KEY);
-    await User.findOne({ where: { id: decoded.id , status: 'existing'}}).then(user=>{
-        if(user){
-            userExists =true;
-        } 
-        else {
-            res.status(404).send({ message: "User not found" })
-            res.end()
-        }
-    }).catch(errHandler);
-    await ExpiredToken.findOne({where: {token: req.headers["authorization"]}}).then(expired => {
+router.post('/', async(req, res) => {
+    var userExists = true;
+
+    var decoded;
+    try {
+        decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
+    } catch (e) {
+        userExists = false;
+        res.status(401).send({ message: "You aren't authorized to add a rating" })
+        res.end();
+    }
+    await ExpiredToken.findOne({ where: { token: req.headers["authorization"] } }).then(expired => {
         if (expired) {
             userExists = false;
             res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
+    await User.findOne({ where: { id: decoded.id, status: 'existing' } }).then(user => {
+        if (!user) {
 
-    if(userExists){
-        //Organization ID check
-        if(req.body.organizationid==null){
-            res.status(400).send( {error: "Organization ID", message: "Organization ID paramter is missing"});
+            userExists = false;
+            res.status(404).send({ message: "User not found" })
+            res.end()
         }
-        else {
+    }).catch(errHandler);
+
+
+    if (userExists) {
+        //Organization ID check
+        if (req.body.organizationid == null) {
+            res.status(400).send({ error: "Organization ID", message: "Organization ID paramter is missing" });
+        } else {
             //Insert org user 
             const orgUserData = {
-            orgid: req.body.organizationid,
-            userid: decoded.id	,
-            distancetoorg: 0.0,
-            timetoorg: 0.0,	
-            distancefromorg: 0.0,	
-            timefromorg: 0.0,	
-            status: 'existing'	
+                orgid: req.body.organizationid,
+                userid: decoded.id,
+                distancetoorg: 0.0,
+                timetoorg: 0.0,
+                distancefromorg: 0.0,
+                timefromorg: 0.0,
+                status: 'existing'
             }
-            await OrgUser.create(orgUserData).then(user=>{
-                res.status(200).send( {message:"OK"});
+            await OrgUser.create(orgUserData).then(user => {
+                res.status(200).send({ message: "organization is chosen" });
             }).catch(errHandler);
         }
     }

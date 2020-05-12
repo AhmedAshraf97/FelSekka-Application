@@ -263,6 +263,11 @@ router.post('/', async(req, res) => {
 
                                 DRdurationValue.push(valueDuration)
                                 DRdistanceValue.push(valueDistance)
+                                if (ToDriverFromRider.trust === 1) {
+                                    Riders[rider].TrustedDrivers.push(Drivers[driver].ID)
+                                } else if (ToDriverFromRider.trust === -1) {
+                                    Riders[rider].UnTrustedDrivers.push(Drivers[driver].ID)
+                                }
                             }
 
                         }
@@ -479,25 +484,25 @@ router.post('/', async(req, res) => {
                                 }
                             }).catch(errHandler)
                         }
-                        res.status(200).send("OK")
+                        res.status(200).send("Matching Done")
 
 
                     }
                 }
                 if (countAssigned === 0) {
-                    res.send("No trips will be scheduled")
+                    res.status(200).send("No trips will be scheduled")
                 }
 
             } else {
-                res.send("No trips will be scheduled")
+                res.status(200).send("No trips will be scheduled")
             }
 
         } else {
-            res.send("no requests")
+            res.status(200).send("no requests")
         }
 
     } else {
-        res.send("no offers")
+        res.status(200).send("no offers")
     }
 
 
