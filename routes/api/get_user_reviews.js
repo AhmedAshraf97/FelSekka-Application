@@ -51,7 +51,9 @@ router.post('/', async(req, res) => {
             status: 'existing'
         }
     }).then(user => {
-
+        var jsonStr = '{"reviews":[]}';
+        var obj = JSON.parse(jsonStr);
+      
             if (user) {
                 if (ValidChecks) {
                     Review.findAll({
@@ -69,10 +71,11 @@ router.post('/', async(req, res) => {
                                             }
                                         }).then(driver => {
                                             if (driver) {
-                                                ReviewsArr[count] = ({ type: "driver", "review": review.review })
+                                                //ReviewsArr[count] = ({ type: "driver", "review": review.review })
+                                                obj['reviews'].push({"type": "driver", "review": review.review});
                                                 count++;
                                                 if (count === reviews.length) {
-                                                    res.send(ReviewsArr)
+                                                    res.send(obj)
                                                 }
 
                                             } else {
@@ -83,11 +86,12 @@ router.post('/', async(req, res) => {
                                                     }
                                                 }).then(rider => {
                                                     if (rider) {
-                                                        ReviewsArr[count] = ({ type: "rider", "review": review.review })
+                                                        obj['reviews'].push({"type": "rider", "review": review.review});
+                                                        
                                                         count++;
                                                         if (count === reviews.length) {
                                                             console.log("COUNT", count)
-                                                            res.send(ReviewsArr)
+                                                            res.send(obj)
                                                         }
                                                     }
                                                 })

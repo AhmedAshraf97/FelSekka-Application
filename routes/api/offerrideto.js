@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
         //Organization id validation
         else if (req.body.toorgid == null) {
             res.status(400).send({ error: "To org ID", message: "To org ID paramter is missing" });
-        } else if (((req.body.toorgid).toString()).trim().length === 0) {
+        }else if (((req.body.toorgid).toString()).trim().length === 0) {
             res.status(400).send({ error: "To org ID", message: "To org ID can't be empty" });
         } 
         //Date validation
