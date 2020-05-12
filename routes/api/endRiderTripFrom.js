@@ -126,7 +126,7 @@ router.post('/', async(req, res) => {
                         status: "ongoing"
                     }
                 }).catch(errHandler)
-                res.send("rider trip is updated")
+                res.status(200).send("Rider trip is updated")
 
             } else {
                 res.status(404).send("Rider doesn't exist")
@@ -134,7 +134,7 @@ router.post('/', async(req, res) => {
             }
 
         } else {
-            res.status(404).send("trip doesn't exist")
+            res.status(404).send("Trip doesn't exist")
             res.end();
         }
     } else {

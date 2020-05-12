@@ -201,81 +201,81 @@ router.post('/', async(req, res) => {
             res.end();
         }
     }).catch(errHandler)
-
+    const user = await User.findOne({
+        where: {
+            id: decoded.id,
+            status: "existing"
+        }
+    }).catch(errHandler)
+    if (!user) {
+        ValidChecks = false;
+        res.status(404).send({ message: "User not found" })
+        res.end()
+    }
 
     var invalidrider = 0;
 
 
 
 
-
-
-
-    if (req.body.latesttime == null) {
-        res.status(400).send({ error: "LatestTime", message: "LatestTime paramter is missing" });
-        ValidChecks = false;
-        res.end()
-    } else if (!((typeof(req.body.latesttime) === 'string') || ((req.body.latesttime) instanceof String))) {
-        ValidChecks = false;
-
-        res.status(400).send({ error: "LatestTime", message: "LatestTime must be a string" });
-        res.end()
-    } else if ((req.body.latesttime).trim().length === 0) {
-        ValidChecks = false;
-        res.status(400).send({ error: "LatestTime", message: "LatestTime can't be empty" });
-        res.end()
-    } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(req.body.latesttime))) {
-        res.status(400).send({ error: "LatestTime", message: "LatestTime is unvalid" });
-        ValidChecks = false;
-        res.end();
-    }
-
-    if (req.body.ridewith == null) {
-        ValidChecks = false;
-
-        res.status(400).send({ error: "RideWith", message: "RideWith paramter is missing" });
-        res.end()
-    } else if (!((typeof(req.body.ridewith) === 'string') || ((req.body.ridewith) instanceof String))) {
-        ValidChecks = false;
-
-        res.status(400).send({ error: "RideWith", message: "RideWith must be a string" });
-        res.end()
-    } else if ((req.body.ridewith).trim().length === 0) {
-        ValidChecks = false;
-
-        res.status(400).send({ error: "RideWith", message: "RideWith can't be empty" });
-        res.end()
-
-    }
-
-    if (req.body.smoking == null) {
-        ValidChecks = false;
-
-        res.status(400).send({ error: "Smoking", message: "Smoking paramter is missing" });
-        res.end()
-    } else if (!((typeof(req.body.smoking) === 'string') || ((req.body.smoking) instanceof String))) {
-        ValidChecks = false;
-
-        res.status(400).send({ error: "Smoking", message: "Smoking must be a string" });
-        res.end()
-    } else if ((req.body.smoking).trim().length === 0) {
-        ValidChecks = false;
-
-        res.status(400).send({ error: "Smoking", message: "Smoking can't be empty" });
-        res.end()
-    }
-
-
-
-
     if (ValidChecks) {
-        const user = await User.findOne({
-            where: {
-                id: decoded.id,
-                "status": "existing"
-            }
-        }).catch(errHandler)
-        if (user) {
+        if (req.body.latesttime == null) {
+            res.status(400).send({ error: "LatestTime", message: "LatestTime paramter is missing" });
+            ValidChecks = false;
+            res.end()
+        } else if (!((typeof(req.body.latesttime) === 'string') || ((req.body.latesttime) instanceof String))) {
+            ValidChecks = false;
+
+            res.status(400).send({ error: "LatestTime", message: "LatestTime must be a string" });
+            res.end()
+        } else if ((req.body.latesttime).trim().length === 0) {
+            ValidChecks = false;
+            res.status(400).send({ error: "LatestTime", message: "LatestTime can't be empty" });
+            res.end()
+        } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(req.body.latesttime))) {
+            res.status(400).send({ error: "LatestTime", message: "LatestTime is unvalid" });
+            ValidChecks = false;
+            res.end();
+        }
+
+
+        if (req.body.ridewith == null) {
+            ValidChecks = false;
+
+            res.status(400).send({ error: "RideWith", message: "RideWith paramter is missing" });
+            res.end()
+        } else if (!((typeof(req.body.ridewith) === 'string') || ((req.body.ridewith) instanceof String))) {
+            ValidChecks = false;
+
+            res.status(400).send({ error: "RideWith", message: "RideWith must be a string" });
+            res.end()
+        } else if ((req.body.ridewith).trim().length === 0) {
+            ValidChecks = false;
+
+            res.status(400).send({ error: "RideWith", message: "RideWith can't be empty" });
+            res.end()
+
+        }
+
+        if (req.body.smoking == null) {
+            ValidChecks = false;
+
+            res.status(400).send({ error: "Smoking", message: "Smoking paramter is missing" });
+            res.end()
+        } else if (!((typeof(req.body.smoking) === 'string') || ((req.body.smoking) instanceof String))) {
+            ValidChecks = false;
+
+            res.status(400).send({ error: "Smoking", message: "Smoking must be a string" });
+            res.end()
+        } else if ((req.body.smoking).trim().length === 0) {
+            ValidChecks = false;
+
+            res.status(400).send({ error: "Smoking", message: "Smoking can't be empty" });
+            res.end()
+        }
+
+
+        if (ValidChecks) {
             const Trip = await Trips.findOne({
                 where: {
                     id: req.body.tripid
