@@ -60,6 +60,8 @@ flutter:
   - images/avatarmale.png
   - images/avatarfemale.png
   - images/bluelogonobg.png
+  - images/rider.png
+  - images/driver.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

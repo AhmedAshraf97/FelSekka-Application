@@ -1,27 +1,35 @@
 import 'dart:convert';
-import 'package:felsekka/pages/homepage.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
-import 'package:felsekka/pages/sidebar_layout.dart';
-import 'package:felsekka/pages/signup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:http/http.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:rich_alert/rich_alert.dart';
-import 'AnimatedPage Route.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+class Review{
+  String type="";
+  String review="";
+  Review(this.type,this.review);
+    factory Review.fromJson(dynamic json) {
+      return Review(json['type'] as String, json['review'] as String);
+    }
+  @override
+  String toString() {
+      return '{ ${this.type}, ${this.review} }';
+    }
+  }
 class Profile extends StatefulWidget with NavigationStates{
   @override
   _ProfileState createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
+  List<Card> ListReviews=[];
   String token;
+  int noReviews=0;
   int id;
   String firstname="";
   String lastname="";
@@ -156,6 +164,85 @@ class _ProfileState extends State<Profile> {
         countTrustint = data['count'];
         countTrust = countTrustint.toString();
     }
+    //User reviews
+    Map<String, String> body = {
+      'username' : username,
+    };
+    String urlReviews="http://3.81.22.120:3000/api/getreviews";
+    Response responseReviews =await post(urlReviews, headers:{'authorization': token}, body:body );
+    if(responseReviews.statusCode==409)
+    {
+      noReviews=1;
+    }
+    else if(responseReviews.statusCode != 200)
+    {
+      Map data= jsonDecode(responseReviews.body);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return RichAlertDialog(
+              alertTitle: richTitle(data['error']),
+              alertSubtitle: richSubtitle(data['message']),
+              alertType: RichAlertType.WARNING,
+              dialogIcon: Icon(
+                Icons.warning,
+                color: Colors.red,
+                size: 80,
+              ),
+              actions: <Widget>[
+                new OutlineButton(
+                  shape: StadiumBorder(),
+                  textColor: Colors.blue,
+                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                  borderSide: BorderSide(
+                      color: Colors.indigo[400], style: BorderStyle.solid,
+                      width: 1),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          });
+    }
+    else{
+      noReviews=0;
+      ListReviews=[];
+      Map data= jsonDecode(responseReviews.body);
+      var reviewObjsJson = data['reviews'] as List;
+      List<Review> reviewObjs = reviewObjsJson.map((reviewJson) => Review.fromJson(reviewJson)).toList();
+      for(int i=0; i<reviewObjs.length; i++)
+        {
+          String img="";
+          String reviewtype="";
+          if(reviewObjs[i].type=="driver")
+            {
+              img="images/driver.png";
+              reviewtype="Review as a driver:";
+            }
+          else{
+            img="images/rider.png";
+            reviewtype="Review as a rider:";
+          }
+          ListReviews.add(
+            Card(
+              elevation: 4,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              child: ListTile(
+                contentPadding: EdgeInsets.all(10),
+                leading: CircleAvatar(
+                  child: Image.asset(img,height: 50,),
+                ),
+                title: Text(reviewtype,style: TextStyle(color: Colors.indigo),),
+                subtitle: Text(reviewObjs[i].review),
+              ),
+            ),
+          );
+        }
+    }
     return null;
   }
   Future<Null>refreshpage(){
@@ -169,7 +256,6 @@ class _ProfileState extends State<Profile> {
     return FutureBuilder(
       future: getData(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        print(snapshot.connectionState);
         if(snapshot.connectionState == ConnectionState.done)
           {
             return Scaffold(
@@ -261,6 +347,13 @@ class _ProfileState extends State<Profile> {
                                         SizedBox(
                                           width: 20,
                                         ),
+                                        Icon(
+                                          Icons.person,
+                                          color: Colors.indigo,
+                                        ),
+                                        SizedBox(
+                                          width: 2,
+                                        ),
                                         Text(
                                           "First name:",
                                           style: TextStyle(
@@ -294,6 +387,13 @@ class _ProfileState extends State<Profile> {
                                       children: <Widget>[
                                         SizedBox(
                                           width: 20,
+                                        ),
+                                        Icon(
+                                          Icons.person,
+                                          color: Colors.indigo,
+                                        ),
+                                        SizedBox(
+                                          width: 2,
                                         ),
                                         Text(
                                           "Last name:",
@@ -329,6 +429,13 @@ class _ProfileState extends State<Profile> {
                                         SizedBox(
                                           width: 20,
                                         ),
+                                        Icon(
+                                          Icons.person,
+                                          color: Colors.indigo,
+                                        ),
+                                        SizedBox(
+                                          width: 2,
+                                        ),
                                         Text(
                                           "Username:",
                                           style: TextStyle(
@@ -362,6 +469,13 @@ class _ProfileState extends State<Profile> {
                                       children: <Widget>[
                                         SizedBox(
                                           width: 20,
+                                        ),
+                                        Icon(
+                                          Icons.mail,
+                                          color: Colors.indigo,
+                                        ),
+                                        SizedBox(
+                                          width: 2,
                                         ),
                                         Text(
                                           "E-mail:",
@@ -397,6 +511,13 @@ class _ProfileState extends State<Profile> {
                                         SizedBox(
                                           width: 20,
                                         ),
+                                        Icon(
+                                          Icons.phone_in_talk,
+                                          color: Colors.indigo,
+                                        ),
+                                        SizedBox(
+                                          width: 2,
+                                        ),
                                         Text(
                                           "Phone number:",
                                           style: TextStyle(
@@ -430,6 +551,13 @@ class _ProfileState extends State<Profile> {
                                       children: <Widget>[
                                         SizedBox(
                                           width: 20,
+                                        ),
+                                        Icon(
+                                          Icons.cake,
+                                          color: Colors.indigo,
+                                        ),
+                                        SizedBox(
+                                          width: 2,
                                         ),
                                         Text(
                                           "Birthdate:",
@@ -465,6 +593,13 @@ class _ProfileState extends State<Profile> {
                                         SizedBox(
                                           width: 20,
                                         ),
+                                        Icon(
+                                          Icons.people,
+                                          color: Colors.indigo,
+                                        ),
+                                        SizedBox(
+                                          width: 2,
+                                        ),
                                         Text(
                                           "Gender:",
                                           style: TextStyle(
@@ -499,6 +634,13 @@ class _ProfileState extends State<Profile> {
                                         SizedBox(
                                           width: 20,
                                         ),
+                                        Icon(
+                                          Icons.time_to_leave,
+                                          color: Colors.indigo,
+                                        ),
+                                        SizedBox(
+                                          width: 2,
+                                        ),
                                         Text(
                                           "Ride with:",
                                           style: TextStyle(
@@ -532,6 +674,13 @@ class _ProfileState extends State<Profile> {
                                       children: <Widget>[
                                         SizedBox(
                                           width: 20,
+                                        ),
+                                        Icon(
+                                          Icons.smoking_rooms,
+                                          color: Colors.indigo,
+                                        ),
+                                        SizedBox(
+                                          width: 2,
                                         ),
                                         Text(
                                           "Smoking:",
@@ -615,7 +764,51 @@ class _ProfileState extends State<Profile> {
                                             borderSide: BorderSide(
                                                 color: Colors.indigo[400], style: BorderStyle.solid,
                                                 width: 1),
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              //////////////////////////////////////////////
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) {
+                                                    return Scaffold(
+                                                        body: Column(
+                                                          children: <Widget>[
+                                                            Expanded(
+                                                              child: Container(
+                                                                width: double.infinity,
+                                                                decoration: BoxDecoration(
+                                                                  color: Colors.indigo,
+                                                                ),
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.all(10.0),
+                                                                  child: Container(
+                                                                      decoration: BoxDecoration(
+                                                                          color: Colors.white,
+                                                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),bottomLeft:Radius.circular(30),bottomRight: Radius.circular(30) )
+                                                                      ),
+                                                                      child: noReviews == 1 ? Center(child: Text("No reviews to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),)) : ListView(
+                                                                        children: ListReviews,
+                                                                      ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+                                                        floatingActionButton: new FloatingActionButton(
+                                                            elevation: 0.0,
+                                                            child: new Icon(Icons.close),
+                                                            backgroundColor: Colors.indigo[400],
+                                                            onPressed: (){
+                                                              Navigator.pop(context);
+                                                            }
+                                                        )
+                                                    );
+                                                  },
+                                                ),
+                                              );
+                                            },
                                           )
                                         ]
                                     ),
