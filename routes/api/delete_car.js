@@ -32,20 +32,6 @@ router.post('/', async(req, res) => {
         res.status(401).send({ message: "You aren't authorized to delete any car" })
         res.end();
     }
-
-    await Car.findOne({
-        where: {
-            id: req.body.carid
-        }
-    }).then(car => {
-        if (!car) {
-            ValidChecks = false;
-            res.status(404).send({ message: "Car not found" })
-            res.end()
-        }
-    }).catch(errHandler)
-
-
     await ExpiredToken.findOne({
         where: {
             token: req.headers["authorization"]
@@ -57,6 +43,21 @@ router.post('/', async(req, res) => {
             res.end();
         }
     }).catch(errHandler)
+
+    await Car.findOne({
+        where: {
+            id: req.body.carid
+        }
+    }).then(car => {
+        if (!car) {
+            ValidChecks = false;
+            res.status(404).send({ message: "Car is not found" })
+            res.end()
+        }
+    }).catch(errHandler)
+
+
+
 
 
     await User.findOne({

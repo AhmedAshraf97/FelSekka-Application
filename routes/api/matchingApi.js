@@ -490,22 +490,22 @@ router.post('/', async(req, res) => {
                                 }
                             }).catch(errHandler)
                         }
-                        res.status(200).send("OK")
+                        res.status(200).send("Matching Done")
 
 
                     }
                 }
                 if (countAssigned === 0) {
-                    res.send("No trips will be scheduled")
+                    res.status(400).send("No trips will be scheduled")
                 }
             } else {
-                res.send("No trips will be scheduled")
+                res.status(400).send("No trips will be scheduled")
             }
         } else {
-            res.send("no requests")
+            res.status(400).send("no requests")
         }
     } else {
-        res.send("no offers")
+        res.status(400).send("no offers")
     }
 
     DriversRider = []

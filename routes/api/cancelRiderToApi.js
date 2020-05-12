@@ -171,8 +171,6 @@ const errHandler = err => {
 
 
 router.post('/', async(req, res) => {
-
-    //    console.log(" Fil awal ", JSON.parse(JSON.stringify(Riders)))
     var DRdistanceValue = []
     var DRdurationValue = []
     var RRdistanceValue = []
@@ -199,13 +197,20 @@ router.post('/', async(req, res) => {
             res.end();
         }
     }).catch(errHandler)
+    const user = await User.findOne({
+        where: {
+            id: decoded.id,
+            status: "existing"
+        }
+    }).catch(errHandler)
+    if (!user) {
+        ValidChecks = false;
+        res.status(404).send({ message: "User not found" })
+        res.end()
+    }
 
     if (ValidChecks) {
-        const user = await User.findOne({
-            where: {
-                id: decoded.id
-            }
-        }).catch(errHandler)
+
         const trip = await Trips.findOne({
             where: {
                 id: req.body.tripid,

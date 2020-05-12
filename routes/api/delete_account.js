@@ -29,7 +29,7 @@ router.post('/', async(req, res) => {
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        res.status(401).send({ message: "You aren't authorized to delete any car" })
+        res.status(401).send({ message: "You aren't authorized to delete account" })
         res.end();
     }
 
@@ -41,7 +41,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to delete any car" })
+            res.status(401).send({ message: "You aren't authorized to delete account" })
             res.end();
         }
     }).catch(errHandler)

@@ -35,7 +35,6 @@ router.post('/', async(req, res) => {
         res.status(401).send({ message: "You aren't authorized to cancel trip" })
         res.end();
     }
-
     await ExpiredToken.findOne({
         where: {
             token: req.headers["authorization"]
@@ -48,14 +47,24 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler)
 
+    const user = await User.findOne({
+        where: {
+            id: decoded.id,
+            status: "existing"
+        }
+    }).catch(errHandler)
+    if (!user) {
+        ValidChecks = false;
+        res.status(404).send({ message: "User not found" })
+        res.end()
+    }
+
+
+
 
 
     if (ValidChecks) {
-        const user = await User.findOne({
-            where: {
-                id: decoded.id
-            }
-        }).catch(errHandler)
+
         const trip = await Trips.findOne({
             where: {
                 id: req.body.tripid,

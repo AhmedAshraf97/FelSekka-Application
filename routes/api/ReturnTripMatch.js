@@ -490,19 +490,19 @@ router.post('/', async(req, res) => {
                     }
                 }
                 if (countAssigned === 0) {
-                    res.status.send("No trips will be scheduled")
+                    res.status(200).send("No trips will be scheduled")
                 }
 
             } else {
-                res.send("No trips will be scheduled")
+                res.status(200).send("No trips will be scheduled")
             }
 
         } else {
-            res.send("no requests")
+            res.status(200).send("no requests")
         }
 
     } else {
-        res.send("no offers")
+        res.status(200).send("no offers")
     }
 
 

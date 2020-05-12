@@ -96,7 +96,7 @@ router.post('/', async(req, res) => {
                                     }
                                 })
                             } else {
-                                res.send({ message: "No Reviews for this user" })
+                                res.status(409).send({ message: "No Reviews for this user" })
                                 res.end()
                             }
                         })

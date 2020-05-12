@@ -18,12 +18,13 @@ const errHandler = err => {
 };
 router.post('/', async(req, res) => {
     var decoded;
-    var userExists = false;
+    var userExists = true;
 
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
-        userExists = true;
+
     } catch (e) {
+        userExists = false;
         res.status(401).send({ message: "You aren't authorized to add a review" })
         res.end();
     }
@@ -31,19 +32,16 @@ router.post('/', async(req, res) => {
 
     await ExpiredToken.findOne({ where: { token: req.headers["authorization"] } }).then(expired => {
         if (expired) {
+            userExists = false;
             res.status(401).send({ message: "You aren't authorized" })
             res.end();
-        } else {
-
-            userExists = true
         }
     }).catch(errHandler)
 
 
     await User.findOne({ where: { id: decoded.id, status: 'existing' } }).then(user => {
-        if (user) {
-            userExists = true;
-        } else {
+        if (!user) {
+            userExists = false;
             res.status(404).send({ message: "User not found" })
             res.end()
         }
