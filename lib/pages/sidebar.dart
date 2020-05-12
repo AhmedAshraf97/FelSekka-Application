@@ -42,7 +42,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
   double doubleRating=0;
   String trimRating="";
   String countTrust="";
-  int countTrustint=10;
+  int countTrustint=0;
   AnimationController _animationController;
   StreamController<bool> isSidebarOpenedStreamController;
   Stream<bool> isSidebarOpenedStream;
