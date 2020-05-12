@@ -148,7 +148,8 @@ router.post('/', async(req, res) => {
                     Car.findOne({
                         where: {
                             plateletters: req.body.plateletters,
-                            platenumbers: req.body.platenumbers
+                            platenumbers: req.body.platenumbers,
+                            status: "existing"
                         }
                     }).then(
                         car => {

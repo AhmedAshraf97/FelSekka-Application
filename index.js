@@ -4,6 +4,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 //DB connection
 require("./database/connection");
@@ -48,9 +49,7 @@ app.use('/api/signout', require('./routes/api/sign_out'));
 app.use('/api/deleteaccount', require('./routes/api/delete_account'));
 
 app.use('/api/searchTrip', require('./routes/api/searchTrip'));
-
 app.use('/api/matching', require('./routes/api/matchingApi').router);
-
 app.use('/api/ReturnTripMatch', require('./routes/api/ReturnTripMatch').router);
 app.use('/api/chooseFromAvailableRides', require('./routes/api/chooseFromAvailableRidesApi').router)
 app.use('/api/chooseFromReturnTripsApi', require('./routes/api/chooseFromReturnTripsApi').router)
@@ -70,3 +69,26 @@ app.use('/api/startDriverTripFrom', require('./routes/api/startDriverTripFrom'))
 app.use('/api/startDriverTripTo', require('./routes/api/startDriverTripTo'))
 app.use('/api/endDriverTripFrom', require('./routes/api/endDriverTripFrom'))
 app.use('/api/endDriverTripTo', require('./routes/api/endDriverTripTo'))
+
+
+var schedule = require('node-schedule');
+var request = require('request');
+
+
+// var matchingSchedule = schedule.scheduleJob('50 * * * * *', function() {
+//     request.post({
+//         url: 'http://localhost:3000/api/matching'
+//     }, function(err, httpResponse, body) {
+//         console.log(body);
+//     })
+
+// });
+
+// var ReturnmatchingSchedule = schedule.scheduleJob('50 * * * * *', function() {
+//     request.post({
+//         url: 'http://localhost:3000/api/ReturnTripMatch'
+//     }, function(err, httpResponse, body) {
+//         console.log(body);
+//     })
+
+// });

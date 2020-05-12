@@ -436,7 +436,7 @@ router.post('/', async(req, res) => {
                             startloclatitude: Drivers[i].latitude,
                             startloclongitude: Drivers[i].longitude,
                             endloclatitude: organization.latitude,
-                            endloclongitude: organization.longitud,
+                            endloclongitude: organization.longitude,
                             totaldistance: 0,
                             totaltime: 0,
                             totalfare: 0,
