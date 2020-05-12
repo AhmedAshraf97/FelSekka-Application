@@ -48,13 +48,12 @@ router.post('/', async(req, res) => {
             where: {
                 [Op.and]: [
                     { user1id: decoded.id },
-                    { trust: 1 }
+                    { trust: -1 }
                 ]
             }
         }).then(users => {
             res.status(200).json(users);
         }).catch(errHandler);
-
     }
 });
 
