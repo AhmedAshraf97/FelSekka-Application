@@ -2,9 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
+var queue = require('express-queue');
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 //DB connection
 require("./database/connection");
@@ -51,8 +52,8 @@ app.use('/api/deleteaccount', require('./routes/api/delete_account'));
 app.use('/api/searchTrip', require('./routes/api/searchTrip'));
 app.use('/api/matching', require('./routes/api/matchingApi').router);
 app.use('/api/ReturnTripMatch', require('./routes/api/ReturnTripMatch').router);
-app.use('/api/chooseFromAvailableRides', require('./routes/api/chooseFromAvailableRidesApi').router)
-app.use('/api/chooseFromReturnTripsApi', require('./routes/api/chooseFromReturnTripsApi').router)
+app.use('/api/chooseFromAvailableRides', require('./routes/api/chooseFromAvailableRidesApi').router, queue({ activeLimit: 1, queuedLimit: -1 }))
+app.use('/api/chooseFromReturnTripsApi', require('./routes/api/chooseFromReturnTripsApi').router, queue({ activeLimit: 1, queuedLimit: -1 }))
 
 app.use('/api/cancelRiderTo', require('./routes/api/cancelRiderToApi').router)
 app.use('/api/cancelRiderFrom', require('./routes/api/cancelRiderFromApi').router)
@@ -74,6 +75,46 @@ app.use('/api/endDriverTripTo', require('./routes/api/endDriverTripTo'))
 var schedule = require('node-schedule');
 var request = require('request');
 
+
+var jsontosend = {
+    "latesttime": "05:00:00",
+    "smoking": "no",
+    "ridewith": "female",
+    "tripid": 121
+}
+
+//ID = 45
+var choose1 = schedule.scheduleJob('50 * * * * *', function() {
+    request.post({
+        url: 'http://localhost:3000/api/chooseFromReturnTripsApi',
+        json: true,
+        body: jsontosend,
+        headers: {
+            'authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDUsImZpcnN0bmFtZSI6ImRpbmEiLCJsYXN0bmFtZSI6IndhbGlkIiwicGhvbmVudW1iZXIiOiIwMTExMjIxMzA1NyIsInBhc3N3b3JkIjoiJDJiJDEwJDFvSXVCeUU5YnVDeGdBSlM4NzFoNHVqeFJOT0p3eElsajhCWmVDTTJNdHFZZ1dTS3lmUDN1IiwiZ2VuZGVyIjoiZmVtYWxlIiwiYmlydGhkYXRlIjoiMTk5Ny0xMC0wNSIsInBob3RvIjpudWxsLCJyaWRld2l0aCI6ImZlbWFsZSIsInNtb2tpbmciOiJubyIsInJhdGluZyI6IjUuMDAwIiwic3RhdHVzIjoiZXhpc3RpbmciLCJlbWFpbCI6ImRpbmEud2FsaWQ5N0Bob3RtYWlsLmNvbSIsImxhdGl0dWRlIjoiMzEuMzA2MTg3MDAiLCJsb25naXR1ZGUiOiIyOS45ODQxNjkwMCIsInVzZXJuYW1lIjoiZGluYXdhbGlkIiwiY3JlYXRlZEF0IjoiMjAyMC0wNC0yMlQwMzoxMTo1Ni4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMC0wNC0yMlQwMzoxMTo1Ni4wMDBaIiwiaWF0IjoxNTg5Mjk5NTk5fQ.HzSCTpGqjzaCh64iKMKFepngL_7Li-i0f-dZIF8dgAs'
+        }
+    }, function(err, httpResponse, body) {
+        console.log(body);
+    })
+});
+
+//ID = 52
+var choose2 = schedule.scheduleJob('50 * * * * *', function() {
+    request.post({
+        url: 'http://localhost:3000/api/chooseFromReturnTripsApi',
+        json: true,
+        body: jsontosend,
+        headers: {
+            'authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTIsImZpcnN0bmFtZSI6Im5hcmltYW4iLCJsYXN0bmFtZSI6InJlZGEiLCJwaG9uZW51bWJlciI6IjAxMTQ1Nzg1NjIyIiwicGFzc3dvcmQiOiIkMmIkMTAkVEg4N2NzLmVUNzdrcURaQ2JiVFlOT3VuUTl6QlFLd3lSSjhudGFXeEV3TlBQLkJqQUd1bGEiLCJnZW5kZXIiOiJmZW1hbGUiLCJiaXJ0aGRhdGUiOiIxOTk3LTAyLTE0IiwicGhvdG8iOm51bGwsInJpZGV3aXRoIjoiZmVtYWxlIiwic21va2luZyI6Im5vIiwicmF0aW5nIjoiNS4wMDAiLCJzdGF0dXMiOiJleGlzdGluZyIsImVtYWlsIjoibmFyaW1hbkBob3RtYWlsLmNvbSIsImxhdGl0dWRlIjoiMzEuNTU1NjI1MDAiLCJsb25naXR1ZGUiOiIyOS41NTY1NjAwMCIsInVzZXJuYW1lIjoibmFyaW1hbiIsImNyZWF0ZWRBdCI6IjIwMjAtMDQtMjJUMjI6Mjk6NDcuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjAtMDQtMjJUMjI6Mjk6NDcuMDAwWiIsImlhdCI6MTU4OTI5ODQ1NH0.lDVPUrJ8DHwLjBAB7QqOYzjLwwSzBuJU2-2rax_orvY'
+        }
+    }, function(err, httpResponse, body) {
+        console.log(body);
+    })
+});
+
+
+
+
+//////////////////////////////////////////////
 
 // var matchingSchedule = schedule.scheduleJob('50 * * * * *', function() {
 //     request.post({
