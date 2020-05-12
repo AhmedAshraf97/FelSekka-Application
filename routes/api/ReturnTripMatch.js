@@ -484,13 +484,13 @@ router.post('/', async(req, res) => {
                                 }
                             }).catch(errHandler)
                         }
-                        res.status(200).send("OK")
+                        res.status(200).send("Matching Done")
 
 
                     }
                 }
                 if (countAssigned === 0) {
-                    res.send("No trips will be scheduled")
+                    res.status.send("No trips will be scheduled")
                 }
 
             } else {

@@ -42,7 +42,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to edit ya car, your token expired" })
+            res.status(401).send({ message: "You aren't authorized to start a trip" })
             res.end();
         }
     }).catch(errHandler)
@@ -148,7 +148,7 @@ router.post('/', async(req, res) => {
                 res.status(200).send("Driver trip is updated")
 
             } else {
-                res.status(404).send("No driver assigned with this trip")
+                res.status(409).send("No driver assigned with this trip")
                 res.end();
             }
 

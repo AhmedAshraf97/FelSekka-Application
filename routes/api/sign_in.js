@@ -36,9 +36,8 @@ router.post('/', (req, res) => {
                 if (bcrypt.compareSync(req.body.password, user.password)) {
                     let token = jwt.sign(user.dataValues, process.env.SECRET_KEY)
                     res.json({ token: token, userInfo: user.dataValues })
-                    console.log("User data ", user.dataValues)
                 } else
-                    res.status(401).send({error: "Password", message: "Invalid Password, Please try again" })
+                    res.status(401).send({ error: "Password", message: "Invalid Password, Please try again" })
             } else
                 res.status(400).send({ error: "User doesn't exist", message: "Invalid Email or Phone number, Please try again" })
         })
