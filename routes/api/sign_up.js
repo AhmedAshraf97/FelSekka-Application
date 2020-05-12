@@ -33,7 +33,7 @@ router.post('/', async(req, res) => {
         birthdate: req.body.birthdate,
         ridewith: req.body.ridewith,
         smoking: req.body.smoking,
-        longitude: parseFloat(req.body.longitude) ,
+        longitude: parseFloat(req.body.longitude),
         latitude: parseFloat(req.body.latitude),
         rating: 5.0,
         status: "existing",
@@ -72,11 +72,11 @@ router.post('/', async(req, res) => {
         res.status(400).send({ error: "First name", message: "First name paramter is missing" });
     } else if (!((typeof(req.body.firstname) === 'string') || ((req.body.firstname) instanceof String))) {
         res.status(400).send({ error: "First name", message: "First name must be a string" });
-    }else if ((req.body.firstname).trim().length === 0) {
+    } else if ((req.body.firstname).trim().length === 0) {
         res.status(400).send({ error: "First name", message: "First name can't be empty" });
     } else if (!(/^[a-zA-Z ]*$/.test(req.body.firstname))) {
         res.status(400).send({ error: "First name", message: "First name can only contain letters" });
-    }else if ((req.body.firstname).trim().length > 15) {
+    } else if ((req.body.firstname).trim().length > 15) {
         res.status(400).send({ error: "First name", message: "First name has maximum length of 15 letters" });
     }
     //Last name validation 
@@ -182,57 +182,55 @@ router.post('/', async(req, res) => {
         res.status(400).send({ error: "Latitude", message: "Latitude paramter is missing" });
     } else if (((req.body.latitude).toString()).trim().length === 0) {
         res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
-    } 
+    }
     //Longitude validation
     else if (req.body.longitude == null) {
         res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
     } else if (((req.body.longitude).toString()).trim().length === 0) {
         res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
-    } 
-    else if(usernameExists === 1){
-        res.status(409).send( {error: "Username", message: "This username already exists"});   
-    }
-    else if (emailExists === 1){  
-        res.status(409).send( {error: "Email", message: "This email already exists"});
-    }    
-    else if(phonenumberExists === 1){
-        res.status(409).send( {error: "Phone number", message: "This phone number already exists"});
-    }
-    else {
-        var createdUserID=0;
+    } else if (usernameExists === 1) {
+        res.status(409).send({ error: "Username", message: "This username already exists" });
+    } else if (emailExists === 1) {
+        res.status(409).send({ error: "Email", message: "This email already exists" });
+    } else if (phonenumberExists === 1) {
+        res.status(409).send({ error: "Phone number", message: "This phone number already exists" });
+    } else {
+        var createdUserID = 0;
         //Insert user 
-        await User.create(userData).then(user=>{
-            res.status(201).send( {message:"User is created"});
+        await User.create(userData).then(user => {
+            res.status(200).send({ message: "User is created" });
             createdUserID = user.id;
-        }).catch(errHandler); 
+        }).catch(errHandler);
 
         //Insert users in betweenusers
         await User.findAll({
-        where: {
-            [Op.and]: [
-            {id:{[Op.ne]:createdUserID}},
-            {status: 'existing'}
-            ]
-        }}).then(users=>{
-            if(users){
-                users.forEach(user => { 
+            where: {
+                [Op.and]: [
+                    { id: {
+                            [Op.ne]: createdUserID } },
+                    { status: 'existing' }
+                ]
+            }
+        }).then(users => {
+            if (users) {
+                users.forEach(user => {
                     const betweenUsersData1 = {
-                    user1id: user.id,
-                    user2id:createdUserID,	
-                    distance: 0.0,	
-                    time: 0.0,
-                    trust:0
+                        user1id: user.id,
+                        user2id: createdUserID,
+                        distance: 0.0,
+                        time: 0.0,
+                        trust: 0
                     }
                     const betweenUsersData2 = {
-                    user1id:createdUserID,
-                    user2id:user.id,	
-                    distance:0.0,	
-                    time:0.0,
-                    trust:0
+                        user1id: createdUserID,
+                        user2id: user.id,
+                        distance: 0.0,
+                        time: 0.0,
+                        trust: 0
                     }
-                    BetweenUsers.create(betweenUsersData1).then().catch(errHandler); 
-                    BetweenUsers.create(betweenUsersData2).then().catch(errHandler); 
-                    }); 
+                    BetweenUsers.create(betweenUsersData1).then().catch(errHandler);
+                    BetweenUsers.create(betweenUsersData2).then().catch(errHandler);
+                });
             }
         }).catch(errHandler);
     }

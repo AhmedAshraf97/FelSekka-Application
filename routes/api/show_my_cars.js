@@ -71,7 +71,7 @@ router.post('/', async(req, res) => {
                         });
 
                     } else {
-                        res.send({ message: "No Cars to be shown" })
+                        res.status(409).send({ message: "No Cars to be shown" })
                         res.end()
                     }
                 }).catch(errHandler)

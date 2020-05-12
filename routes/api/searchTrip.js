@@ -29,10 +29,9 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to show available trips" })
+        res.status(401).send({ message: "You aren't authorized to search for trips" })
         res.end();
     }
-    let isvalid = false
 
     var availableTrips = {}
     var count = 0;
@@ -45,7 +44,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to show available trips" })
+            res.status(401).send({ message: "You aren't authorized to search for trips" })
             res.end();
         }
     }).catch(errHandler)
@@ -118,7 +117,7 @@ router.post('/', async(req, res) => {
 
                                                 }
                                                 if (countAll === scheduledTrips.length) {
-                                                    res.send(availableTrips)
+                                                    res.status(200).send(availableTrips)
                                                 }
                                             }).catch(errHandler)
 
@@ -162,7 +161,7 @@ router.post('/', async(req, res) => {
                                                 }
 
                                                 if (countAll === scheduledTrips.length) {
-                                                    res.send(availableTrips)
+                                                    res.status(200).send(availableTrips)
                                                 }
                                             }).catch(errHandler)
 
@@ -183,7 +182,7 @@ router.post('/', async(req, res) => {
 
                         } else {
 
-                            res.status(404).send("No trips are found")
+                            res.status(409).send("No trips are found")
 
                         }
 

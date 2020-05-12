@@ -361,7 +361,7 @@ router.post('/', async(req, res) => {
                                             }
 
                                         } else if (countcheck == RiderRides.length) {
-                                            res.send({ message: "No Trips for this user" })
+                                            res.status(409).send({ message: "No Trips for this user" })
                                             res.end()
 
                                         }
@@ -596,7 +596,7 @@ router.post('/', async(req, res) => {
 
                                                     }
                                                 } else if (countcheck == DriverRides.length) {
-                                                    res.send({ message: "No Trips for this user" })
+                                                    res.status(409).send({ message: "No Trips for this user" })
                                                     res.end()
 
                                                 }
@@ -608,7 +608,7 @@ router.post('/', async(req, res) => {
                                     })
                                 } else {
 
-                                    res.send({ message: "No Trips for this user" })
+                                    res.status(409).send({ message: "No Trips for this user" })
                                     res.end()
                                 }
                             })

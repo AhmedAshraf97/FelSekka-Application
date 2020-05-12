@@ -25,10 +25,6 @@ const errHandler = err => {
 router.post('/', async(req, res) => {
 
     let ValidChecks = true
-
-
-
-
     if (req.body.driverid == null) {
         res.status(400).send({ error: "driverid", message: "driverid paramter is missing" });
         ValidChecks = false;
