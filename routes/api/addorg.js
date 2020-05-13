@@ -25,7 +25,7 @@ router.post('/', async(req, res) => {
 
     } catch (e) {
         userExists = false;
-        res.status(401).send({ message: "You aren't authorized to add a review" })
+        res.status(401).send({ message: "You aren't authorized to add an organization" })
         res.end();
     }
 

@@ -42,12 +42,12 @@ router.post('/', async(req, res) => {
     }).catch(errHandler);
 
     if (userExists) {
+            
             var org = '{"count": [], "organizations":[]}';
             var obj = JSON.parse(org);
             var orgUserArray = {};
             var allExistingOrg ={};
-            var myOrg =[]; 
-            var count =0;
+            var count = 0;
             await OrgUser.findAll({ where: { userid: decoded.id , status:'existing'}}).then(orgUsers=>{
                 orgUserArray = orgUsers;    
             }).catch(errHandler);    
@@ -58,26 +58,11 @@ router.post('/', async(req, res) => {
                 allExistingOrg.forEach(existingOrg =>{
                     if(orgUser.orgid === existingOrg.id )
                     {
-                        myOrg.push(existingOrg);
-                        
+                        obj['organizations'].push(existingOrg);
+                        count++;
                     }
                 })   
             });
-            allExistingOrg.forEach(existingOrg=>{
-                var found = false;
-                myOrg.forEach(org=>{
-                    if(org.id === existingOrg.id )
-                    {
-                        found=true;
-                    }
-                })
-                if(!found){
-                    count++;
-                    obj['organizations'].push(existingOrg);
-                }
-            });
-
-            
             obj['count'].push(count);
             res.status(200).send(obj);
     }

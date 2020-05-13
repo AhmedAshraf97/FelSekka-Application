@@ -28,7 +28,7 @@ app.use('/api/requestrideto', require('./routes/api/requestrideto'));
 app.use('/api/retrieveuserdata', require('./routes/api/retrieveuserdata'));
 app.use('/api/offerrideto', require('./routes/api/offerrideto'));
 app.use('/api/offerridefrom', require('./routes/api/offerridefrom'));
-
+app.use('/api/showmyorg', require('./routes/api/showmyorg'));
 app.use('/api/editcar', require('./routes/api/edit_car'));
 
 app.use('/api/editprofile', require('./routes/api/editprofile'));

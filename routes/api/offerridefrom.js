@@ -282,7 +282,7 @@ router.post('/', async(req, res) => {
             }
             else{
                 await offerRideFrom.create(rideData).then(ride=>{
-                        res.status(200).send( {message:"OK"});
+                        res.status(200).send( {message:"Offer is made successfully"});
                 }).catch(errHandler);
             }
         }
