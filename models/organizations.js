@@ -22,6 +22,11 @@ module.exports = sequelize.define("organizations", {
         type: Sequelize.STRING(300),
         allowNull: false,
         defaultValue: "pending"
+      }, 
+      domain: {
+        type: Sequelize.STRING(300),
+        allowNull: false,
+        
       } 
   }
   );

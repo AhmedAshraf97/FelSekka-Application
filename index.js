@@ -75,7 +75,7 @@ app.use('/api/endDriverTripTo', require('./routes/api/endDriverTripTo'))
 var schedule = require('node-schedule');
 var request = require('request');
 
-
+/*
 var jsontosend = {
     "latesttime": "05:00:00",
     "smoking": "no",
@@ -112,7 +112,7 @@ var choose2 = schedule.scheduleJob('50 * * * * *', function() {
 });
 
 
-
+*/
 
 //////////////////////////////////////////////
 

@@ -154,7 +154,7 @@ router.post('/', async(req, res) => {
                            
                             error = true;
                         }
-                        else if((reqStart<=rideStart)(rideStart<=reqEnd)){
+                        else if((reqStart<=rideStart)&&(rideStart<=reqEnd)){
                             
                             error = true;
                         }
@@ -166,11 +166,13 @@ router.post('/', async(req, res) => {
                     status: {[Op.or]: ["pending", "scheduled","ongoing"]}    
                 }
                 }).then(rides=>{
+                
                     rides.forEach(ride=> {
                         var reqStart = new Date((req.body.date.toString()) + " " + (req.body.departuretime).toString());
                         var reqEnd = new Date((req.body.date.toString()) + " " + (req.body.latesttime).toString());
                         var rideStart = new Date((ride.date.toString()) + " " + (ride.earliesttime).toString());
                         var rideEnd = new Date((ride.date.toString()) + " " + (ride.arrivaltime).toString());
+                        
                         if((rideStart<= reqStart) && (reqStart<= rideEnd)) {
                             error =  true;
                         }
@@ -178,11 +180,11 @@ router.post('/', async(req, res) => {
                             
                             error =  true;
                         }  
-                        else if((reqStart<=rideEnd) && (rideEnd<= reqEnd)){
+                        else if((reqStart<= rideEnd) && (rideEnd<= reqEnd)){
                            
                             error = true;
                         }
-                        else if((reqStart<=rideStart)(rideStart<=reqEnd)){
+                        else if((reqStart<= rideStart)&& (rideStart<= reqEnd)){
                             
                             error = true;
                         }
@@ -210,7 +212,7 @@ router.post('/', async(req, res) => {
                            
                             error = true;
                         }
-                        else if((reqStart<=rideStart)(rideStart<=reqEnd)){
+                        else if((reqStart<=rideStart)&&(rideStart<=reqEnd)){
                             
                             error = true;
                         }
@@ -238,7 +240,7 @@ router.post('/', async(req, res) => {
                            
                             error = true;
                         }
-                        else if((reqStart<=rideStart)(rideStart<=reqEnd)){
+                        else if((reqStart<=rideStart)&&(rideStart<=reqEnd)){
                             
                             error = true;
                         }
