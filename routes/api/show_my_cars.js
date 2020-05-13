@@ -25,6 +25,9 @@ const errHandler = err => {
 router.post('/', async(req, res) => {
     var CarsArray = {}
     var count = 0;
+    var jsonStr = '{"Cars":[]}';
+    var obj = JSON.parse(jsonStr);
+
     var ValidChecks = true;
     var decoded;
     try {
@@ -63,10 +66,10 @@ router.post('/', async(req, res) => {
                 }).then(cars => {
                     if (cars.length > 0) {
                         cars.forEach(car => {
-                            CarsArray[count] = car.dataValues;
+                            obj['Cars'].push(car.dataValues)
                             count++;
                             if (count === cars.length) {
-                                res.send(CarsArray)
+                                res.send(obj)
                             }
                         });
 

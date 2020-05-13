@@ -31,7 +31,10 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 router.post('/', async(req, res) => {
-    var TripsDetailsArr = {}
+
+    var jsonStr = '{"ScheduledTrips":[]}';
+    var obj = JSON.parse(jsonStr);
+
     var RiderTrip = {}
     var ValidChecks = true;
     var c = 0;
@@ -147,7 +150,7 @@ router.post('/', async(req, res) => {
                                                                                     }
 
                                                                                     if (c === AllRidersTrip.length - 1) {
-                                                                                        TripsDetailsArr[count] = ({
+                                                                                        obj['ScheduledTrips'].push({
                                                                                             type: "Rider",
                                                                                             "tripid": trip.id,
                                                                                             "carDetails.model": carDetails.model,
@@ -168,13 +171,15 @@ router.post('/', async(req, res) => {
                                                                                             "Riders in the trip": RiderTrip
 
                                                                                         })
+
+
                                                                                         count++;
                                                                                         c = 0;
                                                                                         RiderTrip = {}
 
 
                                                                                         if (count === RiderRides.length) {
-                                                                                            res.send(TripsDetailsArr)
+                                                                                            res.send(obj)
                                                                                         }
 
 
@@ -282,7 +287,7 @@ router.post('/', async(req, res) => {
                                                                                     }
 
                                                                                     if (c === AllRidersTrip.length - 1) {
-                                                                                        TripsDetailsArr[count] = ({
+                                                                                        obj['ScheduledTrips'].push({
                                                                                             type: "Rider",
                                                                                             "tripid": trip.id,
                                                                                             "carDetails.model": carDetails.model,
@@ -303,14 +308,14 @@ router.post('/', async(req, res) => {
                                                                                             "Riders in the trip": RiderTrip
 
                                                                                         })
+
                                                                                         count++;
                                                                                         c = 0;
                                                                                         RiderTrip = {}
 
 
                                                                                         if (count === RiderRides.length) {
-
-                                                                                            res.send(TripsDetailsArr)
+                                                                                            res.send(obj)
                                                                                         }
 
 
@@ -442,8 +447,7 @@ router.post('/', async(req, res) => {
 
                                                                                 if (c === AllRidersTrip.length) {
 
-
-                                                                                    TripsDetailsArr[count] = ({
+                                                                                    obj['ScheduledTrips'].push({
                                                                                         type: "driver",
                                                                                         "tripid": trip.id,
                                                                                         "carDetails.model": carDetails.model,
@@ -459,12 +463,12 @@ router.post('/', async(req, res) => {
                                                                                         "Riders in the trip": RiderTrip
 
                                                                                     })
+
                                                                                     c = 0;
                                                                                     RiderTrip = {}
                                                                                     count++;
                                                                                     if (count === DriverRides.length) {
-
-                                                                                        res.send(TripsDetailsArr)
+                                                                                        res.send(obj)
                                                                                     }
 
 
@@ -542,7 +546,9 @@ router.post('/', async(req, res) => {
                                                                                 }
 
                                                                                 if (c === AllRidersTrip.length) {
-                                                                                    TripsDetailsArr[count] = ({
+
+
+                                                                                    obj['ScheduledTrips'].push({
                                                                                         type: "driver",
                                                                                         "tripid": trip.id,
                                                                                         "carDetails.model": carDetails.model,
@@ -565,8 +571,7 @@ router.post('/', async(req, res) => {
 
 
                                                                                     if (count === DriverRides.length) {
-
-                                                                                        res.send(TripsDetailsArr)
+                                                                                        res.send(obj)
                                                                                     }
 
 

@@ -14,7 +14,6 @@ const ExpiredToken = require('../../models/expiredtokens');
 //Error handler
 const errHandler = err => {
     //Catch and log any error.
-    res.send("Error: ", err);
     console.error("Error: ", err);
 };
 router.post('/', async(req, res) => {
