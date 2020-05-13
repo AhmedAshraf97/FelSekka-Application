@@ -64,7 +64,14 @@ router.post('/', async(req, res) => {
                 })   
             });
             obj['count'].push(count);
-            res.status(200).send(obj);
+            if(count === 0)
+            {
+                res.status(409).send("No organizations found");
+            }
+            else{
+                res.status(200).send(obj);
+            }
+            
     }
 });
 
