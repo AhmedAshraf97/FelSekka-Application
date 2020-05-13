@@ -15,22 +15,180 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'AnimatedPage Route.dart';
 
+class Org{
+  int id=0;
+  String name="";
+  String domain="";
+  String latitude="";
+  String longitude="";
+  Org(this.id,this.name,this.domain,this.latitude,this.longitude);
+  factory Org.fromJson(dynamic json) {
+    return Org(json['id'] as int, json['name'] as String,json['domain'] as String, json['latitude'] as String,json['longitude'] as String);
+  }
+  @override
+  String toString() {
+    return '{ ${this.id}, ${this.name},${this.domain}, ${this.latitude},${this.longitude} }';
+  }
+}
 class Organizations extends StatefulWidget with NavigationStates{
   @override
   _OrganizationsState createState() => _OrganizationsState();
 }
 
 class _OrganizationsState extends State<Organizations> {
+  List<Card> ListOrgs=[];
   static TextEditingController nameController = new TextEditingController();
   static TextEditingController domainController = new TextEditingController();
   int _selectedIndex = 0;
   PickResult selectedPlace;
   String latitude="";
   String longitude="";
+  int noOrgs=0;
+  String token;
+
+
+  Future<String> getData() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = await (prefs.getString('token')??'');
+    //User orgs
+    String urlMyOrgs="http://3.81.22.120:3000/api/showmyorg";
+    Response responseMyOrgs =await post(urlMyOrgs, headers:{'authorization': token});
+    print(responseMyOrgs.body);
+    if(responseMyOrgs.statusCode==409)
+    {
+      noOrgs=1;
+    }
+    else if(responseMyOrgs.statusCode != 200)
+    {
+      Map data= jsonDecode(responseMyOrgs.body);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return RichAlertDialog(
+              alertTitle: richTitle(data['error']),
+              alertSubtitle: richSubtitle(data['message']),
+              alertType: RichAlertType.WARNING,
+              dialogIcon: Icon(
+                Icons.warning,
+                color: Colors.red,
+                size: 80,
+              ),
+              actions: <Widget>[
+                new OutlineButton(
+                  shape: StadiumBorder(),
+                  textColor: Colors.blue,
+                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                  borderSide: BorderSide(
+                      color: Colors.indigo[400], style: BorderStyle.solid,
+                      width: 1),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          });
+    }
+    else{
+      noOrgs=0;
+      ListOrgs=[];
+      Map data= jsonDecode(responseMyOrgs.body);
+      var orgObjsJson = data['organizations'] as List;
+      List<Org> orgObjs = orgObjsJson.map((reviewJson) => Org.fromJson(reviewJson)).toList();
+      for(int i=0; i<orgObjs.length; i++)
+      {
+        ListOrgs.add(
+          Card(
+            elevation: 4,
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            child: ListTile(
+              contentPadding: EdgeInsets.all(10),
+              leading: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Image.asset("images/org.png",height: 100,),
+              ),
+              title: Text(orgObjs[i].name,style: TextStyle(color: Colors.indigo),),
+              subtitle: Text(orgObjs[i].domain),
+              trailing: Icon(
+                Icons.location_on,
+                color:Colors.redAccent,
+              ),
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      List<Marker> allMarkers = [];
+                      allMarkers.add(Marker(
+                          markerId: MarkerId('myMarker'),
+                          draggable: true,
+                          onTap: () {
+                            print('Marker Tapped');
+                          },
+                          position: LatLng(double.parse(orgObjs[i].latitude), double.parse(orgObjs[i].longitude))));
+                      return Scaffold(
+                          body: GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: LatLng(double.parse(orgObjs[i].latitude), double.parse(orgObjs[i].longitude)),
+                              zoom: 16,
+                            ),
+                            markers: Set.from(allMarkers),
+                          ),
+                          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+                          floatingActionButton: new FloatingActionButton(
+                              elevation: 0.0,
+                              child: new Icon(Icons.close),
+                              backgroundColor: Colors.indigo[400],
+                              onPressed: (){
+                                Navigator.pop(context);
+                              }
+                          )
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      }
+    }
+    return null;
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     final tabs=[
-      Center(child: Text("My orgs"),),
+    FutureBuilder(
+        future: getData(),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if(snapshot.connectionState == ConnectionState.done)
+          {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+              child: Container(
+                child: noOrgs == 1 ? Center(child: Text("No organizations to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),)) : ListView(
+                  children: ListOrgs,
+                ),
+              ),
+            );
+          }
+          else{
+            return Container(
+               child:Center(
+                  child: GlowingProgressIndicator(
+                    child: Image.asset("images/bluelogonobg.png", width: 150, height: 150,),
+                  ),
+                )
+            );
+          }
+        }
+    ),
       Center(child: Text("Join orgs")),
       SingleChildScrollView(
         child: Column(
