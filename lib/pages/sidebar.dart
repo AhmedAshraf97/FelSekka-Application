@@ -363,11 +363,11 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   endIndent: 32,
                                 ),
                                 MenuItem(
-                                  icon: Icons.store_mall_directory,
+                                  icon: Icons.location_city,
                                   title: "Organizations",
                                   onTap: () {
                                     onIconPressed();
-                                    //BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.MyOrdersClickedEvent);
+                                    BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.OrgsClickedEvent);
                                   },
                                 ),
                                 Divider(

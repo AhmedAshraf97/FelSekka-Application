@@ -2,11 +2,12 @@ import 'package:bloc/bloc.dart';
 import 'package:felsekka/pages/profile.dart';
 import 'package:felsekka/pages/signin.dart';
 import 'homepage.dart';
+import 'organizations.dart';
 
 enum NavigationEvents {
   HomePageClickedEvent,
   ProfileClickedEvent,
-  MyOrdersClickedEvent,
+  OrgsClickedEvent,
 }
 
 abstract class NavigationStates {}
@@ -24,8 +25,8 @@ class NavigationBloc extends Bloc<NavigationEvents, NavigationStates> {
       case NavigationEvents.ProfileClickedEvent:
         yield Profile();
         break;
-      case NavigationEvents.MyOrdersClickedEvent:
-        yield HomePage();
+      case NavigationEvents.OrgsClickedEvent:
+        yield Organizations();
         break;
     }
   }

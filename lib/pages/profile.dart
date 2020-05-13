@@ -594,7 +594,7 @@ class _ProfileState extends State<Profile> {
                                           width: 20,
                                         ),
                                         Icon(
-                                          Icons.people,
+                                          Icons.wc,
                                           color: Colors.indigo,
                                         ),
                                         SizedBox(
