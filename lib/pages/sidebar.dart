@@ -352,7 +352,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   title: "My Cars",
                                   onTap: () {
                                     onIconPressed();
-                                    //BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.MyOrdersClickedEvent);
+                                    BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.CarsClickedEvent);
                                   },
                                 ),
                                 Divider(

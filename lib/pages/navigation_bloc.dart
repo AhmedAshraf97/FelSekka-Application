@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:felsekka/pages/profile.dart';
 import 'package:felsekka/pages/signin.dart';
+import 'cars.dart';
 import 'homepage.dart';
 import 'organizations.dart';
 
@@ -8,6 +9,7 @@ enum NavigationEvents {
   HomePageClickedEvent,
   ProfileClickedEvent,
   OrgsClickedEvent,
+  CarsClickedEvent,
 }
 
 abstract class NavigationStates {}
@@ -27,6 +29,9 @@ class NavigationBloc extends Bloc<NavigationEvents, NavigationStates> {
         break;
       case NavigationEvents.OrgsClickedEvent:
         yield Organizations();
+        break;
+      case NavigationEvents.CarsClickedEvent:
+        yield Cars();
         break;
     }
   }
