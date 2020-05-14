@@ -37,13 +37,16 @@ class Organizations extends StatefulWidget with NavigationStates{
 
 class _OrganizationsState extends State<Organizations> {
   List<Card> ListOrgs=[];
+  List<Card> ListOrgsJoin=[];
   static TextEditingController nameController = new TextEditingController();
   static TextEditingController domainController = new TextEditingController();
+  static TextEditingController emailController = new TextEditingController();
   int _selectedIndex = 0;
   PickResult selectedPlace;
   String latitude="";
   String longitude="";
   int noOrgs=0;
+  int noOrgsJoin=0;
   String token;
 
 
@@ -53,7 +56,6 @@ class _OrganizationsState extends State<Organizations> {
     //User orgs
     String urlMyOrgs="http://3.81.22.120:3000/api/showmyorg";
     Response responseMyOrgs =await post(urlMyOrgs, headers:{'authorization': token});
-    print(responseMyOrgs.body);
     if(responseMyOrgs.statusCode==409)
     {
       noOrgs=1;
@@ -112,41 +114,492 @@ class _OrganizationsState extends State<Organizations> {
               ),
               title: Text(orgObjs[i].name,style: TextStyle(color: Colors.indigo),),
               subtitle: Text(orgObjs[i].domain),
-              trailing: Icon(
-                Icons.location_on,
-                color:Colors.redAccent,
+              trailing: IconButton(
+                icon: Icon(
+                  Icons.location_on,
+                  color:Colors.redAccent,
+                ),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        List<Marker> allMarkers = [];
+                        allMarkers.add(Marker(
+                            markerId: MarkerId('myMarker'),
+                            draggable: true,
+                            onTap: () {
+                              print('Marker Tapped');
+                            },
+                            position: LatLng(double.parse(orgObjs[i].latitude), double.parse(orgObjs[i].longitude))));
+                        return Scaffold(
+                            body: GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(double.parse(orgObjs[i].latitude), double.parse(orgObjs[i].longitude)),
+                                zoom: 16,
+                              ),
+                              markers: Set.from(allMarkers),
+                            ),
+                            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+                            floatingActionButton: new FloatingActionButton(
+                                elevation: 0.0,
+                                child: new Icon(Icons.close),
+                                backgroundColor: Colors.indigo[400],
+                                onPressed: (){
+                                  Navigator.pop(context);
+                                }
+                            )
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+              onTap: (){
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return RichAlertDialog(
+                        alertTitle: richTitle("Leave organization"),
+                        alertSubtitle: richSubtitle("Are you sure you want to leave organization?"),
+                        alertType: RichAlertType.WARNING,
+                        dialogIcon: Icon(
+                          Icons.warning,
+                          color: Colors.red,
+                          size: 80,
+                        ),
+                        actions: <Widget>[
+                          new OutlineButton(
+                            shape: StadiumBorder(),
+                            textColor: Colors.blue,
+                            child: Text('Yes', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                            borderSide: BorderSide(
+                                color: Colors.indigo[400], style: BorderStyle.solid,
+                                width: 1),
+                            onPressed: () async{
+                              String url="http://3.81.22.120:3000/api/deleteorg";
+                              Response response =await post(url, headers:{'authorization': token}, body:{'orgid': orgObjs[i].id.toString()});
+                              if(response.statusCode != 200)
+                              {
+                                Map data= jsonDecode(response.body);
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return RichAlertDialog(
+                                        alertTitle: richTitle("User error"),
+                                        alertSubtitle: richSubtitle(data['message']),
+                                        alertType: RichAlertType.WARNING,
+                                        dialogIcon: Icon(
+                                          Icons.warning,
+                                          color: Colors.red,
+                                          size: 80,
+                                        ),
+                                        actions: <Widget>[
+                                          new OutlineButton(
+                                            shape: StadiumBorder(),
+                                            textColor: Colors.blue,
+                                            child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                            borderSide: BorderSide(
+                                                color: Colors.indigo[400], style: BorderStyle.solid,
+                                                width: 1),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                                Navigator.pop(context);
+                              }
+                              else{
+                                Navigator.pop(context);
+                                setState(() {
+                                });
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return RichAlertDialog(
+                                        alertTitle: richTitle("Done"),
+                                        alertSubtitle: richSubtitle("You left this organization."),
+                                        alertType: RichAlertType.SUCCESS,
+                                        dialogIcon: Icon(
+                                          Icons.check,
+                                          color: Colors.green,
+                                          size: 100,
+                                        ),
+                                        actions: <Widget>[
+                                          new OutlineButton(
+                                            shape: StadiumBorder(),
+                                            textColor: Colors.blue,
+                                            child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                            borderSide: BorderSide(
+                                                color: Colors.indigo[400], style: BorderStyle.solid,
+                                                width: 1),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              }
+                            },
+                          ),
+                          SizedBox(width: 20,),
+                          new OutlineButton(
+                            shape: StadiumBorder(),
+                            textColor: Colors.blue,
+                            child: Text('No', style: TextStyle(color: Colors.red[400],fontSize: 30),),
+                            borderSide: BorderSide(
+                                color: Colors.red[400], style: BorderStyle.solid,
+                                width: 1),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              },
+            ),
+          ),
+        );
+      }
+    }
+
+    //Orgs to join
+    String urlJoinOrgs="http://3.81.22.120:3000/api/showexistingorg";
+    Response responseJoinOrgs =await post(urlJoinOrgs, headers:{'authorization': token});
+    if(responseJoinOrgs.statusCode==409)
+    {
+      noOrgsJoin=1;
+    }
+    else if(responseJoinOrgs.statusCode != 200)
+    {
+      Map data= jsonDecode(responseJoinOrgs.body);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return RichAlertDialog(
+              alertTitle: richTitle(data['error']),
+              alertSubtitle: richSubtitle(data['message']),
+              alertType: RichAlertType.WARNING,
+              dialogIcon: Icon(
+                Icons.warning,
+                color: Colors.red,
+                size: 80,
+              ),
+              actions: <Widget>[
+                new OutlineButton(
+                  shape: StadiumBorder(),
+                  textColor: Colors.blue,
+                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                  borderSide: BorderSide(
+                      color: Colors.indigo[400], style: BorderStyle.solid,
+                      width: 1),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          });
+    }
+    else{
+      noOrgsJoin=0;
+      ListOrgsJoin=[];
+      Map data= jsonDecode(responseJoinOrgs.body);
+      var orgJoinObjsJson = data['organizations'] as List;
+      List<Org> orgJoinObjs = orgJoinObjsJson.map((orgJson) => Org.fromJson(orgJson)).toList();
+      for(int i=0; i<orgJoinObjs.length; i++)
+      {
+        ListOrgsJoin.add(
+          Card(
+            elevation: 4,
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            child: ListTile(
+              contentPadding: EdgeInsets.all(10),
+              leading: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Image.asset("images/org.png",height: 100,),
+              ),
+              title: Text(orgJoinObjs[i].name,style: TextStyle(color: Colors.indigo),),
+              subtitle: Text(orgJoinObjs[i].domain),
+              trailing: IconButton(
+                icon: Icon(
+                  Icons.location_on,
+                  color:Colors.redAccent,
+                ),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        List<Marker> allMarkers = [];
+                        allMarkers.add(Marker(
+                            markerId: MarkerId('myMarker'),
+                            draggable: true,
+                            onTap: () {
+                              print('Marker Tapped');
+                            },
+                            position: LatLng(double.parse(orgJoinObjs[i].latitude), double.parse(orgJoinObjs[i].longitude))));
+                        return Scaffold(
+                            body: GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(double.parse(orgJoinObjs[i].latitude), double.parse(orgJoinObjs[i].longitude)),
+                                zoom: 16,
+                              ),
+                              markers: Set.from(allMarkers),
+                            ),
+                            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+                            floatingActionButton: new FloatingActionButton(
+                                elevation: 0.0,
+                                child: new Icon(Icons.close),
+                                backgroundColor: Colors.indigo[400],
+                                onPressed: (){
+                                  Navigator.pop(context);
+                                }
+                            )
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
               onTap: (){
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      List<Marker> allMarkers = [];
-                      allMarkers.add(Marker(
-                          markerId: MarkerId('myMarker'),
-                          draggable: true,
-                          onTap: () {
-                            print('Marker Tapped');
-                          },
-                          position: LatLng(double.parse(orgObjs[i].latitude), double.parse(orgObjs[i].longitude))));
-                      return Scaffold(
-                          body: GoogleMap(
-                            initialCameraPosition: CameraPosition(
-                              target: LatLng(double.parse(orgObjs[i].latitude), double.parse(orgObjs[i].longitude)),
-                              zoom: 16,
-                            ),
-                            markers: Set.from(allMarkers),
-                          ),
-                          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-                          floatingActionButton: new FloatingActionButton(
-                              elevation: 0.0,
-                              child: new Icon(Icons.close),
-                              backgroundColor: Colors.indigo[400],
-                              onPressed: (){
-                                Navigator.pop(context);
-                              }
-                          )
-                      );
+                     return
+                       Scaffold(
+                         body: Column(
+                           children: <Widget>[
+                             Expanded(
+                               child: Container(
+                                 width: double.infinity,
+                                 decoration: BoxDecoration(
+                                   color: Colors.indigo,
+                                 ),
+                                 child: Padding(
+                                   padding: const EdgeInsets.fromLTRB(10.0,10,10,10),
+                                   child: Container(
+                                     decoration: BoxDecoration(
+                                         color: Colors.white,
+                                         borderRadius: BorderRadius.all(Radius.circular(130)),
+                                     ),
+                                     child:Scaffold(
+                                       body: Container(
+                                         decoration: BoxDecoration(
+                                           color: Colors.white,
+                                           borderRadius: BorderRadius.all(Radius.circular(30)),
+                                         ),
+                                         child: Column(
+                                           mainAxisAlignment: MainAxisAlignment.center,
+                                           crossAxisAlignment: CrossAxisAlignment.center,
+                                           children: <Widget>[
+                                             SizedBox(
+                                               height: 20,
+                                             ),
+                                             Padding(
+                                               padding: const EdgeInsets.fromLTRB(33,0,22,0),
+                                               child: Text("Organization e-mail:", style: TextStyle(color:Colors.indigo,fontSize: 18)),
+                                             ),
+                                             SizedBox(
+                                               height: 3,
+                                             ),
+                                             Padding(
+                                               padding: const EdgeInsets.fromLTRB(33,0,22,0),
+                                               child: Text(orgJoinObjs[i].domain, style: TextStyle(color:Colors.blueGrey,fontSize: 15)),
+                                             ),
+                                             SizedBox(
+                                               height: 3,
+                                             ),
+                                             Padding(
+                                               padding: const EdgeInsets.fromLTRB(22,5.0,22,13),
+                                               child: Container(
+                                                 height: 55.0,
+                                                 padding: EdgeInsets.all(15.0),
+                                                 decoration: BoxDecoration(
+                                                   color: Colors.white,
+                                                   borderRadius: BorderRadius.circular(10),
+                                                   boxShadow: [BoxShadow(
+                                                     color: Color.fromRGBO(39, 78, 220, 0.3),
+                                                     blurRadius: 20.0,
+                                                     offset: Offset(0,10),
+                                                   )],
+                                                 ),
+                                                 child: Container(
+                                                   decoration: BoxDecoration(
+                                                     border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                                                   ),
+                                                   child: TextField(
+                                                     controller: emailController,
+                                                     decoration: InputDecoration(
+                                                       counterText: "",
+                                                       hintText: "Organization e-mail",
+                                                       hintStyle: TextStyle(color:Colors.grey),
+                                                       border: InputBorder.none,
+                                                     ),
+                                                   ),
+                                                 ),
+                                               ),
+                                             ),
+                                             MaterialButton(
+                                               child: Text("Join",
+                                                 style: TextStyle(
+                                                   color: Colors.white,
+                                                   fontSize: 20.0,
+                                                   fontFamily: "Kodchasan",
+                                                 ),
+                                               ),
+                                               height:40,
+                                               minWidth:100,
+                                               color: Colors.indigo,
+                                               elevation: 15,
+                                               highlightColor: Colors.grey,
+                                               splashColor: Colors.blueGrey,
+                                               shape: RoundedRectangleBorder(
+                                                 borderRadius: BorderRadius.circular(50),
+                                               ),
+                                               onPressed: (){
+                                                 String email= emailController.text;
+                                                 bool Valid= true;
+                                                 //E-mail validations:
+                                                 if(email.isEmpty)
+                                                 {
+                                                   Valid = false;
+                                                   showDialog(
+                                                       context: context,
+                                                       builder: (BuildContext context) {
+                                                         return RichAlertDialog(
+                                                           alertTitle: richTitle("Organization e-mail"),
+                                                           alertSubtitle: richSubtitle("Organization e-mail is required"),
+                                                           alertType: RichAlertType.WARNING,
+                                                           dialogIcon: Icon(
+                                                             Icons.warning,
+                                                             color: Colors.red,
+                                                             size: 80,
+                                                           ),
+                                                           actions: <Widget>[
+                                                             new OutlineButton(
+                                                               shape: StadiumBorder(),
+                                                               textColor: Colors.blue,
+                                                               child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                               borderSide: BorderSide(
+                                                                   color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                   width: 1),
+                                                               onPressed: () {
+                                                                 Navigator.pop(context);
+                                                               },
+                                                             ),
+                                                           ],
+                                                         );
+                                                       });
+                                                 }
+                                                 if(Valid==true)
+                                                 {
+                                                   void getData() async{
+                                                     SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                     String token = await (prefs.getString('token')??'');
+                                                     Map<String, String> body = {
+                                                       'orgid': orgJoinObjs[i].id.toString(),
+                                                       'email': email
+                                                     };
+                                                     String url="http://3.81.22.120:3000/api/chooseorg";
+                                                     Response response =await post(url, headers:{'authorization': token}, body: body);
+                                                     if(response.statusCode != 200)
+                                                     {
+                                                       Map data= jsonDecode(response.body);
+                                                       showDialog(
+                                                           context: context,
+                                                           builder: (BuildContext context) {
+                                                             return RichAlertDialog(
+                                                               alertTitle: richTitle(data['error']),
+                                                               alertSubtitle: richSubtitle(data['message']),
+                                                               alertType: RichAlertType.WARNING,
+                                                               dialogIcon: Icon(
+                                                                 Icons.warning,
+                                                                 color: Colors.red,
+                                                                 size: 80,
+                                                               ),
+                                                               actions: <Widget>[
+                                                                 new OutlineButton(
+                                                                   shape: StadiumBorder(),
+                                                                   textColor: Colors.blue,
+                                                                   child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                   borderSide: BorderSide(
+                                                                       color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                       width: 1),
+                                                                   onPressed: () {
+                                                                     Navigator.pop(context);
+                                                                   },
+                                                                 ),
+                                                               ],
+                                                             );
+                                                           });
+                                                     }
+                                                     else{
+                                                       emailController.text="";
+                                                       setState(() {
+                                                       });
+                                                       Navigator.pop(context);
+                                                       showDialog(
+                                                           context: context,
+                                                           builder: (BuildContext context) {
+                                                             return RichAlertDialog(
+                                                               alertTitle: richTitle("Done"),
+                                                               alertSubtitle: richSubtitle("You joined this organization."),
+                                                               alertType: RichAlertType.SUCCESS,
+                                                               dialogIcon: Icon(
+                                                                 Icons.check,
+                                                                 color: Colors.green,
+                                                                 size: 100,
+                                                               ),
+                                                               actions: <Widget>[
+                                                                 new OutlineButton(
+                                                                   shape: StadiumBorder(),
+                                                                   textColor: Colors.blue,
+                                                                   child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                   borderSide: BorderSide(
+                                                                       color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                       width: 1),
+                                                                   onPressed: () {
+                                                                     Navigator.pop(context);
+                                                                   },
+                                                                 ),
+                                                               ],
+                                                             );
+                                                           });
+                                                     }
+                                                   }
+                                                   getData();
+                                                 }
+                                               },
+                                             ),
+                                           ],
+                                         ),
+                                       ),
+                                         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+                                         floatingActionButton: new FloatingActionButton(
+                                             elevation: 0.0,
+                                             child: new Icon(Icons.close),
+                                             backgroundColor: Colors.indigo[400],
+                                             onPressed: (){
+                                               Navigator.pop(context);
+                                             }
+                                         )
+                                     ),
+                                   ),
+                                 ),
+                               ),
+                             ),
+                           ],
+                         ),
+                       );
                     },
                   ),
                 );
@@ -172,8 +625,25 @@ class _OrganizationsState extends State<Organizations> {
             return Padding(
               padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
               child: Container(
-                child: noOrgs == 1 ? Center(child: Text("No organizations to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),)) : ListView(
-                  children: ListOrgs,
+                child: noOrgs == 1 ? Center(child: Text("No organizations to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),)) :
+                Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Tap to leave Organization.",
+                      style: TextStyle(
+                        color: Colors.blueGrey,
+                        fontSize: 15,
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        children: ListOrgs,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -189,7 +659,48 @@ class _OrganizationsState extends State<Organizations> {
           }
         }
     ),
-      Center(child: Text("Join orgs")),
+      FutureBuilder(
+          future: getData(),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if(snapshot.connectionState == ConnectionState.done)
+            {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                child: Container(
+                  child: noOrgsJoin == 1 ? Center(child: Text("No organizations to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),)) :
+                  Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        "Tap to join Organization.",
+                        style: TextStyle(
+                          color: Colors.blueGrey,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: ListOrgsJoin,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+            else{
+              return Container(
+                  child:Center(
+                    child: GlowingProgressIndicator(
+                      child: Image.asset("images/bluelogonobg.png", width: 150, height: 150,),
+                    ),
+                  )
+              );
+            }
+          }
+      ),
       SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -471,10 +982,8 @@ class _OrganizationsState extends State<Organizations> {
                       'latitude': latitude,
                       'longitude' : longitude,
                     };
-                    print(body);
                     String url="http://3.81.22.120:3000/api/addorg";
                     Response response =await post(url, headers:{'authorization': token}, body: body);
-                    print(response.body);
                     if(response.statusCode != 200)
                     {
                       Map data= jsonDecode(response.body);
