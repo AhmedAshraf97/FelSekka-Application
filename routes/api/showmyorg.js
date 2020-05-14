@@ -42,7 +42,6 @@ router.post('/', async(req, res) => {
     }).catch(errHandler);
 
     if (userExists) {
-            
             var org = '{"count": [], "organizations":[]}';
             var obj = JSON.parse(org);
             var orgUserArray = {};
@@ -70,8 +69,7 @@ router.post('/', async(req, res) => {
             }
             else{
                 res.status(200).send(obj);
-            }
-            
+            }    
     }
 });
 

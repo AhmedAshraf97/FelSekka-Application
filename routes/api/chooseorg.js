@@ -68,7 +68,7 @@ router.post('/', async(req, res) => {
             }).catch(errHandler);}
             //Insert org user 
             const orgUserData = {
-                orgid: req.body.orgid,
+                orgid: parseInt(req.body.orgid),
                 userid: decoded.id,
                 distancetoorg: 0.0,
                 timetoorg: 0.0,

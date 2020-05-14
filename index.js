@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
 var queue = require('express-queue');
+const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -29,6 +30,7 @@ app.use('/api/retrieveuserdata', require('./routes/api/retrieveuserdata'));
 app.use('/api/offerrideto', require('./routes/api/offerrideto'));
 app.use('/api/offerridefrom', require('./routes/api/offerridefrom'));
 app.use('/api/showmyorg', require('./routes/api/showmyorg'));
+app.use('/api/deleteorg', require('./routes/api/deleteorg'));
 app.use('/api/editcar', require('./routes/api/edit_car'));
 
 app.use('/api/editprofile', require('./routes/api/editprofile'));
@@ -74,6 +76,17 @@ app.use('/api/endDriverTripTo', require('./routes/api/endDriverTripTo'))
 
 var schedule = require('node-schedule');
 var request = require('request');
+
+/*request.post('https://maps.googleapis.com/maps/api/distancematrix/json?origins=29.973536,31.282332&destinations=29.984513,31.307082&key=AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts&language=en', {
+}, (error, res, body) => {
+  if (error) {
+    console.error(error)
+    return
+  }
+  console.log(res)
+  //console.log(body)
+})*/
+
 
 /*
 var jsontosend = {
