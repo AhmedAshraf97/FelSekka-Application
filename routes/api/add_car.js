@@ -66,7 +66,7 @@ router.post('/', async(req, res) => {
             res.status(400).send({ message: "Model must be a string of (1-300) characters" });
             res.end();
         }
-        if (!((req.body.year).trim().length !== 4)) {
+        if ( ((req.body.year).trim().length !== 4) ) {
             validChecks = false
             res.status(400).send({ message: "year must be a number of 4 digits" });
             res.end();
@@ -82,13 +82,13 @@ router.post('/', async(req, res) => {
             res.status(400).send({ message: "Plateletters must be a string of (1-300) characters" });
             res.end();
         }
-        if (!((req.body.platenumbers).trim().length === 0)) {
+        if (((req.body.platenumbers).trim().length === 0)) {
             validChecks = false
             res.status(400).send({ message: "Plate numbers must be a number of (1-300) digits" });
             res.end();
         }
 
-        if (!( (req.body.nationalid).trim().length === 0)) {
+        if (( (req.body.nationalid).trim().length === 0)) {
             validChecks = false
             res.status(400).send({ message: "National ID must be a number of (1-300) digits" });
             res.end();
@@ -127,7 +127,7 @@ router.post('/', async(req, res) => {
             res.end();
         }
 
-        if (!( (req.body.numberofseats).trim().length === 0)) {
+        if (( (req.body.numberofseats).trim().length === 0)) {
             validChecks = false
             res.status(400).send({ message: "Number of seats be a number of (1-300) digits" });
             res.end();
