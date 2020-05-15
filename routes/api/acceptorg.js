@@ -56,7 +56,7 @@ router.post('/', async(req, res) => {
         } else {
             await Organization.update({ status: "existing" }, {
                 where: {
-                    id: req.body.organizationid
+                    id: parseInt(req.body.organizationid)
                 }
             }).then(user => {
                 res.status(200).send({ message: "Organization is Accepted" });

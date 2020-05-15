@@ -25,7 +25,7 @@ router.post('/', async(req, res) => {
 
     } catch (e) {
         userExists = false;
-        res.status(401).send({ message: "You aren't authorized to add a review" })
+        res.status(401).send({ message: "You aren't authorized to add an organization" })
         res.end();
     }
 
@@ -60,27 +60,32 @@ router.post('/', async(req, res) => {
         } else if ((req.body.name).trim().length > 30) {
             res.status(400).send({ error: "Name", message: "Name has maximum length of 30 letters" });
         }
+        //Domain validation
+         else if (req.body.domain == null) {
+            res.status(400).send({ error: "Domain", message: "Domain paramter is missing" });
+        } else if (!((typeof(req.body.domain) === 'string') || ((req.body.domain) instanceof String))) {
+            res.status(400).send({ error: "Domain", message: "Domain must be a string" });
+        } else if ((req.body.domain).trim().length === 0) {
+            res.status(400).send({ error: "Domain", message: "Domain can't be empty" });
+        } 
         //Latitude validation
         else if (req.body.latitude == null) {
             res.status(400).send({ error: "Latitude", message: "Latitude paramter is missing" });
         } else if (((req.body.latitude).toString()).trim().length === 0) {
             res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
-        } else if ((typeof(req.body.latitude) === 'string') || ((req.body.latitude) instanceof String)) {
-            res.status(400).send({ error: "Latitude", message: "Latitude must be a decimal" });
-        }
+        } 
         //Longitude validation
         else if (req.body.longitude == null) {
             res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
         } else if (((req.body.longitude).toString()).trim().length === 0) {
             res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
-        } else if ((typeof(req.body.longitude) === 'string') || ((req.body.longitude) instanceof String)) {
-            res.status(400).send({ error: "Longitude", message: "Longitude must be a decimal" });
         } else {
             //Insert org user 
             const orgData = {
                 name: req.body.name,
-                longitude: req.body.longitude,
-                latitude: req.body.latitude,
+                longitude: parseFloat(req.body.longitude),
+                latitude: parseFloat(req.body.latitude),
+                domain: req.body.domain,
                 status: 'pending'
             }
             await Organization.create(orgData).then(user => {

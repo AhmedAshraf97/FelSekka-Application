@@ -8,6 +8,7 @@ const graphlib = require('graphlib');
 const ksp = require('../FilSekka-Application/yenKSP')
 
 
+const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -33,7 +34,8 @@ app.use('/api/requestrideto', require('./routes/api/requestrideto'));
 app.use('/api/retrieveuserdata', require('./routes/api/retrieveuserdata'));
 app.use('/api/offerrideto', require('./routes/api/offerrideto'));
 app.use('/api/offerridefrom', require('./routes/api/offerridefrom'));
-
+app.use('/api/showmyorg', require('./routes/api/showmyorg'));
+app.use('/api/deleteorg', require('./routes/api/deleteorg'));
 app.use('/api/editcar', require('./routes/api/edit_car'));
 
 app.use('/api/editprofile', require('./routes/api/editprofile'));
@@ -80,8 +82,18 @@ app.use('/api/endDriverTripTo', require('./routes/api/endDriverTripTo'))
 var schedule = require('node-schedule');
 var request = require('request');
 
-/*
+/*request.post('https://maps.googleapis.com/maps/api/distancematrix/json?origins=29.973536,31.282332&destinations=29.984513,31.307082&key=AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts&language=en', {
+}, (error, res, body) => {
+  if (error) {
+    console.error(error)
+    return
+  }
+  console.log(res)
+  //console.log(body)
+})*/
 
+
+/*
 var jsontosend = {
     "latesttime": "05:00:00",
     "smoking": "no",
@@ -152,16 +164,16 @@ var choose2 = schedule.scheduleJob('50 * * * * *', function() {
 ////////////////////////////////////////////////
 
 
-let g = new graphlib.Graph();
+// let g = new graphlib.Graph();
 
-g.setEdge('C', 'D', 3);
-g.setEdge('C', 'E', 2);
-g.setEdge('D', 'F', 4);
-g.setEdge('E', 'D', 1);
-g.setEdge('E', 'F', 2);
-g.setEdge('E', 'G', 3);
-g.setEdge('F', 'G', 2);
-g.setEdge('F', 'H', 1);
-g.setEdge('G', 'H', 2);
+// g.setEdge('C', 'D', 3);
+// g.setEdge('C', 'E', 2);
+// g.setEdge('D', 'F', 4);
+// g.setEdge('E', 'D', 1);
+// g.setEdge('E', 'F', 2);
+// g.setEdge('E', 'G', 3);
+// g.setEdge('F', 'G', 2);
+// g.setEdge('F', 'H', 1);
+// g.setEdge('G', 'H', 2);
 
-var response = ksp.yenKSP(g, "C", "H", 100);
+// var response = ksp.yenKSP(g, "C", "H", 100);

@@ -56,6 +56,9 @@ router.post('/', async(req, res) => {
                 }
             }).then(user => {
                 if (user) {
+                    var jsonStr = '{"Trips":[]}';
+                    var obj = JSON.parse(jsonStr);
+
                     const options = {
                         where: {}
                     };
@@ -100,7 +103,8 @@ router.post('/', async(req, res) => {
 
 
                                                     if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
-                                                        availableTrips[count] = {
+
+                                                        obj['Trips'].push({
                                                             "tripid": scheduledTrip.id,
                                                             "startloclatitude": scheduledTrip.startloclatitude,
                                                             "startloclongitude": scheduledTrip.startloclongitude,
@@ -108,16 +112,15 @@ router.post('/', async(req, res) => {
                                                             "endloclongitude": scheduledTrip.endloclongitude,
                                                             "arrivaltime": offerTrip.arrivaltime,
                                                             "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats
-                                                        }
+                                                        })
                                                         count++;
-
-
 
                                                     }
 
                                                 }
                                                 if (countAll === scheduledTrips.length) {
-                                                    res.status(200).send(availableTrips)
+                                                    res.status(200).send(obj)
+
                                                 }
                                             }).catch(errHandler)
 
@@ -145,7 +148,8 @@ router.post('/', async(req, res) => {
 
 
                                                     if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
-                                                        availableTrips[count] = {
+
+                                                        obj['Trips'].push({
                                                             "tripid": scheduledTrip.id,
                                                             "startloclatitude": scheduledTrip.startloclatitude,
                                                             "startloclongitude": scheduledTrip.startloclongitude,
@@ -153,7 +157,8 @@ router.post('/', async(req, res) => {
                                                             "endloclongitude": scheduledTrip.endloclongitude,
                                                             "departuretime": offerTrip.departuretime,
                                                             "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats
-                                                        }
+                                                        })
+
                                                         count++;
 
 
@@ -161,7 +166,7 @@ router.post('/', async(req, res) => {
                                                 }
 
                                                 if (countAll === scheduledTrips.length) {
-                                                    res.status(200).send(availableTrips)
+                                                    res.status(200).send(obj)
                                                 }
                                             }).catch(errHandler)
 
