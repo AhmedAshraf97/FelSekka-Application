@@ -36,6 +36,7 @@ router.post('/', async(req, res) => {
             res.end();
         }
     }).catch(errHandler)
+
     await User.findOne({ where: { id: decoded.id, status: 'existing' } }).then(user => {
         if (!user) {
 
@@ -50,71 +51,72 @@ router.post('/', async(req, res) => {
         //Organization ID check
         if (req.body.orgid == null) {
             res.status(400).send({ error: "Organization ID", message: "Organization ID paramter is missing" });
-        }else if (((req.body.orgid).toString()).trim().length === 0) {
+        } else if (((req.body.orgid).toString()).trim().length === 0) {
             res.status(400).send({ error: "Organization ID", message: "Organization ID can't be empty" });
         }
         //Email validation 
         if (req.body.email == null) {
             res.status(400).send({ error: "Email", message: "Email paramter is missing" });
-        }else if (((req.body.email).toString()).trim().length === 0) {
+        } else if (((req.body.email).toString()).trim().length === 0) {
             res.status(400).send({ error: "Email", message: "Email can't be empty" });
-        }else if (!(/^\S+@\S+\.\S+$/.test(req.body.email))) {
+        } else if (!(/^\S+@\S+\.\S+$/.test(req.body.email))) {
             res.status(400).send({ error: "Email", message: "Email address is unvalid" });
-        }
-        else {
+        } else {
             var domain = true;
-            var orglatitude=0;
+            var orglatitude = 0;
             var orglongitude = 0;
-            await  Organization.findOne({ where: { id: req.body.orgid }}).then(org=>{
+            await Organization.findOne({ where: { id: req.body.orgid } }).then(org => {
                 orglatitude = org.latitude;
                 orglongitude = org.longitude;
-                if( !((req.body.email).includes(org.domain)) ){
+                if (!((req.body.email).includes(org.domain))) {
                     domain = false;
                 }
-            }).catch(errHandler);}
-            var x = orglatitude;
-            var y = orglongitude;
-            var z = decoded.latitude;
-            var w = decoded.longitude;
-            var body12 = {}
-            var body21 = {}
-            var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z,',',w,'&destinations=',x,',',y,'&key=',API_KEY); 
-            var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x,',',y,'&destinations=',z,',',w,'&key=',API_KEY); 
-            await request.post(url12).then(function(body) {
-                body12 = body;})
-            await request.post(url21).then(function(body) {
-                body21 = body;})
-            body12 = JSON.parse(body12)
-            body21 = JSON.parse(body21)
-            var results12 = body12.rows[0].elements;
-            var element12 = results12[0]
-            distance12 = element12.distance.value;
-            time12 = element12.duration.value;
-            ///////////////////////////////////
-            var results21 = body21.rows[0].elements;
-            var element21 = results21[0]
-            distance21 = element21.distance.value;
-            time21 = element21.duration.value;
-           
-            //Insert org user 
-            const orgUserData = {
-                orgid: parseInt(req.body.orgid),
-                userid: decoded.id,
-                distancetoorg: distance12,
-                timetoorg: time12,
-                distancefromorg:distance21,
-                timefromorg: time21,
-                status: 'existing'
-            }
-            if(!domain){
-                res.status(200).send({ message: "You can't join this organization" });
-            }
-            else{
-                await OrgUser.create(orgUserData).then(user => {
-                    res.status(200).send({ message: "Organization is chosen" });
-                }).catch(errHandler);
-            }
-            
+            }).catch(errHandler);
+        }
+        var x = orglatitude;
+        var y = orglongitude;
+        var z = decoded.latitude;
+        var w = decoded.longitude;
+        var body12 = {}
+        var body21 = {}
+        var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z, ',', w, '&destinations=', x, ',', y, '&key=', API_KEY);
+        var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x, ',', y, '&destinations=', z, ',', w, '&key=', API_KEY);
+        await request.post(url12).then(function(body) {
+            body12 = body;
+        })
+        await request.post(url21).then(function(body) {
+            body21 = body;
+        })
+        body12 = JSON.parse(body12)
+        body21 = JSON.parse(body21)
+        var results12 = body12.rows[0].elements;
+        var element12 = results12[0]
+        distance12 = element12.distance.value / 1000;
+        time12 = element12.duration.value / 60;
+        ///////////////////////////////////
+        var results21 = body21.rows[0].elements;
+        var element21 = results21[0]
+        distance21 = element21.distance.value / 1000;
+        time21 = element21.duration.value / 60;
+
+        //Insert org user 
+        const orgUserData = {
+            orgid: parseInt(req.body.orgid),
+            userid: decoded.id,
+            distancetoorg: distance12,
+            timetoorg: time12,
+            distancefromorg: distance21,
+            timefromorg: time21,
+            status: 'existing'
+        }
+        if (!domain) {
+            res.status(200).send({ message: "You can't join this organization" });
+        } else {
+            await OrgUser.create(orgUserData).then(user => {
+                res.status(200).send({ message: "Organization is chosen" });
+            }).catch(errHandler);
+        }
+
     }
 });
 
