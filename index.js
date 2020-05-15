@@ -3,6 +3,11 @@ const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
 var queue = require('express-queue');
+const graphlib = require('graphlib');
+//const ksp = require('k-shortest-path');
+const ksp = require('../FilSekka-Application/yenKSP')
+
+
 const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
 
 app.use(express.json());
@@ -84,8 +89,8 @@ var jsontosend = {
     "ridewith": "female",
     "tripid": 121
 }
-
-//ID = 45
+ */
+/* //ID = 45
 var choose1 = schedule.scheduleJob('50 * * * * *', function() {
     request.post({
         url: 'http://localhost:3000/api/chooseFromReturnTripsApi',
@@ -112,9 +117,9 @@ var choose2 = schedule.scheduleJob('50 * * * * *', function() {
         console.log(body);
     })
 });
+ */
 
 
-*/
 
 //////////////////////////////////////////////
 
@@ -135,3 +140,29 @@ var choose2 = schedule.scheduleJob('50 * * * * *', function() {
 //     })
 
 // });
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////
+
+
+// let g = new graphlib.Graph();
+
+// g.setEdge('C', 'D', 3);
+// g.setEdge('C', 'E', 2);
+// g.setEdge('D', 'F', 4);
+// g.setEdge('E', 'D', 1);
+// g.setEdge('E', 'F', 2);
+// g.setEdge('E', 'G', 3);
+// g.setEdge('F', 'G', 2);
+// g.setEdge('F', 'H', 1);
+// g.setEdge('G', 'H', 2);
+
+// var response = ksp.yenKSP(g, "C", "H", 100);
