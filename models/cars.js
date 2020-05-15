@@ -32,7 +32,7 @@ module.exports = sequelize.define("cars", {
         allowNull: true
     },
     platenumbers:{
-        type:Sequelize.INTEGER(255),
+        type:Sequelize.STRING(300),
         allowNull: true
     },
     nationalid:{

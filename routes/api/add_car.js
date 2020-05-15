@@ -133,10 +133,6 @@ router.post('/', async(req, res) => {
             res.end();
 
         }
-
-
-
-
         await User.findOne({
             where: {
                 id: decoded.id,
@@ -164,7 +160,7 @@ router.post('/', async(req, res) => {
                                     year: parseInt(req.body.year),
                                     type: req.body.type,
                                     plateletters: req.body.plateletters,
-                                    platenumbers: parseInt(req.body.platenumbers),
+                                    platenumbers: req.body.platenumbers,
                                     nationalid: parseInt(req.body.nationalid),
                                     carlicensefront: req.body.carlicensefront,
                                     carlicenseback: req.body.carlicenseback,
@@ -187,7 +183,6 @@ router.post('/', async(req, res) => {
                 res.status(404).send({ message: "User not found" })
                 res.end()
             }
-
         }).catch(errHandler)
     }
 
