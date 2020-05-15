@@ -66,7 +66,7 @@ router.post('/', async(req, res) => {
             res.status(400).send({ message: "Model must be a string of (1-300) characters" });
             res.end();
         }
-        if (!((typeof(req.body.year) === 'number')) || ((req.body.year).toString().trim().length !== 4)) {
+        if (!((req.body.year).trim().length !== 4)) {
             validChecks = false
             res.status(400).send({ message: "year must be a number of 4 digits" });
             res.end();
@@ -82,13 +82,13 @@ router.post('/', async(req, res) => {
             res.status(400).send({ message: "Plateletters must be a string of (1-300) characters" });
             res.end();
         }
-        if (!((typeof(req.body.platenumbers) === 'number') || (req.body.platenumbers).toString().trim().length === 0)) {
+        if (!((req.body.platenumbers).trim().length === 0)) {
             validChecks = false
             res.status(400).send({ message: "Plate numbers must be a number of (1-300) digits" });
             res.end();
         }
 
-        if (!((typeof(req.body.nationalid) === 'number') || (req.body.nationalid).toString().trim().length === 0)) {
+        if (!( (req.body.nationalid).trim().length === 0)) {
             validChecks = false
             res.status(400).send({ message: "National ID must be a number of (1-300) digits" });
             res.end();
@@ -127,7 +127,7 @@ router.post('/', async(req, res) => {
             res.end();
         }
 
-        if (!((typeof(req.body.numberofseats) === 'number') || (req.body.numberofseats).toString().trim().length === 0)) {
+        if (!( (req.body.numberofseats).trim().length === 0)) {
             validChecks = false
             res.status(400).send({ message: "Number of seats be a number of (1-300) digits" });
             res.end();
@@ -161,17 +161,17 @@ router.post('/', async(req, res) => {
                                     userid: user.id,
                                     brand: req.body.brand,
                                     model: req.body.model,
-                                    year: req.body.year,
+                                    year: parseInt(req.body.year),
                                     type: req.body.type,
                                     plateletters: req.body.plateletters,
-                                    platenumbers: req.body.platenumbers,
-                                    nationalid: req.body.nationalid,
+                                    platenumbers: parseInt(req.body.platenumbers),
+                                    nationalid: parseInt(req.body.nationalid),
                                     carlicensefront: req.body.carlicensefront,
                                     carlicenseback: req.body.carlicenseback,
                                     driverlicensefront: req.body.driverlicensefront,
                                     driverlicenseback: req.body.driverlicenseback,
                                     color: req.body.color,
-                                    numberofseats: req.body.numberofseats,
+                                    numberofseats: parseInt(req.body.numberofseats),
                                     status: 'existing'
                                 }).then(created => {
                                     res.status(200).send({ message: "Car is created" })
