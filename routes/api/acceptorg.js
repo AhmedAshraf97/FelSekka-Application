@@ -49,14 +49,14 @@ router.post('/', async(req, res) => {
 
     if (userExists) {
         //Organization ID check
-        if (req.body.organizationid == null) {
+        if (req.body.orgid == null) {
             res.status(400).send({ error: "Organization ID", message: "Organization ID paramter is missing" });
-        } else if (((req.body.organizationid).toString()).trim().length === 0) {
+        } else if (((req.body.orgid).toString()).trim().length === 0) {
             res.status(400).send({ error: "Organization ID", message: "Organization ID can't be empty" });
         } else {
             await Organization.update({ status: "existing" }, {
                 where: {
-                    id: parseInt(req.body.organizationid)
+                    id: parseInt(req.body.orgid)
                 }
             }).then(user => {
                 res.status(200).send({ message: "Organization is Accepted" });

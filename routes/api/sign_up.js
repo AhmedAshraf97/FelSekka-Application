@@ -11,8 +11,11 @@ const jwt = require('jsonwebtoken');
 const regex = require('regex');
 const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
+var request = require('request-promise');
 const Op = Sequelize.Op;
 process.env.SECRET_KEY = 'secret'
+const { forEach } = require('p-iteration');
+const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
 
 //Error handler
 const errHandler = err => {
@@ -196,12 +199,16 @@ router.post('/', async(req, res) => {
         res.status(409).send({ error: "Phone number", message: "This phone number already exists" });
     } else {
         var createdUserID = 0;
+        var distance12 = 0;
+        var distance21 =0;
+        var time12 = 0;
+        var time21=0;
+        var allUsers = {};
         //Insert user 
         await User.create(userData).then(user => {
             res.status(200).send({ message: "User is created" });
             createdUserID = user.id;
         }).catch(errHandler);
-
         //Insert users in betweenusers
         await User.findAll({
             where: {
@@ -213,27 +220,54 @@ router.post('/', async(req, res) => {
             }
         }).then(users => {
             if (users) {
-                users.forEach(user => {
-                    const betweenUsersData1 = {
-                        user1id: user.id,
-                        user2id: createdUserID,
-                        distance: 0.0,
-                        time: 0.0,
-                        trust: 0
-                    }
-                    const betweenUsersData2 = {
-                        user1id: createdUserID,
-                        user2id: user.id,
-                        distance: 0.0,
-                        time: 0.0,
-                        trust: 0
-                    }
-                    BetweenUsers.create(betweenUsersData1).then().catch(errHandler);
-                    BetweenUsers.create(betweenUsersData2).then().catch(errHandler);
-                });
+                allUsers = users;
             }
-        }).catch(errHandler);
+            }).catch(errHandler);
+        
+        await forEach(allUsers,async(user)=>{
+            var x = req.body.latitude;
+            var y = req.body.longitude;
+            var z = user.latitude;
+            var w = user.longitude;
+            var body12 = {}
+            var body21 = {}
+            var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z,',',w,'&destinations=',x,',',y,'&key=',API_KEY); 
+            var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x,',',y,'&destinations=',z,',',w,'&key=',API_KEY); 
+            await request.post(url12).then(function(body) {
+                body12 = body;})
+            await request.post(url21).then(function(body) {
+                body21 = body;})
+            body12 = JSON.parse(body12)
+            body21 = JSON.parse(body21)
+            var results12 = body12.rows[0].elements;
+            var element12 = results12[0]
+            distance12 = element12.distance.value;
+            time12 = element12.duration.value;
+            ///////////////////////////////////
+            var results21 = body21.rows[0].elements;
+            var element21 = results21[0]
+            distance21 = element21.distance.value;
+            time21 = element21.duration.value;
+            const betweenUsersData1 = {
+                user1id: user.id,
+                user2id: createdUserID,
+                distance: distance12,
+                time: time12,
+                trust: 0
+            }
+            const betweenUsersData2 = {
+                user1id: createdUserID,
+                user2id: user.id,
+                distance: distance21,
+                time: time21,
+                trust: 0
+            }
+            await BetweenUsers.create(betweenUsersData1).then().catch(errHandler);
+            await BetweenUsers.create(betweenUsersData2).then().catch(errHandler);
+
+        });
     }
+        
 });
 
 module.exports = router;

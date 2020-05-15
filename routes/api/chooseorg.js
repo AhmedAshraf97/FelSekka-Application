@@ -10,6 +10,8 @@ var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 process.env.SECRET_KEY = 'secret';
 const ExpiredToken = require('../../models/expiredtokens');
+const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
+var request = require('request-promise');
 
 //Error handler
 const errHandler = err => {
@@ -61,19 +63,47 @@ router.post('/', async(req, res) => {
         }
         else {
             var domain = true;
+            var orglatitude=0;
+            var orglongitude = 0;
             await  Organization.findOne({ where: { id: req.body.orgid }}).then(org=>{
+                orglatitude = org.latitude;
+                orglongitude = org.longitude;
                 if( !((req.body.email).includes(org.domain)) ){
                     domain = false;
                 }
             }).catch(errHandler);}
+            var x = orglatitude;
+            var y = orglongitude;
+            var z = decoded.latitude;
+            var w = decoded.longitude;
+            var body12 = {}
+            var body21 = {}
+            var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z,',',w,'&destinations=',x,',',y,'&key=',API_KEY); 
+            var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x,',',y,'&destinations=',z,',',w,'&key=',API_KEY); 
+            await request.post(url12).then(function(body) {
+                body12 = body;})
+            await request.post(url21).then(function(body) {
+                body21 = body;})
+            body12 = JSON.parse(body12)
+            body21 = JSON.parse(body21)
+            var results12 = body12.rows[0].elements;
+            var element12 = results12[0]
+            distance12 = element12.distance.value;
+            time12 = element12.duration.value;
+            ///////////////////////////////////
+            var results21 = body21.rows[0].elements;
+            var element21 = results21[0]
+            distance21 = element21.distance.value;
+            time21 = element21.duration.value;
+           
             //Insert org user 
             const orgUserData = {
                 orgid: parseInt(req.body.orgid),
                 userid: decoded.id,
-                distancetoorg: 0.0,
-                timetoorg: 0.0,
-                distancefromorg: 0.0,
-                timefromorg: 0.0,
+                distancetoorg: distance12,
+                timetoorg: time12,
+                distancefromorg:distance21,
+                timefromorg: time21,
                 status: 'existing'
             }
             if(!domain){

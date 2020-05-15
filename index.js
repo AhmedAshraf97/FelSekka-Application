@@ -77,17 +77,6 @@ app.use('/api/endDriverTripTo', require('./routes/api/endDriverTripTo'))
 var schedule = require('node-schedule');
 var request = require('request');
 
-/*request.post('https://maps.googleapis.com/maps/api/distancematrix/json?origins=29.973536,31.282332&destinations=29.984513,31.307082&key=AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts&language=en', {
-}, (error, res, body) => {
-  if (error) {
-    console.error(error)
-    return
-  }
-  console.log(res)
-  //console.log(body)
-})*/
-
-
 /*
 var jsontosend = {
     "latesttime": "05:00:00",
