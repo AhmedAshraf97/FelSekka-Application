@@ -200,9 +200,9 @@ router.post('/', async(req, res) => {
     } else {
         var createdUserID = 0;
         var distance12 = 0;
-        var distance21 =0;
+        var distance21 = 0;
         var time12 = 0;
-        var time21=0;
+        var time21 = 0;
         var allUsers = {};
         //Insert user 
         await User.create(userData).then(user => {
@@ -212,9 +212,11 @@ router.post('/', async(req, res) => {
         //Insert users in betweenusers
         await User.findAll({
             where: {
-                [Op.and]: [
-                    { id: {
-                            [Op.ne]: createdUserID } },
+                [Op.and]: [{
+                        id: {
+                            [Op.ne]: createdUserID
+                        }
+                    },
                     { status: 'existing' }
                 ]
             }
@@ -222,32 +224,34 @@ router.post('/', async(req, res) => {
             if (users) {
                 allUsers = users;
             }
-            }).catch(errHandler);
-        
-        await forEach(allUsers,async(user)=>{
+        }).catch(errHandler);
+
+        await forEach(allUsers, async(user) => {
             var x = req.body.latitude;
             var y = req.body.longitude;
             var z = user.latitude;
             var w = user.longitude;
             var body12 = {}
             var body21 = {}
-            var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z,',',w,'&destinations=',x,',',y,'&key=',API_KEY); 
-            var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x,',',y,'&destinations=',z,',',w,'&key=',API_KEY); 
+            var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z, ',', w, '&destinations=', x, ',', y, '&key=', API_KEY);
+            var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x, ',', y, '&destinations=', z, ',', w, '&key=', API_KEY);
             await request.post(url12).then(function(body) {
-                body12 = body;})
+                body12 = body;
+            })
             await request.post(url21).then(function(body) {
-                body21 = body;})
+                body21 = body;
+            })
             body12 = JSON.parse(body12)
             body21 = JSON.parse(body21)
             var results12 = body12.rows[0].elements;
             var element12 = results12[0]
-            distance12 = element12.distance.value;
-            time12 = element12.duration.value;
+            distance12 = element12.distance.value / 1000;
+            time12 = element12.duration.value / 60;
             ///////////////////////////////////
             var results21 = body21.rows[0].elements;
             var element21 = results21[0]
-            distance21 = element21.distance.value;
-            time21 = element21.duration.value;
+            distance21 = element21.distance.value / 1000;
+            time21 = element21.duration.value / 60;
             const betweenUsersData1 = {
                 user1id: user.id,
                 user2id: createdUserID,
@@ -267,7 +271,7 @@ router.post('/', async(req, res) => {
 
         });
     }
-        
+
 });
 
 module.exports = router;
