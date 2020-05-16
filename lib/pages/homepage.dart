@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:felsekka/pages/AnimatedPage%20Route.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
+import 'package:felsekka/pages/requestride.dart';
 import 'package:felsekka/pages/sidebar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
@@ -106,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       GestureDetector(
                         onTap: (){
-                          print("Request ride");
+                          Navigator.push(context, AnimatedPageRoute(widget: RequestRide()));
                         },
                         child: Container(
                           width: 320,

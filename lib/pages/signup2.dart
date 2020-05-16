@@ -121,6 +121,8 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                           initialDateTime: DateTime(1997, 10, 5),
                           onDateTimeChanged: (DateTime newDateTime) {
                             date = DateFormat('dd-MM-yyyy').format(newDateTime);
+                            setState(() {
+                            });
                             dateSelected= DateFormat('yyyy-MM-dd').format(newDateTime);
                           },
                         ),

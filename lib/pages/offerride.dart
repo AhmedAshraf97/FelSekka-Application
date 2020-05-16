@@ -29,12 +29,12 @@ class Org{
     return '{ ${this.id}, ${this.name},${this.domain}, ${this.latitude},${this.longitude} }';
   }
 }
-class Organizations extends StatefulWidget with NavigationStates{
+class OfferRide extends StatefulWidget with NavigationStates{
   @override
-  _OrganizationsState createState() => _OrganizationsState();
+  _OfferRideState createState() => _OfferRideState();
 }
 
-class _OrganizationsState extends State<Organizations> {
+class _OfferRideState extends State<OfferRide> {
   List<Card> ListOrgs=[];
   List<Card> ListOrgsJoin=[];
   static TextEditingController nameController = new TextEditingController();
@@ -373,232 +373,232 @@ class _OrganizationsState extends State<Organizations> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                     return
-                       Scaffold(
-                         body: Column(
-                           children: <Widget>[
-                             Expanded(
-                               child: Container(
-                                 width: double.infinity,
-                                 decoration: BoxDecoration(
-                                   color: Colors.indigo,
-                                 ),
-                                 child: Padding(
-                                   padding: const EdgeInsets.fromLTRB(10.0,10,10,10),
-                                   child: Container(
-                                     decoration: BoxDecoration(
-                                         color: Colors.white,
-                                         borderRadius: BorderRadius.all(Radius.circular(130)),
-                                     ),
-                                     child:Scaffold(
-                                       body: Container(
-                                         decoration: BoxDecoration(
-                                           color: Colors.white,
-                                           borderRadius: BorderRadius.all(Radius.circular(30)),
-                                         ),
-                                         child: Column(
-                                           mainAxisAlignment: MainAxisAlignment.center,
-                                           crossAxisAlignment: CrossAxisAlignment.center,
-                                           children: <Widget>[
-                                             SizedBox(
-                                               height: 20,
-                                             ),
-                                             Padding(
-                                               padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                                               child: Text("Organization e-mail:", style: TextStyle(color:Colors.indigo,fontSize: 18)),
-                                             ),
-                                             SizedBox(
-                                               height: 3,
-                                             ),
-                                             Padding(
-                                               padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                                               child: Text(orgJoinObjs[i].domain, style: TextStyle(color:Colors.blueGrey,fontSize: 15)),
-                                             ),
-                                             SizedBox(
-                                               height: 3,
-                                             ),
-                                             Padding(
-                                               padding: const EdgeInsets.fromLTRB(22,5.0,22,13),
-                                               child: Container(
-                                                 height: 55.0,
-                                                 padding: EdgeInsets.all(15.0),
-                                                 decoration: BoxDecoration(
-                                                   color: Colors.white,
-                                                   borderRadius: BorderRadius.circular(10),
-                                                   boxShadow: [BoxShadow(
-                                                     color: Color.fromRGBO(39, 78, 220, 0.3),
-                                                     blurRadius: 20.0,
-                                                     offset: Offset(0,10),
-                                                   )],
-                                                 ),
-                                                 child: Container(
-                                                   decoration: BoxDecoration(
-                                                     border: Border(bottom: BorderSide(color: Colors.grey[200])),
-                                                   ),
-                                                   child: TextField(
-                                                     controller: emailController,
-                                                     decoration: InputDecoration(
-                                                       counterText: "",
-                                                       hintText: "Organization e-mail",
-                                                       hintStyle: TextStyle(color:Colors.grey),
-                                                       border: InputBorder.none,
-                                                     ),
-                                                   ),
-                                                 ),
-                                               ),
-                                             ),
-                                             MaterialButton(
-                                               child: Text("Join",
-                                                 style: TextStyle(
-                                                   color: Colors.white,
-                                                   fontSize: 20.0,
-                                                   fontFamily: "Kodchasan",
-                                                 ),
-                                               ),
-                                               height:40,
-                                               minWidth:100,
-                                               color: Colors.indigo,
-                                               elevation: 15,
-                                               highlightColor: Colors.grey,
-                                               splashColor: Colors.blueGrey,
-                                               shape: RoundedRectangleBorder(
-                                                 borderRadius: BorderRadius.circular(50),
-                                               ),
-                                               onPressed: (){
-                                                 String email= emailController.text;
-                                                 bool Valid= true;
-                                                 //E-mail validations:
-                                                 if(email.isEmpty)
-                                                 {
-                                                   Valid = false;
-                                                   showDialog(
-                                                       context: context,
-                                                       builder: (BuildContext context) {
-                                                         return RichAlertDialog(
-                                                           alertTitle: richTitle("Organization e-mail"),
-                                                           alertSubtitle: richSubtitle("Organization e-mail is required"),
-                                                           alertType: RichAlertType.WARNING,
-                                                           dialogIcon: Icon(
-                                                             Icons.warning,
-                                                             color: Colors.red,
-                                                             size: 80,
-                                                           ),
-                                                           actions: <Widget>[
-                                                             new OutlineButton(
-                                                               shape: StadiumBorder(),
-                                                               textColor: Colors.blue,
-                                                               child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
-                                                               borderSide: BorderSide(
-                                                                   color: Colors.indigo[400], style: BorderStyle.solid,
-                                                                   width: 1),
-                                                               onPressed: () {
-                                                                 Navigator.pop(context);
-                                                               },
-                                                             ),
-                                                           ],
-                                                         );
-                                                       });
-                                                 }
-                                                 if(Valid==true)
-                                                 {
-                                                   void getData() async{
-                                                     SharedPreferences prefs = await SharedPreferences.getInstance();
-                                                     String token = await (prefs.getString('token')??'');
-                                                     Map<String, String> body = {
-                                                       'orgid': orgJoinObjs[i].id.toString(),
-                                                       'email': email
-                                                     };
-                                                     String url="http://3.81.22.120:3000/api/chooseorg";
-                                                     Response response =await post(url, headers:{'authorization': token}, body: body);
-                                                     if(response.statusCode != 200)
-                                                     {
-                                                       Map data= jsonDecode(response.body);
-                                                       showDialog(
-                                                           context: context,
-                                                           builder: (BuildContext context) {
-                                                             return RichAlertDialog(
-                                                               alertTitle: richTitle(data['error']),
-                                                               alertSubtitle: richSubtitle(data['message']),
-                                                               alertType: RichAlertType.WARNING,
-                                                               dialogIcon: Icon(
-                                                                 Icons.warning,
-                                                                 color: Colors.red,
-                                                                 size: 80,
-                                                               ),
-                                                               actions: <Widget>[
-                                                                 new OutlineButton(
-                                                                   shape: StadiumBorder(),
-                                                                   textColor: Colors.blue,
-                                                                   child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
-                                                                   borderSide: BorderSide(
-                                                                       color: Colors.indigo[400], style: BorderStyle.solid,
-                                                                       width: 1),
-                                                                   onPressed: () {
-                                                                     Navigator.pop(context);
-                                                                   },
-                                                                 ),
-                                                               ],
-                                                             );
-                                                           });
-                                                     }
-                                                     else{
-                                                       emailController.text="";
-                                                       setState(() {
-                                                       });
-                                                       Navigator.pop(context);
-                                                       showDialog(
-                                                           context: context,
-                                                           builder: (BuildContext context) {
-                                                             return RichAlertDialog(
-                                                               alertTitle: richTitle("Done"),
-                                                               alertSubtitle: richSubtitle("You joined this organization."),
-                                                               alertType: RichAlertType.SUCCESS,
-                                                               dialogIcon: Icon(
-                                                                 Icons.check,
-                                                                 color: Colors.green,
-                                                                 size: 100,
-                                                               ),
-                                                               actions: <Widget>[
-                                                                 new OutlineButton(
-                                                                   shape: StadiumBorder(),
-                                                                   textColor: Colors.blue,
-                                                                   child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
-                                                                   borderSide: BorderSide(
-                                                                       color: Colors.indigo[400], style: BorderStyle.solid,
-                                                                       width: 1),
-                                                                   onPressed: () {
-                                                                     Navigator.pop(context);
-                                                                   },
-                                                                 ),
-                                                               ],
-                                                             );
-                                                           });
-                                                     }
-                                                   }
-                                                   getData();
-                                                 }
-                                               },
-                                             ),
-                                           ],
-                                         ),
-                                       ),
-                                         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-                                         floatingActionButton: new FloatingActionButton(
-                                             elevation: 0.0,
-                                             child: new Icon(Icons.close),
-                                             backgroundColor: Colors.indigo[400],
-                                             onPressed: (){
-                                               Navigator.pop(context);
-                                             }
-                                         )
-                                     ),
-                                   ),
-                                 ),
-                               ),
-                             ),
-                           ],
-                         ),
-                       );
+                      return
+                        Scaffold(
+                          body: Column(
+                            children: <Widget>[
+                              Expanded(
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.indigo,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(10.0,10,10,10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.all(Radius.circular(130)),
+                                      ),
+                                      child:Scaffold(
+                                          body: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.all(Radius.circular(30)),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.fromLTRB(33,0,22,0),
+                                                  child: Text("Organization e-mail:", style: TextStyle(color:Colors.indigo,fontSize: 18)),
+                                                ),
+                                                SizedBox(
+                                                  height: 3,
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.fromLTRB(33,0,22,0),
+                                                  child: Text(orgJoinObjs[i].domain, style: TextStyle(color:Colors.blueGrey,fontSize: 15)),
+                                                ),
+                                                SizedBox(
+                                                  height: 3,
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.fromLTRB(22,5.0,22,13),
+                                                  child: Container(
+                                                    height: 55.0,
+                                                    padding: EdgeInsets.all(15.0),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      boxShadow: [BoxShadow(
+                                                        color: Color.fromRGBO(39, 78, 220, 0.3),
+                                                        blurRadius: 20.0,
+                                                        offset: Offset(0,10),
+                                                      )],
+                                                    ),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                                                      ),
+                                                      child: TextField(
+                                                        controller: emailController,
+                                                        decoration: InputDecoration(
+                                                          counterText: "",
+                                                          hintText: "Organization e-mail",
+                                                          hintStyle: TextStyle(color:Colors.grey),
+                                                          border: InputBorder.none,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                MaterialButton(
+                                                  child: Text("Join",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 20.0,
+                                                      fontFamily: "Kodchasan",
+                                                    ),
+                                                  ),
+                                                  height:40,
+                                                  minWidth:100,
+                                                  color: Colors.indigo,
+                                                  elevation: 15,
+                                                  highlightColor: Colors.grey,
+                                                  splashColor: Colors.blueGrey,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(50),
+                                                  ),
+                                                  onPressed: (){
+                                                    String email= emailController.text;
+                                                    bool Valid= true;
+                                                    //E-mail validations:
+                                                    if(email.isEmpty)
+                                                    {
+                                                      Valid = false;
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext context) {
+                                                            return RichAlertDialog(
+                                                              alertTitle: richTitle("Organization e-mail"),
+                                                              alertSubtitle: richSubtitle("Organization e-mail is required"),
+                                                              alertType: RichAlertType.WARNING,
+                                                              dialogIcon: Icon(
+                                                                Icons.warning,
+                                                                color: Colors.red,
+                                                                size: 80,
+                                                              ),
+                                                              actions: <Widget>[
+                                                                new OutlineButton(
+                                                                  shape: StadiumBorder(),
+                                                                  textColor: Colors.blue,
+                                                                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                  borderSide: BorderSide(
+                                                                      color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                      width: 1),
+                                                                  onPressed: () {
+                                                                    Navigator.pop(context);
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            );
+                                                          });
+                                                    }
+                                                    if(Valid==true)
+                                                    {
+                                                      void getData() async{
+                                                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                        String token = await (prefs.getString('token')??'');
+                                                        Map<String, String> body = {
+                                                          'orgid': orgJoinObjs[i].id.toString(),
+                                                          'email': email
+                                                        };
+                                                        String url="http://3.81.22.120:3000/api/chooseorg";
+                                                        Response response =await post(url, headers:{'authorization': token}, body: body);
+                                                        if(response.statusCode != 200)
+                                                        {
+                                                          Map data= jsonDecode(response.body);
+                                                          showDialog(
+                                                              context: context,
+                                                              builder: (BuildContext context) {
+                                                                return RichAlertDialog(
+                                                                  alertTitle: richTitle(data['error']),
+                                                                  alertSubtitle: richSubtitle(data['message']),
+                                                                  alertType: RichAlertType.WARNING,
+                                                                  dialogIcon: Icon(
+                                                                    Icons.warning,
+                                                                    color: Colors.red,
+                                                                    size: 80,
+                                                                  ),
+                                                                  actions: <Widget>[
+                                                                    new OutlineButton(
+                                                                      shape: StadiumBorder(),
+                                                                      textColor: Colors.blue,
+                                                                      child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                      borderSide: BorderSide(
+                                                                          color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                          width: 1),
+                                                                      onPressed: () {
+                                                                        Navigator.pop(context);
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              });
+                                                        }
+                                                        else{
+                                                          emailController.text="";
+                                                          setState(() {
+                                                          });
+                                                          Navigator.pop(context);
+                                                          showDialog(
+                                                              context: context,
+                                                              builder: (BuildContext context) {
+                                                                return RichAlertDialog(
+                                                                  alertTitle: richTitle("Done"),
+                                                                  alertSubtitle: richSubtitle("You joined this organization."),
+                                                                  alertType: RichAlertType.SUCCESS,
+                                                                  dialogIcon: Icon(
+                                                                    Icons.check,
+                                                                    color: Colors.green,
+                                                                    size: 100,
+                                                                  ),
+                                                                  actions: <Widget>[
+                                                                    new OutlineButton(
+                                                                      shape: StadiumBorder(),
+                                                                      textColor: Colors.blue,
+                                                                      child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                      borderSide: BorderSide(
+                                                                          color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                          width: 1),
+                                                                      onPressed: () {
+                                                                        Navigator.pop(context);
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              });
+                                                        }
+                                                      }
+                                                      getData();
+                                                    }
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+                                          floatingActionButton: new FloatingActionButton(
+                                              elevation: 0.0,
+                                              child: new Icon(Icons.close),
+                                              backgroundColor: Colors.indigo[400],
+                                              onPressed: (){
+                                                Navigator.pop(context);
+                                              }
+                                          )
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
                     },
                   ),
                 );
@@ -610,51 +610,54 @@ class _OrganizationsState extends State<Organizations> {
     }
     return null;
   }
+
+
+
   @override
   Widget build(BuildContext context) {
     final tabs=[
-    FutureBuilder(
-        future: getData(),
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          if(snapshot.connectionState == ConnectionState.done)
-          {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-              child: Container(
-                child: noOrgs == 1 ? Center(child: Text("No organizations to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),)) :
-                Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "Tap to leave Organization.",
-                      style: TextStyle(
-                        color: Colors.blueGrey,
-                        fontSize: 15,
+      FutureBuilder(
+          future: getData(),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if(snapshot.connectionState == ConnectionState.done)
+            {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                child: Container(
+                  child: noOrgs == 1 ? Center(child: Text("No organizations to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),)) :
+                  Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 20,
                       ),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        children: ListOrgs,
+                      Text(
+                        "Tap to leave Organization.",
+                        style: TextStyle(
+                          color: Colors.blueGrey,
+                          fontSize: 15,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-          else{
-            return Container(
-               child:Center(
-                  child: GlowingProgressIndicator(
-                    child: Image.asset("images/bluelogonobg.png", width: 150, height: 150,),
+                      Expanded(
+                        child: ListView(
+                          children: ListOrgs,
+                        ),
+                      ),
+                    ],
                   ),
-                )
-            );
+                ),
+              );
+            }
+            else{
+              return Container(
+                  child:Center(
+                    child: GlowingProgressIndicator(
+                      child: Image.asset("images/bluelogonobg.png", width: 150, height: 150,),
+                    ),
+                  )
+              );
+            }
           }
-        }
-    ),
+      ),
       FutureBuilder(
           future: getData(),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -716,9 +719,9 @@ class _OrganizationsState extends State<Organizations> {
                 Text(
                   "Add Organization:",
                   style: TextStyle(
-                  color: Colors.indigo,
+                    color: Colors.indigo,
                     fontSize: 20,
-                ),
+                  ),
                 ),
               ],
             ),
@@ -1044,7 +1047,7 @@ class _OrganizationsState extends State<Organizations> {
                               ],
                             );
                           });
-                      }
+                    }
                   }
                   getData();
                 }
@@ -1066,35 +1069,35 @@ class _OrganizationsState extends State<Organizations> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(10.0,10,10,0),
                 child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30))
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30))
+                  ),
+                  child:Scaffold(
+                    bottomNavigationBar: FlashyTabBar(
+                      animationCurve: Curves.linear,
+                      selectedIndex: _selectedIndex,
+                      showElevation: true, // use this to remove appBar's elevation
+                      onItemSelected: (index) => setState(() {
+                        _selectedIndex = index;
+                      }),
+                      items: [
+                        FlashyTabBarItem(
+                          icon: Icon(Icons.location_city),
+                          title: Text('My Organizations', style: TextStyle(fontSize: 12,color: Colors.indigo),),
+                        ),
+                        FlashyTabBarItem(
+                          icon: Icon(Icons.search),
+                          title: Text('Join Organization', style: TextStyle(fontSize: 12,color: Colors.indigo),),
+                        ),
+                        FlashyTabBarItem(
+                          icon: Icon(Icons.add),
+                          title: Text('Add Organization', style: TextStyle(fontSize: 12,color: Colors.indigo),),
+                        ),
+                      ],
                     ),
-                    child:Scaffold(
-                      bottomNavigationBar: FlashyTabBar(
-                        animationCurve: Curves.linear,
-                        selectedIndex: _selectedIndex,
-                        showElevation: true, // use this to remove appBar's elevation
-                        onItemSelected: (index) => setState(() {
-                          _selectedIndex = index;
-                        }),
-                        items: [
-                          FlashyTabBarItem(
-                            icon: Icon(Icons.location_city),
-                            title: Text('My Organizations', style: TextStyle(fontSize: 12,color: Colors.indigo),),
-                          ),
-                          FlashyTabBarItem(
-                            icon: Icon(Icons.search),
-                            title: Text('Join Organization', style: TextStyle(fontSize: 12,color: Colors.indigo),),
-                          ),
-                          FlashyTabBarItem(
-                            icon: Icon(Icons.add),
-                            title: Text('Add Organization', style: TextStyle(fontSize: 12,color: Colors.indigo),),
-                          ),
-                        ],
-                      ),
-                      body: tabs[_selectedIndex],
-                    ),
+                    body: tabs[_selectedIndex],
+                  ),
                 ),
               ),
             ),
