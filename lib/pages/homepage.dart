@@ -43,6 +43,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       GestureDetector(
                         onTap: (){
+                          print("Offer ride");
                         },
                         child: Container(
                           width: 320,
@@ -105,6 +106,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       GestureDetector(
                         onTap: (){
+                          print("Request ride");
                         },
                         child: Container(
                           width: 320,
@@ -167,6 +169,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       GestureDetector(
                         onTap: (){
+                          print("Join ride");
                         },
                         child: Container(
                           width: 320,
