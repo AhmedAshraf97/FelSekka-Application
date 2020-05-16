@@ -204,14 +204,15 @@ router.post('/', async(req, res) => {
         var distance21 = 0;
         var time12 = 0;
         var time21 = 0;
-        var allUsers = {};
+
         //Insert user 
         await User.create(userData).then(user => {
             res.status(200).send({ message: "User is created" });
             createdUserID = user.id;
         }).catch(errHandler);
+
         //Insert users in betweenusers
-        await User.findAll({
+        const allUsers = await User.findAll({
             where: {
                 [Op.and]: [{
                         id: {
@@ -221,13 +222,9 @@ router.post('/', async(req, res) => {
                     { status: 'existing' }
                 ]
             }
-        }).then(users => {
-            if (users) {
-                allUsers = users;
-            }
         }).catch(errHandler);
 
-        await forEach(allUsers, async(user) => {
+        for (user of allUsers) {
             var x = req.body.latitude;
             var y = req.body.longitude;
             var z = user.latitude;
@@ -236,12 +233,12 @@ router.post('/', async(req, res) => {
             var body21 = {}
             var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z, ',', w, '&destinations=', x, ',', y, '&key=', API_KEY);
             var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x, ',', y, '&destinations=', z, ',', w, '&key=', API_KEY);
-            await request.post(url12).then(function(body) {
-                body12 = body;
-            })
-            await request.post(url21).then(function(body) {
-                body21 = body;
-            })
+            const url122 = await request.post(url12).catch(errHandler)
+            body12 = url122;
+
+            const url211 = await request.post(url21).catch(errHandler)
+            body21 = url211;
+
             body12 = JSON.parse(body12)
             body21 = JSON.parse(body21)
             var results12 = body12.rows[0].elements;
@@ -267,10 +264,10 @@ router.post('/', async(req, res) => {
                 time: time21,
                 trust: 0
             }
-            await BetweenUsers.create(betweenUsersData1).then().catch(errHandler);
-            await BetweenUsers.create(betweenUsersData2).then().catch(errHandler);
+            await BetweenUsers.create(betweenUsersData1).catch(errHandler);
+            await BetweenUsers.create(betweenUsersData2).catch(errHandler);
 
-        });
+        }
     }
 
 });

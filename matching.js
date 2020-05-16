@@ -131,7 +131,8 @@ async function MatchingReorder() {
         }
 
         var response = ksp.ksp(g, DriverIDstr, OrganizationID, kValue);
-        response = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= (Drivers[k].TotalDurationTaken + Drivers[k].TimeToOrganizationMinutes))
+        var lastRiderTimeToOrg = Riders.find(n => n.ID === Drivers[k].AssignedRiders[Drivers[k].AssignedRiders.length - 1]).TimeToOrganizationMinutes
+        response = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= (Drivers[k].TotalDurationTaken + lastRiderTimeToOrg))
 
         for (var d = 0; d < response.length; d++) {
             var AssignedTemp = []
@@ -231,9 +232,14 @@ module.exports = async function main() {
                     //add duration 
                     if (Riders.find(n => n.ID === RiderID).isAssigned === false) {
 
-                        var WeightFunction = -0.45 * Duration / Drivers[j].MaxDurationToNormalize - 0.25 * Distance / Drivers[j].MaxDistanceToNormalize + 0.3 * Trust -
-                            0.15 * (diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) - Duration) / Drivers[j].MaxEarliestDiffToNormalize -
+                        var WeightFunction = -0.45 * Duration / Drivers[j].MaxDurationToNormalize - 0.25 * Distance / Drivers[j].MaxDistanceToNormalize +
+                            0.3 * Trust -
                             0.04 * diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) / 30; ///arrival time diff
+
+                        if (diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) > 0) {
+                            WeightFunction -= 0.15 * (diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) / Drivers[j].MaxEarliestDiffToNormalize)
+                        }
+
 
                         WeightArray.push(WeightFunction)
                         WeightIndex.push(RiderID)

@@ -62,6 +62,9 @@ app.use('/api/ReturnTripMatch', require('./routes/api/ReturnTripMatch').router);
 app.use('/api/chooseFromAvailableRides', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/chooseFromAvailableRidesApi').router)
 app.use('/api/chooseFromReturnTripsApi', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/chooseFromReturnTripsApi').router)
 
+
+app.use('/api/betweenusers', require('./routes/api/betweenusershandler'));
+
 app.use('/api/cancelRiderTo', require('./routes/api/cancelRiderToApi').router)
 app.use('/api/cancelRiderFrom', require('./routes/api/cancelRiderFromApi').router)
 app.use('/api/canceldriverTo', require('./routes/api/canceldriverToApi').router)
