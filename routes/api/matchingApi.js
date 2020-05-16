@@ -86,6 +86,9 @@ class Driver {
         this.offerid = offerid
         this.latitude = latitude
         this.longitude = longitude
+
+        this.closestFlag = 0
+        this.continueFlag = 0;
     }
 };
 

@@ -176,6 +176,10 @@ module.exports = async function main() {
 
 
         for (var j = 0; j < Drivers.length; j++) {
+            if (Drivers[j].continueFlag === 1) {
+                Drivers[j].continueFlag = 0;
+                continue;
+            }
 
 
             if (NumberOfUnAssignedRiders === 0)
@@ -190,6 +194,7 @@ module.exports = async function main() {
             if (DriversRidersDuration.findIndex(n => n.ID === Drivers[j].ID) === -1) {
                 continue;
             }
+
             if (lastRiderID === DriverID) { //First Rider to be assigned
 
                 if (Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1] === Drivers[j].ID) // last rider driver
@@ -253,8 +258,22 @@ module.exports = async function main() {
                     ChosenRiderID = WeightIndex[WeightArray.indexOf(Math.max.apply(Math, WeightArray))]
                     chosenDistance = DriversRider[indexinDriverRider].data.find(n => n.to === ChosenRiderID).distance
                     chosenDuration = DriversRidersDuration[indexinDriverRider].data.find(n => n.to === ChosenRiderID).duration
-                    DriversRidersDuration[indexinDriverRider].data.find(n => n.to === ChosenRiderID).checked = 1;
-                    DriversRidersDuration[indexinDriverRider].checked++;
+                    if (Drivers[j].closestFlag == 0) {
+                        if (chosenDuration <= 5) {
+                            DriversRidersDuration[indexinDriverRider].data.find(n => n.to === ChosenRiderID).checked = 1;
+                            DriversRidersDuration[indexinDriverRider].checked++;
+                            Drivers[j].continueFlag = 1;
+
+
+                        } else {
+                            ChosenRiderID = -1;
+                        }
+
+                        Drivers[j].closestFlag = 1
+                    } else {
+                        DriversRidersDuration[indexinDriverRider].data.find(n => n.to === ChosenRiderID).checked = 1;
+                        DriversRidersDuration[indexinDriverRider].checked++;
+                    }
 
                 }
 
@@ -353,6 +372,7 @@ module.exports = async function main() {
 
 
                 }
+
                 maxDurationCurrentRider = Drivers[j].TotalDurationTaken + chosenDuration + Riders.find(n => n.ID === ChosenRiderID).TimeToOrganizationMinutes;
                 if (maxDurationCurrentRider < Drivers[j].MaxDuration && chosenDistance < DistanceThreshold) {
                     Riders.find(n => n.ID === ChosenRiderID).isAssigned = true;
