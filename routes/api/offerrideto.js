@@ -68,8 +68,6 @@ router.post('/', async(req, res) => {
             res.status(400).send({ error: "Number of seats", message: "Number of seats paramter is missing" });
         } else if (((req.body.numberofseats).toString()).trim().length === 0) {
             res.status(400).send({ error: "Number of seats", message: "Number of seats can't be empty" });
-        } else if (((typeof(req.body.numberofseats) === 'string') || ((req.body.numberofseats) instanceof String))) {
-            res.status(400).send({ error: "Number of seats", message: "Number of seats must be a number" });
         }
         //Organization id validation
         else if (req.body.toorgid == null) {
@@ -261,16 +259,16 @@ router.post('/', async(req, res) => {
             
             const rideData = {
                 userid: decoded.id,
-                carid: req.body.carid,
+                carid: parseInt(req.body.carid),
                 fromlatitude: decoded.latitude,
                 fromlongitude: decoded.longitude,
-                toorgid: req.body.toorgid,
+                toorgid: parseInt(req.body.toorgid),
                 date: req.body.date,
                 arrivaltime: req.body.arrivaltime,
                 ridewith: req.body.ridewith,
                 smoking: req.body.smoking,
                 earliesttime: req.body.earliesttime,
-                numberofseats: req.body.numberofseats,
+                numberofseats: parseInt(req.body.numberofseats),
                 status: "pending"
             }
             if(!existinorg){

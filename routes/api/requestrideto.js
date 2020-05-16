@@ -246,7 +246,7 @@ router.post('/', async(req, res) => {
                 userid: decoded.id,
                 fromlatitude: decoded.latitude,
                 fromlongitude: decoded.longitude,
-                toorgid: req.body.toorgid,
+                toorgid: parseInt(req.body.toorgid),
                 date: req.body.date,
                 arrivaltime: req.body.arrivaltime,
                 ridewith: req.body.ridewith,

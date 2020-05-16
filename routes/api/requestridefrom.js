@@ -59,6 +59,8 @@ router.post('/', async(req, res) => {
         //Organization id validation
         if (req.body.fromorgid == null) {
             res.status(400).send({ error: "From org id", message: "From org id paramter is missing" });
+        }else if (((req.body.fromorgid).toString()).trim().length === 0) {
+            res.status(400).send({ error: "From org id", message: "From org id can't be empty" });
         }
         //Date validation
         else if (req.body.date == null) {
@@ -248,7 +250,7 @@ router.post('/', async(req, res) => {
                 userid: decoded.id,
                 tolatitude: decoded.latitude,
                 tolongitude: decoded.longitude,
-                fromorgid: req.body.fromorgid,
+                fromorgid: parseInt(req.body.fromorgid),
                 date: req.body.date,
                 departuretime: req.body.departuretime,
                 ridewith: req.body.ridewith,
