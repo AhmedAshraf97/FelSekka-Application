@@ -220,9 +220,10 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                               };
                               String url="http://3.81.22.120:3000/api/signup";
                               Response response =await post(url, body: body);
-                              if(response.statusCode != 201)
+                              if(response.statusCode != 200)
                               {
                                 Map data= jsonDecode(response.body);
+
                                 showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
@@ -253,6 +254,33 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                               }
                               else{
                                 Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return RichAlertDialog(
+                                        alertTitle: richTitle("Done"),
+                                        alertSubtitle: richSubtitle("Let's carppol!"),
+                                        alertType: RichAlertType.SUCCESS,
+                                        dialogIcon: Icon(
+                                          Icons.check,
+                                          color: Colors.green,
+                                          size: 80,
+                                        ),
+                                        actions: <Widget>[
+                                          new OutlineButton(
+                                            shape: StadiumBorder(),
+                                            textColor: Colors.blue,
+                                            child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                            borderSide: BorderSide(
+                                                color: Colors.indigo[400], style: BorderStyle.solid,
+                                                width: 1),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
                               }
                             }
                             getData();
