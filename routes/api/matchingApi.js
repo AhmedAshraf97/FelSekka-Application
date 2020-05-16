@@ -197,7 +197,7 @@ router.post('/', async(req, res) => {
             }).catch(errHandler)
 
             var driver = new Driver(offer.userid, parseFloat(orguser.distancetoorg), new Date(offer.date + " " + offer.arrivaltime),
-                parseFloat(orguser.timetoorg),
+                Math.round(orguser.timetoorg),
                 offer.numberofseats,
                 new Date(offer.date + " " + offer.earliesttime),
                 offer.ridewith,
@@ -229,7 +229,7 @@ router.post('/', async(req, res) => {
                 var rider = new Rider(request.userid,
                     parseFloat(orguser.distancetoorg),
                     new Date(request.date + " " + request.arrivaltime),
-                    parseFloat(orguser.timetoorg),
+                    Math.round(orguser.timetoorg),
                     new Date(request.date + " " + request.earliesttime),
                     request.ridewith,
                     request.smoking,
@@ -257,7 +257,7 @@ router.post('/', async(req, res) => {
 
                             }).catch(errHandler)
                             if (FromDriverToRider) {
-                                var valueDuration = new values(Drivers[driver].ID, Riders[rider].ID, parseFloat(FromDriverToRider.time))
+                                var valueDuration = new values(Drivers[driver].ID, Riders[rider].ID, Math.round(FromDriverToRider.time))
                                 var valueDistance = new values(Drivers[driver].ID, Riders[rider].ID, parseFloat(FromDriverToRider.distance))
 
                                 DRdurationValue.push(valueDuration)
@@ -272,6 +272,7 @@ router.post('/', async(req, res) => {
                                     }
 
                                 }).catch(errHandler)
+
                                 if (FromRiderToDriver.trust === 1) {
                                     Riders[rider].TrustedDrivers.push(Drivers[driver].ID)
                                 } else if (FromRiderToDriver.trust === -1) {
@@ -307,7 +308,7 @@ router.post('/', async(req, res) => {
 
                                 }).catch(errHandler)
                                 if (FromRiderToRider) {
-                                    var valueDuration = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.time))
+                                    var valueDuration = new values(Riders[riderFrom].ID, Riders[riderTo].ID, Math.round(FromRiderToRider.time))
                                     var valueDistance = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.distance))
 
                                     RRdurationValue.push(valueDuration)
@@ -490,13 +491,17 @@ router.post('/', async(req, res) => {
                                 }
                             }).catch(errHandler)
                         }
-                        res.status(200).send("Matching Done")
-
 
                     }
                 }
+
                 if (countAssigned === 0) {
                     res.status(400).send("No trips will be scheduled")
+                    res.end()
+                } else {
+                    res.status(200).send("Matching Done")
+                    res.end()
+
                 }
             } else {
                 res.status(400).send("No trips will be scheduled")
