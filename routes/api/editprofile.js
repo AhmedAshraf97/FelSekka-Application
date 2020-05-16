@@ -1,7 +1,6 @@
 const User = require('../../models/users');
-const org = require('../../models/orgusers');
-const betweenusers = require('../../models/betweenusers');
-betweenusers
+const orgUser = require('../../models/orgusers');
+const BetweenUsers = require('../../models/betweenusers');
 const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
@@ -10,6 +9,8 @@ const regex = require('regex');
 const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const ExpiredToken = require('../../models/expiredtokens');
+var request = require('request-promise');
+const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
 
 function cal(x, y) {
 
@@ -224,23 +225,17 @@ router.post('/', async(req, res) => {
                             res.end()
                         }
                     }
-
-
-
                     let bcryptPass
                     if (req.body.newpassword !== undefined) {
                         bcryptPass = bcrypt.hashSync(req.body.newpassword, 10)
                     } else {
                         bcryptPass = user.password
-
                     }
                     /////check if all paramters empty dont update
-
                     if (isvalid === false) {
-
-
-
-                        user.update({
+                        var allUsers = {}
+                        var orgUsers = {}
+                         user.update({
                             firstname: req.body.firstname || user.firstname,
                             lastname: req.body.lastname || user.lastname,
                             password: bcryptPass,
@@ -250,64 +245,116 @@ router.post('/', async(req, res) => {
                             smoking: req.body.smoking || user.smoking,
                             latitude: req.body.latitude || user.latitude,
                             longitude: req.body.longitude || user.longitude
-
-
-
                         }, {
                             where: { id: decoded.id }
-                        }).then(user1 => {
-                            if (loc === true) {
-                                console.log("hi")
-                                org.update({
-                                    distancetoorg: cal(2, req.body.longitude),
-                                    timetoorg: 0,
-                                    distancefromorg: 0,
-                                    timefromorg: 0
-                                }, {
-                                    where: {
-                                        userid: decoded.id,
-                                        status: "existing"
-
-                                    }
-                                }).then(betweenuser1 => {
-                                    betweenusers.update({
-                                        distance: cal(3, req.body.longitude),
-                                        time: 0
-                                    }, {
-                                        where: {
-                                            user1id: decoded.id
-
-                                        }
-                                    })
-                                }).then(betweenuser2 => {
-                                        betweenusers.update({
-                                            distance: cal(4, req.body.longitude),
-                                            time: 0
-                                        }, {
-                                            where: {
-                                                user2id: decoded.id
-
-                                            }
-                                        }).then(res.status(200).send("OK")).catch(errHandler);
-                                    }
-
-                                ).catch(errHandler);
-                            }
-
-                        }).catch(errHandler);
-                        // distancetoorg timetoorg distancefromorg timefromorg 
-                        //.then(res.status(200).send("OK")).catch(errHandler);
-
-
-
+                        }).then(res.status(200).send("OK")).catch(errHandler);
+                    }            
+                } 
+                else
+                  {  
+                      res.status(401).send("User not found")
+                  }
+            }).catch(err => {res.send('error: ' + err)})
+            
+            if(isValid === false && loc ===true){
+                var allUsers = {}
+                var orgUsers = {}
+                await User.findAll({
+                    where: {
+                        [Op.and]: [{id: {[Op.ne]: decoded.id}},{ status: 'existing'}]
+                    }   
+                }).then(users => {
+                    if (users) {
+                        allUsers = users;
                     }
-
-                } else
-                    res.status(401).send("User not found")
-            })
-            .catch(err => {
-                res.send('error: ' + err)
-            })
+                }).catch(errHandler);
+                await forEach(allUsers, async(user) => {
+                    var x = req.body.latitude;
+                    var y = req.body.longitude;
+                    var z = user.latitude;
+                    var w = user.longitude;
+                    var body12 = {}
+                    var body21 = {}
+                    var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z, ',', w, '&destinations=', x, ',', y, '&key=', API_KEY);
+                    var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x, ',', y, '&destinations=', z, ',', w, '&key=', API_KEY);
+                    await request.post(url12).then(function(body) {
+                        body12 = body;
+                    })
+                    await request.post(url21).then(function(body) {
+                        body21 = body;
+                    })
+                    body12 = JSON.parse(body12)
+                    body21 = JSON.parse(body21)
+                    var results12 = body12.rows[0].elements;
+                    var element12 = results12[0]
+                    distance12 = element12.distance.value / 1000;
+                    time12 = element12.duration.value / 60;
+                    ///////////////////////////////////
+                    var results21 = body21.rows[0].elements;
+                    var element21 = results21[0]
+                    distance21 = element21.distance.value / 1000;
+                    time21 = element21.duration.value / 60;
+                    await BetweenUsers.update({
+                        distance: distance12,
+                        time: time12
+                    }, {
+                        where: { user1id: user.id, user2id: decoded.id }}).then().catch(errHandler);
+                    await BetweenUsers.update({
+                        distance: distance21,
+                        time: time21
+                    }, {
+                        where: { user1id: decoded.id, user2id: user.id }}).then().catch(errHandler);    
+                });  
+                await orgUser.findAll({
+                    where: {
+                        [Op.and]: [{userid: decoded.id },{ status: 'existing'}]
+                    }   
+                }).then(orgusers => {
+                    if (orgusers) {
+                        orgUsers = orgusers;
+                    }
+                }).catch(errHandler);
+                await forEach(orgUsers, async(user) => {
+                    var x = orglatitude;
+                    var y = orglongitude;
+                    var z = decoded.latitude;
+                    var w = decoded.longitude;
+                    var orgid = 0;
+                    await Organization.findOne({ where: { id: user.orgid , status: 'existing'} }).then(org => {
+                        orglatitude = org.latitude;
+                        orglongitude = org.longitude;
+                        orgid = org.id;
+                    }).catch(errHandler);
+                    var body12 = {}
+                    var body21 = {}
+                    var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z, ',', w, '&destinations=', x, ',', y, '&key=', API_KEY);
+                    var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x, ',', y, '&destinations=', z, ',', w, '&key=', API_KEY);
+                    await request.post(url12).then(function(body) {
+                        body12 = body;
+                    })
+                    await request.post(url21).then(function(body) {
+                        body21 = body;
+                    })
+                    body12 = JSON.parse(body12)
+                    body21 = JSON.parse(body21)
+                    var results12 = body12.rows[0].elements;
+                    var element12 = results12[0]
+                    distance12 = element12.distance.value / 1000;
+                    time12 = element12.duration.value / 60;
+                    ///////////////////////////////////
+                    var results21 = body21.rows[0].elements;
+                    var element21 = results21[0]
+                    distance21 = element21.distance.value / 1000;
+                    time21 = element21.duration.value / 60;
+                    await orgUser.update({
+                        distancetoorg: distance12,
+                        timetoorg: time12,
+                        distancefromorg: distance21,
+                        timefromorg: time21,
+                    }, {
+                        where: { userid: decoded.id, orgid: orgid , status: 'existing' }}).then().catch(errHandler);
+                })  
+            }
     }
 })
 module.exports = router;

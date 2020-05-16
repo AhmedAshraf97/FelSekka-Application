@@ -68,9 +68,7 @@ router.post('/', async(req, res) => {
             res.status(400).send({ error: "Number of seats", message: "Number of seats paramter is missing" });
         } else if (((req.body.numberofseats).toString()).trim().length === 0) {
             res.status(400).send({ error: "Number of seats", message: "Number of seats can't be empty" });
-        } else if (((typeof(req.body.numberofseats) === 'string') || ((req.body.numberofseats) instanceof String))) {
-            res.status(400).send({ error: "Number of seats", message: "Number of seats must be a number" });
-        }
+        } 
         //Organization id validation
         else if (req.body.fromorgid == null) {
             res.status(400).send({ error: "From org id", message: "From org id paramter is missing" });
@@ -86,9 +84,7 @@ router.post('/', async(req, res) => {
             res.status(400).send({ error: "Date", message: "Date can't be empty" });
         } else if (!(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(req.body.date))) {
             res.status(400).send({ error: "Date", message: "Date is unvalid" });
-        }/*else if(! (Date.parse(req.body.date)-Date.parse(new Date())>= 0)  && (!(isToday(req.body.date)))){ 
-            res.status(400).send({ error: "Date", message: "Date can't be in the past" });
-        }*/
+        }
         //Departure time validation
         else if (req.body.departuretime == null) {
             res.status(400).send({ error: "Departute time", message: "Departute time paramter is missing" });
@@ -264,14 +260,14 @@ router.post('/', async(req, res) => {
                 userid: decoded.id,
                 tolatitude: decoded.latitude,
                 tolongitude: decoded.longitude,
-                fromorgid: req.body.fromorgid,
-                carid: req.body.carid,
+                fromorgid: parseInt(req.body.fromorgid),
+                carid: parseInt(req.body.carid),
                 date: req.body.date,
                 departuretime: req.body.departuretime,
                 ridewith: req.body.ridewith,
                 smoking: req.body.smoking,
                 latesttime: req.body.latesttime,
-                numberofseats: req.body.numberofseats,
+                numberofseats: parseInt(req.body.numberofseats),
                 status: "pending"
             }
             if(!existinorg){
