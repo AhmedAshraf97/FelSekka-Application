@@ -177,7 +177,7 @@ module.exports = async function main() {
             if (Drivers[j].ID == 44) {
 
 
-                var x;
+                var x = 5;
             }
 
             if (NumberOfUnAssignedRiders === 0)

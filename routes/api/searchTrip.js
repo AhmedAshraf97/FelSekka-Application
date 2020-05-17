@@ -9,7 +9,7 @@ var Sequelize = require('sequelize');
 const ExpiredToken = require('../../models/expiredtokens');
 const Trips = require('../../models/trips')
 const Driver = require('../../models/drivers');
-
+const Organization = require('../../models/organizations');
 const OfferRideTo = require('../../models/offerrideto');
 const OfferRideFrom = require('../../models/offerridefrom');
 const errHandler = err => {
@@ -49,163 +49,192 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler)
     if (ValidChecks) {
-        await User.findOne({
-                where: {
-                    id: decoded.id,
-                    "status": "existing"
-                }
-            }).then(user => {
-                if (user) {
-                    var jsonStr = '{"Trips":[]}';
-                    var obj = JSON.parse(jsonStr);
+        const user = await User.findOne({
+            where: {
+                id: decoded.id,
+                "status": "existing"
+            }
+        })
 
-                    const options = {
-                        where: {}
-                    };
+        if (user) {
+            var jsonStr = '{"Trips":[]}';
+            var obj = JSON.parse(jsonStr);
 
-                    options.where.status = "scheduled"
-                    if (req.body.tofrom !== "")
-                        options.where.tofrom = req.body.tofrom;
+            const options = {
+                where: {}
+            };
 
-                    Trips.findAll(options).then(scheduledTrips => {
-                        if (scheduledTrips.length > 0) {
-                            scheduledTrips.forEach(scheduledTrip => {
+            options.where.status = "scheduled"
+            if (req.body.tofrom !== "")
+                options.where.tofrom = req.body.tofrom;
 
-                                Driver.findOne({
-                                    where: {
-                                        tripid: scheduledTrip.id
-                                    }
-                                }).then(driverTrip => {
+            const scheduledTrips = await Trips.findAll(options).catch(errHandler)
 
-                                    if (driverTrip) {
+            if (scheduledTrips.length > 0) {
 
-                                        if (driverTrip.tofrom === "to") {
-                                            const optionsTo = {
-                                                where: {}
-                                            };
-                                            optionsTo.where.id = driverTrip.offerid
-                                            if (req.body.arrivaltime !== "")
-                                                optionsTo.where.arrivaltime = req.body.arrivaltime;
-                                            if (req.body.ridewith !== "")
-                                                optionsTo.where.ridewith = req.body.ridewith;
-                                            if (req.body.smoking !== "")
-                                                optionsTo.where.smoking = req.body.smoking;
-                                            if (req.body.date !== "")
-                                                optionsTo.where.date = req.body.date;
-                                            if (req.body.toorgid !== "")
-                                                optionsTo.where.toorgid = parseInt(req.body.toorgid);
+                for (scheduledTrip of scheduledTrips) {
+                    const driverTrip = await Driver.findOne({
+                        where: {
+                            tripid: scheduledTrip.id
+                        }
+                    }).catch(errHandler)
 
+                    if (driverTrip) {
 
-
-                                            OfferRideTo.findOne(optionsTo).then(offerTrip => {
-                                                countAll++;
-                                                if (offerTrip) {
+                        if (driverTrip.tofrom === "to") {
+                            const optionsTo = {
+                                where: {}
+                            };
+                            optionsTo.where.id = driverTrip.offerid
+                            if (req.body.arrivaltime !== "")
+                                optionsTo.where.arrivaltime = req.body.arrivaltime;
+                            if (req.body.ridewith !== "")
+                                optionsTo.where.ridewith = req.body.ridewith;
+                            if (req.body.smoking !== "")
+                                optionsTo.where.smoking = req.body.smoking;
+                            if (req.body.date !== "")
+                                optionsTo.where.date = req.body.date;
+                            if (req.body.toorgid !== "")
+                                optionsTo.where.toorgid = parseInt(req.body.toorgid);
 
 
-                                                    if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
+                            const offerTrip = await OfferRideTo.findOne(optionsTo).catch(errHandler)
+                            countAll++;
+                            if (offerTrip) {
 
-                                                        obj['Trips'].push({
-                                                            "tofrom": "to",
-                                                            "tripid": scheduledTrip.id,
-                                                            "startloclatitude": scheduledTrip.startloclatitude,
-                                                            "startloclongitude": scheduledTrip.startloclongitude,
-                                                            "endloclatitude": scheduledTrip.endloclatitude,
-                                                            "endloclongitude": scheduledTrip.endloclongitude,
-                                                            "arrivaltime": offerTrip.arrivaltime,
-                                                            "departuretime": "",
-                                                            "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats,
-                                                            "date": offerTrip.date,
-                                                            "ridewith": offerTrip.ridewith,
-                                                            "smoking": offerTrip.smoking
-                                                        })
-                                                        count++;
+                                if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
 
-                                                    }
-
-                                                }
-                                                if (countAll === scheduledTrips.length) {
-                                                    res.status(200).send(obj)
-
-                                                }
-                                            }).catch(errHandler)
-
-                                        } else {
-                                            //from
-                                            const optionsFrom = {
-                                                where: {}
-                                            };
-                                            optionsFrom.where.id = driverTrip.offerid
-                                            if (req.body.departuretime !== "")
-                                                optionsFrom.where.departuretime = req.body.departuretime;
-                                            if (req.body.ridewith !== "")
-                                                optionsFrom.where.ridewith = req.body.ridewith;
-                                            if (req.body.smoking !== "")
-                                                optionsFrom.where.smoking = req.body.smoking;
-
-                                            if (req.body.date !== "")
-                                                optionsFrom.where.date = req.body.date;
-                                            if (req.body.fromorgid !== "")
-                                                optionsFrom.where.fromorgid = parseInt(req.body.fromorgid);
-
-                                            OfferRideFrom.findOne(optionsFrom).then(offerTrip => {
-                                                countAll++;
-                                                if (offerTrip) {
-
-
-                                                    if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
-
-                                                        obj['Trips'].push({
-                                                            "tofrom": "from",
-                                                            "tripid": scheduledTrip.id,
-                                                            "startloclatitude": scheduledTrip.startloclatitude,
-                                                            "startloclongitude": scheduledTrip.startloclongitude,
-                                                            "endloclatitude": scheduledTrip.endloclatitude,
-                                                            "endloclongitude": scheduledTrip.endloclongitude,
-                                                            "arrivaltime": "",
-                                                            "departuretime": offerTrip.departuretime,
-                                                            "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats,
-                                                            "date": offerTrip.date,
-                                                            "ridewith": offerTrip.ridewith,
-                                                            "smoking": offerTrip.smoking
-                                                        })
-
-                                                        count++;
-
-
-                                                    }
-                                                }
-
-                                                if (countAll === scheduledTrips.length) {
-                                                    res.status(200).send(obj)
-                                                }
-                                            }).catch(errHandler)
+                                    const orgDetails = await Organization.findOne({
+                                        where: {
+                                            id: offerTrip.toorgid
 
                                         }
 
+                                    }).catch(errHandler)
 
 
-                                    }
+                                    obj['Trips'].push({
+                                        "tripid": scheduledTrip.id,
+                                        "startloclatitude": scheduledTrip.startloclatitude,
+                                        "startloclongitude": scheduledTrip.startloclongitude,
+                                        "endloclatitude": scheduledTrip.endloclatitude,
+                                        "endloclongitude": scheduledTrip.endloclongitude,
+                                        "arrivaltime": offerTrip.arrivaltime,
+                                        "departuretime": "",
+                                        "Availableseats": offerTrip.numberofseats - scheduledTrip.numberofseats,
+                                        "date": offerTrip.date,
+                                        "ridewith": offerTrip.ridewith,
+                                        "smoking": offerTrip.smoking,
+                                        "orgid": orgDetails.id,
+                                        "orgname": orgDetails.name,
+                                        "orglatitude": orgDetails.latitude,
+                                        "orglongitude": orgDetails.longitude
+                                    })
+                                    count++;
 
-                                }).catch(errHandler)
 
-                            })
+                                }
 
+                            }
+                            if (countAll === scheduledTrips.length) {
+                                if (count !== 0) {
+                                    res.status(200).send(obj)
+                                } else {
+                                    res.status(409).send("No trips are found")
 
+                                }
 
-
-
+                            }
 
                         } else {
+                            //from
+                            const optionsFrom = {
+                                where: {}
+                            };
+                            optionsFrom.where.id = driverTrip.offerid
+                            if (req.body.departuretime !== "")
+                                optionsFrom.where.departuretime = req.body.departuretime;
+                            if (req.body.ridewith !== "")
+                                optionsFrom.where.ridewith = req.body.ridewith;
+                            if (req.body.smoking !== "")
+                                optionsFrom.where.smoking = req.body.smoking;
 
-                            res.status(409).send("No trips are found")
+                            if (req.body.date !== "")
+                                optionsFrom.where.date = req.body.date;
+                            if (req.body.fromorgid !== "")
+                                optionsFrom.where.fromorgid = parseInt(req.body.fromorgid);
+
+                            const offerTrip = await OfferRideFrom.findOne(optionsFrom).catch(errHandler)
+
+                            countAll++;
+                            if (offerTrip) {
+
+                                if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
+
+                                    const orgDetails = await Organization.findOne({
+                                        where: {
+                                            id: offerTrip.toorgid
+
+                                        }
+
+                                    }).catch(errHandler)
+
+
+
+
+                                    obj['Trips'].push({
+                                        "tripid": scheduledTrip.id,
+                                        "startloclatitude": scheduledTrip.startloclatitude,
+                                        "startloclongitude": scheduledTrip.startloclongitude,
+                                        "endloclatitude": scheduledTrip.endloclatitude,
+                                        "endloclongitude": scheduledTrip.endloclongitude,
+                                        "arrivaltime": "",
+                                        "departuretime": offerTrip.departuretime,
+                                        "Availableseats": offerTrip.numberofseats - scheduledTrip.numberofseats,
+                                        "date": offerTrip.date,
+                                        "ridewith": offerTrip.ridewith,
+                                        "smoking": offerTrip.smoking,
+                                        "orgid": orgDetails.id,
+                                        "orgname": orgDetails.name,
+                                        "orglatitude": orgDetails.latitude,
+                                        "orglongitude": orgDetails.longitude
+                                    })
+
+                                    count++;
+
+
+                                }
+                            }
+
+                            if (countAll === scheduledTrips.length) {
+                                if (count !== 0) {
+                                    res.status(200).send(obj)
+                                } else {
+                                    res.status(409).send("No trips are found")
+
+                                }
+                            }
 
                         }
 
-                    }).catch(errHandler)
 
-                } else
-                    res.status(401).send("User doesn't exist, Please Enter valid ID")
-            })
+
+                    }
+
+
+                }
+
+
+
+
+            } else {
+
+                res.status(409).send("No trips are found")
+
+            }
+
+        } else
+            res.status(401).send("User doesn't exist, Please Enter valid ID")
             .catch(err => {
                 res.send('error: ' + err)
             })
