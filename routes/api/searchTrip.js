@@ -111,7 +111,10 @@ router.post('/', async(req, res) => {
                                                             "endloclatitude": scheduledTrip.endloclatitude,
                                                             "endloclongitude": scheduledTrip.endloclongitude,
                                                             "arrivaltime": offerTrip.arrivaltime,
-                                                            "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats
+                                                            "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats,
+                                                            "date": offerTrip.date,
+                                                            "ridewith": offerTrip.ridewith,
+                                                            "smoking": offerTrip.smoking
                                                         })
                                                         count++;
 
@@ -156,7 +159,10 @@ router.post('/', async(req, res) => {
                                                             "endloclatitude": scheduledTrip.endloclatitude,
                                                             "endloclongitude": scheduledTrip.endloclongitude,
                                                             "departuretime": offerTrip.departuretime,
-                                                            "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats
+                                                            "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats,
+                                                            "date": offerTrip.date,
+                                                            "ridewith": offerTrip.ridewith,
+                                                            "smoking": offerTrip.smoking
                                                         })
 
                                                         count++;
