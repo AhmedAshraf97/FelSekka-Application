@@ -92,7 +92,7 @@ router.post('/', async(req, res) => {
                                                 optionsTo.where.smoking = req.body.smoking;
                                             if (req.body.date !== "")
                                                 optionsTo.where.date = req.body.date;
-                                            if (parseInt(req.body.toorgid) !== "")
+                                            if (req.body.toorgid !== "")
                                                 optionsTo.where.toorgid = parseInt(req.body.toorgid);
 
 
@@ -144,7 +144,7 @@ router.post('/', async(req, res) => {
 
                                             if (req.body.date !== "")
                                                 optionsFrom.where.date = req.body.date;
-                                            if (parseInt(req.body.fromorgid) !== "")
+                                            if (req.body.fromorgid !== "")
                                                 optionsFrom.where.fromorgid = parseInt(req.body.fromorgid);
 
                                             OfferRideFrom.findOne(optionsFrom).then(offerTrip => {
