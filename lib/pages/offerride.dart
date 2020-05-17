@@ -116,6 +116,7 @@ class _OfferRideState extends State<OfferRide> {
   int ridewithselectedfrom=1;
   int smokingselectedfrom=1;
   static TextEditingController numberofseatsController = new TextEditingController();
+  static TextEditingController numberofseatsControllerfrom = new TextEditingController();
   final TimeOfDay _time = new TimeOfDay.now();
   static String getDisplayRating(double rating) {
     rating = rating.abs();
@@ -474,7 +475,7 @@ class _OfferRideState extends State<OfferRide> {
                     hint: "Select car",
                     searchHint: "Select car",
                     onChanged: (value) {
-                        selectedCar = value[0];
+                        selectedCar = value;
                         numberofseatsController.text=value[1];
                     },
                     isExpanded: true,
@@ -874,9 +875,74 @@ class _OfferRideState extends State<OfferRide> {
                       borderRadius: BorderRadius.circular(50),
                     ),
                     onPressed: (){
+                      String noofseats=numberofseatsController.text;
                       bool Valid= true;
+                      //Car validation
+                      if(selectedCar.isEmpty)
+                      {
+                        Valid = false;
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return RichAlertDialog(
+                                alertTitle: richTitle("Car"),
+                                alertSubtitle: richSubtitle("Car is required"),
+                                alertType: RichAlertType.WARNING,
+                                dialogIcon: Icon(
+                                  Icons.warning,
+                                  color: Colors.red,
+                                  size: 80,
+                                ),
+                                actions: <Widget>[
+                                  new OutlineButton(
+                                    shape: StadiumBorder(),
+                                    textColor: Colors.blue,
+                                    child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                    borderSide: BorderSide(
+                                        color: Colors.indigo[400], style: BorderStyle.solid,
+                                        width: 1),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      }
+                      //Number of seats
+                      else if(noofseats.isEmpty)
+                      {
+                        Valid = false;
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return RichAlertDialog(
+                                alertTitle: richTitle("Number of seats"),
+                                alertSubtitle: richSubtitle("Number of seats is required"),
+                                alertType: RichAlertType.WARNING,
+                                dialogIcon: Icon(
+                                  Icons.warning,
+                                  color: Colors.red,
+                                  size: 80,
+                                ),
+                                actions: <Widget>[
+                                  new OutlineButton(
+                                    shape: StadiumBorder(),
+                                    textColor: Colors.blue,
+                                    child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                    borderSide: BorderSide(
+                                        color: Colors.indigo[400], style: BorderStyle.solid,
+                                        width: 1),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      }
                       //To validation validations:
-                      if(selectedOrg.isEmpty)
+                      else if(selectedOrg.isEmpty)
                       {
                         Valid = false;
                         showDialog(
@@ -1030,7 +1096,6 @@ class _OfferRideState extends State<OfferRide> {
                           else{
                             s="any";
                           }
-                          String noofseats=numberofseatsController.text;
                           SharedPreferences prefs = await SharedPreferences.getInstance();
                           String token = await (prefs.getString('token')??'');
                           Map<String, String> body = {
@@ -1186,7 +1251,7 @@ class _OfferRideState extends State<OfferRide> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(
-              height: 17,
+              height: 10,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1213,7 +1278,51 @@ class _OfferRideState extends State<OfferRide> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 SizedBox(
-                  height: 14,
+                  height: 4,
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(33,0,22,0),
+                  child: Text("Car:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(22.0,0,22,3),
+                  child: SearchableDropdown.single(
+                    iconDisabledColor: Colors.grey,
+                    iconEnabledColor: Colors.indigo,
+                    items: caritems,
+                    value: selectedCarfrom,
+                    hint: "Select car",
+                    searchHint: "Select car",
+                    onChanged: (value) {
+                      selectedCarfrom = value;
+                      numberofseatsControllerfrom.text=value[1];
+                    },
+                    isExpanded: true,
+
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(33,0,22,0),
+                  child: Text("Number of seats available:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(33,0,22,0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                    ),
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      controller: numberofseatsControllerfrom,
+                      maxLength: 30,
+                      decoration: InputDecoration(
+                        counterText: "",
+                        hintText: "Number of seats",
+                        hintStyle: TextStyle(color:Colors.grey),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
@@ -1294,7 +1403,7 @@ class _OfferRideState extends State<OfferRide> {
                       child: Text("Date:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
                     ),
                     SizedBox(
-                      width: 205,
+                      width: 213,
                     ),
                     Container(
                       height: 30,
@@ -1309,6 +1418,7 @@ class _OfferRideState extends State<OfferRide> {
                                 dateselectedfrom= DateFormat('yyyy-MM-dd').format(datepick).toString();
                                 datefrom= DateFormat('dd-MM-yyyy').format(datepick).toString();
                                 setState(() {
+
                                 });
                               }, currentTime: DateTime.now(), locale: LocaleType.en);
                         },
@@ -1328,7 +1438,7 @@ class _OfferRideState extends State<OfferRide> {
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Row(
                   children: <Widget>[
@@ -1337,7 +1447,7 @@ class _OfferRideState extends State<OfferRide> {
                       child: Text("Departure time:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
                     ),
                     SizedBox(
-                      width: 128,
+                      width: 137,
                     ),
                     Container(
                       height: 30,
@@ -1371,13 +1481,16 @@ class _OfferRideState extends State<OfferRide> {
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Row(
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                      child: Text("Latest time possible to go home: ", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                      child: Text("Latest time possible to go home:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                    ),
+                    SizedBox(
+                      width: 12,
                     ),
                     Container(
                       height: 30,
@@ -1391,6 +1504,7 @@ class _OfferRideState extends State<OfferRide> {
                               onConfirm: (date) {
                                 latesttime= DateFormat('Hms').format(date).toString();
                                 setState(() {
+
                                 });
                               }, currentTime: DateTime.now(), locale: LocaleType.en);
                         },
@@ -1410,7 +1524,7 @@ class _OfferRideState extends State<OfferRide> {
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Row(
                   children: <Widget>[
@@ -1557,7 +1671,7 @@ class _OfferRideState extends State<OfferRide> {
                 ),
               ],
             ),
-            SizedBox(height: 8,),
+            SizedBox(height: 5,),
             Padding(
               padding: const EdgeInsets.fromLTRB(33,0,33,0),
               child: Row(
@@ -1581,9 +1695,74 @@ class _OfferRideState extends State<OfferRide> {
                       borderRadius: BorderRadius.circular(50),
                     ),
                     onPressed: (){
+                      String noofseats=numberofseatsControllerfrom.text;
                       bool Valid= true;
+                      //Car validation
+                      if(selectedCarfrom.isEmpty)
+                      {
+                        Valid = false;
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return RichAlertDialog(
+                                alertTitle: richTitle("Car"),
+                                alertSubtitle: richSubtitle("Car is required"),
+                                alertType: RichAlertType.WARNING,
+                                dialogIcon: Icon(
+                                  Icons.warning,
+                                  color: Colors.red,
+                                  size: 80,
+                                ),
+                                actions: <Widget>[
+                                  new OutlineButton(
+                                    shape: StadiumBorder(),
+                                    textColor: Colors.blue,
+                                    child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                    borderSide: BorderSide(
+                                        color: Colors.indigo[400], style: BorderStyle.solid,
+                                        width: 1),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      }
+                      //Number of seats
+                      else if(noofseats.isEmpty)
+                      {
+                        Valid = false;
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return RichAlertDialog(
+                                alertTitle: richTitle("Number of seats"),
+                                alertSubtitle: richSubtitle("Number of seats is required"),
+                                alertType: RichAlertType.WARNING,
+                                dialogIcon: Icon(
+                                  Icons.warning,
+                                  color: Colors.red,
+                                  size: 80,
+                                ),
+                                actions: <Widget>[
+                                  new OutlineButton(
+                                    shape: StadiumBorder(),
+                                    textColor: Colors.blue,
+                                    child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                    borderSide: BorderSide(
+                                        color: Colors.indigo[400], style: BorderStyle.solid,
+                                        width: 1),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      }
                       //To validation validations:
-                      if(selectedOrgfrom.isEmpty)
+                      else if(selectedOrgfrom.isEmpty)
                       {
                         Valid = false;
                         showDialog(
@@ -1646,7 +1825,7 @@ class _OfferRideState extends State<OfferRide> {
                               );
                             });
                       }
-                      //Earliest validations:
+                      //Date validations:
                       else if(departuretime.isEmpty)
                       {
                         Valid = false;
@@ -1678,7 +1857,7 @@ class _OfferRideState extends State<OfferRide> {
                               );
                             });
                       }
-                      //Date validations:
+                      //Earliest validations:
                       else if(latesttime.isEmpty)
                       {
                         Valid = false;
@@ -1740,6 +1919,8 @@ class _OfferRideState extends State<OfferRide> {
                           SharedPreferences prefs = await SharedPreferences.getInstance();
                           String token = await (prefs.getString('token')??'');
                           Map<String, String> body = {
+                            'carid' : selectedCarfrom,
+                            'numberofseats': noofseats,
                             'fromorgid': selectedOrgfrom,
                             'date': dateselectedfrom,
                             'departuretime': departuretime,
@@ -1785,34 +1966,35 @@ class _OfferRideState extends State<OfferRide> {
                           else{
                             if(ridewith=="female")
                             {
-                              ridewithselectedfrom=2;
+                              ridewithselected=2;
                             }
                             else if(ridewith=="male")
                             {
-                              ridewithselectedfrom=1;
+                              ridewithselected=1;
                             }
                             else
                             {
-                              ridewithselectedfrom=3;
+                              ridewithselected=3;
                             }
                             if(smoking=="yes")
                             {
-                              smokingselectedfrom=1;
+                              smokingselected=1;
                             }
                             else if(smoking=="no")
                             {
-                              smokingselectedfrom=2;
+                              smokingselected=2;
                             }
                             else
                             {
-                              smokingselectedfrom=3;
+                              smokingselected=3;
                             }
-                            departuretime="";
-                            latesttime="";
-                            datefrom="";
-                            dateselectedfrom="";
-                            selectedOrgfrom="";
+                            arrivaltime="";
+                            earliesttime="";
+                            date="";
+                            dateselected="";
+                            selectedOrg="";
                             setState(() {
+
                             });
                             showDialog(
                                 context: context,
