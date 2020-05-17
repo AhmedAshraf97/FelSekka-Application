@@ -64,7 +64,7 @@ router.post('/', async(req, res) => {
                     };
 
                     options.where.status = "scheduled"
-                    if (req.body.tofrom !== undefined)
+                    if (req.body.tofrom !== "")
                         options.where.tofrom = req.body.tofrom;
 
                     Trips.findAll(options).then(scheduledTrips => {
@@ -84,16 +84,16 @@ router.post('/', async(req, res) => {
                                                 where: {}
                                             };
                                             optionsTo.where.id = driverTrip.offerid
-                                            if (req.body.arrivaltime !== undefined)
+                                            if (req.body.arrivaltime !== "")
                                                 optionsTo.where.arrivaltime = req.body.arrivaltime;
-                                            if (req.body.ridewith !== undefined)
+                                            if (req.body.ridewith !== "")
                                                 optionsTo.where.ridewith = req.body.ridewith;
-                                            if (req.body.smoking !== undefined)
+                                            if (req.body.smoking !== "")
                                                 optionsTo.where.smoking = req.body.smoking;
-                                            if (req.body.date !== undefined)
+                                            if (req.body.date !== "")
                                                 optionsTo.where.date = req.body.date;
-                                            if (req.body.toorgid !== undefined)
-                                                optionsTo.where.toorgid = req.body.toorgid;
+                                            if (parseInt(req.body.toorgid) !== "")
+                                                optionsTo.where.toorgid = parseInt(req.body.toorgid);
 
 
 
@@ -105,12 +105,14 @@ router.post('/', async(req, res) => {
                                                     if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
 
                                                         obj['Trips'].push({
+                                                            "tofrom": "to",
                                                             "tripid": scheduledTrip.id,
                                                             "startloclatitude": scheduledTrip.startloclatitude,
                                                             "startloclongitude": scheduledTrip.startloclongitude,
                                                             "endloclatitude": scheduledTrip.endloclatitude,
                                                             "endloclongitude": scheduledTrip.endloclongitude,
                                                             "arrivaltime": offerTrip.arrivaltime,
+                                                            "departuretime": "",
                                                             "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats,
                                                             "date": offerTrip.date,
                                                             "ridewith": offerTrip.ridewith,
@@ -133,17 +135,17 @@ router.post('/', async(req, res) => {
                                                 where: {}
                                             };
                                             optionsFrom.where.id = driverTrip.offerid
-                                            if (req.body.departuretime !== undefined)
+                                            if (req.body.departuretime !== "")
                                                 optionsFrom.where.departuretime = req.body.departuretime;
-                                            if (req.body.ridewith !== undefined)
+                                            if (req.body.ridewith !== "")
                                                 optionsFrom.where.ridewith = req.body.ridewith;
-                                            if (req.body.smoking !== undefined)
+                                            if (req.body.smoking !== "")
                                                 optionsFrom.where.smoking = req.body.smoking;
 
-                                            if (req.body.date !== undefined)
+                                            if (req.body.date !== "")
                                                 optionsFrom.where.date = req.body.date;
-                                            if (req.body.fromorgid !== undefined)
-                                                optionsFrom.where.fromorgid = req.body.fromorgid;
+                                            if (parseInt(req.body.fromorgid) !== "")
+                                                optionsFrom.where.fromorgid = parseInt(req.body.fromorgid);
 
                                             OfferRideFrom.findOne(optionsFrom).then(offerTrip => {
                                                 countAll++;
@@ -153,11 +155,13 @@ router.post('/', async(req, res) => {
                                                     if (offerTrip.numberofseats > scheduledTrip.numberofseats) {
 
                                                         obj['Trips'].push({
+                                                            "tofrom": "from",
                                                             "tripid": scheduledTrip.id,
                                                             "startloclatitude": scheduledTrip.startloclatitude,
                                                             "startloclongitude": scheduledTrip.startloclongitude,
                                                             "endloclatitude": scheduledTrip.endloclatitude,
                                                             "endloclongitude": scheduledTrip.endloclongitude,
+                                                            "arrivaltime": "",
                                                             "departuretime": offerTrip.departuretime,
                                                             "Available seats": offerTrip.numberofseats - scheduledTrip.numberofseats,
                                                             "date": offerTrip.date,

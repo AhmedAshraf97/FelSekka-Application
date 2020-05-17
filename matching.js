@@ -19,14 +19,6 @@ function diff_minutes(dt2, dt1) {
 }
 
 
-function add_minutes(d1, miuntes) {
-
-    var d2 = new Date(d1);
-    d2.setMinutes(d1.getMinutes() + miuntes);
-    return d2
-}
-
-
 
 
 function SetPickUpTime(DriverObj) {
@@ -81,78 +73,6 @@ function SetPickUpTime(DriverObj) {
 
     return Promise.resolve(DriverObj.TotalDurationTaken);
 }
-/* 
-
-async function MatchingReorder() {
-
-    for (var k = 0; k < Drivers.length; k++) {
-        if (Drivers[k].AssignedRiders.length === 1)
-            break;
-        DriverID = Drivers[k].ID;
-        DriverIDstr = `${DriverID}`
-        let g = new graphlib.Graph();
-        var OrganizationID = "ORG";
-        g.setNode(DriverIDstr)
-        g.setNode(OrganizationID)
-        for (var l = 1; l < Drivers[k].AssignedRiders.length; l++) {
-            var RiderID = Drivers[k].AssignedRiders[l];
-            RiderIDstr = `${RiderID}`
-            var Durationn = DriversRidersDuration.find(n => n.ID === DriverID).data.find(n => n.to === RiderID).duration;
-            g.setNode(RiderIDstr)
-            g.setEdge(DriverIDstr, RiderIDstr, Durationn)
-            g.setEdge(RiderIDstr, OrganizationID, Riders.find(n => n.ID === RiderID).TimeToOrganizationMinutes)
-        }
-
-        for (var p = 1; p < Drivers[k].AssignedRiders.length; p++) {
-            for (var m = 1; m < Drivers[k].AssignedRiders.length; m++) {
-
-                if (m != p) {
-                    var SourceID = Drivers[k].AssignedRiders[p]
-                    var DestID = Drivers[k].AssignedRiders[m]
-                    var Durationn = RiderRiderDuration.find(n => n.ID === SourceID).data.find(n => n.to === DestID).duration
-                    SourceID = `${SourceID}`
-                    DestID = `${DestID}`
-                    g.setEdge(SourceID, DestID, Durationn)
-                }
-            }
-        }
-
-        var n = Drivers[k].AssignedRiders.length - 1;
-
-        var count = n;
-        var kValue = 0;
-
-        while (true) {
-            kValue += Combinatorics.P(n, count)
-            count--;
-            if (count === 0)
-                break;
-
-        }
-
-        var response = ksp.ksp(g, DriverIDstr, OrganizationID, kValue);
-        var lastRiderTimeToOrg = Riders.find(n => n.ID === Drivers[k].AssignedRiders[Drivers[k].AssignedRiders.length - 1]).TimeToOrganizationMinutes
-        response = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= (Drivers[k].TotalDurationTaken + lastRiderTimeToOrg))
-
-        for (var d = 0; d < response.length; d++) {
-            var AssignedTemp = []
-            AssignedTemp.push(DriverID)
-            for (var j = 0; j < response[d].edges.length - 1; j++) {
-                AssignedTemp.push(parseInt(response[d].edges[j].toNode))
-            }
-            Drivers[k].AssignedRiders = AssignedTemp;
-            var ValidDuration = await SetPickUpTime(Drivers[k])
-            if (ValidDuration != -1) {
-                break;
-            }
-        }
-
-    }
-    return Promise.resolve();
-} */
-
-
-
 async function StepByStepReorder(AvailableDriver) {
 
     DriverID = AvailableDriver.ID;
@@ -238,9 +158,6 @@ module.exports = async function main() {
     RiderRiderDuration = obj.RiderRiderDuration;
     DriversRidersDuration = obj.DriversRidersDuration;
     DriversRider = obj.DriversRider;
-
-    var DistanceThreshold = 8;
-
     var NumberOfUnAssignedRiders = Riders.length;
 
     //Drivers are sorted by rating
@@ -257,16 +174,16 @@ module.exports = async function main() {
                 Drivers[j].continueFlag = 0;
                 continue;
             }
+            if (Drivers[j].ID == 44) {
 
+
+                var x;
+            }
 
             if (NumberOfUnAssignedRiders === 0)
                 break;
 
             var DriverID = Drivers[j].ID;
-            if (DriverID === 43) {
-                var x = 4;
-
-            }
             var chosenDuration = -1
             var lastRiderID = Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1]
             var ChosenRiderID = -1;
@@ -365,7 +282,6 @@ module.exports = async function main() {
                 }
                 if (RiderRiderDuration[indexinRiderRider].checked === RiderRiderDuration[indexinRiderRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
                     continue;
-
                 }
 
 
@@ -401,7 +317,6 @@ module.exports = async function main() {
                     //add duration ,,trial error equation
 
                     if (Riders.find(n => n.ID === RiderID).isAssigned === false) {
-
                         var WeightFunction = -0.45 * Duration / Riders[IndexInRiders].MaxDurationToNormalize - 0.25 * Distance / Riders[IndexInRiders].MaxDistanceToNormalize + 0.3 * Trust -
                             0.04 * diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) / 30
                         WeightArray.push(WeightFunction)
@@ -439,6 +354,10 @@ module.exports = async function main() {
                         Riders.find(n => n.ID === ChosenRiderID).isAssigned = true;
                         Riders.find(n => n.ID === ChosenRiderID).DriverAssigned = DriverID;
                         NumberOfUnAssignedRiders--;
+
+
+                        //hageb 5 min then ha7ot flag eno maykhosh fy weight function elgya le nas tanya 
+
                     }
                 } else {
                     var ValidAssign = await StepByStepReorder(Drivers[j])
@@ -482,12 +401,6 @@ module.exports = async function main() {
         }
 
     }
-
-
-
-    //Setting Pickup Time and Pool Start Time
-    // var x = await MatchingReorder()
-
 
 
 }
