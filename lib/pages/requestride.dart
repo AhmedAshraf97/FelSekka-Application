@@ -1180,7 +1180,7 @@ class _RequestRideState extends State<RequestRide> {
                 Padding(
                   padding: EdgeInsets.fromLTRB(33,0,22,0),
                   child: Text(
-                    departuretime == ""? "Please, pick arrival time." : departuretime,
+                    departuretime == ""? "Please, pick departure time." : departuretime,
                     style: TextStyle(
                       color: Colors.blueGrey,
                       fontFamily: "Kodchasan",
