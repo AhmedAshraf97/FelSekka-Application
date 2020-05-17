@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 3000;
 var queue = require('express-queue');
 const graphlib = require('graphlib');
 //const ksp = require('k-shortest-path');
-const ksp = require('../FilSekka-Application/yenKSP')
+const ksp = require('../FelSekka-Application/yenKSP')
 
 
 const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
