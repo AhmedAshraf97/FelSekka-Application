@@ -1607,6 +1607,8 @@ class _CarsState extends State<Cars> {
                                         width: 1),
                                     onPressed: () {
                                       Navigator.pop(context);
+                                      Navigator.pop(context);
+                                      Navigator.push(context, AnimatedPageRoute(widget: Cars()));
                                     },
                                   ),
                                 ],
