@@ -84,6 +84,9 @@ app.use('/api/endDriverTripTo', require('./routes/api/endDriverTripTo'))
 app.use('/api/cancelRequest', require('./routes/api/cancelRequest'))
 
 app.use('/api/cancelOffer', require('./routes/api/cancelOffer'))
+app.use('/api/showrequests', require('./routes/api/show_requests'))
+app.use('/api/showoffers', require('./routes/api/show_offers'))
+
 
 var schedule = require('node-schedule');
 var request = require('request');
