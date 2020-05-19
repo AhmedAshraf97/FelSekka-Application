@@ -42,6 +42,13 @@ class Rider {
         this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
         this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
 
+        this.MaxDistanceToNormalizeDrivers = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
+        this.MaxDurationToNormalizeDrivers = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
+
+        this.MaxDistanceToNormalizeRiders = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
+        this.MaxDurationToNormalizeRiders = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
+
+
         this.EarliestPickup = EarliestPickup
             //Timing
         this.ArrivalTime = ArrivalTime
@@ -88,7 +95,9 @@ class Driver {
         this.longitude = longitude
 
         this.closestFlag = 0
-        this.continueFlag = 0;
+        this.skipFlag = 0;
+        this.countRiders = 0;
+        this.countDrivers = 0
     }
 };
 
@@ -151,6 +160,11 @@ class userArray {
         return this.data;
     }
 }
+
+var AllDriversToRider = []
+var AllDriversToRiderDuration = []
+var AllRidersToRider = []
+var AllRidersToRiderDuration = []
 
 var DriversRider = new Array();
 var RiderRider = new Array();
@@ -421,6 +435,96 @@ router.post('/', async(req, res) => {
                 }
 
 
+
+                ///////////// Array of durations from all drivers to single rider ////
+
+
+                for (var i = 0; i < Riders.length; i++) { //get id's from offers
+                    var RiderID = Riders[i].ID
+                    var RiderRow = new userArray(RiderID);
+
+                    for (var j = 0; j < DRdistanceValue.length; j++) {
+                        if (DRdistanceValue[j].to === RiderID) {
+                            var distanceObj = new distance(DRdistanceValue[j].from, DRdistanceValue[j].to, DRdistanceValue[j].value);
+                            Riders[i].MaxDistanceToNormalizeDrivers = Math.max(DRdistanceValue[j].value, Riders[i].MaxDistanceToNormalizeDrivers)
+                            RiderRow.push(distanceObj);
+                        }
+                    }
+                    if (Riders[i].MaxDistanceToNormalizeDrivers <= 0)
+                        Riders[i].MaxDistanceToNormalizeDrivers = 1;
+                    if (RiderRow.length > 0) {
+                        AllDriversToRider.push(RiderRow);
+                    }
+
+                }
+
+                ///
+
+                for (var i = 0; i < Riders.length; i++) { //get id's from offers
+                    var RiderID = Riders[i].ID
+                    var RiderRow = new userArray(RiderID);
+
+                    for (var j = 0; j < DRdurationValue.length; j++) {
+                        if (DRdurationValue[j].to === RiderID) {
+                            var durationObj = new duration(DRdurationValue[j].from, DRdurationValue[j].to, DRdurationValue[j].value);
+                            Riders[i].MaxDurationToNormalizeDrivers = Math.max(DRdurationValue[j].value, Riders[i].MaxDurationToNormalizeDrivers)
+                            RiderRow.push(durationObj);
+                        }
+                    }
+                    if (Riders[i].MaxDurationToNormalizeDrivers <= 0)
+                        Riders[i].MaxDurationToNormalizeDrivers = 1;
+                    if (RiderRow.length > 0) {
+                        AllDriversToRiderDuration.push(RiderRow);
+                    }
+
+                }
+                ///////////////////////////////////
+
+                for (var i = 0; i < Riders.length; i++) {
+
+                    var riderID = Riders[i].ID
+                    var RiderRow = new userArray(riderID);
+                    for (var j = 0; j < RRdistanceValue.length; j++) {
+                        if (RRdistanceValue[j].to === riderID) {
+                            var distanceObj = new distance(RRdistanceValue[j].from, RRdistanceValue[j].to, RRdistanceValue[j].value);
+                            Riders[i].MaxDistanceToNormalizeRiders = Math.max(RRdistanceValue[j].value, Riders[i].MaxDistanceToNormalizeRiders)
+                            RiderRow.push(distanceObj);
+                        }
+                    }
+                    if (Riders[i].MaxDistanceToNormalizeRiders <= 0)
+                        Riders[i].MaxDistanceToNormalizeRiders = 1;
+                    if (RiderRow.length > 0) {
+                        AllRidersToRider.push(RiderRow);
+                    }
+
+
+                }
+                //////////////////////////////////////////
+                for (var i = 0; i < Riders.length; i++) {
+                    var riderID = Riders[i].ID
+                    var RiderRowDuration = new userArray(riderID);
+
+                    for (var j = 0; j < RRdurationValue.length; j++) {
+                        if (RRdurationValue[j].to === riderID) {
+                            var durationObj = new duration(RRdurationValue[j].from, RRdurationValue[j].to, RRdurationValue[j].value);
+                            Riders[i].MaxDurationToNormalizeRiders = Math.max(RRdurationValue[j].value, Riders[i].MaxDurationToNormalizeRiders)
+                            RiderRowDuration.push(durationObj);
+                        }
+                    }
+
+                    if (Riders[i].MaxDurationToNormalizeRiders <= 0)
+                        Riders[i].MaxDurationToNormalizeRiders = 1;
+                    if (RiderRowDuration.length > 0) {
+                        AllRidersToRiderDuration.push(RiderRowDuration);
+                    }
+
+
+                }
+
+
+                ////////////////////////////////////////////////////////////////
+
+
                 var z = await matching();
                 var countAssigned = 0;
 
@@ -516,6 +620,12 @@ router.post('/', async(req, res) => {
         res.status(400).send("no offers")
     }
 
+    AllDriversToRider = []
+    AllDriversToRiderDuration = []
+
+    AllRidersToRider = []
+    AllRidersToRiderDuration = []
+
     DriversRider = []
     RiderRider = []
     DriversRidersDuration = []
@@ -526,7 +636,18 @@ router.post('/', async(req, res) => {
 });
 
 function getters() {
-    return { Riders, Drivers, RiderRider, RiderRiderDuration, DriversRidersDuration, DriversRider }
+    return {
+        Riders,
+        Drivers,
+        RiderRider,
+        RiderRiderDuration,
+        DriversRidersDuration,
+        DriversRider,
+        AllDriversToRider,
+        AllDriversToRiderDuration,
+        AllRidersToRider,
+        AllRidersToRiderDuration
+    }
 }
 
 
