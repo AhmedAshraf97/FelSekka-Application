@@ -202,16 +202,13 @@ router.post('/', async(req, res) => {
             status: 'pending'
         }
     }).catch(errHandler)
-    if (offers.length > 0) {
-        for (offer of offers) {
-            const orguser = await OrgUser.findOne({
-                where: {
-                    orgid: offer.toorgid,
-                    userid: offer.userid,
-                    status: "existing"
-                }
 
-            }).catch(errHandler)
+    if (offers.length > 0) {
+
+        const OrgUsersObject = await OrgUser.findAll({ where: { status: "existing" } }).catch(errHandler)
+        for (offer of offers) {
+
+            const orguser = OrgUsersObject.find(n => n.orgid === offer.toorgid && n.userid === offer.userid)
 
             var driver = new Driver(offer.userid, parseFloat(orguser.distancetoorg), new Date(offer.date + " " + offer.arrivaltime),
                 Math.round(orguser.timetoorg),
@@ -235,13 +232,8 @@ router.post('/', async(req, res) => {
         if (requests.length > 0) {
 
             for (const request of requests) {
-                const orguser = await OrgUser.findOne({
-                    where: {
-                        orgid: request.toorgid,
-                        userid: request.userid,
-                        status: "existing"
-                    }
-                }).catch(errHandler);
+
+                const orguser = OrgUsersObject.find(n => n.orgid === request.toorgid && n.userid === request.userid)
 
                 var rider = new Rider(request.userid,
                     parseFloat(orguser.distancetoorg),
@@ -256,6 +248,10 @@ router.post('/', async(req, res) => {
 
                 Riders.push(rider);
             }
+
+            const betweenUsersObject = await BetweenUsers.findAll({}).catch(errHandler);
+
+
             if (Drivers.length > 0) {
                 for (driver in Drivers) {
                     for (rider in Riders) {
@@ -265,14 +261,7 @@ router.post('/', async(req, res) => {
                             diff_minutes((Riders[rider].ArrivalTime), (Drivers[driver].ArrivalTime)) <= 30
 
                         ) {
-                            const FromDriverToRider = await BetweenUsers.findOne({
-                                where: {
-                                    user1id: Drivers[driver].userID,
-                                    user2id: Riders[rider].userID
-
-                                }
-
-                            }).catch(errHandler)
+                            const FromDriverToRider = betweenUsersObject.find(n => n.user1id === Drivers[driver].userID && n.user2id === Riders[rider].userID)
                             if (FromDriverToRider) {
                                 var valueDuration = new values(Drivers[driver].ID, Riders[rider].ID, Math.round(FromDriverToRider.time))
                                 var valueDistance = new values(Drivers[driver].ID, Riders[rider].ID, parseFloat(FromDriverToRider.distance))
@@ -280,15 +269,8 @@ router.post('/', async(req, res) => {
                                 DRdurationValue.push(valueDuration)
                                 DRdistanceValue.push(valueDistance)
                                     /////////////////////////////////////////////////////////////
-                                const FromRiderToDriver = await BetweenUsers.findOne({
-                                    where: {
 
-                                        user1id: Riders[rider].userID,
-                                        user2id: Drivers[driver].userID
-
-                                    }
-
-                                }).catch(errHandler)
+                                const FromRiderToDriver = betweenUsersObject.find(n => n.user1id === Riders[rider].userID && n.user2id === Drivers[driver].userID)
 
                                 if (FromRiderToDriver.trust === 1) {
                                     Riders[rider].TrustedDrivers.push(Drivers[driver].ID)
@@ -316,14 +298,8 @@ router.post('/', async(req, res) => {
 
                             ) {
 
-                                const FromRiderToRider = await BetweenUsers.findOne({
-                                    where: {
-                                        user1id: Riders[riderFrom].userID,
-                                        user2id: Riders[riderTo].userID
+                                const FromRiderToRider = betweenUsersObject.find(n => n.user1id === Riders[riderFrom].userID && n.user2id === Riders[riderTo].userID)
 
-                                    }
-
-                                }).catch(errHandler)
                                 if (FromRiderToRider) {
                                     var valueDuration = new values(Riders[riderFrom].ID, Riders[riderTo].ID, Math.round(FromRiderToRider.time))
                                     var valueDistance = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.distance))
