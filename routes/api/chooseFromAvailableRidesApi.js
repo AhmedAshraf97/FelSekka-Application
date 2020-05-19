@@ -213,7 +213,7 @@ router.post('/', async(req, res) => {
     }
     if (ValidChecks) {
 
-        if (req.body.earliesttime == null) {
+        if (req.body.earliesttime == "") {
             res.status(400).send({ error: "EarliestTime", message: "EarliestTime paramter is missing" });
             ValidChecks = false;
             res.end()
@@ -232,40 +232,8 @@ router.post('/', async(req, res) => {
             res.end();
         }
 
-        if (req.body.ridewith == null) {
-            ValidChecks = false;
 
-            res.status(400).send({ error: "RideWith", message: "RideWith paramter is missing" });
-            res.end()
-        } else if (!((typeof(req.body.ridewith) === 'string') || ((req.body.ridewith) instanceof String))) {
-            ValidChecks = false;
 
-            res.status(400).send({ error: "RideWith", message: "RideWith must be a string" });
-            res.end()
-        } else if ((req.body.ridewith).trim().length === 0) {
-            ValidChecks = false;
-
-            res.status(400).send({ error: "RideWith", message: "RideWith can't be empty" });
-            res.end()
-
-        }
-
-        if (req.body.smoking == null) {
-            ValidChecks = false;
-
-            res.status(400).send({ error: "Smoking", message: "Smoking paramter is missing" });
-            res.end()
-        } else if (!((typeof(req.body.smoking) === 'string') || ((req.body.smoking) instanceof String))) {
-            ValidChecks = false;
-
-            res.status(400).send({ error: "Smoking", message: "Smoking must be a string" });
-            res.end()
-        } else if ((req.body.smoking).trim().length === 0) {
-            ValidChecks = false;
-
-            res.status(400).send({ error: "Smoking", message: "Smoking can't be empty" });
-            res.end()
-        }
 
 
         var invalidrider = 0;
@@ -305,7 +273,7 @@ router.post('/', async(req, res) => {
                             for (const org of orguserdecoded) {
                                 if (org.orgid === offer.toorgid) {
                                     countorg++;
-                                    if (req.body.smoking === offer.smoking && req.body.ridewith === offer.ridewith) {
+                                    if (user.gender === offer.ridewith) {
                                         const orguser = await OrgUser.findOne({
                                             where: {
                                                 orgid: offer.toorgid,
@@ -376,8 +344,8 @@ router.post('/', async(req, res) => {
                                                 new Date(offer.date + " " + offer.arrivaltime),
                                                 parseFloat(org.timetoorg),
                                                 new Date(offer.date + " " + req.body.earliesttime),
-                                                req.body.ridewith,
-                                                req.body.smoking,
+                                                offerridewith,
+                                                offer.smoking,
                                                 offer.toorgid,
                                                 new Date(offer.date))
                                             Riders.push(rider);
@@ -529,8 +497,8 @@ router.post('/', async(req, res) => {
                                                             toorgid: offer.toorgid,
                                                             date: offer.date,
                                                             arrivaltime: offer.arrivaltime,
-                                                            ridewith: req.body.ridewith,
-                                                            smoking: req.body.smoking,
+                                                            ridewith: offer.ridewith,
+                                                            smoking: offer.smoking,
                                                             earliesttime: req.body.earliesttime,
                                                             status: "scheduled"
                                                         }
