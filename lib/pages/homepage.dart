@@ -10,6 +10,8 @@ import 'package:http/http.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+
+import 'joinride.dart';
 class HomePage extends StatefulWidget with NavigationStates{
   @override
   _HomePageState createState() => _HomePageState();
@@ -435,7 +437,7 @@ class _HomePageState extends State<HomePage> {
                           }
                           else
                           {
-                            Navigator.push(context, AnimatedPageRoute(widget: RequestRide()));
+                            Navigator.push(context, AnimatedPageRoute(widget: JoinRide()));
                           }
                         },
                         child: Container(

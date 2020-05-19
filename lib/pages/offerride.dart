@@ -475,11 +475,18 @@ class _OfferRideState extends State<OfferRide> {
                     hint: "Select car",
                     searchHint: "Select car",
                     onChanged: (value) {
-                        selectedCar = value;
-                        numberofseatsController.text=value[1];
+                      if(value!=null)
+                        {
+                          selectedCar = value[0];
+                          numberofseatsController.text=value[1];
+                        }
+                        else
+                          {
+                            selectedCar=value;
+                            numberofseatsController.text="";
+                          }
                     },
                     isExpanded: true,
-
                   ),
                 ),
                 Padding(
@@ -1172,7 +1179,9 @@ class _OfferRideState extends State<OfferRide> {
                             earliesttime="";
                             date="";
                             dateselected="";
-                            selectedOrg="";
+                            selectedOrg=null;
+                            selectedCar=null;
+                            numberofseatsController.text="";
                             setState(() {
 
                             });
@@ -1294,8 +1303,16 @@ class _OfferRideState extends State<OfferRide> {
                     hint: "Select car",
                     searchHint: "Select car",
                     onChanged: (value) {
-                      selectedCarfrom = value;
-                      numberofseatsControllerfrom.text=value[1];
+                      if(value!=null)
+                      {
+                        selectedCarfrom= value[0];
+                        numberofseatsControllerfrom.text=value[1];
+                      }
+                      else
+                      {
+                        selectedCarfrom=value;
+                        numberofseatsControllerfrom.text="";
+                      }
                     },
                     isExpanded: true,
 

@@ -297,6 +297,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin{
                                   Map userInfo = data['userInfo'];
                                   SharedPreferences prefs = await SharedPreferences.getInstance();
                                   await prefs.setString('token', token);
+                                  Navigator.pop(context);
                                   Navigator.push(context, AnimatedPageRoute(widget: SideBarLayout()));
                                 }
                               }

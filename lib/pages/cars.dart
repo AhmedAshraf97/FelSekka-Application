@@ -956,32 +956,19 @@ class _CarsState extends State<Cars> {
                   height: 3,
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(22,5.0,22,13),
+                  padding: const EdgeInsets.fromLTRB(33,5.0,22,13),
                   child: Container(
-                    height: 55.0,
-                    padding: EdgeInsets.all(15.0),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [BoxShadow(
-                        color: Color.fromRGBO(39, 78, 220, 0.3),
-                        blurRadius: 20.0,
-                        offset: Offset(0,10),
-                      )],
+                      border: Border(bottom: BorderSide(color: Colors.grey[200])),
                     ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Colors.grey[200])),
-                      ),
-                      child: TextField(
-                        controller: modelController,
-                        maxLength: 30,
-                        decoration: InputDecoration(
-                          counterText: "",
-                          hintText: "Model",
-                          hintStyle: TextStyle(color:Colors.grey),
-                          border: InputBorder.none,
-                        ),
+                    child: TextField(
+                      controller: modelController,
+                      maxLength: 30,
+                      decoration: InputDecoration(
+                        counterText: "",
+                        hintText: "Model",
+                        hintStyle: TextStyle(color:Colors.grey),
+                        border: InputBorder.none,
                       ),
                     ),
                   ),
