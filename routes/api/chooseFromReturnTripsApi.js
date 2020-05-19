@@ -244,7 +244,7 @@ router.post('/', async(req, res) => {
         if (ValidChecks) {
             const Trip = await Trips.findOne({
                 where: {
-                    id: req.body.tripid
+                    id: parseInt(req.body.tripid)
                 }
             }).catch(errHandler)
             if (Trip) {
