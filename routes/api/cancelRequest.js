@@ -5,7 +5,7 @@ const User = require('../../models/users');
 const OfferFrom = require('../../models/offerridefrom')
 const RequestFrom = require('../../models/requestridefrom')
 
-const OfferTo = require('../../models/offerrideTo')
+const OfferTo = require('../../models/offerrideto')
 const RequestTo = require('../../models/requestrideTo')
 
 const express = require('express');
