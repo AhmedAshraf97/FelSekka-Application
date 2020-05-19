@@ -6,7 +6,7 @@ const OfferFrom = require('../../models/offerridefrom')
 const RequestFrom = require('../../models/requestridefrom')
 
 const OfferTo = require('../../models/offerrideto')
-const RequestTo = require('../../models/requestrideTo')
+const RequestTo = require('../../models/requestrideto')
 
 const express = require('express');
 const router = express.Router();
