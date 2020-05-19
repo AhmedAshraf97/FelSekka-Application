@@ -444,8 +444,6 @@ module.exports = async function main() {
                         NumberOfUnAssignedRiders--;
 
 
-                        //hageb 5 min then ha7ot flag eno maykhosh fy weight function elgya le nas tanya 
-
                     }
                 } else {
                     var ValidAssign = await StepByStepReorder(Drivers[j])

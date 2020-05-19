@@ -344,7 +344,7 @@ router.post('/', async(req, res) => {
                                                 new Date(offer.date + " " + offer.arrivaltime),
                                                 parseFloat(org.timetoorg),
                                                 new Date(offer.date + " " + req.body.earliesttime),
-                                                offerridewith,
+                                                offer.ridewith,
                                                 offer.smoking,
                                                 offer.toorgid,
                                                 new Date(offer.date))
