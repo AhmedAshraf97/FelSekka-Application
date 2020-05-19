@@ -273,7 +273,7 @@ router.post('/', async(req, res) => {
                             for (const org of orguserdecoded) {
                                 if (org.orgid === offer.toorgid) {
                                     countorg++;
-                                    if (user.gender === offer.ridewith) {
+                                    if ( ((user.gender === offer.ridewith) || (offer.ridewith==="any")) ) {
                                         const orguser = await OrgUser.findOne({
                                             where: {
                                                 orgid: offer.toorgid,
