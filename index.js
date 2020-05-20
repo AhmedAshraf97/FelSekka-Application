@@ -16,7 +16,7 @@ app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 //DB connection
 require("./database/connection");
 //Uers API route
-app.use('/api/signup', require('./routes/api/sign_up'));
+app.use('/api/signup', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/sign_up'));
 app.use('/api/chooseorg', require('./routes/api/chooseorg'));
 app.use('/api/userexists', require('./routes/api/userexists'));
 app.use('/api/addorg', require('./routes/api/addorg'));
