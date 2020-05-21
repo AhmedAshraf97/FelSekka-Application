@@ -19,12 +19,14 @@ const RiderDB = require('../../models/riders');
 
 
 class values {
-    constructor(from, to, value) {
+    constructor(from, to, valueDistance, valueDuration) {
         this.from = from;
         this.to = to;
-        this.value = value;
+        this.valueDistance = valueDistance;
+        this.valueDuration = valueDuration
     }
 }
+
 
 class Rider {
     constructor(ID, DistanceFromOrganization, DepartureTime, TimeFromOrganizationMinutes,
@@ -92,20 +94,11 @@ class Driver {
 };
 
 
-class distance {
-    constructor(from, to, distance) {
+class distanceDuration {
+    constructor(from, to, distance, duration) {
         this.from = from;
         this.to = to;
         this.distance = distance;
-        this.checked = 0;
-
-    }
-
-}
-class duration {
-    constructor(from, to, duration) {
-        this.from = from;
-        this.to = to;
         this.duration = duration;
         this.checked = 0;
 
@@ -151,10 +144,8 @@ class userArray {
     }
 }
 
-var DriversRider = new Array();
-var RiderRider = new Array();
-var DriversRidersDuration = new Array();
-var RiderRiderDuration = new Array();
+var DriversRiders = new Array();
+var RidersRiders = new Array();
 
 var Drivers = []
 var Riders = []
@@ -173,10 +164,10 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 router.post('/', async(req, res) => {
-    var DRdistanceValue = []
-    var DRdurationValue = []
-    var RRdistanceValue = []
-    var RRdurationValue = []
+
+    var DRDistanceDurationValue = []
+    var RRDistanceDurationValue = []
+
 
 
     const offers = await Offer.findAll({
@@ -185,18 +176,17 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler)
     if (offers.length > 0) {
-        for (offer of offers) {
-            const orguser = await OrgUser.findOne({
-                where: {
-                    orgid: offer.fromorgid,
-                    userid: offer.userid,
-                    status: "existing"
-                }
+        const orguserObj = await OrgUser.findAll({
+            where: {
+                status: "existing"
+            }
+        }).catch(errHandler)
 
-            }).catch(errHandler)
+        for (offer of offers) {
+            const orguser = orguserObj.find(n => n.orgid === offer.fromorgid && n.userid === offer.userid)
 
             var driver = new Driver(offer.userid, parseFloat(orguser.distancefromorg), new Date(offer.date + " " + offer.departuretime),
-                parseFloat(orguser.timefromorg),
+                Math.round(orguser.timetoorg),
                 offer.numberofseats,
                 new Date(offer.date + " " + offer.latesttime),
                 offer.ridewith,
@@ -216,19 +206,12 @@ router.post('/', async(req, res) => {
         if (requests.length > 0) {
 
             for (const request of requests) {
-                const orguser = await OrgUser.findOne({
-                    where: {
-                        orgid: request.fromorgid,
-                        userid: request.userid,
-                        status: "existing"
-                    }
-                }).catch(errHandler);
-
+                const orguser = orguserObj.find(n => n.orgid === request.fromorgid && n.userid === request.userid)
 
                 var rider = new Rider(request.userid,
                     parseFloat(orguser.distancefromorg),
                     new Date(request.date + " " + request.departuretime),
-                    parseFloat(orguser.timefromorg),
+                    Math.round(orguser.timetoorg),
                     new Date(request.date + " " + request.latesttime),
                     request.ridewith,
                     request.smoking,
@@ -240,7 +223,10 @@ router.post('/', async(req, res) => {
             }
 
 
+            const betweenusersObj = await BetweenUsers.findAll().catch(errHandler)
+
             if (Drivers.length > 0) {
+
                 for (driver in Drivers) {
                     for (rider in Riders) {
                         if (Riders[rider].fromorgid === Drivers[driver].fromorgid && Riders[rider].ridewith === Drivers[driver].ridewith &&
@@ -248,21 +234,13 @@ router.post('/', async(req, res) => {
                             diff_minutes((Drivers[driver].PoolStartTime), (Riders[rider].DepartureTime)) >= 0 &&
                             diff_minutes((Drivers[driver].PoolStartTime), (Riders[rider].DepartureTime)) <= 30
                         ) {
-                            const ToDriverFromRider = await BetweenUsers.findOne({
-                                where: {
+                            const ToDriverFromRider = betweenusersObj.find(n => n.user1id === Riders[rider].userID && n.user2id === Drivers[driver].userID)
 
-                                    user1id: Riders[rider].userID,
-                                    user2id: Drivers[driver].userID
-
-                                }
-
-                            }).catch(errHandler)
                             if (ToDriverFromRider) {
-                                var valueDuration = new values(Riders[rider].ID, Drivers[driver].ID, parseFloat(ToDriverFromRider.time))
-                                var valueDistance = new values(Riders[rider].ID, Drivers[driver].ID, parseFloat(ToDriverFromRider.distance))
 
-                                DRdurationValue.push(valueDuration)
-                                DRdistanceValue.push(valueDistance)
+                                var valueDistanceDuration = new values(Riders[rider].ID, Drivers[driver].ID, parseFloat(ToDriverFromRider.distance), Math.round(ToDriverFromRider.time))
+
+                                DRDistanceDurationValue.push(valueDistanceDuration)
                                 if (ToDriverFromRider.trust === 1) {
                                     Riders[rider].TrustedDrivers.push(Drivers[driver].ID)
                                 } else if (ToDriverFromRider.trust === -1) {
@@ -277,7 +255,7 @@ router.post('/', async(req, res) => {
                 }
             }
 
-            if (DRdurationValue.length != 0) {
+            if (DRDistanceDurationValue.length != 0) {
                 if (Riders.length > 0) {
                     for (riderTo in Riders) {
                         for (riderFrom in Riders) {
@@ -288,20 +266,11 @@ router.post('/', async(req, res) => {
 
                             ) {
 
-                                const FromRiderToRider = await BetweenUsers.findOne({
-                                    where: {
-                                        user1id: Riders[riderFrom].userID,
-                                        user2id: Riders[riderTo].userID
+                                const FromRiderToRider = betweenusersObj.find(n => n.user1id === Riders[riderFrom].userID && n.user2id === Riders[riderTo].userID)
 
-                                    }
-
-                                }).catch(errHandler)
                                 if (FromRiderToRider) {
-                                    var valueDuration = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.time))
-                                    var valueDistance = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.distance))
-
-                                    RRdurationValue.push(valueDuration)
-                                    RRdistanceValue.push(valueDistance)
+                                    var valueDistanceDuration = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.distance), Math.round(FromRiderToRider.time))
+                                    RRDistanceDurationValue.push(valueDistanceDuration)
                                 }
 
                             }
@@ -311,103 +280,162 @@ router.post('/', async(req, res) => {
                     }
                 }
 
-                for (var i = 0; i < Drivers.length; i++) { //get id's from offers
+                for (var i = 0; i < Drivers.length; i++) {
                     var driverID = Drivers[i].ID
                     var DriverRow = new userArray(driverID);
+                    var diffDropOff
 
-                    for (var j = 0; j < DRdistanceValue.length; j++) {
-                        if (DRdistanceValue[j].to === driverID) {
-                            var distanceObj = new distance(DRdistanceValue[j].from, DRdistanceValue[j].to, DRdistanceValue[j].value);
-                            Drivers[i].MaxDistanceToNormalize = Math.max(DRdistanceValue[j].value, Drivers[i].MaxDistanceToNormalize)
-                            DriverRow.push(distanceObj);
+                    for (var j = 0; j < DRDistanceDurationValue.length; j++) {
+                        if (DRDistanceDurationValue[j].to === driverID) {
+                            var distanceDurationObj = new distanceDuration(DRDistanceDurationValue[j].from, DRDistanceDurationValue[j].to, DRDistanceDurationValue[j].valueDistance, DRDistanceDurationValue[j].valueDuration);
+                            Drivers[i].MaxDistanceToNormalize = Math.max(DRDistanceDurationValue[j].valueDistance, Drivers[i].MaxDistanceToNormalize)
+                            Drivers[i].MaxDurationToNormalize = Math.max(DRDistanceDurationValue[j].valueDuration, Drivers[i].MaxDurationToNormalize)
+
+                            diffDropOff = diff_minutes(Drivers[i].LatestDropOff, Riders.find(n => n.ID === DRDistanceDurationValue[j].from).LatestDropOff) - DRDistanceDurationValue[j].valueDuration
+
+                            Drivers[i].MaxDropoffDiffToNormalize = Math.max(diffDropOff, Drivers[i].MaxDropoffDiffToNormalize)
+                            DriverRow.push(distanceDurationObj);
+
                         }
 
                     }
 
                     if (Drivers[i].MaxDistanceToNormalize <= 0)
                         Drivers[i].MaxDistanceToNormalize = 1;
+                    if (Drivers[i].MaxDurationToNormalize <= 0)
+                        Drivers[i].MaxDurationToNormalize = 1;
+                    if (Drivers[i].MaxDropoffDiffToNormalize <= 0)
+                        Drivers[i].MaxDropoffDiffToNormalize = 1;
                     if (DriverRow.length > 0) {
-                        DriversRider.push(DriverRow);
+                        DriversRiders.push(DriverRow);
                     }
 
 
                 }
 
+                /*                 for (var i = 0; i < Drivers.length; i++) { //get id's from offers
+                                    var driverID = Drivers[i].ID
+                                    var DriverRow = new userArray(driverID);
+
+                                    for (var j = 0; j < DRdistanceValue.length; j++) {
+                                        if (DRdistanceValue[j].to === driverID) {
+                                            var distanceObj = new distance(DRdistanceValue[j].from, DRdistanceValue[j].to, DRdistanceValue[j].value);
+                                            Drivers[i].MaxDistanceToNormalize = Math.max(DRdistanceValue[j].value, Drivers[i].MaxDistanceToNormalize)
+                                            DriverRow.push(distanceObj);
+                                        }
+
+                                    }
+
+                                    if (Drivers[i].MaxDistanceToNormalize <= 0)
+                                        Drivers[i].MaxDistanceToNormalize = 1;
+                                    if (DriverRow.length > 0) {
+                                        DriversRider.push(DriverRow);
+                                    }
 
 
+                                }
+                 */
+
+                /*                 for (var i = 0; i < Drivers.length; i++) { //get id's from offers
+
+                                    var driverID = Drivers[i].ID
+                                    var DriverRowDuration = new userArray(driverID);
+                                    var diffDropOff
+                                    for (var j = 0; j < DRdurationValue.length; j++) {
+                                        if (DRdurationValue[j].to === driverID) {
+                                            var durationObj = new duration(DRdurationValue[j].from, DRdurationValue[j].to, DRdurationValue[j].value);
+                                            Drivers[i].MaxDurationToNormalize = Math.max(DRdurationValue[j].value, Drivers[i].MaxDurationToNormalize)
+                                            diffDropOff = diff_minutes(Drivers[i].LatestDropOff, Riders.find(n => n.ID === DRdurationValue[j].from).LatestDropOff) - DRdurationValue[j].value
+
+                                            Drivers[i].MaxDropoffDiffToNormalize = Math.max(diffDropOff, Drivers[i].MaxDropoffDiffToNormalize)
+
+                                            DriverRowDuration.push(durationObj);
+                                        }
+
+                                    }
+                                    if (Drivers[i].MaxDurationToNormalize <= 0)
+                                        Drivers[i].MaxDurationToNormalize = 1;
+
+                                    if (Drivers[i].MaxDropoffDiffToNormalize <= 0)
+                                        Drivers[i].MaxDropoffDiffToNormalize = 1;
+                                    if (DriverRowDuration.length > 0) {
+
+                                        DriversRidersDuration.push(DriverRowDuration);
+                                    }
+
+
+                                }
+                 */
                 for (var i = 0; i < Riders.length; i++) {
-
                     var riderID = Riders[i].ID
                     var RiderRow = new userArray(riderID);
-                    for (var j = 0; j < RRdistanceValue.length; j++) {
-                        if (RRdistanceValue[j].to === riderID) {
-                            var distanceObj = new distance(RRdistanceValue[j].from, RRdistanceValue[j].to, RRdistanceValue[j].value);
-                            Riders[i].MaxDistanceToNormalize = Math.max(RRdistanceValue[j].value, Riders[i].MaxDistanceToNormalize)
-                            RiderRow.push(distanceObj);
+
+                    for (var j = 0; j < RRDistanceDurationValue.length; j++) {
+                        if (RRDistanceDurationValue[j].to === riderID) {
+                            var distanceDurationObj = new distanceDuration(RRDistanceDurationValue[j].from, RRDistanceDurationValue[j].to, RRDistanceDurationValue[j].valueDistance, RRDistanceDurationValue[j].valueDuration);
+                            Riders[i].MaxDurationToNormalize = Math.max(RRDistanceDurationValue[j].valueDuration, Riders[i].MaxDurationToNormalize)
+                            Riders[i].MaxDistanceToNormalize = Math.max(RRDistanceDurationValue[j].valueDistance, Riders[i].MaxDistanceToNormalize)
+                            RiderRow.push(distanceDurationObj);
                         }
                     }
                     if (Riders[i].MaxDistanceToNormalize <= 0)
                         Riders[i].MaxDistanceToNormalize = 1;
-                    if (RiderRow.length > 0) {
-                        RiderRider.push(RiderRow);
-                    }
-
-
-                }
-
-
-                for (var i = 0; i < Drivers.length; i++) { //get id's from offers
-
-                    var driverID = Drivers[i].ID
-                    var DriverRowDuration = new userArray(driverID);
-                    var diffDropOff
-                    for (var j = 0; j < DRdurationValue.length; j++) {
-                        if (DRdurationValue[j].to === driverID) {
-                            var durationObj = new duration(DRdurationValue[j].from, DRdurationValue[j].to, DRdurationValue[j].value);
-                            Drivers[i].MaxDurationToNormalize = Math.max(DRdurationValue[j].value, Drivers[i].MaxDurationToNormalize)
-                            diffDropOff = diff_minutes(Drivers[i].LatestDropOff, Riders.find(n => n.ID === DRdurationValue[j].from).LatestDropOff) - DRdurationValue[j].value
-
-                            Drivers[i].MaxDropoffDiffToNormalize = Math.max(diffDropOff, Drivers[i].MaxDropoffDiffToNormalize)
-
-                            DriverRowDuration.push(durationObj);
-                        }
-
-                    }
-                    if (Drivers[i].MaxDurationToNormalize <= 0)
-                        Drivers[i].MaxDurationToNormalize = 1;
-
-                    if (Drivers[i].MaxDropoffDiffToNormalize <= 0)
-                        Drivers[i].MaxDropoffDiffToNormalize = 1;
-                    if (DriverRowDuration.length > 0) {
-
-                        DriversRidersDuration.push(DriverRowDuration);
-                    }
-
-
-                }
-
-
-                for (var i = 0; i < Riders.length; i++) {
-                    var riderID = Riders[i].ID
-                    var RiderRowDuration = new userArray(riderID);
-
-                    for (var j = 0; j < RRdurationValue.length; j++) {
-                        if (RRdurationValue[j].to === riderID) {
-                            var durationObj = new duration(RRdurationValue[j].from, RRdurationValue[j].to, RRdurationValue[j].value);
-                            Riders[i].MaxDurationToNormalize = Math.max(RRdurationValue[j].value, Riders[i].MaxDurationToNormalize)
-                            RiderRowDuration.push(durationObj);
-                        }
-                    }
-
                     if (Riders[i].MaxDurationToNormalize <= 0)
                         Riders[i].MaxDurationToNormalize = 1;
-                    if (RiderRowDuration.length > 0) {
-                        RiderRiderDuration.push(RiderRowDuration);
+                    if (RiderRow.length > 0) {
+
+                        RidersRiders.push(RiderRow);
                     }
 
 
                 }
 
+
+
+                /* 
+                                for (var i = 0; i < Riders.length; i++) {
+
+                                    var riderID = Riders[i].ID
+                                    var RiderRow = new userArray(riderID);
+                                    for (var j = 0; j < RRdistanceValue.length; j++) {
+                                        if (RRdistanceValue[j].to === riderID) {
+                                            var distanceObj = new distance(RRdistanceValue[j].from, RRdistanceValue[j].to, RRdistanceValue[j].value);
+                                            Riders[i].MaxDistanceToNormalize = Math.max(RRdistanceValue[j].value, Riders[i].MaxDistanceToNormalize)
+                                            RiderRow.push(distanceObj);
+                                        }
+                                    }
+                                    if (Riders[i].MaxDistanceToNormalize <= 0)
+                                        Riders[i].MaxDistanceToNormalize = 1;
+                                    if (RiderRow.length > 0) {
+                                        RiderRider.push(RiderRow);
+                                    }
+
+
+                                }
+                 */
+
+
+                /*                 for (var i = 0; i < Riders.length; i++) {
+                                    var riderID = Riders[i].ID
+                                    var RiderRowDuration = new userArray(riderID);
+
+                                    for (var j = 0; j < RRdurationValue.length; j++) {
+                                        if (RRdurationValue[j].to === riderID) {
+                                            var durationObj = new duration(RRdurationValue[j].from, RRdurationValue[j].to, RRdurationValue[j].value);
+                                            Riders[i].MaxDurationToNormalize = Math.max(RRdurationValue[j].value, Riders[i].MaxDurationToNormalize)
+                                            RiderRowDuration.push(durationObj);
+                                        }
+                                    }
+
+                                    if (Riders[i].MaxDurationToNormalize <= 0)
+                                        Riders[i].MaxDurationToNormalize = 1;
+                                    if (RiderRowDuration.length > 0) {
+                                        RiderRiderDuration.push(RiderRowDuration);
+                                    }
+
+
+                                }
+                 */
 
                 var z = await ReturnTripMatching();
 
@@ -484,13 +512,16 @@ router.post('/', async(req, res) => {
                                 }
                             }).catch(errHandler)
                         }
-                        res.status(200).send("Matching Done")
 
 
                     }
                 }
                 if (countAssigned === 0) {
+
                     res.status(200).send("No trips will be scheduled")
+                } else {
+                    res.status(200).send("Matching Done")
+
                 }
 
             } else {
@@ -510,10 +541,8 @@ router.post('/', async(req, res) => {
 
     Drivers = []
     Riders = []
-    DriversRider = []
-    RiderRider = []
-    DriversRidersDuration = new Array();
-    RiderRiderDuration = [];
+    DriversRiders = []
+    RidersRiders = []
     DRdistanceValue = []
     DRdurationValue = []
     RRdistanceValue = []
@@ -523,7 +552,7 @@ router.post('/', async(req, res) => {
 
 
 function getterss() {
-    return { Riders, Drivers, RiderRider, RiderRiderDuration, DriversRidersDuration, DriversRider };
+    return { Riders, Drivers, RidersRiders, DriversRiders };
 }
 
 

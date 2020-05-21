@@ -102,28 +102,6 @@ class Driver {
     }
 };
 
-
-/* class distance {
-    constructor(from, to, distance) {
-        this.from = from;
-        this.to = to;
-        this.distance = distance;
-        this.checked = 0;
-
-    }
-
-}
-class duration {
-    constructor(from, to, duration) {
-        this.from = from;
-        this.to = to;
-        this.duration = duration;
-        this.checked = 0;
-
-    }
-
-} */
-
 class distanceDuration {
     constructor(from, to, distance, duration) {
         this.from = from;

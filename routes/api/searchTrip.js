@@ -173,7 +173,7 @@ router.post('/', async(req, res) => {
 
                                     const orgDetails = await Organization.findOne({
                                         where: {
-                                            id: offerTrip.toorgid
+                                            id: offerTrip.fromorgid
 
                                         }
 
