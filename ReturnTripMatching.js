@@ -1,5 +1,6 @@
 const graphlib = require('graphlib');
-const ksp = require('k-shortest-path');
+//const ksp = require('k-shortest-path');
+const ksp = require('../FilSekka-Application/yenKSP')
 var Combinatorics = require('js-combinatorics');
 
 var Riders;
@@ -132,7 +133,10 @@ async function StepByStepReorder(AvailableDriver) {
 
 
     var delta = Math.max(0.25 * AvailableDriver.MaxDuration, 10)
-    var response = ksp.ksp(g, OrganizationID, DriverIDstr, kValue);
+        // var response = ksp.ksp(g, OrganizationID, DriverIDstr, kValue);
+
+    var response = ksp.yenKSP(g, OrganizationID, DriverIDstr, kValue);
+
     response = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.TotalDurationTaken + delta && p.totalCost <= AvailableDriver.MaxDuration)
 
     var ValidDuration = -1
@@ -157,13 +161,17 @@ async function StepByStepReorder(AvailableDriver) {
 
 module.exports = async function main() {
 
-    var f = require('./routes/api/ReturnTripMatch').getters
+    var f = require('./routes/api/ReturnTripMatchingApi').getters
     obj = f();
 
     Riders = obj.Riders;
     Drivers = obj.Drivers;
     RidersRiders = obj.RidersRiders;
     DriversRiders = obj.DriversRiders;
+
+
+    FromRiderToAllDrivers = obj.FromRiderToAllDrivers
+    FromRiderToAllRiders = obj.FromRiderToAllRiders
 
     var NumberOfUnAssignedRiders = Riders.length;
     var count = -1;
@@ -237,13 +245,66 @@ module.exports = async function main() {
                         DriversRiders[indexinDriverRider].checked++;
                     }
                 }
+                var WeightArrayForDrivers = []
+                var WeightIndexForDrivers = []
 
                 if (WeightArray.length > 0) {
                     ChosenRiderID = WeightIndex[WeightArray.indexOf(Math.max.apply(Math, WeightArray))]
                     chosenDistance = DriversRiders[indexinDriverRider].data.find(n => n.from === ChosenRiderID).distance
                     chosenDuration = DriversRiders[indexinDriverRider].data.find(n => n.from === ChosenRiderID).duration
-                    DriversRiders[indexinDriverRider].data.find(n => n.from === ChosenRiderID).checked = 1;
-                    DriversRiders[indexinDriverRider].checked++;
+                    var indexinFromRiderToAllDrivers = FromRiderToAllDrivers.findIndex(n => n.ID === ChosenRiderID);
+                    var CurrentRider = Riders.find(n => n.ID === ChosenRiderID)
+
+                    for (var g = 0; g < FromRiderToAllDrivers[indexinFromRiderToAllDrivers].length; g++) {
+                        var DriverToCheckID = FromRiderToAllDrivers[indexinFromRiderToAllDrivers].data[g].to
+                        var DistanceToDriver = FromRiderToAllDrivers[indexinFromRiderToAllDrivers].data[g].distance
+                        var DurationToDriver = FromRiderToAllDrivers[indexinFromRiderToAllDrivers].data[g].duration;
+
+                        var CurrentDriver = Drivers.find(n => n.ID === DriverToCheckID)
+                        var Trust, NumberofEmptyPlaces;
+
+                        NumberofEmptyPlaces = CurrentDriver.capacity - (CurrentDriver.AssignedRiders.length - 1)
+                        if (CurrentRider.TrustedDrivers.find(n => n === DriverToCheckID))
+                            Trust = 1
+                        else if (CurrentRider.UnTrustedDrivers.find(n => n === DriverToCheckID))
+                            Trust = -1;
+
+
+                        var WeightFunctionDriver = -0.45 * DurationToDriver / CurrentRider.MaxDurationToNormalizeDrivers -
+                            0.25 * DistanceToDriver / CurrentRider.MaxDistanceToNormalizeDrivers +
+                            0.3 * Trust -
+                            0.04 * diff_minutes(CurrentDriver.PoolStartTime, CurrentRider.DepartureTime) / 30 +
+                            0.2 * NumberofEmptyPlaces
+
+                        WeightArrayForDrivers.push(WeightFunctionDriver)
+                        WeightIndexForDrivers.push(DriverToCheckID)
+
+
+                    }
+
+                    if (Drivers[j].countDrivers == WeightArray.length) { //to prevent loop
+                        DriversRiders[indexinDriverRider].data.find(n => n.from === ChosenRiderID).checked = 1;
+                        DriversRiders[indexinDriverRider].checked++;
+
+                    } else {
+                        Drivers[j].countDrivers = WeightArray.length
+
+                        if (WeightArrayForDrivers.length > 0) {
+                            var ChosenDriverID = WeightIndexForDrivers[WeightArrayForDrivers.indexOf(Math.max.apply(Math, WeightArrayForDrivers))]
+                            if (ChosenDriverID !== Drivers[j].ID) {
+                                ChosenRiderID = -1;
+                            } else {
+                                DriversRiders[indexinDriverRider].data.find(n => n.from === ChosenRiderID).checked = 1;
+                                DriversRiders[indexinDriverRider].checked++;
+                            }
+
+                        } else {
+                            ChosenRiderID = -1;
+                        }
+
+
+                    }
+
                 }
 
             } else { // Not First Rider
@@ -308,8 +369,68 @@ module.exports = async function main() {
                     ChosenRiderID = WeightIndex[WeightArray.indexOf(Math.max.apply(null, WeightArray))]
                     chosenDistance = RidersRiders[indexinRiderRider].data.find(n => n.from === ChosenRiderID).distance
                     chosenDuration = RidersRiders[indexinRiderRider].data.find(n => n.from === ChosenRiderID).duration
-                    RidersRiders[indexinRiderRider].data.find(n => n.from === ChosenRiderID).checked = 1;
-                    RidersRiders[indexinRiderRider].checked++;
+                    CurrentRider = Riders.find(n => n.ID === ChosenRiderID)
+                    WeightArrayForRiders = []
+                    WeightIndexForRiders = []
+
+                    var indexinFromRiderToAllRiders = FromRiderToAllRiders.findIndex(n => n.ID === ChosenRiderID);
+                    for (var g = 0; g < FromRiderToAllRiders[indexinFromRiderToAllRiders].length; g++) {
+                        var RiderToCheckID = FromRiderToAllRiders[indexinFromRiderToAllRiders].data[g].to
+                        var DistanceToRider = FromRiderToAllRiders[indexinFromRiderToAllRiders].data[g].distance
+                        var DurationToRider = FromRiderToAllRiders[indexinFromRiderToAllRiders].data[g].duration;
+                        var RiderToCheckobj = Riders.find(n => n.ID === RiderToCheckID)
+
+                        if (RiderToCheckobj.DriverAssigned === -1) {
+                            continue;
+                        }
+                        var DriverOfRiderToCheck = Drivers.find(n => n.ID === RiderToCheckobj.DriverAssigned)
+
+                        var Trust, NumberofEmptyPlaces;
+
+                        NumberofEmptyPlaces = DriverOfRiderToCheck.capacity - (DriverOfRiderToCheck.AssignedRiders.length - 1)
+
+
+                        if (RiderToCheckobj.TrustedDrivers.find(n => n === DriverOfRiderToCheck.ID))
+                            Trust = 1
+                        else if (RiderToCheckobj.UnTrustedDrivers.find(n => n === DriverOfRiderToCheck.ID))
+                            Trust = -1;
+
+
+                        var WeightFunctionRider = -0.45 * DurationToRider / CurrentRider.MaxDistanceToNormalizeRiders -
+                            0.25 * DistanceToRider / CurrentRider.MaxDurationToNormalizeRiders +
+                            0.3 * Trust -
+                            0.04 * diff_minutes(DriverOfRiderToCheck.PoolStartTime, RiderToCheckobj.DepartureTime) / 30 +
+                            0.2 * NumberofEmptyPlaces
+
+                        WeightArrayForRiders.push(WeightFunctionRider)
+                        WeightIndexForRiders.push(RiderToCheckID)
+
+                    }
+                    if (Drivers[j].countRiders == WeightArrayForRiders.length) {
+                        RidersRiders[indexinRiderRider].data.find(n => n.from === ChosenRiderID).checked = 1;
+                        RidersRiders[indexinRiderRider].checked++;
+
+                    } else {
+                        Drivers[j].countRiders = WeightArrayForRiders.length
+
+                        if (WeightArrayForRiders.length > 0) {
+                            var ChosenMaxRider = WeightIndexForRiders[WeightArrayForRiders.indexOf(Math.max.apply(Math, WeightArrayForRiders))]
+                            if (ChosenMaxRider !== lastRiderID) {
+                                ChosenRiderID = -1;
+
+
+                            } else {
+                                RidersRiders[indexinRiderRider].data.find(n => n.from === ChosenRiderID).checked = 1;
+                                RidersRiders[indexinRiderRider].checked++;
+                            }
+
+                        } else {
+                            ChosenRiderID = -1;
+                        }
+
+                    }
+                    // RidersRiders[indexinRiderRider].data.find(n => n.from === ChosenRiderID).checked = 1;
+                    // RidersRiders[indexinRiderRider].checked++;
 
 
                 }

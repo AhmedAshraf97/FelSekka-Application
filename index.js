@@ -58,7 +58,7 @@ app.use('/api/deleteaccount', require('./routes/api/delete_account'));
 
 app.use('/api/searchTrip', require('./routes/api/searchTrip'));
 app.use('/api/matching', require('./routes/api/matchingApi').router);
-app.use('/api/ReturnTripMatch', require('./routes/api/ReturnTripMatch').router);
+app.use('/api/ReturnTripMatch', require('./routes/api/ReturnTripMatchingApi').router);
 app.use('/api/chooseFromAvailableRides', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/chooseFromAvailableRidesApi').router)
 app.use('/api/chooseFromReturnTripsApi', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/chooseFromReturnTripsApi').router)
 
