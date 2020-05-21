@@ -104,7 +104,7 @@ function PathInB(B, path) {
     }
     return flag;
 }
-exports.yenKSP = function(g, source, sink, K) {
+exports.yenKSP = function(g, source, sink, K, constraint1, constraint2) {
 
     let clonedGraph = graphlib.json.read(graphlib.json.write(g));
 
@@ -115,6 +115,9 @@ exports.yenKSP = function(g, source, sink, K) {
     let firstShortestPath = getShortestPath(clonedGraph, source, sink);
     if (!firstShortestPath) {
         return A;
+    }
+    if (kthPath > constraint1 || kthPath > constraint2) {
+        return null;
     }
 
     A.push(firstShortestPath);
@@ -174,7 +177,9 @@ exports.yenKSP = function(g, source, sink, K) {
         if (kthPath == null) {
             break;
         }
-
+        if (kthPath.totalCost > constraint1 || kthPath.totalCost > constraint2) {
+            return A;
+        }
         A.push(kthPath);
     }
     return A;

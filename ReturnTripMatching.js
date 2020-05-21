@@ -135,10 +135,10 @@ async function StepByStepReorder(AvailableDriver) {
     var delta = Math.max(0.25 * AvailableDriver.MaxDuration, 10)
         // var response = ksp.ksp(g, OrganizationID, DriverIDstr, kValue);
 
-    var response = ksp.yenKSP(g, OrganizationID, DriverIDstr, kValue);
+    var response = ksp.yenKSP(g, OrganizationID, DriverIDstr, kValue, AvailableDriver.TotalDurationTaken + delta, AvailableDriver.MaxDuration);
 
-    response = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.TotalDurationTaken + delta && p.totalCost <= AvailableDriver.MaxDuration)
-
+    //  response = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.TotalDurationTaken + delta && p.totalCost <= AvailableDriver.MaxDuration)
+    response = response.filter(p => (p.edges.length === n + 1))
     var ValidDuration = -1
 
     for (var d = 0; d < response.length; d++) {
