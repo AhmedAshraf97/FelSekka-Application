@@ -186,11 +186,23 @@ router.post('/', async(req, res) => {
             status: 'pending'
         }
     }).catch(errHandler)
+
+    var OffersArray = []
+    var RequestsArray = []
     if (offers.length > 0) {
+
+        for (offer of offers) {
+            OffersArray.push(offer.userid)
+        }
+
         const orguserObj = await OrgUser.findAll({
             where: {
-                status: "existing"
+                status: "existing",
+                userid: {
+                    [Op.in]: OffersArray
+                }
             }
+
         }).catch(errHandler)
 
         for (offer of offers) {
@@ -216,7 +228,22 @@ router.post('/', async(req, res) => {
 
         if (requests.length > 0) {
 
-            for (const request of requests) {
+            for (request of requests) {
+
+                RequestsArray.push(request.userid)
+            }
+
+            const orguserObj = await OrgUser.findAll({
+                where: {
+                    status: "existing",
+                    userid: {
+                        [Op.in]: RequestsArray
+                    }
+                }
+
+            }).catch(errHandler)
+
+            for (request of requests) {
                 const orguser = orguserObj.find(n => n.orgid === request.fromorgid && n.userid === request.userid)
 
                 var rider = new Rider(request.userid,
@@ -234,7 +261,19 @@ router.post('/', async(req, res) => {
             }
 
 
-            const betweenusersObj = await BetweenUsers.findAll().catch(errHandler)
+            var RequestsOffers = RequestsArray.concat(OffersArray)
+            const betweenusersObj = await BetweenUsers.findAll({
+                where: {
+                    user1id: {
+                        [Op.in]: RequestsOffers
+                    },
+                    user2id: {
+                        [Op.in]: RequestsOffers
+                    }
+                }
+
+            }).catch(errHandler)
+
 
             if (Drivers.length > 0) {
 
@@ -405,17 +444,47 @@ router.post('/', async(req, res) => {
 
                 var z = await ReturnTripMatching();
 
+                var OffersToupdate = []
+                var RequestsToupdate = []
+
+
+                for (var i = 0; i < Drivers.length; i++) {
+                    if (Drivers[i].AssignedRiders.length > 1) {
+                        OffersToupdate.push(Drivers[i].offerid)
+                        for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
+                            RequestsToupdate.push(Drivers[i].AssignedRiders[j])
+                        }
+                    }
+                }
+
+                await Offer.update({ status: "scheduled" }, {
+                    where: {
+                        id: {
+                            [Op.in]: OffersToupdate
+                        }
+                    }
+                }).catch(errHandler)
+
+                await Request.update({ status: "scheduled" }, {
+                    where: {
+                        id: {
+                            [Op.in]: RequestsToupdate
+                        }
+                    }
+                }).catch(errHandler)
+
+                const organizationObj = await Organization.findAll({
+                    where: {
+                        status: "existing"
+                    }
+                }).catch(errHandler);
 
                 var countAssigned = 0;
                 for (var i = 0; i < Drivers.length; i++) {
                     if (Drivers[i].AssignedRiders.length > 1) {
                         countAssigned++;
-                        const organization = await Organization.findOne({
-                            where: {
-                                id: Drivers[i].fromorgid,
-                                status: "existing"
-                            }
-                        }).catch(errHandler);
+                        const organization = organizationObj.find(n => n.id === Drivers[i].fromorgid);
+
                         const trip = await Trips.create({
                             tofrom: "from",
                             starttime: 0,
@@ -434,36 +503,12 @@ router.post('/', async(req, res) => {
                         }).catch(errHandler)
 
                         await DriverDB.create({
-                            tripid: trip.id,
-                            tofrom: "from",
-                            offerid: Drivers[i].offerid,
-                            driverid: Drivers[i].userID,
-                            pickuptime: Drivers[i].PoolStartTime,
-                            arrivaltime: Drivers[i].DropOffTime,
-                            actualpickuptime: 0,
-                            actualarrivaltime: 0,
-                            distance: 0,
-                            time: 0,
-                            fare: 0,
-                            status: "scheduled"
-
-
-                        }).catch(errHandler)
-                        await Offer.update({ status: "scheduled" }, {
-                            where: {
-                                id: Drivers[i].offerid
-                            }
-                        }).catch(errHandler)
-                        for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
-                            await RiderDB.create({
-
                                 tripid: trip.id,
                                 tofrom: "from",
                                 offerid: Drivers[i].offerid,
-                                requestid: Drivers[i].AssignedRiders[j],
-                                riderid: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).userID,
-                                pickuptime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).DepartureTime,
-                                arrivaltime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).DropOffTime,
+                                driverid: Drivers[i].userID,
+                                pickuptime: Drivers[i].PoolStartTime,
+                                arrivaltime: Drivers[i].DropOffTime,
                                 actualpickuptime: 0,
                                 actualarrivaltime: 0,
                                 distance: 0,
@@ -471,12 +516,36 @@ router.post('/', async(req, res) => {
                                 fare: 0,
                                 status: "scheduled"
 
+
                             }).catch(errHandler)
-                            await Request.update({ status: "scheduled" }, {
-                                where: {
-                                    id: Drivers[i].AssignedRiders[j]
-                                }
-                            }).catch(errHandler)
+                            // await Offer.update({ status: "scheduled" }, {
+                            //     where: {
+                            //         id: Drivers[i].offerid
+                            //     }
+                            // }).catch(errHandler)
+                        for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
+                            await RiderDB.create({
+
+                                    tripid: trip.id,
+                                    tofrom: "from",
+                                    offerid: Drivers[i].offerid,
+                                    requestid: Drivers[i].AssignedRiders[j],
+                                    riderid: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).userID,
+                                    pickuptime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).DepartureTime,
+                                    arrivaltime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).DropOffTime,
+                                    actualpickuptime: 0,
+                                    actualarrivaltime: 0,
+                                    distance: 0,
+                                    time: 0,
+                                    fare: 0,
+                                    status: "scheduled"
+
+                                }).catch(errHandler)
+                                // await Request.update({ status: "scheduled" }, {
+                                //     where: {
+                                //         id: Drivers[i].AssignedRiders[j]
+                                //     }
+                                // }).catch(errHandler)
                         }
 
 

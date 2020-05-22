@@ -171,11 +171,6 @@ module.exports = async function main() {
                 Drivers[j].skipFlag = 0;
                 continue;
             }
-            if (Drivers[j].ID == 44) {
-
-
-                var x = 5;
-            }
 
             if (NumberOfUnAssignedRiders === 0)
                 break;
@@ -410,7 +405,8 @@ module.exports = async function main() {
 
                         if (WeightArrayForRiders.length > 0) {
                             var ChosenMaxRider = WeightIndexForRiders[WeightArrayForRiders.indexOf(Math.max.apply(Math, WeightArrayForRiders))]
-                            if (ChosenMaxRider !== lastRiderID) {
+                            var isExist = Drivers[j].AssignedRiders.find(n => n === ChosenMaxRider)
+                            if (isExist === undefined) {
                                 ChosenRiderID = -1;
 
 
