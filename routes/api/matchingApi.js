@@ -483,65 +483,111 @@ router.post('/', async(req, res) => {
                         status: "existing"
                     }
                 }).catch(errHandler);
-
+                var TripsArray = []
+                var DriversArray = []
+                var RidersArray = []
                 for (var i = 0; i < Drivers.length; i++) {
                     const organization = organizationObj.find(n => n.id === Drivers[i].toorgid);
                     if (Drivers[i].AssignedRiders.length > 1) {
                         countAssigned++;
-                        const trip = await Trips.create({
-                            tofrom: "to",
-                            starttime: 0,
-                            endtime: 0,
-                            startloclatitude: Drivers[i].latitude,
-                            startloclongitude: Drivers[i].longitude,
-                            endloclatitude: organization.latitude,
-                            endloclongitude: organization.longitude,
-                            totaldistance: 0,
-                            totaltime: 0,
-                            totalfare: 0,
-                            numberofseats: Drivers[i].AssignedRiders.length - 1,
-                            date: Drivers[i].date,
-                            status: "scheduled"
+                        var Trip = {}
 
-                        }).catch(errHandler)
-                        await DriverDB.create({
-                            tripid: trip.id,
-                            tofrom: "to",
-                            offerid: Drivers[i].offerid,
-                            driverid: Drivers[i].userID,
-                            pickuptime: Drivers[i].PoolStartTime,
-                            arrivaltime: Drivers[i].ArrivalTime,
-                            actualpickuptime: 0,
-                            actualarrivaltime: 0,
-                            distance: 0,
-                            time: 0,
-                            fare: 0,
-                            status: "scheduled"
+                        Trip.tofrom = "to"
+                        Trip.starttime = 0
+                        Trip.endtime = 0
+                        Trip.startloclatitude = Drivers[i].latitude
+                        Trip.startloclongitude = Drivers[i].longitude
+                        Trip.endloclatitude = organization.latitude
+                        Trip.endloclongitude = organization.longitude
+                        Trip.totaldistance = 0
+                        Trip.totaltime = 0
+                        Trip.totalfare = 0
+                        Trip.numberofseats = Drivers[i].AssignedRiders.length - 1
+                        Trip.date = Drivers[i].date
+                        Trip.status = "scheduled"
+                        TripsArray.push(Trip)
+
+                        /*    await DriverDB.create({
+                               tripid: trip.id,
+                               tofrom: "to",
+                               offerid: Drivers[i].offerid,
+                               driverid: Drivers[i].userID,
+                               pickuptime: Drivers[i].PoolStartTime,
+                               arrivaltime: Drivers[i].ArrivalTime,
+                               actualpickuptime: 0,
+                               actualarrivaltime: 0,
+                               distance: 0,
+                               time: 0,
+                               fare: 0,
+                               status: "scheduled"
 
 
-                        }).catch(errHandler)
-                        for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
-                            await RiderDB.create({
+                           }).catch(errHandler)
+                           for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
+                               await RiderDB.create({
 
-                                tripid: trip.id,
-                                tofrom: "to",
-                                offerid: Drivers[i].offerid,
-                                requestid: Drivers[i].AssignedRiders[j],
-                                riderid: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).userID,
-                                pickuptime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).PickupTime,
-                                arrivaltime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).ArrivalTime,
-                                actualpickuptime: 0,
-                                actualarrivaltime: 0,
-                                distance: 0,
-                                time: 0,
-                                fare: 0,
-                                status: "scheduled"
+                                   tripid: trip.id,
+                                   tofrom: "to",
+                                   offerid: Drivers[i].offerid,
+                                   requestid: Drivers[i].AssignedRiders[j],
+                                   riderid: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).userID,
+                                   pickuptime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).PickupTime,
+                                   arrivaltime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).ArrivalTime,
+                                   actualpickuptime: 0,
+                                   actualarrivaltime: 0,
+                                   distance: 0,
+                                   time: 0,
+                                   fare: 0,
+                                   status: "scheduled"
 
-                            }).catch(errHandler)
-                        }
+                               }).catch(errHandler)
+                           } */
 
                     }
                 }
+                const trip = await Trips.bulkCreate(TripsArray).catch(errHandler)
+
+                var tripscounter = 0;
+                for (var i = 0; i < Drivers.length; i++) {
+                    if (Drivers[i].AssignedRiders.length > 1) {
+                        var Driverr = {}
+                        Driverr.tripid = trip[tripscounter].dataValues.id
+                        Driverr.tofrom = "to"
+                        Driverr.offerid = Drivers[i].offerid
+                        Driverr.driverid = Drivers[i].userID
+                        Driverr.pickuptime = Drivers[i].PoolStartTime
+                        Driverr.arrivaltime = Drivers[i].ArrivalTime
+                        Driverr.actualpickuptime = 0
+                        Driverr.actualarrivaltime = 0
+                        Driverr.distance = 0
+                        Driverr.time = 0
+                        Driverr.fare = 0
+                        Driverr.status = "scheduled"
+                        DriversArray.push(Driverr)
+                        for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
+
+                            var Riderr = {}
+                            Riderr.tripid = trip[tripscounter].dataValues.id
+                            Riderr.tofrom = "to"
+                            Riderr.offerid = Drivers[i].offerid
+                            Riderr.requestid = Drivers[i].AssignedRiders[j]
+                            Riderr.riderid = Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).userID
+                            Riderr.pickuptime = Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).PickupTime
+                            Riderr.arrivaltime = Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).ArrivalTime
+                            Riderr.actualpickuptime = 0
+                            Riderr.actualarrivaltime = 0
+                            Riderr.distance = 0
+                            Riderr.time = 0
+                            Riderr.fare = 0
+                            Riderr.status = "scheduled"
+                            RidersArray.push(Riderr)
+                        }
+                        tripscounter++
+
+                    }
+                }
+                const RidersCreated = await RiderDB.bulkCreate(RidersArray).catch(errHandler)
+                const DriversCreated = await DriverDB.bulkCreate(DriversArray).catch(errHandler)
 
                 if (countAssigned === 0) {
                     res.status(400).send("No trips will be scheduled")
