@@ -206,10 +206,11 @@ router.post('/', async(req, res) => {
         var time21 = 0;
 
         //Insert user 
-        await User.create(userData).then(user => {
+        const userCreate = await User.create(userData).catch(errHandler)
+        if (userCreate) {
+            createdUserID = userCreate.id;
             res.status(200).send({ message: "User is created" });
-            createdUserID = user.id;
-        }).catch(errHandler);
+        }
 
         //Insert users in betweenusers
         const allUsers = await User.findAll({
@@ -223,6 +224,8 @@ router.post('/', async(req, res) => {
                 ]
             }
         }).catch(errHandler);
+
+        var BetweenUsersArray = []
 
         for (user of allUsers) {
             var x = req.body.latitude;
@@ -264,11 +267,15 @@ router.post('/', async(req, res) => {
                 time: time21,
                 trust: 0
             }
-            await BetweenUsers.create(betweenUsersData1).catch(errHandler);
-            await BetweenUsers.create(betweenUsersData2).catch(errHandler);
+            BetweenUsersArray.push(betweenUsersData1)
+
+            BetweenUsersArray.push(betweenUsersData2)
 
         }
+        await BetweenUsers.bulkCreate(BetweenUsersArray).catch(errHandler);
+
     }
+
 
 });
 
