@@ -590,21 +590,21 @@ router.post('/', async(req, res) => {
                 const DriversCreated = await DriverDB.bulkCreate(DriversArray).catch(errHandler)
 
                 if (countAssigned === 0) {
-                    res.status(400).send("No trips will be scheduled")
+                    res.status(400).send({ error: "No trips to be scheduled", message: "No trips to be scheduled" })
                     res.end()
                 } else {
-                    res.status(200).send("Matching Done")
+                    res.status(200).send({ message: "Matching Done" })
                     res.end()
 
                 }
             } else {
-                res.status(400).send("No trips will be scheduled")
+                res.status(400).send({ error: "No trips to be scheduled", message: "No trips to be scheduled" })
             }
         } else {
-            res.status(400).send("no requests")
+            res.status(400).send({ error: "No requests", message: "No requests" })
         }
     } else {
-        res.status(400).send("no offers")
+        res.status(400).send({ error: "No offers", message: "No offers" })
     }
 
     AllDriversToRider = []

@@ -1,8 +1,8 @@
-const offerRideFrom = require('../../models/offerridefrom'); 
-const offerRideTo = require('../../models/offerrideto'); 
-const requestRideFrom = require('../../models/requestridefrom'); 
-const requestRideTo = require('../../models/requestrideto'); 
-const orgUser = require('../../models/orgusers'); 
+const offerRideFrom = require('../../models/offerridefrom');
+const offerRideTo = require('../../models/offerrideto');
+const requestRideFrom = require('../../models/requestridefrom');
+const requestRideTo = require('../../models/requestrideto');
+const orgUser = require('../../models/orgusers');
 const express = require('express');
 const Organization = require('../../models/organizations');
 const User = require('../../models/users');
@@ -34,14 +34,14 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         userExists = false;
-        res.status(401).send({ message: "You aren't authorized to request a ride " })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
     await ExpiredToken.findOne({ where: { token: req.headers["authorization"] } }).then(expired => {
         if (expired) {
             userExists = false;
-            res.status(401).send({ message: "You aren't authorized to request a ride" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -69,7 +69,7 @@ router.post('/', async(req, res) => {
             res.status(400).send({ error: "Date", message: "Date can't be empty" });
         } else if (!(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(req.body.date))) {
             res.status(400).send({ error: "Date", message: "Date is unvalid" });
-        } 
+        }
         //Earliest time 
         else if (req.body.earliesttime == null) {
             res.status(400).send({ error: "Earliest time", message: "Earliest time paramter is missing" });
@@ -109,139 +109,133 @@ router.post('/', async(req, res) => {
             res.status(400).send({ error: "Smoking", message: "Smoking must be a string" });
         } else if ((req.body.smoking).trim().length === 0) {
             res.status(400).send({ error: "Smoking", message: "Smoking can't be empty" });
-        }
-      else {
-            var error =false;
+        } else {
+            var error = false;
             var existinorg = true;
-            await offerRideFrom.findAll({ 
+            await offerRideFrom.findAll({
                 where: {
                     userid: decoded.id,
-                    status: {[Op.or]: ["pending", "scheduled","ongoing"]}    
+                    status: {
+                        [Op.or]: ["pending", "scheduled", "ongoing"]
+                    }
                 }
-                }).then(rides=>{
-                    rides.forEach(ride=> {
-                        var reqStart = new Date((req.body.date.toString()) + " " + (req.body.earliesttime).toString());
-                        var reqEnd = new Date((req.body.date.toString()) + " " + (req.body.arrivaltime).toString());
-                        var rideStart = new Date((ride.date.toString()) + " " + (ride.departuretime).toString());
-                        var rideEnd = new Date((ride.date.toString()) + " " + (ride.latesttime).toString());
-                        if((rideStart<= reqStart) && (reqStart<= rideEnd)) {
-                            error =  true;
-                        }
-                        else if((rideStart<= reqEnd) && (reqEnd<= rideEnd) ){
-                            
-                            error =  true;
-                        }  
-                        else if((reqStart<=rideEnd) && (rideEnd<= reqEnd)){
-                        
-                            error = true;
-                        }
-                        else if((reqStart<=rideStart)&&(rideStart<=reqEnd)){
-                            
-                            error = true;
-                        }
-                    });
-                }).catch(errHandler);
-            await offerRideTo.findAll({ 
+            }).then(rides => {
+                rides.forEach(ride => {
+                    var reqStart = new Date((req.body.date.toString()) + " " + (req.body.earliesttime).toString());
+                    var reqEnd = new Date((req.body.date.toString()) + " " + (req.body.arrivaltime).toString());
+                    var rideStart = new Date((ride.date.toString()) + " " + (ride.departuretime).toString());
+                    var rideEnd = new Date((ride.date.toString()) + " " + (ride.latesttime).toString());
+                    if ((rideStart <= reqStart) && (reqStart <= rideEnd)) {
+                        error = true;
+                    } else if ((rideStart <= reqEnd) && (reqEnd <= rideEnd)) {
+
+                        error = true;
+                    } else if ((reqStart <= rideEnd) && (rideEnd <= reqEnd)) {
+
+                        error = true;
+                    } else if ((reqStart <= rideStart) && (rideStart <= reqEnd)) {
+
+                        error = true;
+                    }
+                });
+            }).catch(errHandler);
+            await offerRideTo.findAll({
                 where: {
                     userid: decoded.id,
-                    status: {[Op.or]: ["pending", "scheduled","ongoing"]}    
+                    status: {
+                        [Op.or]: ["pending", "scheduled", "ongoing"]
+                    }
                 }
-                }).then(rides=>{
-                
-                    rides.forEach(ride=> {
-                        var reqStart = new Date((req.body.date.toString()) + " " + (req.body.earliesttime).toString());
-                        var reqEnd = new Date((req.body.date.toString()) + " " + (req.body.arrivaltime).toString());
-                        var rideStart = new Date((ride.date.toString()) + " " + (ride.earliesttime).toString());
-                        var rideEnd = new Date((ride.date.toString()) + " " + (ride.arrivaltime).toString());
-                        
-                        if((rideStart<= reqStart) && (reqStart<= rideEnd)) {
-                            error =  true;
-                        }
-                        else if((rideStart<= reqEnd) && (reqEnd<= rideEnd) ){
-                            
-                            error =  true;
-                        }  
-                        else if((reqStart<= rideEnd) && (rideEnd<= reqEnd)){
-                        
-                            error = true;
-                        }
-                        else if((reqStart<= rideStart)&& (rideStart<= reqEnd)){
-                            
-                            error = true;
-                        }
-                    });
-                }).catch(errHandler);
-            await requestRideTo.findAll({ 
+            }).then(rides => {
+
+                rides.forEach(ride => {
+                    var reqStart = new Date((req.body.date.toString()) + " " + (req.body.earliesttime).toString());
+                    var reqEnd = new Date((req.body.date.toString()) + " " + (req.body.arrivaltime).toString());
+                    var rideStart = new Date((ride.date.toString()) + " " + (ride.earliesttime).toString());
+                    var rideEnd = new Date((ride.date.toString()) + " " + (ride.arrivaltime).toString());
+
+                    if ((rideStart <= reqStart) && (reqStart <= rideEnd)) {
+                        error = true;
+                    } else if ((rideStart <= reqEnd) && (reqEnd <= rideEnd)) {
+
+                        error = true;
+                    } else if ((reqStart <= rideEnd) && (rideEnd <= reqEnd)) {
+
+                        error = true;
+                    } else if ((reqStart <= rideStart) && (rideStart <= reqEnd)) {
+
+                        error = true;
+                    }
+                });
+            }).catch(errHandler);
+            await requestRideTo.findAll({
                 where: {
                     userid: decoded.id,
-                    status: {[Op.or]: ["pending", "scheduled","ongoing"]}    
+                    status: {
+                        [Op.or]: ["pending", "scheduled", "ongoing"]
+                    }
                 }
-                }).then(rides=>{
-                    rides.forEach(ride=> {
-                        var reqStart = new Date((req.body.date.toString()) + " " + (req.body.earliesttime).toString());
-                        var reqEnd = new Date((req.body.date.toString()) + " " + (req.body.arrivaltime).toString());
-                        var rideStart = new Date((ride.date.toString()) + " " + (ride.earliesttime).toString());
-                        var rideEnd = new Date((ride.date.toString()) + " " + (ride.arrivaltime).toString());
-                        if((rideStart<= reqStart) && (reqStart<= rideEnd)) {
-                            error =  true;
-                        }
-                        else if((rideStart<= reqEnd) && (reqEnd<= rideEnd) ){
-                            
-                            error =  true;
-                        }  
-                        else if((reqStart<=rideEnd) && (rideEnd<= reqEnd)){
-                        
-                            error = true;
-                        }
-                        else if((reqStart<=rideStart)&&(rideStart<=reqEnd)){
-                            
-                            error = true;
-                        }
-                    });
-                }).catch(errHandler); 
-            await requestRideFrom.findAll({ 
+            }).then(rides => {
+                rides.forEach(ride => {
+                    var reqStart = new Date((req.body.date.toString()) + " " + (req.body.earliesttime).toString());
+                    var reqEnd = new Date((req.body.date.toString()) + " " + (req.body.arrivaltime).toString());
+                    var rideStart = new Date((ride.date.toString()) + " " + (ride.earliesttime).toString());
+                    var rideEnd = new Date((ride.date.toString()) + " " + (ride.arrivaltime).toString());
+                    if ((rideStart <= reqStart) && (reqStart <= rideEnd)) {
+                        error = true;
+                    } else if ((rideStart <= reqEnd) && (reqEnd <= rideEnd)) {
+
+                        error = true;
+                    } else if ((reqStart <= rideEnd) && (rideEnd <= reqEnd)) {
+
+                        error = true;
+                    } else if ((reqStart <= rideStart) && (rideStart <= reqEnd)) {
+
+                        error = true;
+                    }
+                });
+            }).catch(errHandler);
+            await requestRideFrom.findAll({
                 where: {
                     userid: decoded.id,
-                    status: {[Op.or]: ["pending", "scheduled","ongoing"]}    
+                    status: {
+                        [Op.or]: ["pending", "scheduled", "ongoing"]
+                    }
                 }
-                }).then(rides=>{
-                    rides.forEach(ride=> {
-                        var reqStart = new Date((req.body.date.toString()) + " " + (req.body.earliesttime).toString());
-                        var reqEnd = new Date((req.body.date.toString()) + " " + (req.body.arrivaltime).toString());
-                        var rideStart = new Date((ride.date.toString()) + " " + (ride.departuretime).toString());
-                        var rideEnd = new Date((ride.date.toString()) + " " + (ride.latesttime).toString());
-                        if((rideStart<= reqStart) && (reqStart<= rideEnd)) {
-                            error =  true;
-                        }
-                        else if((rideStart<= reqEnd) && (reqEnd<= rideEnd) ){
-                            
-                            error =  true;
-                        }  
-                        else if((reqStart<=rideEnd) && (rideEnd<= reqEnd)){
-                        
-                            error = true;
-                        }
-                        else if((reqStart<=rideStart)&&(rideStart<=reqEnd)){
-                            
-                            error = true;
-                        }
-                    });
-                }).catch(errHandler);    
+            }).then(rides => {
+                rides.forEach(ride => {
+                    var reqStart = new Date((req.body.date.toString()) + " " + (req.body.earliesttime).toString());
+                    var reqEnd = new Date((req.body.date.toString()) + " " + (req.body.arrivaltime).toString());
+                    var rideStart = new Date((ride.date.toString()) + " " + (ride.departuretime).toString());
+                    var rideEnd = new Date((ride.date.toString()) + " " + (ride.latesttime).toString());
+                    if ((rideStart <= reqStart) && (reqStart <= rideEnd)) {
+                        error = true;
+                    } else if ((rideStart <= reqEnd) && (reqEnd <= rideEnd)) {
+
+                        error = true;
+                    } else if ((reqStart <= rideEnd) && (rideEnd <= reqEnd)) {
+
+                        error = true;
+                    } else if ((reqStart <= rideStart) && (rideStart <= reqEnd)) {
+
+                        error = true;
+                    }
+                });
+            }).catch(errHandler);
             await orgUser.findOne({
-                where:{
+                where: {
                     userid: decoded.id,
-                    orgid:req.body.toorgid,
+                    orgid: req.body.toorgid,
                     status: "existing"
                 }
-                }).then(orguser=>{
-                    if(!orguser){
-                        existinorg = false;
-                    }
-                    else{
-                        existinorg = true;
-                    }
-                }).catch(errHandler)   
-            
+            }).then(orguser => {
+                if (!orguser) {
+                    existinorg = false;
+                } else {
+                    existinorg = true;
+                }
+            }).catch(errHandler)
+
             const rideData = {
                 userid: decoded.id,
                 fromlatitude: decoded.latitude,
@@ -254,16 +248,14 @@ router.post('/', async(req, res) => {
                 earliesttime: req.body.earliesttime,
                 status: "pending"
             }
-            if(!existinorg){
-                res.status(401).send( {error:"Organization" , message:"You are not assigned to this organization"});        
-            }
-            else if(error){
-                res.status(401).send( {error:"error" , message:"You can't have two rides at the same time"});        
-            }
-            else{
-            await requestRideTo.create(rideData).then(ride => {
-                res.status(200).send({ message: "Request is made successfully" });
-            }).catch(errHandler);
+            if (!existinorg) {
+                res.status(401).send({ error: "Organization", message: "You aren't assigned to this organization" });
+            } else if (error) {
+                res.status(401).send({ error: "error", message: "You can't request two rides at the same time" });
+            } else {
+                await requestRideTo.create(rideData).then(ride => {
+                    res.status(200).send({ message: "Request is made successfully" });
+                }).catch(errHandler);
             }
         }
     }

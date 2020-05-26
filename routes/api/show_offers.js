@@ -36,7 +36,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to show any offers" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -47,7 +47,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to show any offers" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -77,7 +77,7 @@ router.post('/', async(req, res) => {
 
             if (offersTo.length == 0 && offersFrom.length == 0) {
 
-                res.status(409).send({ message: "No pending offers to be shown" })
+                res.status(409).send({ error: "No pending offers", message: "No pending offers" })
                 res.end();
             } else {
                 for (offerFrom of offersFrom) {

@@ -34,7 +34,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to show any requests" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -45,7 +45,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to show any requests" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -75,7 +75,7 @@ router.post('/', async(req, res) => {
 
             if (requestsFrom.length == 0 && requestsTo.length == 0) {
 
-                res.status(409).send({ message: "No pending requests to be shown" })
+                res.status(409).send({ error: "No pending requests", message: "No pending requests" })
                 res.end();
             } else {
                 for (requestFrom of requestsFrom) {

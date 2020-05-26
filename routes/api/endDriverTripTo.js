@@ -31,7 +31,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to end trip" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -42,7 +42,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to end trip" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -89,20 +89,20 @@ router.post('/', async(req, res) => {
             res.end();
 
         } else if (req.body.time == null) {
-            res.status(400).send({ error: "time ", message: "time paramter is missing" });
+            res.status(400).send({ error: "Time ", message: "Time paramter is missing" });
             ValidChecks = false;
             res.end();
 
         } else if (!((typeof(req.body.time) === 'number'))) {
-            res.status(400).send({ error: "time", message: "time must be a number" });
+            res.status(400).send({ error: "Time", message: "Time must be a number" });
             ValidChecks = false;
             res.end();
         } else if (req.body.fare == null) {
-            res.status(400).send({ error: "fare ", message: "fare paramter is missing" });
+            res.status(400).send({ error: "Fare ", message: "Fare paramter is missing" });
             ValidChecks = false;
             res.end();
         } else if (!((typeof(req.body.fare) === 'number'))) {
-            res.status(400).send({ error: "fare", message: "fare must be a number" });
+            res.status(400).send({ error: "Fare", message: "Fare must be a number" });
             ValidChecks = false;
             res.end();
         } else if (req.body.latitude == null) {
@@ -114,7 +114,7 @@ router.post('/', async(req, res) => {
             ValidChecks = false;
             res.end();
         } else if (!((typeof(req.body.latitude) === 'number'))) {
-            res.status(400).send({ error: "latitude", message: "latitude must be a number" });
+            res.status(400).send({ error: "Latitude", message: "Latitude must be a number" });
             ValidChecks = false;
             res.end();
         } else if (req.body.longitude == null) {
@@ -126,7 +126,7 @@ router.post('/', async(req, res) => {
             ValidChecks = false;
             res.end();
         } else if (!((typeof(req.body.longitude) === 'number'))) {
-            res.status(400).send({ error: "longitude", message: "longitude must be a number" });
+            res.status(400).send({ error: "Longitude", message: "Longitude must be a number" });
             ValidChecks = false;
             res.end();
         }
@@ -180,10 +180,10 @@ router.post('/', async(req, res) => {
                         status: "ongoing"
                     }
                 })
-                res.status(200).send("Driver trip is updated")
+                res.status(200).send({ message: "Driver trip is updated" })
 
             } else {
-                res.status(404).send("No driver assigned with this trip")
+                res.status(404).send({ error: "No driver assigned", message: "No driver assigned" })
                 res.end();
             }
 

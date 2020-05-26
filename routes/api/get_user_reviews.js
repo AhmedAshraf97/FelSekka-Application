@@ -28,7 +28,7 @@ router.post('/', async(req, res) => {
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        res.status(401).send({ message: "You aren't authorized to view any reviews" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -39,7 +39,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to view any reviews " })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -51,9 +51,9 @@ router.post('/', async(req, res) => {
             status: 'existing'
         }
     }).then(user => {
-        var jsonStr = '{"reviews":[]}';
-        var obj = JSON.parse(jsonStr);
-      
+            var jsonStr = '{"reviews":[]}';
+            var obj = JSON.parse(jsonStr);
+
             if (user) {
                 if (ValidChecks) {
                     Review.findAll({
@@ -72,7 +72,7 @@ router.post('/', async(req, res) => {
                                         }).then(driver => {
                                             if (driver) {
                                                 //ReviewsArr[count] = ({ type: "driver", "review": review.review })
-                                                obj['reviews'].push({"type": "driver", "review": review.review});
+                                                obj['reviews'].push({ "type": "driver", "review": review.review });
                                                 count++;
                                                 if (count === reviews.length) {
                                                     res.send(obj)
@@ -86,8 +86,8 @@ router.post('/', async(req, res) => {
                                                     }
                                                 }).then(rider => {
                                                     if (rider) {
-                                                        obj['reviews'].push({"type": "rider", "review": review.review});
-                                                        
+                                                        obj['reviews'].push({ "type": "rider", "review": review.review });
+
                                                         count++;
                                                         if (count === reviews.length) {
                                                             console.log("COUNT", count)
@@ -100,14 +100,14 @@ router.post('/', async(req, res) => {
                                     }
                                 })
                             } else {
-                                res.status(409).send({ message: "No Reviews for this user" })
+                                res.status(409).send({ error: "No Reviews", message: "No Reviews" })
                                 res.end()
                             }
                         })
                         .catch(errHandler)
                 }
             } else {
-                res.status(404).send({ message: "User not found" })
+                res.status(404).send({ error: "User not found", message: "User not found" })
                 res.end()
             }
         }

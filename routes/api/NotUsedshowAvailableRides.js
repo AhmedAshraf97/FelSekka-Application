@@ -151,7 +151,7 @@ router.post('/', async(req, res) => {
 
 
             } else
-                res.status(401).send("User doesn't exist, Please Enter valid ID")
+                res.status(401).send({ error: "User doesn't exist", message: "User doesn't exist" })
         })
         .catch(err => {
             res.send('error: ' + err)

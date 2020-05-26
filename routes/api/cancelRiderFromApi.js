@@ -188,7 +188,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to cancel trip" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
     await ExpiredToken.findOne({
@@ -198,7 +198,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to cancel trip" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -308,11 +308,11 @@ router.post('/', async(req, res) => {
                         }
                     }).catch(errHandler)
 
-                    res.send("The whole trip is cancelled")
+                    res.send({ message: "The whole trip is cancelled" })
                     res.end()
 
                 } else {
-                    res.status(401).send("You aren't assigned in this trip")
+                    res.status(401).send({ error: "You aren't assigned", message: "You aren't assigned" })
                     res.end()
 
                 }
@@ -538,12 +538,12 @@ router.post('/', async(req, res) => {
 
                 }
 
-                res.status(200).send("The trip is cancelled")
+                res.status(200).send({ message: "The trip is cancelled" })
                 res.end()
             }
 
         } else {
-            res.status(401).send("No trip found")
+            res.status(401).send({ error: "No trip found", message: "No trip found" })
             res.end()
         }
 

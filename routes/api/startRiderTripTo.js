@@ -94,15 +94,15 @@ router.post('/', async(req, res) => {
                 }).catch(errHandler)
 
 
-                res.status(200).send("Rider trip is updated")
+                res.status(200).send({ message: "Rider trip is updated" })
             } else {
-                res.status(404).send("Rider doesn't exist")
+                res.status(404).send({ error: "Rider doesn't exist", message: "Rider doesn't exist" })
                 res.end();
 
             }
 
         } else {
-            res.status(404).send("Driver doesn't exist")
+            res.status(404).send({ error: "Driver doesn't exist", message: "Driver doesn't exist" })
             res.end();
         }
 

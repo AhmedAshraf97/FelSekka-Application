@@ -183,7 +183,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to choose from avilable rides" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -195,7 +195,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to choose from avilable rides" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -273,7 +273,7 @@ router.post('/', async(req, res) => {
                             for (const org of orguserdecoded) {
                                 if (org.orgid === offer.toorgid) {
                                     countorg++;
-                                    if ( ((user.gender === offer.ridewith) || (offer.ridewith==="any")) ) {
+                                    if (((user.gender === offer.ridewith) || (offer.ridewith === "any"))) {
                                         const orguser = await OrgUser.findOne({
                                             where: {
                                                 orgid: offer.toorgid,
@@ -535,19 +535,19 @@ router.post('/', async(req, res) => {
                                                     }
 
                                                 }
-                                                res.status(200).send({message: "You joined this ride"})
+                                                res.status(200).send({ message: "You joined this ride" })
                                             } else {
-                                                res.status(400).send({error: "Can't join this trip" , message: "Your location or earliest time don't match"})
+                                                res.status(400).send({ error: "Can't join this trip", message: "Your location or earliest time don't match" })
                                                 res.end()
                                             }
 
                                         } else {
-                                            res.status(400).send({error: "Can't join this trip" , message:"You are already in this trip"})
+                                            res.status(400).send({ error: "Can't join this trip", message: "You are already in this trip" })
                                             res.end();
 
                                         }
                                     } else {
-                                        res.status(400).send({error:"Can't join this trip", message: "Ridewith/Smoking don't match" })
+                                        res.status(400).send({ error: "Can't join this trip", message: "Ridewith/Smoking don't match" })
                                         res.end();
                                     }
 
@@ -555,22 +555,22 @@ router.post('/', async(req, res) => {
                                 }
                             }
                             if (countorg == 0) {
-                                res.status(400).send({error:"Can't join this trip",message:"Not a memeber in organization"})
+                                res.status(400).send({ error: "Can't join this trip", message: "Not a memeber in organization" })
                                 res.end();
                             }
 
                         } else {
-                            res.status(400).send({error:"Can't join this trip",message:"Not a memeber in organization"})
+                            res.status(400).send({ error: "Can't join this trip", message: "Not a memeber in organization" })
                             res.end();
 
                         }
                     } else {
-                        res.status(400).send( {error:"Can't join this trip",message:"You are a driver in it"})
+                        res.status(400).send({ error: "Can't join this trip", message: "You are a driver in it" })
                         res.end();
 
                     }
                 } else {
-                    res.status(400).send({error:"Can't join this trip",message:"No available seats"})
+                    res.status(400).send({ error: "Can't join this trip", message: "No available seats" })
                     res.end()
                 }
             } else {

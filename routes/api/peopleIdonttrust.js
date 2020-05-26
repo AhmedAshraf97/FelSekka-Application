@@ -22,7 +22,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         userExists = false;
-        res.status(401).send({ message: "You aren't authorized to show trusted people " })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 

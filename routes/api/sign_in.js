@@ -37,9 +37,9 @@ router.post('/', (req, res) => {
                     let token = jwt.sign(user.dataValues, process.env.SECRET_KEY)
                     res.json({ token: token, userInfo: user.dataValues })
                 } else
-                    res.status(401).send({ error: "Password", message: "Invalid Password, Please try again" })
+                    res.status(401).send({ error: "Password", message: "Invalid Password" })
             } else
-                res.status(400).send({ error: "User doesn't exist", message: "Invalid Email or Phone number, Please try again" })
+                res.status(400).send({ error: "User doesn't exist", message: "Invalid Email or Phone number" })
         })
         .catch(errHandler)
 })

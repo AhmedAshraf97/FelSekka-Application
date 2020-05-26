@@ -24,7 +24,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         userExists = false;
-        res.status(401).send({ message: "You aren't authorized to delete an organization" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
     await ExpiredToken.findOne({ where: { token: req.headers["authorization"] } }).then(expired => {
@@ -48,10 +48,9 @@ router.post('/', async(req, res) => {
         //Organization ID check
         if (req.body.orgid == null) {
             res.status(400).send({ error: "Organization ID", message: "Organization ID paramter is missing" });
-        }else if (((req.body.orgid).toString()).trim().length === 0) {
+        } else if (((req.body.orgid).toString()).trim().length === 0) {
             res.status(400).send({ error: "Organization ID", message: "Organization ID can't be empty" });
-        }
-        else {
+        } else {
             await OrgUser.update({ status: "cancelled" }, {
                 where: {
                     userid: decoded.id,
@@ -61,7 +60,7 @@ router.post('/', async(req, res) => {
                 res.status(200).send({ message: "Organization is deleted" });
             }).catch(errHandler);
 
-        }             
+        }
     }
 });
 

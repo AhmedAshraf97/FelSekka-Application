@@ -23,7 +23,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to show available trips" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -66,7 +66,7 @@ router.post('/', async(req, res) => {
     if (req.body.brand !== undefined && ValidChecks) {
         if (!((typeof(req.body.brand) === 'string') || ((req.body.brand) instanceof String)) || (req.body.brand).trim().length === 0) {
             ValidChecks = false
-            res.status(400).send({ message: "Brand must be a string of (1-300) characters" });
+            res.status(400).send({ error: "Brand", message: "Brand must be a string of (1-300) characters" });
             res.end();
         } else {
             options.brand = req.body.brand
@@ -75,7 +75,7 @@ router.post('/', async(req, res) => {
     if (req.body.model !== undefined && ValidChecks) {
         if (!((typeof(req.body.model) === 'string') || ((req.body.model) instanceof String)) || (req.body.model).trim().length === 0) {
             ValidChecks = false
-            res.status(400).send({ message: "Model must be a string of (1-300) characters" });
+            res.status(400).send({ error: "Model", message: "Model must be a string of (1-300) characters" });
             res.end();
         } else {
             options.model = req.body.model
@@ -84,7 +84,7 @@ router.post('/', async(req, res) => {
     if (req.body.year !== undefined && ValidChecks) {
         if (!((typeof(req.body.year) === 'number')) || ((req.body.year).toString().trim().length !== 4)) {
             ValidChecks = false
-            res.status(400).send({ message: "Year must be a number of 4 digits" });
+            res.status(400).send({ error: "Year", message: "Year must be a number of 4 digits" });
             res.end();
         } else {
             options.year = req.body.year
@@ -93,7 +93,7 @@ router.post('/', async(req, res) => {
     if (req.body.type !== undefined && ValidChecks) {
         if (!((typeof(req.body.type) === 'string') || ((req.body.type) instanceof String)) || (req.body.type).trim().length === 0) {
             ValidChecks = false
-            res.status(400).send({ message: "Type must be a string of (1-300) characters" });
+            res.status(400).send({ error: "Type", message: "Type must be a string of (1-300) characters" });
             res.end();
         } else {
             options.type = req.body.type
@@ -103,7 +103,7 @@ router.post('/', async(req, res) => {
         if (!((typeof(req.body.plateletters) === 'string') || ((req.body.plateletters) instanceof String)) || (req.body.plateletters).trim().length === 0) {
             ValidChecks = false
 
-            res.status(400).send({ message: "Plateletters must be a string of (1-300) characters" });
+            res.status(400).send({ error: "Plateletters", message: "Plateletters must be a string of (1-300) characters" });
             res.end();
         } else {
             options.plateletters = req.body.plateletters
@@ -112,7 +112,7 @@ router.post('/', async(req, res) => {
     if (req.body.platenumbers !== undefined && ValidChecks) {
         if (!((typeof(req.body.platenumbers) === 'number') || (req.body.platenumbers).toString().trim().length === 0)) {
             ValidChecks = false
-            res.status(400).send({ message: "Plate numbers must be a number of (1-300) digits" });
+            res.status(400).send({ error: "Platenumbers", message: "Plate numbers must be a number of (1-300) digits" });
             res.end();
         } else {
             options.platenumbers = req.body.platenumbers
@@ -122,8 +122,9 @@ router.post('/', async(req, res) => {
     if (req.body.nationalid !== undefined && ValidChecks) {
         if (!((typeof(req.body.nationalid) === 'number') || (req.body.nationalid).toString().trim().length === 0)) {
             ValidChecks = false
-            res.status(400).send({ message: "National ID must be a number of (1-300) digits" });
+            res.status(400).send({ error: "Nationalid", message: "National ID must be a number of (1-300) digits" });
             res.end();
+
         } else {
             options.nationalid = req.body.nationalid
         }
@@ -131,7 +132,7 @@ router.post('/', async(req, res) => {
     if (req.body.carlicensefront !== undefined && ValidChecks) {
         if (!((typeof(req.body.carlicensefront) === 'string') || ((req.body.carlicensefront) instanceof String)) || (req.body.carlicensefront).trim().length === 0) {
             ValidChecks = false
-            res.status(400).send({ message: "Car License front must be a string of (1-300) characters" });
+            res.status(400).send({ error: "Carlicensefront", message: "Car License front must be a string of (1-300) characters" });
             res.end();
         } else {
             options.carlicensefront = req.body.carlicensefront
@@ -140,7 +141,7 @@ router.post('/', async(req, res) => {
     if (req.body.carlicenseback !== undefined && ValidChecks) {
         if (!((typeof(req.body.carlicenseback) === 'string') || ((req.body.carlicenseback) instanceof String)) || (req.body.carlicenseback).trim().length === 0) {
             ValidChecks = false
-            res.status(400).send({ message: "Car License back must be a string of (1-300) characters" });
+            res.status(400).send({ error: "Carlicenseback", message: "Car License back must be a string of (1-300) characters" });
             res.end();
         } else {
             options.carlicenseback = req.body.carlicenseback
@@ -149,7 +150,7 @@ router.post('/', async(req, res) => {
     if (req.body.driverlicensefront !== undefined && ValidChecks) {
         if (!((typeof(req.body.driverlicensefront) === 'string') || ((req.body.driverlicensefront) instanceof String)) || (req.body.driverlicensefront).trim().length === 0) {
             ValidChecks = false
-            res.status(400).send({ message: "Driver License front must be a string of (1-300) characters" });
+            res.status(400).send({ error: "Driverlicensefront", message: "Driver License front must be a string of (1-300) characters" });
             res.end();
 
         } else {
@@ -160,7 +161,7 @@ router.post('/', async(req, res) => {
     if (req.body.driverlicenseback !== undefined && ValidChecks) {
         if (!((typeof(req.body.driverlicenseback) === 'string') || ((req.body.driverlicenseback) instanceof String)) || (req.body.driverlicenseback).trim().length === 0) {
             ValidChecks = false
-            res.status(400).send({ message: "Driver License back must be a string of (1-300) characters" });
+            res.status(400).send({ error: "Driverlicenseback", message: "Driver License back must be a string of (1-300) characters" });
             res.end();
         } else {
             options.driverlicenseback = req.body.driverlicenseback
@@ -169,7 +170,7 @@ router.post('/', async(req, res) => {
     if (req.body.color !== undefined && ValidChecks) {
         if (!((typeof(req.body.color) === 'string') || ((req.body.color) instanceof String)) || (req.body.color).trim().length === 0) {
             ValidChecks = false
-            res.status(400).send({ message: "Color must be a string of (1-300) characters" });
+            res.status(400).send({ error: "Color", message: "Color must be a string of (1-300) characters" });
             res.end();
         } else {
             options.color = req.body.color
@@ -179,7 +180,7 @@ router.post('/', async(req, res) => {
     if (req.body.numberofseats !== undefined && ValidChecks) {
         if (!((typeof(req.body.numberofseats) === 'number') || (req.body.numberofseats).toString().trim().length === 0)) {
             ValidChecks = false
-            res.status(400).send({ message: "Number of seats be a number of (1-300) digits" });
+            res.status(400).send({ error: "Numberofseats", message: "Number of seats be a number of (1-300) digits" });
             res.end();
 
         } else {
@@ -204,17 +205,17 @@ router.post('/', async(req, res) => {
             }).catch(errHandler)
 
             if (updated[0] === 1 && Object.keys(options).length > 0) {
-                res.status(200).send("Car edited successfully")
+                res.status(200).send({ message: "Car edited successfully" })
                 res.end()
 
             } else {
-                res.status(404).send("No parameters to be edited")
+                res.status(404).send({ error: "No parameters to be edited", message: "No parameters to be edited" })
                 res.end()
             }
 
         } else {
 
-            res.status(404).send("User doesn't exist, Please Enter valid ID")
+            res.status(404).send({ error: "User doesn't exist", message: "User doesn't exist" })
             res.end();
         }
 

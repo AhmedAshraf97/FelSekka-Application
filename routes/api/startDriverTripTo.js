@@ -31,7 +31,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to edit a car" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -42,7 +42,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to start a trip" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -145,15 +145,15 @@ router.post('/', async(req, res) => {
                         status: "scheduled"
                     }
                 })
-                res.status(200).send("Driver trip is updated")
+                res.status(200).send({ message: "Driver trip is updated" })
 
             } else {
-                res.status(409).send("No driver assigned with this trip")
+                res.status(409).send({ error: "No driver assigned", message: "No driver assigned" })
                 res.end();
             }
 
         } else {
-            res.status(404).send("User doesn't exist, Please Enter valid ID")
+            res.status(404).send({ message: "User doesn't exist" })
             res.end();
         }
     }

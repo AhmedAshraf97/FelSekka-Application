@@ -45,7 +45,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to view user scheduled trips" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -56,7 +56,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to view user scheduled trips" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -366,7 +366,7 @@ router.post('/', async(req, res) => {
                                             }
 
                                         } else if (countcheck == RiderRides.length) {
-                                            res.status(409).send({ message: "No Trips for this user" })
+                                            res.status(409).send({ error: "No Trips found", message: "No Trips found" })
                                             res.end()
 
                                         }
@@ -443,7 +443,7 @@ router.post('/', async(req, res) => {
 
 
                                                                                 }
-                                                                                var x = 5;
+
 
                                                                                 if (c === AllRidersTrip.length) {
 
@@ -601,7 +601,7 @@ router.post('/', async(req, res) => {
 
                                                     }
                                                 } else if (countcheck == DriverRides.length) {
-                                                    res.status(409).send({ message: "No Trips for this user" })
+                                                    res.status(409).send({ error: "No Trips found", message: "No Trips found" })
                                                     res.end()
 
                                                 }
@@ -613,7 +613,7 @@ router.post('/', async(req, res) => {
                                     })
                                 } else {
 
-                                    res.status(409).send({ message: "No Trips for this user" })
+                                    res.status(409).send({ error: "No Trips found", message: "No Trips found" })
                                     res.end()
                                 }
                             })
@@ -623,7 +623,7 @@ router.post('/', async(req, res) => {
                     }).catch(errHandler)
 
                 } else {
-                    res.status(404).send({ message: "User not found" })
+                    res.status(404).send({ error: "User not found", message: "User not found" })
                     res.end()
                 }
             }

@@ -29,7 +29,7 @@ router.post('/', async(req, res) => {
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        res.status(401).send({ message: "You aren't authorized to add a review" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -41,7 +41,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to add any review" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -49,7 +49,7 @@ router.post('/', async(req, res) => {
 
     if (req.body.review === undefined || (req.body.review).trim().length > 300 || (req.body.review).trim().length === 0) {
         ValidChecks = false;
-        res.status(400).send({ message: "Review size must be between (1-300) characters" });
+        res.status(400).send({ error: "review", message: "Review size must be between (1-300) characters" });
         res.end();
     }
 
@@ -62,7 +62,7 @@ router.post('/', async(req, res) => {
     }).then(trip => {
         if (!trip) {
             ValidChecks = false;
-            res.status(400).send({ message: "Invalid trip id" })
+            res.status(400).send({ error: "trip id", message: "Invalid trip id" })
             res.end();
         }
     })
@@ -76,7 +76,7 @@ router.post('/', async(req, res) => {
     }).then(user => {
         if (!user) {
             ValidChecks = false;
-            res.status(400).send({ message: "Reviewed user doesn't exist" });
+            res.status(400).send({ error: "Reviewed user id", message: "Reviewed user doesn't exist" });
             res.end();
         }
     }).catch(errHandler)
@@ -117,7 +117,7 @@ router.post('/', async(req, res) => {
                     }).catch(errHandler);
             }
         } else {
-            res.status(404).send({ message: "User not found" })
+            res.status(404).send({ error: "User not found", message: "User not found" })
             res.end()
         }
     }).catch(errHandler)

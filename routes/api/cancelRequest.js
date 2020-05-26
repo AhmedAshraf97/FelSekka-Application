@@ -36,7 +36,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to cancel trip" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
     await ExpiredToken.findOne({
@@ -46,7 +46,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to cancel trip" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -83,10 +83,10 @@ router.post('/', async(req, res) => {
                     }
                 })
                 if (!RequestToupdated) {
-                    res.status(400).send("you can't cancel this request ")
+                    res.status(400).send({ error: "Request not found", message: "you can't cancel this request " })
                     res.end()
                 } else {
-                    res.status(200).send("The Request is cancelled ")
+                    res.status(200).send({ message: "The Request is cancelled " })
                     res.end()
                 }
             } else {
@@ -100,10 +100,10 @@ router.post('/', async(req, res) => {
                     }
                 })
                 if (!RequestFromupdated) {
-                    res.status(400).send("you can't cancel this request")
+                    res.status(400).send({ error: "Request not found", message: "you can't cancel this request " })
                     res.end()
                 } else {
-                    res.status(200).send("The Request is cancelled ")
+                    res.status(200).send({ message: "The Request is cancelled " })
                     res.end()
                 }
 

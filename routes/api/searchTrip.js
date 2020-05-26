@@ -29,7 +29,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to search for trips" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -44,7 +44,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to search for trips" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -140,7 +140,7 @@ router.post('/', async(req, res) => {
                                 if (count !== 0) {
                                     res.status(200).send(obj)
                                 } else {
-                                    res.status(409).send("No trips are found")
+                                    res.status(409).send({ error: "No trips are found", message: "No trips are found" })
 
                                 }
 
@@ -210,7 +210,7 @@ router.post('/', async(req, res) => {
                                 if (count !== 0) {
                                     res.status(200).send(obj)
                                 } else {
-                                    res.status(409).send("No trips are found")
+                                    res.status(409).send({ error: "No trips are found", message: "No trips are found" })
 
                                 }
                             }
@@ -229,12 +229,12 @@ router.post('/', async(req, res) => {
 
             } else {
 
-                res.status(409).send("No trips are found")
+                res.status(409).send({ error: "No trips are found", message: "No trips are found" })
 
             }
 
         } else
-            res.status(401).send("User doesn't exist, Please Enter valid ID")
+            res.status(401).send({ message: "User doesn't exist" })
             .catch(err => {
                 res.send('error: ' + err)
             })

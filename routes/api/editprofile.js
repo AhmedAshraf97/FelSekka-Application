@@ -27,7 +27,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         isvalid = true;
-        res.status(401).send({ message: "You aren't authorized to edit profile" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -40,7 +40,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             isvalid = true;
-            res.status(401).send({ message: "You aren't authorized to edit profile" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -247,10 +247,10 @@ router.post('/', async(req, res) => {
                         longitude: req.body.longitude || user.longitude
                     }, {
                         where: { id: decoded.id }
-                    }).then(res.status(200).send("OK")).catch(errHandler);
+                    }).then(res.status(200).send({ message: "OK" })).catch(errHandler);
                 }
             } else {
-                res.status(401).send("User not found")
+                res.status(401).send({ error: "User not found", message: "User not found" })
             }
         }).catch(err => { res.send('error: ' + err) })
 

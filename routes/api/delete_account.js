@@ -29,7 +29,7 @@ router.post('/', async(req, res) => {
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        res.status(401).send({ message: "You aren't authorized to delete account" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -41,7 +41,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to delete account" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -71,7 +71,7 @@ router.post('/', async(req, res) => {
 
             }
         } else {
-            res.status(404).send({ message: "User not found" })
+            res.status(404).send({ error: "User not found", message: "User not found" })
             res.end()
         }
     }).catch(errHandler)

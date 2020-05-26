@@ -91,7 +91,7 @@ router.post('/', async(req, res) => {
 
                     }, {
                         where: { id: decoded.id }
-                    }).then(res.status(200).send("Password is changed")).catch(err => {
+                    }).then(res.status(200).send({ message: "Password is changed" })).catch(err => {
                         console.log(err)
                     })
 
@@ -99,7 +99,7 @@ router.post('/', async(req, res) => {
                 }
 
             } else
-                res.status(401).send("User doesn't exist, Please Enter valid ID")
+                res.status(401).send({ error: "User doesn't exist", message: "User doesn't exist" })
         })
         .catch(err => {
             console.log(err)

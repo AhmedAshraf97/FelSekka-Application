@@ -128,15 +128,15 @@ router.post('/', async(req, res) => {
                         status: "ongoing"
                     }
                 }).catch(errHandler)
-                res.status(200).send("rider trip is updated")
+                res.status(200).send({ message: "rider trip is updated" })
 
             } else {
-                res.status(404).send("Rider doesn't exist")
+                res.status(404).send({ error: "Rider doesn't exist", message: "Rider doesn't exist" })
                 res.end();
             }
 
         } else {
-            res.status(404).send("trip doesn't exist")
+            res.status(404).send({ error: "Trip doesn't exist", message: "Trip doesn't exist" })
             res.end();
         }
     } else {

@@ -23,7 +23,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         userExists = false;
-        res.status(401).send({ message: "You aren't authorized to show organizations" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
     await ExpiredToken.findOne({ where: { token: req.headers["authorization"] } }).then(expired => {
@@ -42,34 +42,31 @@ router.post('/', async(req, res) => {
     }).catch(errHandler);
 
     if (userExists) {
-            var org = '{"count": [], "organizations":[]}';
-            var obj = JSON.parse(org);
-            var orgUserArray = {};
-            var allExistingOrg ={};
-            var count = 0;
-            await OrgUser.findAll({ where: { userid: decoded.id , status:'existing'}}).then(orgUsers=>{
-                orgUserArray = orgUsers;    
-            }).catch(errHandler);    
-            await Organization.findAll({ where: {status: "existing"}}).then(existingOrganizations=>{
-                    allExistingOrg = existingOrganizations; 
-            }).catch(errHandler);
-            orgUserArray.forEach(orgUser => {
-                allExistingOrg.forEach(existingOrg =>{
-                    if(orgUser.orgid === existingOrg.id )
-                    {
-                        obj['organizations'].push(existingOrg);
-                        count++;
-                    }
-                })   
-            });
-            obj['count'].push(count);
-            if(count === 0)
-            {
-                res.status(409).send("No organizations found");
-            }
-            else{
-                res.status(200).send(obj);
-            }    
+        var org = '{"count": [], "organizations":[]}';
+        var obj = JSON.parse(org);
+        var orgUserArray = {};
+        var allExistingOrg = {};
+        var count = 0;
+        await OrgUser.findAll({ where: { userid: decoded.id, status: 'existing' } }).then(orgUsers => {
+            orgUserArray = orgUsers;
+        }).catch(errHandler);
+        await Organization.findAll({ where: { status: "existing" } }).then(existingOrganizations => {
+            allExistingOrg = existingOrganizations;
+        }).catch(errHandler);
+        orgUserArray.forEach(orgUser => {
+            allExistingOrg.forEach(existingOrg => {
+                if (orgUser.orgid === existingOrg.id) {
+                    obj['organizations'].push(existingOrg);
+                    count++;
+                }
+            })
+        });
+        obj['count'].push(count);
+        if (count === 0) {
+            res.status(409).send({ error: "No organizations found", message: "No organizations found" });
+        } else {
+            res.status(200).send(obj);
+        }
     }
 });
 

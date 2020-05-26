@@ -56,28 +56,28 @@ router.post('/', async(req, res) => {
         res.end();
     } else if (req.body.distance == null) {
         ValidChecks = false;
-        res.status(400).send({ error: "distance ", message: "distance paramter is missing" });
+        res.status(400).send({ error: "Distance ", message: "Distance paramter is missing" });
         res.end();
     } else if (!((typeof(req.body.distance) === 'number'))) {
         ValidChecks = false;
-        res.status(400).send({ error: "distance", message: "distance must be a number" });
+        res.status(400).send({ error: "Distance", message: "Distance must be a number" });
         res.end();
     } else if (req.body.time == null) {
         ValidChecks = false;
-        res.status(400).send({ error: "time ", message: "time paramter is missing" });
+        res.status(400).send({ error: "Time ", message: "Time paramter is missing" });
         res.end();
     } else if (!((typeof(req.body.time) === 'number'))) {
         ValidChecks = false;
 
-        res.status(400).send({ error: "time", message: "time must be a number" });
+        res.status(400).send({ error: "Time", message: "Time must be a number" });
         res.end();
     } else if (req.body.fare == null) {
         ValidChecks = false;
-        res.status(400).send({ error: "fare ", message: "fare paramter is missing" });
+        res.status(400).send({ error: "Fare", message: "Fare paramter is missing" });
         res.end();
     } else if (!((typeof(req.body.fare) === 'number'))) {
         ValidChecks = false;
-        res.status(400).send({ error: "fare", message: "fare must be a number" });
+        res.status(400).send({ error: "Fare", message: "Fare must be a number" });
         res.end();
     }
 
@@ -126,15 +126,15 @@ router.post('/', async(req, res) => {
                         status: "ongoing"
                     }
                 }).catch(errHandler)
-                res.status(200).send("Rider trip is updated")
+                res.status(200).send({ message: "Rider trip is updated" })
 
             } else {
-                res.status(404).send("Rider doesn't exist")
+                res.status(404).send({ error: "Rider doesn't exist", message: "Rider doesn't exist" })
                 res.end();
             }
 
         } else {
-            res.status(404).send("Trip doesn't exist")
+            res.status(404).send({ error: "Trip doesn't exist", message: "Trip doesn't exist" })
             res.end();
         }
     } else {

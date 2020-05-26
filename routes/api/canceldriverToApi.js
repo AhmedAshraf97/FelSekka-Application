@@ -32,7 +32,7 @@ router.post('/', async(req, res) => {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         ValidChecks = false;
-        res.status(401).send({ message: "You aren't authorized to cancel trip" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
     const user = await User.findOne({
@@ -54,7 +54,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to cancel trip" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -145,7 +145,7 @@ router.post('/', async(req, res) => {
                     }
 
 
-                    res.status(200).send("The whole trip is cancelled")
+                    res.status(200).send({ message: "The trip is cancelled" })
                     res.end()
 
 
@@ -181,16 +181,16 @@ router.post('/', async(req, res) => {
                         }
                     }).catch(errHandler)
 
-                    res.status(200).send("The whole trip is cancelled")
+                    res.status(200).send({ message: "The trip is cancelled" })
                     res.end()
                 }
             } else {
-                res.status(400).send("you are not the driver of this trip")
+                res.status(400).send({ error: "You aren't the driver", message: "You aren't the driver" })
                 res.end()
 
             }
         } else {
-            res.status(400).send({ error: "tripid", message: "enter valid trip id" });
+            res.status(400).send({ error: "Trip id", message: "enter valid trip id" });
             res.end()
         }
     }

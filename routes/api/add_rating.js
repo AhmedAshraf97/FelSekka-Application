@@ -28,7 +28,7 @@ router.post('/', async(req, res) => {
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        res.status(401).send({ message: "You aren't authorized to add a rating" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
 
@@ -39,7 +39,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to add any rating" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -71,14 +71,14 @@ router.post('/', async(req, res) => {
     }).then(trip => {
         if (!trip) {
             ValidChecks = false;
-            res.status(400).send({ message: "Invalid trip id" })
+            res.status(400).send({ error: "Trip id", message: "Invalid trip id" })
             res.end();
         }
     })
 
     if (!((typeof(req.body.rating) === 'number') || (req.body.rating).trim().length === 0) || req.body.rating > 5 || req.body.rating < 0) {
         ValidChecks = false
-        res.status(400).send({ message: "Rating should be a number of value (1-5)" });
+        res.status(400).send({ error: "rating", message: "Rating should be a number of value (1-5)" });
         res.end();
 
     }
@@ -115,7 +115,7 @@ router.post('/', async(req, res) => {
                         Rating.count({ where: { rateduserid: req.body.rateduserid } }).then(count => {
                             User.update({ rating: (sum / count) }, { where: { id: req.body.rateduserid } }).
                             then(result => {
-                                res.status(200).send("Rating updated")
+                                res.status(200).send({ message: "Rating updated" })
                                 console.log(" New Rating : ", (sum / count))
                             }).catch(errHandler)
                         })
@@ -124,7 +124,7 @@ router.post('/', async(req, res) => {
                 }).catch(errHandler)
             }
         } else {
-            res.status(404).send({ message: "User not found" })
+            res.status(404).send({ error: "User not found", message: "User not found" })
             res.end()
         }
     }).catch(errHandler)

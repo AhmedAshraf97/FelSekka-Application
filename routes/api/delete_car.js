@@ -29,7 +29,7 @@ router.post('/', async(req, res) => {
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        res.status(401).send({ message: "You aren't authorized to delete any car" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
     await ExpiredToken.findOne({
@@ -39,7 +39,7 @@ router.post('/', async(req, res) => {
     }).then(expired => {
         if (expired) {
             ValidChecks = false;
-            res.status(401).send({ message: "You aren't authorized to delete any car" })
+            res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
     }).catch(errHandler)
@@ -51,7 +51,7 @@ router.post('/', async(req, res) => {
     }).then(car => {
         if (!car) {
             ValidChecks = false;
-            res.status(404).send({ message: "Car is not found" })
+            res.status(404).send({ error: "Car not found", message: "Car not found" })
             res.end()
         }
     }).catch(errHandler)
@@ -77,14 +77,14 @@ router.post('/', async(req, res) => {
                     }
                 }).then(carupdate => {
                     if (carupdate) {
-                        res.status(200).send({ message: "Car is deleted successfully" })
+                        res.status(200).send({ message: "Car is deleted" })
                         res.end()
                     }
                 }).catch(errHandler)
 
             }
         } else {
-            res.status(404).send({ message: "User not found" })
+            res.status(404).send({ error: "User not found", message: "User not found" })
             res.end()
         }
     }).catch(errHandler)
