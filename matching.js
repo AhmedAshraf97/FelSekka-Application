@@ -167,9 +167,8 @@ module.exports = async function main() {
 
 
         for (var j = 0; j < Drivers.length; j++) {
-            if (Drivers[j].skipFlag === 1) {
-                Drivers[j].skipFlag = 0;
-                continue;
+            if (Drivers[j].ID === 64) {
+                var x = 5;;
             }
 
             if (NumberOfUnAssignedRiders === 0)
@@ -267,7 +266,7 @@ module.exports = async function main() {
                             0.25 * DistanceFromDriver / CurrentRider.MaxDistanceToNormalizeDrivers +
                             0.3 * Trust -
                             0.04 * diff_minutes(CurrentRider.ArrivalTime, CurrentDriver.ArrivalTime) / 30 +
-                            0.2 * NumberofEmptyPlaces
+                            0.075 * NumberofEmptyPlaces
 
                         WeightArrayForDrivers.push(WeightFunctionDriver)
                         WeightIndexForDrivers.push(DriverToCheckID)
@@ -389,7 +388,7 @@ module.exports = async function main() {
                             0.25 * DistanceFromRider / CurrentRider.MaxDurationToNormalizeRiders +
                             0.3 * Trust -
                             0.04 * diff_minutes(CurrentRider.ArrivalTime, DriverOfRiderToCheck.ArrivalTime) / 30 +
-                            0.2 * NumberofEmptyPlaces
+                            0.075 * NumberofEmptyPlaces
 
                         WeightArrayForRiders.push(WeightFunctionRider)
                         WeightIndexForRiders.push(RiderToCheckID)
