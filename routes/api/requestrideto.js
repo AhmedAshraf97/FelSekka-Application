@@ -41,7 +41,7 @@ router.post('/', async(req, res) => {
     await ExpiredToken.findOne({ where: { token: req.headers["authorization"] } }).then(expired => {
         if (expired) {
             userExists = false;
-            res.status(401).send({ message: "You aren't authorized" })
+            res.status(401).send({ message: "You aren't authorized " })
             res.end();
         }
     }).catch(errHandler)

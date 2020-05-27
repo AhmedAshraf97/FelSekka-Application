@@ -1,6 +1,6 @@
 const graphlib = require('graphlib');
 //const ksp = require('k-shortest-path');
-const ksp = require('../FilSekka-Application/yenKSP')
+const ksp = require('../FelSekka-Application/yenKSP')
 var Combinatorics = require('js-combinatorics');
 
 var Riders;
