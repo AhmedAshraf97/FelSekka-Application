@@ -46,6 +46,18 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler);
 
+    const org = await OrgUser.findOne({
+        where: {
+            userid: decoded.id,
+            orgid: req.body.orgid
+        }
+    })
+    if (org) {
+        userExists = false;
+        res.status(400).send({ error: "Can't join", message: "You can't join this organization" });
+        res.end()
+
+    }
 
     if (userExists) {
         //Organization ID check
@@ -72,51 +84,58 @@ router.post('/', async(req, res) => {
                     domain = false;
                 }
             }).catch(errHandler);
-        }
-        var x = orglatitude;
-        var y = orglongitude;
-        var z = decoded.latitude;
-        var w = decoded.longitude;
-        var body12 = {}
-        var body21 = {}
-        var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z, ',', w, '&destinations=', x, ',', y, '&key=', API_KEY);
-        var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x, ',', y, '&destinations=', z, ',', w, '&key=', API_KEY);
-        await request.post(url12).then(function(body) {
-            body12 = body;
-        })
-        await request.post(url21).then(function(body) {
-            body21 = body;
-        })
-        body12 = JSON.parse(body12)
-        body21 = JSON.parse(body21)
-        var results12 = body12.rows[0].elements;
-        var element12 = results12[0]
-        distance12 = element12.distance.value / 1000;
-        time12 = element12.duration.value / 60;
-        ///////////////////////////////////
-        var results21 = body21.rows[0].elements;
-        var element21 = results21[0]
-        distance21 = element21.distance.value / 1000;
-        time21 = element21.duration.value / 60;
 
-        //Insert org user 
-        const orgUserData = {
-            orgid: parseInt(req.body.orgid),
-            userid: decoded.id,
-            distancetoorg: distance12,
-            timetoorg: time12,
-            distancefromorg: distance21,
-            timefromorg: time21,
-            status: 'existing'
-        }
-        if (!domain) {
-            res.status(200).send({ message: "You can't join this organization" });
-        } else {
-            await OrgUser.create(orgUserData).then(user => {
-                res.status(200).send({ message: "Organization is chosen" });
-            }).catch(errHandler);
-        }
+            if (domain) {
+                var x = orglatitude;
+                var y = orglongitude;
+                var z = decoded.latitude;
+                var w = decoded.longitude;
+                var body12 = {}
+                var body21 = {}
+                var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z, ',', w, '&destinations=', x, ',', y, '&key=', API_KEY);
+                var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x, ',', y, '&destinations=', z, ',', w, '&key=', API_KEY);
+                await request.post(url12).then(function(body) {
+                    body12 = body;
+                })
+                await request.post(url21).then(function(body) {
+                    body21 = body;
+                })
+                body12 = JSON.parse(body12)
+                body21 = JSON.parse(body21)
+                var results12 = body12.rows[0].elements;
+                var element12 = results12[0]
+                distance12 = element12.distance.value / 1000;
+                time12 = element12.duration.value / 60;
+                ///////////////////////////////////
+                var results21 = body21.rows[0].elements;
+                var element21 = results21[0]
+                distance21 = element21.distance.value / 1000;
+                time21 = element21.duration.value / 60;
 
+                //Insert org user 
+                const orgUserData = {
+                    orgid: parseInt(req.body.orgid),
+                    userid: decoded.id,
+                    distancetoorg: distance12,
+                    timetoorg: time12,
+                    distancefromorg: distance21,
+                    timefromorg: time21,
+                    status: 'existing'
+                }
+                await OrgUser.create(orgUserData).then(user => {
+                    res.status(200).send({ message: "Organization is chosen" });
+                }).catch(errHandler);
+
+            } else {
+
+                res.status(400).send({ error: "Can't join", message: "You can't join this organization" });
+                res.end()
+
+            }
+
+
+
+        }
     }
 });
 
