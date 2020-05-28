@@ -199,7 +199,7 @@ module.exports = async function main() {
                 {
                     var indexinDriverRider = DriversRiders.findIndex(n => n.ID == Drivers[j].ID);
 
-                    if (DriversRiders[indexinDriverRider].checked === DriversRiders[indexinDriverRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
+                    if (DriversRiders[indexinDriverRider].checked === DriversRiders[indexinDriverRider].length || (Drivers[j].AssignedRiders.length - 1) === Drivers[j].capacity) {
                         continue;
 
                     }
@@ -314,7 +314,7 @@ module.exports = async function main() {
                 if (indexinRiderRider === -1) {
                     continue;
                 }
-                if (RidersRiders[indexinRiderRider].checked === RidersRiders[indexinRiderRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
+                if (RidersRiders[indexinRiderRider].checked === RidersRiders[indexinRiderRider].length || (Drivers[j].AssignedRiders.length - 1) === Drivers[j].capacity) {
                     continue;
 
                 }
@@ -484,7 +484,7 @@ module.exports = async function main() {
                 var indexinDriverRider = RidersRiders.findIndex(n => n.ID == Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1]);
                 if (indexinDriverRider === -1) {
                     count++;
-                } else if (RidersRiders[indexinDriverRider].checked === RidersRiders[indexinDriverRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
+                } else if (RidersRiders[indexinDriverRider].checked === RidersRiders[indexinDriverRider].length || (Drivers[j].AssignedRiders.length - 1) === Drivers[j].capacity) {
                     count++;
 
                 }
@@ -494,7 +494,7 @@ module.exports = async function main() {
                 var indexinRiderRider = RidersRiders.findIndex(n => n.ID == Drivers[j].AssignedRiders[Drivers[j].AssignedRiders.length - 1]);
                 if (indexinRiderRider === -1) {
                     count++;
-                } else if (RidersRiders[indexinRiderRider].checked === RidersRiders[indexinRiderRider].length || Drivers[j].AssignedRiders.length === Drivers[j].capacity) {
+                } else if (RidersRiders[indexinRiderRider].checked === RidersRiders[indexinRiderRider].length || (Drivers[j].AssignedRiders.length - 1) === Drivers[j].capacity) {
                     count++;
 
                 }
