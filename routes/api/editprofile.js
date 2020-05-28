@@ -9,6 +9,10 @@ const regex = require('regex');
 const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const ExpiredToken = require('../../models/expiredtokens');
+
+const Organization = require('../../models/organizations');
+
+const Op = Sequelize.Op;
 var request = require('request-promise');
 const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
 
@@ -233,9 +237,7 @@ router.post('/', async(req, res) => {
                 }
                 /////check if all paramters empty dont update
                 if (isvalid === false) {
-                    var allUsers = {}
-                    var orgUsers = {}
-                    user.update({
+                    User.update({
                         firstname: req.body.firstname || user.firstname,
                         lastname: req.body.lastname || user.lastname,
                         password: bcryptPass,
@@ -247,7 +249,8 @@ router.post('/', async(req, res) => {
                         longitude: req.body.longitude || user.longitude
                     }, {
                         where: { id: decoded.id }
-                    }).then(res.status(200).send({ message: "OK" })).catch(errHandler);
+                    }).then(
+                        res.status(200).send({ message: "OK" })).catch(errHandler);
                 }
             } else {
                 res.status(401).send({ error: "User not found", message: "User not found" })
@@ -256,7 +259,6 @@ router.post('/', async(req, res) => {
 
         if (isvalid === false && loc === true) {
 
-            var orgUsers = {}
             const allUsers = await User.findAll({
                 where: {
                     [Op.and]: [{
@@ -266,9 +268,10 @@ router.post('/', async(req, res) => {
                     }, { status: 'existing' }]
                 }
             }).catch(errHandler);
-            await forEach(allUsers, async(user) => {
-                var x = req.body.latitude;
-                var y = req.body.longitude;
+
+            allUsers.forEach(async(user) => {
+                var x = req.body.latitude.toString();
+                var y = req.body.longitude.toString();
                 var z = user.latitude;
                 var w = user.longitude;
                 var body12 = {}
@@ -309,26 +312,26 @@ router.post('/', async(req, res) => {
             });
 
 
-            await orgUser.findAll({
+            const orgUsers = await orgUser.findAll({
                 where: {
                     [Op.and]: [{ userid: decoded.id }, { status: 'existing' }]
                 }
-            }).then(orgusers => {
-                if (orgusers) {
-                    orgUsers = orgusers;
-                }
             }).catch(errHandler);
-            await forEach(orgUsers, async(user) => {
-                var x = orglatitude;
-                var y = orglongitude;
-                var z = decoded.latitude;
-                var w = decoded.longitude;
-                var orgid = 0;
+
+
+            orgUsers.forEach(async(user) => {
+
                 await Organization.findOne({ where: { id: user.orgid, status: 'existing' } }).then(org => {
                     orglatitude = org.latitude;
                     orglongitude = org.longitude;
                     orgid = org.id;
                 }).catch(errHandler);
+
+                var x = orglatitude;
+                var y = orglongitude;
+                var z = req.body.latitude.toString();
+                var w = req.body.longitude.toString();
+                var orgid = orgid;
                 var body12 = {}
                 var body21 = {}
                 var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z, ',', w, '&destinations=', x, ',', y, '&key=', API_KEY);
@@ -357,7 +360,7 @@ router.post('/', async(req, res) => {
                     timefromorg: time21,
                 }, {
                     where: { userid: decoded.id, orgid: orgid, status: 'existing' }
-                }).then().catch(errHandler);
+                }).catch(errHandler);
             })
         }
     }
