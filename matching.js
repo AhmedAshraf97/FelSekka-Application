@@ -117,8 +117,14 @@ async function StepByStepReorder(AvailableDriver) {
             break;
 
     }
-    // var RemainingToDest=Riders.find(n=>n.ID===AvailableDriver.AssignedRiders[AvailableDriver.AssignedRiders.length-1]).TimeToOrganizationMinutes
-    var delta = Math.min(0.25 * AvailableDriver.MaxDuration, 10)
+
+
+    var RemainingToDest = Riders.find(n => n.ID === AvailableDriver.AssignedRiders[AvailableDriver.AssignedRiders.length - 2]).TimeToOrganizationMinutes
+        //var delta = Math.min(0.25 * AvailableDriver.MaxDuration, 10)
+    var RemainingMaxDuration = AvailableDriver.MaxDuration - (AvailableDriver.TotalDurationTaken - RemainingToDest)
+    var delta = ((AvailableDriver.AssignedRiders.length - 2) / AvailableDriver.capacity) * RemainingMaxDuration
+
+    delta = Math.min(delta, RemainingToDest)
     var response = ksp.ksp(g, DriverIDstr, OrganizationID, kValue);
     filteredresponse = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.TotalDurationTaken + delta && p.totalCost <= AvailableDriver.MaxDuration)
 
@@ -170,9 +176,7 @@ module.exports = async function main() {
 
 
         for (var j = 0; j < Drivers.length; j++) {
-            if (Drivers[j].ID === 97) {
-                var x = 5;
-            }
+
 
             if (NumberOfUnAssignedRiders === 0)
                 break;
@@ -369,8 +373,8 @@ module.exports = async function main() {
 
                 }
                 if (WeightArray.length > 0) {
-                    if (Drivers[j].ID === 70 && Riders[61].DriverAssigned == -1) {
-                        var x = 5;
+                    if (Drivers[j].ID === 43) {
+                        var x = 7;
                     }
 
                     ChosenRiderID = WeightIndex[WeightArray.indexOf(Math.max.apply(null, WeightArray))]
@@ -391,7 +395,6 @@ module.exports = async function main() {
                             continue;
                         }
                         var DriverOfRiderToCheck = Drivers.find(n => n.ID === RiderToCheckobj.DriverAssigned)
-
 
                         var Trust, NumberofEmptyPlaces;
 
