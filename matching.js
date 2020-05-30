@@ -119,8 +119,14 @@ async function StepByStepReorder(AvailableDriver) {
     }
 
 
-    //var RemainingToDest = Riders.find(n => n.ID === AvailableDriver.AssignedRiders[AvailableDriver.AssignedRiders.length - 2]).TimeToOrganizationMinutes
-    var delta = Math.max(0.25 * AvailableDriver.MaxDuration, 10)
+    var RemainingToDest = Riders.find(n => n.ID === AvailableDriver.AssignedRiders[AvailableDriver.AssignedRiders.length - 2]).TimeToOrganizationMinutes
+
+    if (AvailableDriver.ID === 64 && AvailableDriver.AssignedRiders[AvailableDriver.AssignedRiders.length - 1] === 102) {
+        var x = 7;
+
+    }
+    var durationTaken = AvailableDriver.TotalDurationTaken - RemainingToDest;
+    var delta = Math.max(0.25 * AvailableDriver.MaxDuration - 0.15 * durationTaken, 10)
         //var RemainingMaxDuration = AvailableDriver.MaxDuration - (AvailableDriver.TotalDurationTaken - RemainingToDest)
         //var delta = ((AvailableDriver.AssignedRiders.length - 2) / AvailableDriver.capacity) * RemainingMaxDuration
 
@@ -168,14 +174,19 @@ module.exports = async function main() {
 
     //Drivers are sorted by rating
     var count = -1;
+    var farah = 0;
 
     while (count != Drivers.length) {
-
+        farah++;
         if (NumberOfUnAssignedRiders === 0)
             break;
 
 
         for (var j = 0; j < Drivers.length; j++) {
+
+            if (Drivers[j].countRiders == 70 && Drivers[j].ID === 46) {
+                var x = 5;
+            }
 
 
             if (NumberOfUnAssignedRiders === 0)
@@ -418,8 +429,19 @@ module.exports = async function main() {
 
 
                     }
+
+                    if (Drivers[j].ID == 44 && ChosenRiderID == 103) {
+                        var x = 7;
+
+                    }
+
                     if (Drivers[j].countRiders == WeightArrayForRiders.length) {
 
+
+                        if (ChosenRiderID === 102) {
+                            var x = 7;
+
+                        }
                         var filteredDrivers = Drivers.filter(n => n.lastChosenRider === ChosenRiderID);
                         if (filteredDrivers.length != 0) {
                             var durations = [],
@@ -438,7 +460,6 @@ module.exports = async function main() {
                             if (BestDriver === Drivers[j].ID) {
                                 RidersRiders[indexinRiderRider].data.find(n => n.to === ChosenRiderID).checked = 1;
                                 RidersRiders[indexinRiderRider].checked++;
-                                Drivers[j].lastChosenRider = -1;
                             } else {
                                 ChosenRiderID = -1;
 
@@ -447,9 +468,8 @@ module.exports = async function main() {
 
                             RidersRiders[indexinRiderRider].data.find(n => n.to === ChosenRiderID).checked = 1;
                             RidersRiders[indexinRiderRider].checked++;
+
                         }
-
-
 
                     } else {
                         Drivers[j].countRiders = WeightArrayForRiders.length
@@ -457,6 +477,11 @@ module.exports = async function main() {
                         if (WeightArrayForRiders.length > 0) {
                             var ChosenMaxRider = WeightIndexForRiders[WeightArrayForRiders.indexOf(Math.max.apply(Math, WeightArrayForRiders))]
                             var isExist = Drivers[j].AssignedRiders.find(n => n === ChosenMaxRider)
+
+
+                            if (ChosenRiderID == 102 && Drivers[j].ID == 43) {
+                                var x = 9;
+                            }
                             if (isExist === undefined) {
                                 Drivers[j].lastChosenRider = ChosenRiderID;
                                 ChosenRiderID = -1;
@@ -466,6 +491,7 @@ module.exports = async function main() {
                             } else {
                                 RidersRiders[indexinRiderRider].data.find(n => n.to === ChosenRiderID).checked = 1;
                                 RidersRiders[indexinRiderRider].checked++;
+
                             }
 
                         } else {
@@ -478,7 +504,7 @@ module.exports = async function main() {
             }
 
             if (ChosenRiderID != -1 && chosenDuration != -1) {
-
+                Drivers[j].lastChosenRider = -1;
                 var old_Assigned = JSON.parse(JSON.stringify(Drivers[j].AssignedRiders));
                 Drivers[j].AssignedRiders.push(ChosenRiderID)
                 if (lastRiderID === DriverID) {
