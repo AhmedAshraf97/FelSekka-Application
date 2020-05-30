@@ -36,7 +36,7 @@ class _LoadingScreenState extends State<LoadingScreen>
     Future.delayed(const Duration(seconds: 4), () {
       setState(() {
         Navigator.pop(context);
-        if(token!="")
+        if(token!="") // Already logged in
         {
           Navigator.push(context, AnimatedPageRoute(widget: SideBarLayout()));
         }
@@ -59,17 +59,39 @@ class _LoadingScreenState extends State<LoadingScreen>
     controller.forward();
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: FadeTransition(
-          opacity: animation,
-          child: Container(
-              height: 200.0,
-              child: Material( // with Material
-                child: Image.asset("images/felsekkalogo2nobg.png"),
-                elevation: 18.0,
-                shape: CircleBorder(),
-                clipBehavior: Clip.antiAlias,
-              )
+      body: Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.center,
+                colors: [
+                  Colors.indigo[600],
+                  Colors.indigo[500],
+                  Colors.indigo[400],
+                  Colors.indigo[300]
+                ]
+            ),
+        ),
+        width: double.infinity,
+        height: double.infinity,
+        child: Center(
+          child: FadeTransition(
+            opacity: animation,
+            child: Container(
+                height: 200.0,
+                decoration: BoxDecoration(
+                  boxShadow: [BoxShadow(
+                    color: Color.fromRGBO(39, 78, 220, 0.3),
+                    blurRadius: 20.0,
+                    offset: Offset(0,10),
+                  )],
+                ),
+                child: Material( // with Material
+                  child: Image.asset("images/bgblue.png"),
+                  elevation: 18.0,
+                  shape: CircleBorder(),
+                  clipBehavior: Clip.antiAlias,
+                )
+            ),
           ),
         ),
       ),

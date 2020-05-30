@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:felsekka/pages/signin.dart';
 import 'package:felsekka/pages/signup3.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,8 +26,8 @@ class SignUp2 extends StatefulWidget {
 
 class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
   String selectedGender="female";
-  String date = null;
-  String dateSelected="";
+  String date = null; //To show date
+  String dateSelected=""; //To sign up
   int ridewith=1;
   int smoking=1;
   String ridewithSelected="";
@@ -40,34 +41,31 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
             gradient: LinearGradient(
                 begin: Alignment.center,
                 colors: [
-                  Colors.indigo[700],
                   Colors.indigo[600],
-                  Colors.deepPurple[800],
-                  Colors.deepPurple[600],
                   Colors.indigo[500],
-                  Colors.indigo[400]
+                  Colors.indigo[400],
+                  Colors.indigo[300]
                 ]
             )
         ),
         child: Column(
           children: <Widget>[
-            SizedBox(
-              height: 10.0,
-            ),
             Image.asset(
               "images/felsekkalogowhitenobg.png",
-              height: 60.0,
+              height: 50.0,
             ),
-            Text(
+            AutoSizeText(
               "Sign Up & Carpool!",
+              minFontSize: 2.0,
+              maxLines: 1,
               style: TextStyle(
                 color: Colors.white,
                 fontFamily: "Kodchasan",
-                fontSize: 15.0,
+                fontSize: 10.0,
               ),
             ),
             SizedBox(
-              height: 10.0,
+              height: 5.0,
             ),
             Expanded(
               child: Container(
@@ -80,6 +78,8 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                   child: Column(
                     children: <Widget>[
                       GenderSelector(
+                        femaleimg: "https://github.com/dhruvemod/gender_selector_flutter/blob/master/assets/female.png?raw=true",
+                        maleimg: "https://github.com/dhruvemod/gender_selector_flutter/blob/master/assets/male.png?raw=true",
                         margin: EdgeInsets.only(left: 10, top: 0, right: 10, bottom: 5,),
                         selectedGender: selectedGender == "female"
                             ? Gender.FEMALE
@@ -115,10 +115,10 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                         ),
                       ),
                       Container(
-                        height: 70,
+                        height: 80,
                         child: CupertinoDatePicker(
                           mode: CupertinoDatePickerMode.date,
-                          initialDateTime: DateTime(1997, 10, 5),
+                          initialDateTime: DateTime.now(),
                           onDateTimeChanged: (DateTime newDateTime) {
                             date = DateFormat('dd-MM-yyyy').format(newDateTime);
                             setState(() {
@@ -127,13 +127,21 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                           },
                         ),
                       ),
-                      Text(
+                      SizedBox(
+                        height: 5,
+                      ),
+                      AutoSizeText(
                         "*You can change Ride with & Smoking on requesting/offering rides",
+                        minFontSize: 2,
+                        maxLines: 1,
                         style: TextStyle(
                           color: Colors.black,
                           fontFamily: "Kodchasan",
                           fontSize: 9.0,
                         ),
+                      ),
+                      SizedBox(
+                        height: 3,
                       ),
                       Text(
                         "Ride with:",
@@ -275,13 +283,13 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                         child: Text("Next",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 20.0,
+                            fontSize: 15.0,
                             fontFamily: "Kodchasan",
                           ),
                         ),
-                        height:40,
+                        height:35,
                         minWidth:100,
-                        color: Colors.indigo,
+                        color: Colors.indigo[400],
                         elevation: 15,
                         highlightColor: Colors.grey,
                         splashColor: Colors.blueGrey,
@@ -291,7 +299,7 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                         onPressed: (){
                           RegExp regExpBirthdate= new RegExp(r"([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))");
                           bool Valid=true;
-                          //ridewith
+                          //ridewith as string
                           if(ridewith==1)
                             {
                               ridewithSelected="male";
@@ -304,7 +312,7 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                             {
                               ridewithSelected="any";
                             }
-                          //smoking
+                          //smoking as string
                           if(smoking==1)
                           {
                             smokingSelected="yes";
@@ -531,10 +539,12 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                           Navigator.pop(context);
                           Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
                         },
-                        child: Text(
+                        child: AutoSizeText(
                           "Already have an account? Sign In.",
+                          minFontSize: 2,
+                          maxLines: 1,
                           style: TextStyle(
-                            color: Colors.indigo,
+                            color: Colors.indigo[400],
                             fontFamily: "Kodchasan",
                             decoration: TextDecoration.underline,
                           ),

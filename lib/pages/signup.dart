@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:felsekka/pages/signin.dart';
 import 'package:felsekka/pages/signup2.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,34 +32,31 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin{
             gradient: LinearGradient(
                 begin: Alignment.center,
                 colors: [
-                  Colors.indigo[700],
                   Colors.indigo[600],
-                  Colors.deepPurple[800],
-                  Colors.deepPurple[600],
                   Colors.indigo[500],
-                  Colors.indigo[400]
+                  Colors.indigo[400],
+                  Colors.indigo[300]
                 ]
             )
         ),
         child: Column(
           children: <Widget>[
-            SizedBox(
-              height: 10.0,
-            ),
             Image.asset(
               "images/felsekkalogowhitenobg.png",
-              height: 70.0,
+              height: 50.0,
             ),
-            Text(
+            AutoSizeText(
               "Sign Up & Carpool!",
+              minFontSize: 2.0,
+              maxLines: 1,
               style: TextStyle(
                 color: Colors.white,
                 fontFamily: "Kodchasan",
-                fontSize: 15.0,
+                fontSize: 10.0,
               ),
             ),
             SizedBox(
-              height: 10.0,
+              height: 5.0,
             ),
             Expanded(
               child: Container(
@@ -67,257 +65,359 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin{
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(60),topRight: Radius.circular(60))
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(30.0),
+                  padding: EdgeInsets.all(25.0),
                   child: SingleChildScrollView(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Container(
-                          height: 50.0,
-                          padding: EdgeInsets.all(15.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [BoxShadow(
-                              color: Color.fromRGBO(39, 78, 220, 0.3),
-                              blurRadius: 20.0,
-                              offset: Offset(0,10),
-                            )],
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0,0,0,3),
+                              child: AutoSizeText(
+                                "First name:",
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: Colors.indigo[400],
+                                  fontFamily: "Kodchasan",
+                                  fontSize: 13.0,
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
                             ),
-                            child: TextField(
-                              controller: firstnameController,
-                              maxLength: 15,
-                              inputFormatters: [new WhitelistingTextInputFormatter(RegExp("[a-zA-Z]")),],
-                              decoration: InputDecoration(
-                                  counterText: "",
-                                  hintText: "First name",
-                                  hintStyle: TextStyle(color:Colors.grey),
-                                  border: InputBorder.none,
+                            Container(
+                              height: 40.0,
+                              padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [BoxShadow(
+                                  color: Color.fromRGBO(39, 78, 220, 0.3),
+                                  blurRadius: 20.0,
+                                  offset: Offset(0,10),
+                                )],
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                                ),
+                                child: TextField(
+                                  controller: firstnameController,
+                                  maxLength: 15,
+                                  inputFormatters: [new WhitelistingTextInputFormatter(RegExp("[a-zA-Z]")),],
+                                  decoration: InputDecoration(
+                                    counterText: "",
+                                    hintText: "First name",
+                                    hintStyle: TextStyle(color:Colors.grey, fontSize: 12),
+                                    border: InputBorder.none,
                                   ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Container(
-                          height: 50.0,
-                          padding: EdgeInsets.all(15.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [BoxShadow(
-                              color: Color.fromRGBO(39, 78, 220, 0.3),
-                              blurRadius: 20.0,
-                              offset: Offset(0,10),
-                            )],
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border(bottom: BorderSide(color: Colors.grey[200])),
-                            ),
-                            child: TextField(
-                              controller: lastnameController,
-                              maxLength: 15,
-                              inputFormatters: [new WhitelistingTextInputFormatter(RegExp("[a-zA-Z]")),],
-                              decoration: InputDecoration(
-                                hintText: "Last name",
-                                hintStyle: TextStyle(color:Colors.grey),
-                                counterText: "",
-                                border: InputBorder.none,
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Container(
-                          height: 50.0,
-                          padding: EdgeInsets.all(15.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [BoxShadow(
-                              color: Color.fromRGBO(39, 78, 220, 0.3),
-                              blurRadius: 20.0,
-                              offset: Offset(0,10),
-                            )],
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                            SizedBox(
+                              height: 3.0,
                             ),
-                            child: TextField(
-                              controller: usernameController,
-                              maxLength: 20,
-                              inputFormatters: [BlacklistingTextInputFormatter(new RegExp('[ ]'))],
-                              decoration: InputDecoration(
-                                hintText: "Username",
-                                hintStyle: TextStyle(color:Colors.grey),
-                                counterText: "",
-                                border: InputBorder.none,
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0,0,0,3),
+                              child: AutoSizeText(
+                                "Last name:",
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: Colors.indigo[400],
+                                  fontFamily: "Kodchasan",
+                                  fontSize: 13.0,
+                                ),
+                                textAlign: TextAlign.start,
                               ),
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Container(
-                          height: 50.0,
-                          padding: EdgeInsets.all(15.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [BoxShadow(
-                              color: Color.fromRGBO(39, 78, 220, 0.3),
-                              blurRadius: 20.0,
-                              offset: Offset(0,10),
-                            )],
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border(bottom: BorderSide(color: Colors.grey[200])),
-                            ),
-                            child: TextField(
-                              keyboardType: TextInputType.emailAddress,
-                              controller: emailController,
-                              inputFormatters: [BlacklistingTextInputFormatter(new RegExp('[ ]'))],
-                              decoration: InputDecoration(
-                                hintText: "E-mail",
-                                hintStyle: TextStyle(color:Colors.grey),
-                                counterText: "",
-                                border: InputBorder.none,
+                            Container(
+                              height: 40.0,
+                              padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [BoxShadow(
+                                  color: Color.fromRGBO(39, 78, 220, 0.3),
+                                  blurRadius: 20.0,
+                                  offset: Offset(0,10),
+                                )],
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                                ),
+                                child: TextField(
+                                  controller: lastnameController,
+                                  maxLength: 15,
+                                  inputFormatters: [new WhitelistingTextInputFormatter(RegExp("[a-zA-Z]")),],
+                                  decoration: InputDecoration(
+                                    hintText: "Last name",
+                                    hintStyle: TextStyle(color:Colors.grey,fontSize: 12),
+                                    counterText: "",
+                                    border: InputBorder.none,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Container(
-                          height: 50.0,
-                          padding: EdgeInsets.all(15.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [BoxShadow(
-                              color: Color.fromRGBO(39, 78, 220, 0.3),
-                              blurRadius: 20.0,
-                              offset: Offset(0,10),
-                            )],
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                            SizedBox(
+                              height: 3.0,
                             ),
-                            child: TextField(
-                              keyboardType: TextInputType.number,
-                              controller: phonenumberController,
-                              maxLength: 11,
-                              inputFormatters:[new WhitelistingTextInputFormatter(RegExp("[0-9]")),],
-                              decoration: InputDecoration(
-                                hintText: "Phone number",
-                                hintStyle: TextStyle(color:Colors.grey),
-                                counterText: "",
-                                border: InputBorder.none,
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0,0,0,3),
+                              child: AutoSizeText(
+                                "Username:",
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: Colors.indigo[400],
+                                  fontFamily: "Kodchasan",
+                                  fontSize: 13.0,
+                                ),
+                                textAlign: TextAlign.start,
                               ),
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Text(
-                          "Password must be 8-15 characters, It should include at least 1 letter, 1 number and 1 special character",
-                          style: TextStyle(
-                            color: Colors.indigo,
-                            fontFamily: "Kodchasan",
-                            fontSize: 10.0,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Container(
-                          height: 50.0,
-                          padding: EdgeInsets.all(15.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [BoxShadow(
-                              color: Color.fromRGBO(39, 78, 220, 0.3),
-                              blurRadius: 20.0,
-                              offset: Offset(0,10),
-                            )],
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border(bottom: BorderSide(color: Colors.grey[200])),
-                            ),
-                            child: TextField(
-                              obscureText: true,
-                              controller: passwordController,
-                              maxLength: 15,
-                              decoration: InputDecoration(
-                                hintText: "Password",
-                                hintStyle: TextStyle(color:Colors.grey),
-                                counterText: "",
-                                border: InputBorder.none,
+                            Container(
+                              height: 40.0,
+                              padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [BoxShadow(
+                                  color: Color.fromRGBO(39, 78, 220, 0.3),
+                                  blurRadius: 20.0,
+                                  offset: Offset(0,10),
+                                )],
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                                ),
+                                child: TextField(
+                                  controller: usernameController,
+                                  maxLength: 20,
+                                  inputFormatters: [BlacklistingTextInputFormatter(new RegExp('[ ]'))],
+                                  decoration: InputDecoration(
+                                    hintText: "Username",
+                                    hintStyle: TextStyle(color:Colors.grey,fontSize: 12),
+                                    counterText: "",
+                                    border: InputBorder.none,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Container(
-                          height: 50.0,
-                          padding: EdgeInsets.all(15.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [BoxShadow(
-                              color: Color.fromRGBO(39, 78, 220, 0.3),
-                              blurRadius: 20.0,
-                              offset: Offset(0,10),
-                            )],
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                            SizedBox(
+                              height: 3.0,
                             ),
-                            child: TextField(
-                              obscureText: true,
-                              controller: confirmpasswordController,
-                              maxLength: 15,
-                              decoration: InputDecoration(
-                                hintText: "Confirm Password",
-                                hintStyle: TextStyle(color:Colors.grey),
-                                counterText: "",
-                                border: InputBorder.none,
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0,0,0,3),
+                              child: AutoSizeText(
+                                "E-mail:",
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: Colors.indigo[400],
+                                  fontFamily: "Kodchasan",
+                                  fontSize: 13.0,
+                                ),
+                                textAlign: TextAlign.start,
                               ),
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
+                            Container(
+                              height: 40.0,
+                              padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [BoxShadow(
+                                  color: Color.fromRGBO(39, 78, 220, 0.3),
+                                  blurRadius: 20.0,
+                                  offset: Offset(0,10),
+                                )],
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                                ),
+                                child: TextField(
+                                  keyboardType: TextInputType.emailAddress,
+                                  controller: emailController,
+                                  inputFormatters: [BlacklistingTextInputFormatter(new RegExp('[ ]'))],
+                                  decoration: InputDecoration(
+                                    hintText: "E-mail",
+                                    hintStyle: TextStyle(color:Colors.grey,fontSize: 12),
+                                    counterText: "",
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 3.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0,0,0,3),
+                              child: AutoSizeText(
+                                "Phone number:",
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: Colors.indigo[400],
+                                  fontFamily: "Kodchasan",
+                                  fontSize: 13.0,
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
+                            ),
+                            Container(
+                              height: 40.0,
+                              padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [BoxShadow(
+                                  color: Color.fromRGBO(39, 78, 220, 0.3),
+                                  blurRadius: 20.0,
+                                  offset: Offset(0,10),
+                                )],
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                                ),
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  controller: phonenumberController,
+                                  maxLength: 11,
+                                  inputFormatters:[new WhitelistingTextInputFormatter(RegExp("[0-9]")),],
+                                  decoration: InputDecoration(
+                                    hintText: "Phone number",
+                                    hintStyle: TextStyle(color:Colors.grey,fontSize: 12),
+                                    counterText: "",
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 3.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                              child: AutoSizeText(
+                                "Password must be 8-15 characters, It should include at least 1 letter, 1 number and 1 special character",
+                                style: TextStyle(
+                                  color: Colors.indigo,
+                                  fontFamily: "Kodchasan",
+                                  fontSize: 10.0,
+                                ),
+                                maxLines: 2,
+                                minFontSize: 2.0,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 3.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0,0,0,3),
+                              child: AutoSizeText(
+                                "Password:",
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: Colors.indigo[400],
+                                  fontFamily: "Kodchasan",
+                                  fontSize: 13.0,
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
+                            ),
+                            Container(
+                              height: 40.0,
+                              padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [BoxShadow(
+                                  color: Color.fromRGBO(39, 78, 220, 0.3),
+                                  blurRadius: 20.0,
+                                  offset: Offset(0,10),
+                                )],
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                                ),
+                                child: TextField(
+                                  obscureText: true,
+                                  controller: passwordController,
+                                  maxLength: 15,
+                                  decoration: InputDecoration(
+                                    hintText: "Password",
+                                    hintStyle: TextStyle(color:Colors.grey,fontSize: 12),
+                                    counterText: "",
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 3.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0,0,0,3),
+                              child: AutoSizeText(
+                                "Confirm password:",
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: Colors.indigo[400],
+                                  fontFamily: "Kodchasan",
+                                  fontSize: 13.0,
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
+                            ),
+                            Container(
+                              height: 40.0,
+                              padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [BoxShadow(
+                                  color: Color.fromRGBO(39, 78, 220, 0.3),
+                                  blurRadius: 20.0,
+                                  offset: Offset(0,10),
+                                )],
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                                ),
+                                child: TextField(
+                                  obscureText: true,
+                                  controller: confirmpasswordController,
+                                  maxLength: 15,
+                                  decoration: InputDecoration(
+                                    hintText: "Confirm Password",
+                                    hintStyle: TextStyle(color:Colors.grey,fontSize: 12),
+                                    counterText: "",
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5.0,
+                            ),
+                          ],
                         ),
                         MaterialButton(
                           child: Text("Next",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 20.0,
+                              fontSize: 15.0,
                               fontFamily: "Kodchasan",
                             ),
                           ),
-                          height:40,
+                          height:35,
                           minWidth:100,
-                          color: Colors.indigo,
+                          color: Colors.indigo[400],
                           elevation: 15,
                           highlightColor: Colors.grey,
                           splashColor: Colors.blueGrey,
@@ -565,8 +665,8 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin{
                                   context: context,
                                   builder: (BuildContext context) {
                                     return RichAlertDialog(
-                                      alertTitle: richTitle("Username can't contain spaces."),
-                                      alertSubtitle: richSubtitle("Username is required"),
+                                      alertTitle: richTitle("Username"),
+                                      alertSubtitle: richSubtitle("Username can't contain spaces."),
                                       alertType: RichAlertType.WARNING,
                                       dialogIcon: Icon(
                                         Icons.warning,
@@ -817,7 +917,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin{
                                   builder: (BuildContext context) {
                                     return RichAlertDialog(
                                       alertTitle: richTitle("Password"),
-                                      alertSubtitle: richSubtitle("Password must be minimum eight characters,maximum 15 characters and should include at least one letter, one number and one special character"),
+                                      alertSubtitle: Text("Password must be minimum eight characters, maximum 15 characters and should include at least one letter, one number and one special character.", textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: Colors.grey[500]),),
                                       alertType: RichAlertType.WARNING,
                                       dialogIcon: Icon(
                                         Icons.warning,
@@ -911,7 +1011,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin{
                                   builder: (BuildContext context) {
                                     return RichAlertDialog(
                                       alertTitle: richTitle("Password"),
-                                      alertSubtitle: richSubtitle("Password and Confirm password aren't matching"),
+                                      alertSubtitle: Text("Password & Confirm password don't match", maxLines: 1,textAlign: TextAlign.center,style: TextStyle(fontSize: 13, color: Colors.grey[500]),),
                                       alertType: RichAlertType.WARNING,
                                       dialogIcon: Icon(
                                         Icons.warning,
@@ -956,8 +1056,8 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin{
                                          context: context,
                                          builder: (BuildContext context) {
                                            return RichAlertDialog(
-                                             alertTitle: richTitle(data['error']),
-                                             alertSubtitle: richSubtitle(data['message']),
+                                             alertTitle: Text(data['error'], maxLines: 1, style: TextStyle(color: Colors.black, fontSize: 13),textAlign: TextAlign.center,),
+                                             alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
                                              alertType: RichAlertType.WARNING,
                                              dialogIcon: Icon(
                                                Icons.warning,
@@ -988,16 +1088,22 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin{
                             }
                           },
                         ),
-                        new FlatButton(
-                          onPressed: () {
-                            Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
-                          },
-                          child: Text(
-                            "Already have an account? Sign In.",
-                            style: TextStyle(
-                              color: Colors.indigo,
-                              fontFamily: "Kodchasan",
-                              decoration: TextDecoration.underline,
+                        Padding(
+                          padding: const EdgeInsets.all(0.0),
+                          child: FlatButton(
+                            onPressed: () {
+                              Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
+                            },
+                            child: AutoSizeText(
+                              "Already have an account? Sign In.",
+                              maxLines: 1,
+                              minFontSize: 2.0,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.indigo[400],
+                                fontFamily: "Kodchasan",
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
                           ),
                         ),

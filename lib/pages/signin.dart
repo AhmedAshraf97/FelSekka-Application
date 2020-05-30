@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:felsekka/pages/homepage.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
 import 'package:felsekka/pages/sidebar_layout.dart';
@@ -17,30 +18,23 @@ class SignIn extends StatefulWidget with NavigationStates{
 }
 
 class _SignInState extends State<SignIn> with TickerProviderStateMixin{
-  AnimationController animationController;
+  //Initializations
   TextEditingController emailorphoneController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-    animationController = new AnimationController(
-        vsync: this, duration: new Duration(milliseconds: 1000));
-  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+   return Scaffold(
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
             gradient: LinearGradient(
                 begin: Alignment.center,
                 colors: [
-                  Colors.indigo[700],
                   Colors.indigo[600],
-                  Colors.deepPurple[800],
-                  Colors.deepPurple[600],
                   Colors.indigo[500],
-                  Colors.indigo[400]
+                  Colors.indigo[400],
+                  Colors.indigo[300]
                 ]
             )
         ),
@@ -58,8 +52,9 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin{
               child:Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Text(
+                  AutoSizeText(
                     "Login",
+                    maxLines: 1,
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: "Kodchasan",
@@ -69,8 +64,9 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin{
                   SizedBox(
                     height: 10.0,
                   ),
-                  Text(
+                  AutoSizeText(
                     "Let's carpool!",
+                    maxLines: 1,
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: "Kodchasan",
@@ -93,90 +89,124 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin{
                   padding: EdgeInsets.all(30.0),
                   child: SingleChildScrollView(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        Container(
-                          height: 70.0,
-                          padding: EdgeInsets.all(20.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [BoxShadow(
-                              color: Color.fromRGBO(39, 78, 220, 0.3),
-                              blurRadius: 20.0,
-                              offset: Offset(0,10),
-                            )],
-                          ),
-                          child: Container(
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0,0,0,5),
+                              child: AutoSizeText(
+                                "E-mail or Phone number:",
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: Colors.indigo[400],
+                                  fontFamily: "Kodchasan",
+                                  fontSize: 15.0,
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
+                            ),
+                            Container(
+                              height: 70.0,
+                              padding: EdgeInsets.all(20.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [BoxShadow(
+                                  color: Color.fromRGBO(39, 78, 220, 0.3),
+                                  blurRadius: 20.0,
+                                  offset: Offset(0,10),
+                                )],
+                              ),
+                              child: Container(
                                 decoration: BoxDecoration(
                                   border: Border(bottom: BorderSide(color: Colors.grey[200])),
                                 ),
                                 child: TextField(
                                   controller: emailorphoneController,
                                   decoration: InputDecoration(
-                                    hintText: "E-mail or Phone Number",
-                                    hintStyle: TextStyle(color:Colors.grey),
+                                    hintText: "E-mail or phone number",
+                                    hintStyle: TextStyle(color:Colors.grey, fontSize: 14),
                                     border: InputBorder.none,
                                   ),
                                 ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Container(
-                          height: 70.0,
-                          padding: EdgeInsets.all(20.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [BoxShadow(
-                              color: Color.fromRGBO(39, 78, 220, 0.3),
-                              blurRadius: 20.0,
-                              offset: Offset(0,10),
-                            )],
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border(bottom: BorderSide(color: Colors.grey[200])),
-                            ),
-                            child: TextField(
-                              obscureText: true,
-                              controller: passwordController,
-                              decoration: InputDecoration(
-                                hintText: "Password",
-                                hintStyle: TextStyle(color:Colors.grey),
-                                border: InputBorder.none,
                               ),
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20.0,
+                            SizedBox(
+                              height: 15.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10.0,0,0,5),
+                              child: AutoSizeText(
+                                "Password:",
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: Colors.indigo[400],
+                                  fontFamily: "Kodchasan",
+                                  fontSize: 15.0,
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
+                            ),
+                            Container(
+                              height: 70.0,
+                              padding: EdgeInsets.all(20.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [BoxShadow(
+                                  color: Color.fromRGBO(39, 78, 220, 0.3),
+                                  blurRadius: 20.0,
+                                  offset: Offset(0,10),
+                                )],
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                                ),
+                                child: TextField(
+                                  obscureText: true,
+                                  controller: passwordController,
+                                  decoration: InputDecoration(
+                                    hintText: "Password",
+                                    hintStyle: TextStyle(color:Colors.grey, fontSize: 14),
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20.0,
+                            ),
+                          ],
                         ),
                         Text(
                           "Forgot password?",
                           style: TextStyle(
-                            color: Colors.indigo,
+                            color: Colors.indigo[400],
                             fontFamily: "Kodchasan",
                           ),
                         ),
                         SizedBox(
-                          height: 70.0,
+                          height: 40.0,
                         ),
                         MaterialButton(
                           child: Text("Login",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 20.0,
+                              fontSize: 15.0,
                               fontFamily: "Kodchasan",
                             ),
                           ),
                           height:40,
                           minWidth:100,
-                          color: Colors.indigo,
+                          color: Colors.indigo[400],
                           elevation: 15,
                           highlightColor: Colors.grey,
                           splashColor: Colors.blueGrey,
@@ -260,6 +290,8 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin{
                                 };
                                 String url="http://3.81.22.120:3000/api/signin";
                                 Response response =await post(url, body: body);
+                                print(response.statusCode);
+                                print(response.body);
                                 if(response.statusCode != 200)
                                 {
                                   Map data= jsonDecode(response.body);
@@ -294,7 +326,6 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin{
                                 else{
                                   Map data= jsonDecode(response.body);
                                   String token= data['token'];
-                                  Map userInfo = data['userInfo'];
                                   SharedPreferences prefs = await SharedPreferences.getInstance();
                                   await prefs.setString('token', token);
                                   Navigator.pop(context);
@@ -309,12 +340,14 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin{
                           onPressed: () {
                             Navigator.push(context, AnimatedPageRoute(widget: SignUp()));
                           },
-                          child: Text(
+                          child: AutoSizeText(
                             "Don't have an account? Sign Up.",
+                            maxLines: 1,
                             style: TextStyle(
-                              color: Colors.indigo,
+                              color: Colors.indigo[300],
                               fontFamily: "Kodchasan",
                               decoration: TextDecoration.underline,
+                              fontSize: 15,
                             ),
                           ),
                         ),

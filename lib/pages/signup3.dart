@@ -1,12 +1,16 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:felsekka/pages/signin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'AnimatedPage Route.dart';
 import 'dart:convert';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
+//import 'package:geolocation/geolocation.dart';
 
 class SignUp3 extends StatefulWidget {
   final String firstname;
@@ -29,6 +33,26 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
   PickResult selectedPlace;
   String latitude;
   String longitude;
+  Position position;
+  LatLng currentlocation;
+
+  //LocationResult result;
+  void getlocation() async{
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager = true;
+    position = await geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    currentlocation = LatLng(position.latitude,position.longitude);
+    //result = await Geolocation.lastKnownLocation();
+    print("Current:");
+    print(position);
+    print(currentlocation);
+  }
+  @override
+  void initState() {
+    getlocation();
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,34 +62,31 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
             gradient: LinearGradient(
                 begin: Alignment.center,
                 colors: [
-                  Colors.indigo[700],
                   Colors.indigo[600],
-                  Colors.deepPurple[800],
-                  Colors.deepPurple[600],
                   Colors.indigo[500],
-                  Colors.indigo[400]
+                  Colors.indigo[400],
+                  Colors.indigo[300]
                 ]
             )
         ),
         child: Column(
           children: <Widget>[
-            SizedBox(
-              height: 10.0,
-            ),
             Image.asset(
               "images/felsekkalogowhitenobg.png",
-              height: 60.0,
+              height: 50.0,
             ),
-            Text(
+            AutoSizeText(
               "Sign Up & Carpool!",
+              minFontSize: 2.0,
+              maxLines: 1,
               style: TextStyle(
                 color: Colors.white,
                 fontFamily: "Kodchasan",
-                fontSize: 15.0,
+                fontSize: 10.0,
               ),
             ),
             SizedBox(
-              height: 10.0,
+              height: 5.0,
             ),
             Expanded(
               child: Container(
@@ -79,23 +100,27 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                     children: <Widget>[
                       Image.asset(
                         "images/location.png",
-                        height: 150.0,
+                        height: 130.0,
                       ),
-                      Text(
+                      AutoSizeText(
                         "Choose your home location.",
+                        minFontSize: 2,
+                        maxLines: 1,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.indigo,
+                          color: Colors.indigo[400],
                           fontFamily: "Kodchasan",
                           fontSize: 15.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
+                      AutoSizeText(
                         "You will go from and to this location.",
                         textAlign: TextAlign.center,
+                        minFontSize: 2,
+                        maxLines: 1,
                         style: TextStyle(
-                          color: Colors.indigo,
+                          color: Colors.indigo[400],
                           fontFamily: "Kodchasan",
                           fontSize: 15.0,
                           fontWeight: FontWeight.bold,
@@ -107,7 +132,7 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                       MaterialButton(
                         child: Text("Choose location",
                           style: TextStyle(
-                            color: Colors.indigo,
+                            color: Colors.indigo[400],
                             fontSize: 20.0,
                             fontFamily: "Kodchasan",
                           ),
@@ -129,6 +154,8 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                                 return PlacePicker(
                                   apiKey: "AIzaSyC6NQ_ODwiORDBTsuB5k9J8prDQ_MTZgB4",
                                   useCurrentLocation: true,
+                                  enableMyLocationButton: true,
+                                  initialMapType: MapType.normal,
                                   onPlacePicked: (result) {
                                     selectedPlace = result;
                                     latitude=selectedPlace.geometry.location.lat.toString();
@@ -136,6 +163,7 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                                     Navigator.of(context).pop();
                                     setState(() {});
                                   },
+                                  initialPosition: currentlocation,
                                 );
                               },
                             ),
@@ -159,7 +187,7 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                         ),
                         height:40,
                         minWidth:100,
-                        color: Colors.indigo,
+                        color: Colors.indigo[400],
                         elevation: 15,
                         highlightColor: Colors.grey,
                         splashColor: Colors.blueGrey,
@@ -228,8 +256,8 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                                     context: context,
                                     builder: (BuildContext context) {
                                       return RichAlertDialog(
-                                        alertTitle: richTitle(data['error']),
-                                        alertSubtitle: richSubtitle(data['message']),
+                                        alertTitle: Text(data['error'], maxLines: 1, style: TextStyle(color: Colors.black, fontSize: 13),textAlign: TextAlign.center,),
+                                        alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
                                         alertType: RichAlertType.WARNING,
                                         dialogIcon: Icon(
                                           Icons.warning,
@@ -293,10 +321,12 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                           Navigator.pop(context);
                           Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
                         },
-                        child: Text(
+                        child: AutoSizeText(
                           "Already have an account? Sign In.",
+                          minFontSize: 2,
+                          maxLines: 1,
                           style: TextStyle(
-                            color: Colors.indigo,
+                            color: Colors.indigo[400],
                             fontFamily: "Kodchasan",
                             decoration: TextDecoration.underline,
                           ),
