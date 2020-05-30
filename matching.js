@@ -119,12 +119,12 @@ async function StepByStepReorder(AvailableDriver) {
     }
 
 
-    var RemainingToDest = Riders.find(n => n.ID === AvailableDriver.AssignedRiders[AvailableDriver.AssignedRiders.length - 2]).TimeToOrganizationMinutes
-        //var delta = Math.min(0.25 * AvailableDriver.MaxDuration, 10)
-    var RemainingMaxDuration = AvailableDriver.MaxDuration - (AvailableDriver.TotalDurationTaken - RemainingToDest)
-    var delta = ((AvailableDriver.AssignedRiders.length - 2) / AvailableDriver.capacity) * RemainingMaxDuration
+    //var RemainingToDest = Riders.find(n => n.ID === AvailableDriver.AssignedRiders[AvailableDriver.AssignedRiders.length - 2]).TimeToOrganizationMinutes
+    var delta = Math.max(0.25 * AvailableDriver.MaxDuration, 10)
+        //var RemainingMaxDuration = AvailableDriver.MaxDuration - (AvailableDriver.TotalDurationTaken - RemainingToDest)
+        //var delta = ((AvailableDriver.AssignedRiders.length - 2) / AvailableDriver.capacity) * RemainingMaxDuration
 
-    delta = Math.min(delta, RemainingToDest)
+    //  delta = Math.min(delta, RemainingToDest)
     var response = ksp.ksp(g, DriverIDstr, OrganizationID, kValue);
     filteredresponse = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.TotalDurationTaken + delta && p.totalCost <= AvailableDriver.MaxDuration)
 
@@ -419,8 +419,37 @@ module.exports = async function main() {
 
                     }
                     if (Drivers[j].countRiders == WeightArrayForRiders.length) {
-                        RidersRiders[indexinRiderRider].data.find(n => n.to === ChosenRiderID).checked = 1;
-                        RidersRiders[indexinRiderRider].checked++;
+
+                        var filteredDrivers = Drivers.filter(n => n.lastChosenRider === ChosenRiderID);
+                        if (filteredDrivers.length != 0) {
+                            var durations = [],
+                                Ids = [];
+                            for (var h = 0; h < filteredDrivers.length; h++) {
+                                var currDriver = filteredDrivers[h]
+                                var lastrider = currDriver.AssignedRiders[currDriver.AssignedRiders.length - 1]
+                                var tempindexinRidersToRider = RidersRiders.findIndex(n => n.ID === lastrider);
+                                var DurationToChosenRider = RidersRiders[tempindexinRidersToRider].data.find(n => n.to === ChosenRiderID).duration;
+                                durations.push(DurationToChosenRider)
+                                Ids.push(currDriver.ID)
+                            }
+
+                            var BestDriver = Ids[durations.indexOf(Math.min.apply(null, durations))]
+
+                            if (BestDriver === Drivers[j].ID) {
+                                RidersRiders[indexinRiderRider].data.find(n => n.to === ChosenRiderID).checked = 1;
+                                RidersRiders[indexinRiderRider].checked++;
+                                Drivers[j].lastChosenRider = -1;
+                            } else {
+                                ChosenRiderID = -1;
+
+                            }
+                        } else {
+
+                            RidersRiders[indexinRiderRider].data.find(n => n.to === ChosenRiderID).checked = 1;
+                            RidersRiders[indexinRiderRider].checked++;
+                        }
+
+
 
                     } else {
                         Drivers[j].countRiders = WeightArrayForRiders.length
@@ -429,7 +458,9 @@ module.exports = async function main() {
                             var ChosenMaxRider = WeightIndexForRiders[WeightArrayForRiders.indexOf(Math.max.apply(Math, WeightArrayForRiders))]
                             var isExist = Drivers[j].AssignedRiders.find(n => n === ChosenMaxRider)
                             if (isExist === undefined) {
+                                Drivers[j].lastChosenRider = ChosenRiderID;
                                 ChosenRiderID = -1;
+
 
 
                             } else {

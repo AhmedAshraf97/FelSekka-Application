@@ -85,7 +85,7 @@ class Driver {
         this.PoolStartTime = new Date();
         this.ArrivalTime = ArrivalTime
         this.MaxDuration = diff_minutes(this.ArrivalTime, this.EarliestStartTime)
-
+        this.lastChosenRider = -1
 
         this.ridewith = ridewith;
         this.smoking = smoking
@@ -446,7 +446,14 @@ router.post('/', async(req, res) => {
                 }
 
 
+                var date1 = new Date();
+
                 var z = await matching();
+
+                var date2 = new Date();
+                var diff = date2 - date1;
+
+                console.log("TIMEEEEE ", diff)
                 var countAssigned = 0;
                 var OffersToupdate = []
                 var RequestsToupdate = []
@@ -507,41 +514,7 @@ router.post('/', async(req, res) => {
                         Trip.status = "scheduled"
                         TripsArray.push(Trip)
 
-                        /*    await DriverDB.create({
-                               tripid: trip.id,
-                               tofrom: "to",
-                               offerid: Drivers[i].offerid,
-                               driverid: Drivers[i].userID,
-                               pickuptime: Drivers[i].PoolStartTime,
-                               arrivaltime: Drivers[i].ArrivalTime,
-                               actualpickuptime: 0,
-                               actualarrivaltime: 0,
-                               distance: 0,
-                               time: 0,
-                               fare: 0,
-                               status: "scheduled"
 
-
-                           }).catch(errHandler)
-                           for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
-                               await RiderDB.create({
-
-                                   tripid: trip.id,
-                                   tofrom: "to",
-                                   offerid: Drivers[i].offerid,
-                                   requestid: Drivers[i].AssignedRiders[j],
-                                   riderid: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).userID,
-                                   pickuptime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).PickupTime,
-                                   arrivaltime: Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).ArrivalTime,
-                                   actualpickuptime: 0,
-                                   actualarrivaltime: 0,
-                                   distance: 0,
-                                   time: 0,
-                                   fare: 0,
-                                   status: "scheduled"
-
-                               }).catch(errHandler)
-                           } */
 
                     }
                 }
