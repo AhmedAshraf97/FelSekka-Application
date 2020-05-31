@@ -1,11 +1,9 @@
 import 'dart:convert';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:felsekka/pages/AnimatedPage%20Route.dart';
-import 'package:felsekka/pages/homepage.dart';
-import 'package:felsekka/pages/sidebar_layout.dart';
 import 'package:felsekka/pages/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
-import 'package:felsekka/pages/signup3.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
 import 'package:rich_alert/rich_alert.dart';
@@ -38,16 +36,20 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
   String latitude="";
   String longitude="";
   String username="";
-  String fullname="";
-  double doubleRating=0;
-  String trimRating="";
-  String countTrust="";
+  String fullname=""; // For displaying user's name
+  double doubleRating=0; // Used to trim rating
+  String trimRating=""; // For displaying user's rating
+  String countTrust=""; // For displaying count of people trusting user
   int countTrustint=0;
+
+  //Side bar
   AnimationController _animationController;
   StreamController<bool> isSidebarOpenedStreamController;
   Stream<bool> isSidebarOpenedStream;
   StreamSink<bool> isSidebarOpenedSink;
   final _animationDuration = const Duration(milliseconds: 500);
+
+  //Function to trim rating for displaying
   static String getDisplayRating(double rating) {
     rating = rating.abs();
     final str = rating.toStringAsFixed(rating.truncateToDouble() ==rating ? 0 : 2);
@@ -56,11 +58,14 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
     if (str.endsWith('0')) return str.substring(0, str.length -1);
     return str;
   }
+
+
   void getData() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = (prefs.getString('token')??'');
     String url="http://3.81.22.120:3000/api/retrieveuserdata";
     Response response =await post(url, headers:{'authorization': token});
+    print(response.body);
     if(response.statusCode != 200)
     {
       Map data= jsonDecode(response.body);
@@ -69,7 +74,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
           builder: (BuildContext context) {
             return RichAlertDialog(
               alertTitle: richTitle("User error"),
-              alertSubtitle: richSubtitle(data['message']),
+              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -118,6 +123,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
     }
     String urltrust = "http://3.81.22.120:3000/api/peopletrustme";
     Response responsetrust = await post(urltrust, headers:{'authorization': token});
+    print(response.body);
     if(responsetrust.statusCode != 200)
     {
       Map data= jsonDecode(responsetrust.body);
@@ -126,7 +132,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
           builder: (BuildContext context) {
             return RichAlertDialog(
               alertTitle: richTitle("User error"),
-              alertSubtitle: richSubtitle(data['message']),
+              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -177,9 +183,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
 
   void onIconPressed() {
     getData();
-    setState(() {
-      int x=0;
-    });
+    setState(() {});
     final animationStatus = _animationController.status;
     final isAnimationCompleted = animationStatus == AnimationStatus.completed;
 
@@ -238,22 +242,24 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                         ),
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       GestureDetector(
                         onTap: (){
                           BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.ProfileClickedEvent);
                           onIconPressed();
                         },
-                        child: Text(
+                        child: AutoSizeText(
                           fullname,
+                          minFontSize: 2,
+                          maxLines: 1,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 20),
                         ),
                       ),
                       SizedBox(
-                        width: 5,
+                        width: 3,
                       ),
                       Center(
                         child: Row(
@@ -299,7 +305,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                               borderRadius: BorderRadius.only(topLeft: Radius.circular(60),topRight: Radius.circular(60))
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(15.0,5,0,0),
+                            padding: const EdgeInsets.fromLTRB(15.0,2,15,0),
                             child: Column(
                               children: <Widget>[
                                 MenuItem(
@@ -311,7 +317,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   },
                                 ),
                                 Divider(
-                                  height: 5,
+                                  height: 3,
                                   thickness: 0.4,
                                   color: Colors.indigo.withOpacity(0.3),
                                   indent: 32,
@@ -326,7 +332,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   },
                                 ),
                                 Divider(
-                                  height: 5,
+                                  height: 3,
                                   thickness: 0.4,
                                   color: Colors.indigo.withOpacity(0.3),
                                   indent: 32,
@@ -341,7 +347,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   },
                                 ),
                                 Divider(
-                                  height: 5,
+                                  height: 3,
                                   thickness: 0.4,
                                   color: Colors.indigo.withOpacity(0.3),
                                   indent: 32,
@@ -356,7 +362,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   },
                                 ),
                                 Divider(
-                                  height: 5,
+                                  height: 3,
                                   thickness: 0.4,
                                   color: Colors.indigo.withOpacity(0.3),
                                   indent: 32,
@@ -371,7 +377,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   },
                                 ),
                                 Divider(
-                                  height: 5,
+                                  height: 3,
                                   thickness: 0.4,
                                   color: Colors.indigo.withOpacity(0.3),
                                   indent: 32,
@@ -386,7 +392,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   },
                                 ),
                                 Divider(
-                                  height: 5,
+                                  height: 3,
                                   thickness: 0.4,
                                   color: Colors.indigo.withOpacity(0.3),
                                   indent: 32,
@@ -401,7 +407,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   },
                                 ),
                                 Divider(
-                                  height: 5,
+                                  height: 3,
                                   thickness: 0.4,
                                   color: Colors.indigo.withOpacity(0.3),
                                   indent: 32,
@@ -416,7 +422,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   },
                                 ),
                                 Divider(
-                                  height: 5,
+                                  height: 3,
                                   thickness: 0.4,
                                   color: Colors.indigo.withOpacity(0.3),
                                   indent: 32,
@@ -427,7 +433,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   title: "Settings",
                                 ),
                                 Divider(
-                                  height: 5,
+                                  height: 3,
                                   thickness: 0.4,
                                   color: Colors.indigo.withOpacity(0.3),
                                   indent: 32,
@@ -460,6 +466,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                                 onPressed: () async{
                                                   String url="http://3.81.22.120:3000/api/signout";
                                                   Response response =await post(url, headers:{'authorization': token});
+                                                  print(response.body);
                                                   if(response.statusCode != 200)
                                                   {
                                                     Map data= jsonDecode(response.body);
@@ -468,7 +475,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                                         builder: (BuildContext context) {
                                                           return RichAlertDialog(
                                                             alertTitle: richTitle("User error"),
-                                                            alertSubtitle: richSubtitle(data['message']),
+                                                            alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
                                                             alertType: RichAlertType.WARNING,
                                                             dialogIcon: Icon(
                                                               Icons.warning,
@@ -495,7 +502,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                                   else{
                                                     final pref = await SharedPreferences.getInstance();
                                                     await pref.clear();
-                                                    Logout=1;
+                                                    Navigator.pop(context);
                                                     Navigator.push(context,AnimatedPageRoute(widget: SignIn()));
                                                      }
                                                 },

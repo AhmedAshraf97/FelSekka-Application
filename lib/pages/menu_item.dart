@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class MenuItem extends StatelessWidget {
@@ -17,15 +18,17 @@ class MenuItem extends StatelessWidget {
           children: <Widget>[
             Icon(
               icon,
-              color: Colors.indigo,
+              color: Colors.indigo[400],
               size: 25,
             ),
             SizedBox(
-              width: 10,
+              width: 15,
             ),
-            Text(
+            AutoSizeText(
               title,
-              style: TextStyle(fontSize: 20, color: Colors.indigo),
+              minFontSize: 2,
+              maxLines: 1,
+              style: TextStyle(fontSize: 17, color: Colors.indigo[400]),
             )
           ],
         ),

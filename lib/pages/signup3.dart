@@ -10,7 +10,6 @@ import 'package:rich_alert/rich_alert.dart';
 import 'AnimatedPage Route.dart';
 import 'dart:convert';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
-//import 'package:geolocation/geolocation.dart';
 
 class SignUp3 extends StatefulWidget {
   final String firstname;
@@ -41,10 +40,6 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager = true;
     position = await geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     currentlocation = LatLng(position.latitude,position.longitude);
-    //result = await Geolocation.lastKnownLocation();
-    print("Current:");
-    print(position);
-    print(currentlocation);
   }
   @override
   void initState() {

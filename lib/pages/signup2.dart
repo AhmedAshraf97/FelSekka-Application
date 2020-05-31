@@ -41,7 +41,6 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
             gradient: LinearGradient(
                 begin: Alignment.center,
                 colors: [
-                  Colors.indigo[600],
                   Colors.indigo[500],
                   Colors.indigo[400],
                   Colors.indigo[300]

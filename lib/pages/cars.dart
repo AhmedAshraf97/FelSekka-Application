@@ -1,12 +1,10 @@
 import 'dart:convert';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
-import 'package:felsekka/pages/signup2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flashy_tab_bar/flashy_tab_bar.dart';
-import 'package:flutter/services.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:http/http.dart';
 import 'package:progress_indicators/progress_indicators.dart';
@@ -40,12 +38,20 @@ class Car{
     return '{ ${this.id}, ${this.brand},${this.model}, ${this.year},${this.type},${this.plateletters},${this.platenumbers},${this.numberofseats},${this.nationalid},${this.carlicensefront},${this.carlicenseback},${this.driverlicensefront},${this.driverlicenseback},${this.color}}';
   }
 }
+
+
+
 class Cars extends StatefulWidget with NavigationStates{
   @override
   _CarsState createState() => _CarsState();
 }
 
+
+
 class _CarsState extends State<Cars> {
+  String token;
+
+  //Add car initializations:
   String selectedBrand="";
   String selectedType="";
   String selectedColor="";
@@ -622,7 +628,6 @@ class _CarsState extends State<Cars> {
       value: "Zotye",
     ),
   ];
-  List<Card> ListCars=[];
   static TextEditingController modelController = new TextEditingController();
   static TextEditingController domainController = new TextEditingController();
   static TextEditingController emailController = new TextEditingController();
@@ -630,21 +635,22 @@ class _CarsState extends State<Cars> {
   static TextEditingController platenumbersController = new TextEditingController();
   static TextEditingController numberofseatsController = new TextEditingController();
   static TextEditingController nationalidController = new TextEditingController();
-  int _selectedIndex = 0;
-  PickResult selectedPlace;
-  String latitude="";
-  String longitude="";
+
+  //My cars initializations:
+  List<Card> ListCars=[];
   int noCars=0;
-  String token;
+
+  //Which tab:
+  int _selectedIndex = 0;
 
 
   Future<String> getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = await (prefs.getString('token') ?? '');
+
     //User cars
     String urlMyCars = "http://3.81.22.120:3000/api/showmycars";
-    Response responseMyCars = await post(
-        urlMyCars, headers: {'authorization': token});
+    Response responseMyCars = await post(urlMyCars, headers: {'authorization': token});
     if (responseMyCars.statusCode == 409) {
       noCars = 1;
     }
@@ -654,8 +660,8 @@ class _CarsState extends State<Cars> {
           context: context,
           builder: (BuildContext context) {
             return RichAlertDialog(
-              alertTitle: richTitle(data['error']),
-              alertSubtitle: richSubtitle(data['message']),
+              alertTitle: richTitle("User error"),
+              alertSubtitle: Text(data['message'] , maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -711,22 +717,22 @@ class _CarsState extends State<Cars> {
               contentPadding: EdgeInsets.all(10),
               leading: CircleAvatar(
                 backgroundColor: Colors.white,
-                child: Image.asset("images/caricon.jpg", height: 200,),
+                child: Image.asset("images/caricon.jpg", height: 200),
               ),
-              title: Text(up, style: TextStyle(color: Colors.indigo),),
+              title: AutoSizeText(up, style: TextStyle(color: Colors.indigo[400], fontSize: 15),maxLines: 1,minFontSize: 2,),
               subtitle: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(down),
-                  Text(seats),
-                  Text(plate),
+                  AutoSizeText(down, style: TextStyle(color: Colors.grey[500], fontSize: 11),maxLines: 1,minFontSize: 2,),
+                  AutoSizeText(seats, style: TextStyle(color: Colors.grey[500], fontSize: 11),maxLines: 1,minFontSize: 2,),
+                  AutoSizeText(plate, style: TextStyle(color: Colors.grey[500], fontSize: 11),maxLines: 1,minFontSize: 2,),
                 ],
               ),
               trailing: IconButton(
                 icon: Icon(
                   Icons.delete,
-                  color: Colors.blueGrey,
+                  color: Colors.blueGrey[200],
                 ),
                 onPressed: () {
                   showDialog(
@@ -752,7 +758,39 @@ class _CarsState extends State<Cars> {
                               onPressed: () async{
                                 String url="http://3.81.22.120:3000/api/deletecar";
                                 Response response =await post(url, headers:{'authorization': token}, body:{'carid': carObjs[i].id.toString()});
-                                if(response.statusCode != 200)
+                                if(response.statusCode == 404)
+                                  {
+                                    Map data= jsonDecode(response.body);
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return RichAlertDialog(
+                                            alertTitle: richTitle("Error"),
+                                            alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                            alertType: RichAlertType.WARNING,
+                                            dialogIcon: Icon(
+                                              Icons.warning,
+                                              color: Colors.red,
+                                              size: 80,
+                                            ),
+                                            actions: <Widget>[
+                                              new OutlineButton(
+                                                shape: StadiumBorder(),
+                                                textColor: Colors.blue,
+                                                child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                borderSide: BorderSide(
+                                                    color: Colors.indigo[400], style: BorderStyle.solid,
+                                                    width: 1),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        });
+                                    Navigator.pop(context);
+                                  }
+                                else if(response.statusCode != 200)
                                 {
                                   Map data= jsonDecode(response.body);
                                   showDialog(
@@ -760,7 +798,7 @@ class _CarsState extends State<Cars> {
                                       builder: (BuildContext context) {
                                         return RichAlertDialog(
                                           alertTitle: richTitle("User error"),
-                                          alertSubtitle: richSubtitle(data['message']),
+                                          alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
                                           alertType: RichAlertType.WARNING,
                                           dialogIcon: Icon(
                                             Icons.warning,
@@ -846,7 +884,7 @@ class _CarsState extends State<Cars> {
   @override
   Widget build(BuildContext context) {
     final tabs=[
-      //tab1
+      // Tab 1
       FutureBuilder(
           future: getData(),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -855,7 +893,7 @@ class _CarsState extends State<Cars> {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(33, 0, 33, 0),
                 child: Container(
-                  child: noCars == 1 ? Center(child: Text("No cars to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),)) :
+                  child: noCars == 1 ? Center(child: AutoSizeText("No cars to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),maxLines: 1,minFontSize: 2,)) :
                   Column(
                     children: <Widget>[
                       Expanded(
@@ -881,20 +919,7 @@ class _CarsState extends State<Cars> {
       ),
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-      //Add car tab
+      // Tab 2: Add car:
       SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1637,11 +1662,11 @@ class _CarsState extends State<Cars> {
                       items: [
                         FlashyTabBarItem(
                           icon: Icon(Icons.time_to_leave),
-                          title: Text('My Cars', style: TextStyle(fontSize: 16,color: Colors.indigo),),
+                          title: Text('My Cars', style: TextStyle(fontSize: 12,color: Colors.indigo[400]),),
                         ),
                         FlashyTabBarItem(
                           icon: Icon(Icons.add),
-                          title: Text('Add car', style: TextStyle(fontSize: 16,color: Colors.indigo),),
+                          title: Text('Add car', style: TextStyle(fontSize: 12,color: Colors.indigo[400]),),
                         ),
                       ],
                     ),

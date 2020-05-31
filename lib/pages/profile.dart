@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,6 +53,9 @@ class _ProfileState extends State<Profile> {
   String imggender="";
   String countTrust="";
   int countTrustint=0;
+  String datetoshow="";
+  String ridewithtoshow="";
+  String smokingtoshow="";
   static String getDisplayRating(double rating) {
     rating = rating.abs();
     final str = rating.toStringAsFixed(rating.truncateToDouble() ==rating ? 0 : 2);
@@ -71,8 +76,8 @@ class _ProfileState extends State<Profile> {
           context: context,
           builder: (BuildContext context) {
             return RichAlertDialog(
-              alertTitle: richTitle(data['error']),
-              alertSubtitle: richSubtitle(data['message']),
+              alertTitle: Text(data['error'], maxLines: 1, style: TextStyle(color: Colors.black, fontSize: 12),textAlign: TextAlign.center,),
+              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -98,24 +103,49 @@ class _ProfileState extends State<Profile> {
     else{
         Map data= jsonDecode(response.body);
         Map userInfo = data['decoded'];
-        id = userInfo['id'];//
-        firstname = userInfo['firstname'];//
-        lastname = userInfo['lastname'];//
-        phonenumber = userInfo['phonenumber'];//
-        gender = userInfo['gender'];//
-        password = userInfo['password'];//
-        birthdate = userInfo['birthdate'];//
+        id = userInfo['id'];
+        firstname = userInfo['firstname'];
+        lastname = userInfo['lastname'];
+        phonenumber = userInfo['phonenumber'];
+        gender = userInfo['gender'];
+        password = userInfo['password'];
+        birthdate = userInfo['birthdate'];
         ridewith = userInfo['ridewith'];
         smoking = userInfo['smoking'];
-        rating = userInfo['rating'];//
-        status = userInfo['status'];//
-        email = userInfo['email'];//
+        rating = userInfo['rating'];
+        status = userInfo['status'];
+        email = userInfo['email'];
         latitude = userInfo['latitude'];
         longitude = userInfo['longitude'];
-        username = userInfo['username'];//
+        username = userInfo['username'];
+        datetoshow = DateFormat('dd-MM-yyyy').format(DateTime.parse(birthdate));
         fullname = firstname + " "+ lastname;
         doubleRating = double.parse(rating);
         trimRating = getDisplayRating(doubleRating);
+        if(ridewith=="female")
+          {
+            ridewithtoshow="Female";
+          }
+        else if(ridewith == "male")
+          {
+            ridewithtoshow="Male";
+          }
+        else
+          {
+            ridewithtoshow="Any";
+          }
+        if(smoking=="yes")
+          {
+            smokingtoshow="Yes";
+          }
+        else if(smoking=="no")
+          {
+            smokingtoshow="No";
+          }
+        else
+          {
+            smokingtoshow="Any";
+          }
         if(gender=="female")
           {
             imggender="images/avatarfemale.png";
@@ -136,7 +166,7 @@ class _ProfileState extends State<Profile> {
           builder: (BuildContext context) {
             return RichAlertDialog(
               alertTitle: richTitle("User error"),
-              alertSubtitle: richSubtitle(data['message']),
+              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -181,8 +211,8 @@ class _ProfileState extends State<Profile> {
           context: context,
           builder: (BuildContext context) {
             return RichAlertDialog(
-              alertTitle: richTitle(data['error']),
-              alertSubtitle: richSubtitle(data['message']),
+              alertTitle: richTitle("User error"),
+              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -234,10 +264,13 @@ class _ProfileState extends State<Profile> {
               child: ListTile(
                 contentPadding: EdgeInsets.all(10),
                 leading: CircleAvatar(
-                  child: Image.asset(img,height: 50,),
+                  child: Image.asset(
+                      img,
+                      height: 40
+                  ),
                 ),
-                title: Text(reviewtype,style: TextStyle(color: Colors.indigo),),
-                subtitle: Text(reviewObjs[i].review),
+                title: AutoSizeText(reviewtype,style: TextStyle(color: Colors.indigo[400], fontSize: 15),maxLines: 1,minFontSize: 2,),
+                subtitle: AutoSizeText(reviewObjs[i].review,style: TextStyle(color: Colors.grey[600], fontSize: 13),maxLines: 5, minFontSize: 2,),
               ),
             ),
           );
@@ -245,9 +278,8 @@ class _ProfileState extends State<Profile> {
     }
     return null;
   }
-  Future<Null>refreshpage(){
+  Future<Null>refreshpage() async{
     setState(() {
-      int z=0;
     });
     return null;
   }
@@ -265,7 +297,15 @@ class _ProfileState extends State<Profile> {
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.indigo,
+                        gradient: LinearGradient(
+                            begin: Alignment.center,
+                            colors: [
+                              Colors.indigo[600],
+                              Colors.indigo[500],
+                              Colors.indigo[400],
+                              Colors.indigo[300]
+                            ]
+                        ),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
@@ -285,20 +325,22 @@ class _ProfileState extends State<Profile> {
                                     ),
                                     CircleAvatar(
                                       child: Image.asset(imggender),
-                                      radius: 60,
+                                      radius: 50,
                                     ),
                                     SizedBox(
                                       height: 5,
                                     ),
-                                    Text(
+                                    AutoSizeText(
                                       fullname,
                                       style: TextStyle(
                                         color: Colors.indigo,
                                         fontSize: 25,
                                       ),
+                                      maxLines: 1,
+                                      minFontSize: 2,
                                     ),
                                     SizedBox(
-                                      height: 5,
+                                      height: 2,
                                     ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -335,9 +377,9 @@ class _ProfileState extends State<Profile> {
                                     Divider(
                                       height: 5,
                                       thickness: 1,
-                                      color: Colors.indigo.withOpacity(0.3),
-                                      indent: 15,
-                                      endIndent: 15,
+                                      color: Colors.indigo,
+                                      indent: 10,
+                                      endIndent: 10,
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -349,27 +391,31 @@ class _ProfileState extends State<Profile> {
                                         ),
                                         Icon(
                                           Icons.person,
-                                          color: Colors.indigo,
+                                          color: Colors.indigo[400],
                                         ),
                                         SizedBox(
                                           width: 2,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           "First name:",
                                           style: TextStyle(
-                                            color: Colors.indigo,
-                                            fontSize: 18,
+                                            color: Colors.indigo[400],
+                                            fontSize: 16,
                                           ),
+                                          maxLines: 1,
+                                          minFontSize: 1,
                                         ),
                                         SizedBox(
                                           width: 5,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           firstname,
                                           style: TextStyle(
                                             color: Colors.blueGrey,
-                                            fontSize: 18,
+                                            fontSize: 17,
                                           ),
+                                          minFontSize: 1,
+                                          maxLines: 1,
                                         ),
                                       ],
                                     ),
@@ -381,7 +427,7 @@ class _ProfileState extends State<Profile> {
                                       endIndent: 15,
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 5,
                                     ),
                                     Row(
                                       children: <Widget>[
@@ -390,27 +436,31 @@ class _ProfileState extends State<Profile> {
                                         ),
                                         Icon(
                                           Icons.person,
-                                          color: Colors.indigo,
+                                          color: Colors.indigo[400],
                                         ),
                                         SizedBox(
                                           width: 2,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           "Last name:",
                                           style: TextStyle(
-                                            color: Colors.indigo,
-                                            fontSize: 18,
+                                            color: Colors.indigo[400],
+                                            fontSize: 16,
                                           ),
+                                          maxLines: 1,
+                                          minFontSize: 1,
                                         ),
                                         SizedBox(
                                           width: 5,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           lastname,
                                           style: TextStyle(
                                             color: Colors.blueGrey,
-                                            fontSize: 18,
+                                            fontSize: 17,
                                           ),
+                                          minFontSize: 2,
+                                          maxLines: 1,
                                         ),
                                       ],
                                     ),
@@ -422,7 +472,7 @@ class _ProfileState extends State<Profile> {
                                       endIndent: 15,
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 5,
                                     ),
                                     Row(
                                       children: <Widget>[
@@ -431,26 +481,28 @@ class _ProfileState extends State<Profile> {
                                         ),
                                         Icon(
                                           Icons.person,
-                                          color: Colors.indigo,
+                                          color: Colors.indigo[400],
                                         ),
                                         SizedBox(
                                           width: 2,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           "Username:",
                                           style: TextStyle(
-                                            color: Colors.indigo,
-                                            fontSize: 18,
+                                            color: Colors.indigo[400],
+                                            fontSize: 16,
                                           ),
+                                          minFontSize: 2,
+                                          maxLines: 1,
                                         ),
                                         SizedBox(
                                           width: 5,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           username,
                                           style: TextStyle(
                                             color: Colors.blueGrey,
-                                            fontSize: 18,
+                                            fontSize: 17,
                                           ),
                                         ),
                                       ],
@@ -463,7 +515,7 @@ class _ProfileState extends State<Profile> {
                                       endIndent: 15,
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 5,
                                     ),
                                     Row(
                                       children: <Widget>[
@@ -472,17 +524,19 @@ class _ProfileState extends State<Profile> {
                                         ),
                                         Icon(
                                           Icons.mail,
-                                          color: Colors.indigo,
+                                          color: Colors.indigo[400],
                                         ),
                                         SizedBox(
                                           width: 2,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           "E-mail:",
                                           style: TextStyle(
-                                            color: Colors.indigo,
-                                            fontSize: 18,
+                                            color: Colors.indigo[400],
+                                            fontSize: 16,
                                           ),
+                                          maxLines: 1,
+                                          minFontSize: 2,
                                         ),
                                         SizedBox(
                                           width: 5,
@@ -491,7 +545,7 @@ class _ProfileState extends State<Profile> {
                                           email,
                                           style: TextStyle(
                                             color: Colors.blueGrey,
-                                            fontSize: 18,
+                                            fontSize: 17,
                                           ),
                                         ),
                                       ],
@@ -504,7 +558,7 @@ class _ProfileState extends State<Profile> {
                                       endIndent: 15,
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 5,
                                     ),
                                     Row(
                                       children: <Widget>[
@@ -513,27 +567,29 @@ class _ProfileState extends State<Profile> {
                                         ),
                                         Icon(
                                           Icons.phone_in_talk,
-                                          color: Colors.indigo,
+                                          color: Colors.indigo[400],
                                         ),
                                         SizedBox(
                                           width: 2,
                                         ),
-                                        Text(
-                                          "Phone number:",
+                                        AutoSizeText(
+                                          "Phone:",
                                           style: TextStyle(
-                                            color: Colors.indigo,
-                                            fontSize: 18,
+                                            color: Colors.indigo[400],
+                                            fontSize: 16,
                                           ),
                                         ),
                                         SizedBox(
                                           width: 5,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           phonenumber,
                                           style: TextStyle(
                                             color: Colors.blueGrey,
-                                            fontSize: 18,
+                                            fontSize: 17,
                                           ),
+                                          minFontSize: 2,
+                                          maxLines: 1,
                                         ),
                                       ],
                                     ),
@@ -545,7 +601,7 @@ class _ProfileState extends State<Profile> {
                                       endIndent: 15,
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 5,
                                     ),
                                     Row(
                                       children: <Widget>[
@@ -554,27 +610,31 @@ class _ProfileState extends State<Profile> {
                                         ),
                                         Icon(
                                           Icons.cake,
-                                          color: Colors.indigo,
+                                          color: Colors.indigo[400],
                                         ),
                                         SizedBox(
                                           width: 2,
                                         ),
-                                        Text(
-                                          "Birthdate:",
+                                        AutoSizeText(
+                                          "Birth date:",
+                                          minFontSize: 2,
+                                          maxLines: 1,
                                           style: TextStyle(
-                                            color: Colors.indigo,
-                                            fontSize: 18,
+                                            color: Colors.indigo[400],
+                                            fontSize: 16,
                                           ),
                                         ),
                                         SizedBox(
                                           width: 5,
                                         ),
-                                        Text(
-                                          birthdate,
+                                        AutoSizeText(
+                                          datetoshow,
                                           style: TextStyle(
                                             color: Colors.blueGrey,
-                                            fontSize: 18,
+                                            fontSize: 17,
                                           ),
+                                          maxLines: 1,
+                                          minFontSize: 2,
                                         ),
                                       ],
                                     ),
@@ -586,7 +646,7 @@ class _ProfileState extends State<Profile> {
                                       endIndent: 15,
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 5,
                                     ),
                                     Row(
                                       children: <Widget>[
@@ -595,26 +655,30 @@ class _ProfileState extends State<Profile> {
                                         ),
                                         Icon(
                                           Icons.wc,
-                                          color: Colors.indigo,
+                                          color: Colors.indigo[400],
                                         ),
                                         SizedBox(
                                           width: 2,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           "Gender:",
                                           style: TextStyle(
-                                            color: Colors.indigo,
-                                            fontSize: 18,
+                                            color: Colors.indigo[400],
+                                            fontSize: 16,
                                           ),
+                                          minFontSize: 2,
+                                          maxLines: 1,
                                         ),
                                         SizedBox(
                                           width: 5,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           gender == "female"? "Female" : "Male",
+                                          maxLines: 1,
+                                          minFontSize: 1,
                                           style: TextStyle(
                                             color: Colors.blueGrey,
-                                            fontSize: 18,
+                                            fontSize: 17,
                                           ),
                                         ),
                                       ],
@@ -627,7 +691,7 @@ class _ProfileState extends State<Profile> {
                                       endIndent: 15,
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 5,
                                     ),
                                     Row(
                                       children: <Widget>[
@@ -636,26 +700,30 @@ class _ProfileState extends State<Profile> {
                                         ),
                                         Icon(
                                           Icons.time_to_leave,
-                                          color: Colors.indigo,
+                                          color: Colors.indigo[400],
                                         ),
                                         SizedBox(
                                           width: 2,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           "Ride with:",
+                                          maxLines: 1,
+                                          minFontSize: 2,
                                           style: TextStyle(
-                                            color: Colors.indigo,
-                                            fontSize: 18,
+                                            color: Colors.indigo[400],
+                                            fontSize: 16,
                                           ),
                                         ),
                                         SizedBox(
                                           width: 5,
                                         ),
-                                        Text(
-                                          ridewith,
+                                        AutoSizeText(
+                                          ridewithtoshow,
+                                          minFontSize: 1,
+                                          maxLines: 1,
                                           style: TextStyle(
                                             color: Colors.blueGrey,
-                                            fontSize: 18,
+                                            fontSize: 17,
                                           ),
                                         ),
                                       ],
@@ -668,7 +736,7 @@ class _ProfileState extends State<Profile> {
                                       endIndent: 15,
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 5,
                                     ),
                                     Row(
                                       children: <Widget>[
@@ -677,26 +745,30 @@ class _ProfileState extends State<Profile> {
                                         ),
                                         Icon(
                                           Icons.smoking_rooms,
-                                          color: Colors.indigo,
+                                          color: Colors.indigo[400],
                                         ),
                                         SizedBox(
                                           width: 2,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           "Smoking:",
+                                          minFontSize: 1,
+                                          maxLines: 1,
                                           style: TextStyle(
-                                            color: Colors.indigo,
-                                            fontSize: 18,
+                                            color: Colors.indigo[400],
+                                            fontSize: 16,
                                           ),
                                         ),
                                         SizedBox(
                                           width: 5,
                                         ),
-                                        Text(
-                                          smoking,
+                                        AutoSizeText(
+                                          smokingtoshow,
+                                          minFontSize: 1,
+                                          maxLines: 1,
                                           style: TextStyle(
                                             color: Colors.blueGrey,
-                                            fontSize: 18,
+                                            fontSize: 17,
                                           ),
                                         ),
                                       ],
@@ -717,7 +789,17 @@ class _ProfileState extends State<Profile> {
                                           new OutlineButton(
                                             shape: StadiumBorder(),
                                             textColor: Colors.blue,
-                                            child: Text('View home location', style: TextStyle(color: Colors.indigo[400]),),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.location_on,
+                                                  color: Colors.indigo[400],
+                                                  size: 19,
+                                                ),
+
+                                                Text('Home location', style: TextStyle(color: Colors.indigo[400],fontSize: 12),),
+                                              ],
+                                            ),
                                             borderSide: BorderSide(
                                                 color: Colors.indigo[400], style: BorderStyle.solid,
                                                 width: 1),
@@ -760,12 +842,23 @@ class _ProfileState extends State<Profile> {
                                           new OutlineButton(
                                             shape: StadiumBorder(),
                                             textColor: Colors.blue,
-                                            child: Text('View reviews', style: TextStyle(color: Colors.indigo[400]),),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.comment,
+                                                  color: Colors.indigo[400],
+                                                  size: 18,
+                                                ),
+                                                SizedBox(
+                                                  width: 2,
+                                                ),
+                                                Text('Your reviews', style: TextStyle(color: Colors.indigo[400],fontSize: 12),),
+                                              ],
+                                            ),
                                             borderSide: BorderSide(
                                                 color: Colors.indigo[400], style: BorderStyle.solid,
                                                 width: 1),
                                             onPressed: () {
-                                              //////////////////////////////////////////////
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
@@ -777,7 +870,15 @@ class _ProfileState extends State<Profile> {
                                                               child: Container(
                                                                 width: double.infinity,
                                                                 decoration: BoxDecoration(
-                                                                  color: Colors.indigo,
+                                                                  gradient: LinearGradient(
+                                                                      begin: Alignment.center,
+                                                                      colors: [
+                                                                        Colors.indigo[600],
+                                                                        Colors.indigo[500],
+                                                                        Colors.indigo[400],
+                                                                        Colors.indigo[300]
+                                                                      ]
+                                                                  ),
                                                                 ),
                                                                 child: Padding(
                                                                   padding: const EdgeInsets.all(10.0),
@@ -786,8 +887,11 @@ class _ProfileState extends State<Profile> {
                                                                           color: Colors.white,
                                                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),bottomLeft:Radius.circular(30),bottomRight: Radius.circular(30) )
                                                                       ),
-                                                                      child: noReviews == 1 ? Center(child: Text("No reviews to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),)) : ListView(
-                                                                        children: ListReviews,
+                                                                      child: noReviews == 1 ? Center(child: AutoSizeText("No reviews to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),maxLines: 1, minFontSize: 2,)) : Padding(
+                                                                        padding: const EdgeInsets.all(15.0),
+                                                                        child: ListView(
+                                                                          children: ListReviews,
+                                                                        ),
                                                                       ),
                                                                   ),
                                                                 ),
@@ -813,7 +917,7 @@ class _ProfileState extends State<Profile> {
                                         ]
                                     ),
                                     SizedBox(
-                                      height: 25,
+                                      height: 50,
                                     )
                                   ],
                                 ),
@@ -836,7 +940,15 @@ class _ProfileState extends State<Profile> {
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.indigo,
+                      gradient: LinearGradient(
+                          begin: Alignment.center,
+                          colors: [
+                            Colors.indigo[600],
+                            Colors.indigo[500],
+                            Colors.indigo[400],
+                            Colors.indigo[300]
+                          ]
+                      ),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
