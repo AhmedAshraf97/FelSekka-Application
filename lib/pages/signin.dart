@@ -129,6 +129,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin{
                                   border: Border(bottom: BorderSide(color: Colors.grey[200])),
                                 ),
                                 child: TextField(
+                                  keyboardType: TextInputType.emailAddress,
                                   controller: emailorphoneController,
                                   decoration: InputDecoration(
                                     hintText: "E-mail or phone number",

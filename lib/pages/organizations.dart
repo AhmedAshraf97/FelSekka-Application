@@ -1,18 +1,16 @@
 import 'dart:convert';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
-import 'package:felsekka/pages/signup2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flashy_tab_bar/flashy_tab_bar.dart';
-import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:http/http.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'AnimatedPage Route.dart';
 
 class Org{
   int id=0;
@@ -34,6 +32,8 @@ class Organizations extends StatefulWidget with NavigationStates{
   _OrganizationsState createState() => _OrganizationsState();
 }
 
+
+
 class _OrganizationsState extends State<Organizations> {
   List<Card> ListOrgs=[];
   List<Card> ListOrgsJoin=[];
@@ -49,9 +49,11 @@ class _OrganizationsState extends State<Organizations> {
   String token;
 
 
+
   Future<String> getData() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = await (prefs.getString('token')??'');
+
     //User orgs
     String urlMyOrgs="http://3.81.22.120:3000/api/showmyorg";
     Response responseMyOrgs =await post(urlMyOrgs, headers:{'authorization': token});
@@ -66,8 +68,8 @@ class _OrganizationsState extends State<Organizations> {
           context: context,
           builder: (BuildContext context) {
             return RichAlertDialog(
-              alertTitle: richTitle(data['error']),
-              alertSubtitle: richSubtitle(data['message']),
+              alertTitle: richTitle('User error'),
+              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -111,8 +113,8 @@ class _OrganizationsState extends State<Organizations> {
                 backgroundColor: Colors.white,
                 child: Image.asset("images/org.png",height: 100,),
               ),
-              title: Text(orgObjs[i].name,style: TextStyle(color: Colors.indigo),),
-              subtitle: Text(orgObjs[i].domain),
+              title: AutoSizeText(orgObjs[i].name, maxLines: 1,minFontSize: 2, style: TextStyle(color: Colors.indigo[400], fontSize: 13)),
+              subtitle: AutoSizeText(orgObjs[i].domain, maxLines: 1, minFontSize:2,style: TextStyle(color: Colors.grey[500], fontSize: 12)),
               trailing: IconButton(
                 icon: Icon(
                   Icons.location_on,
@@ -160,7 +162,7 @@ class _OrganizationsState extends State<Organizations> {
                     builder: (BuildContext context) {
                       return RichAlertDialog(
                         alertTitle: richTitle("Leave organization"),
-                        alertSubtitle: richSubtitle("Are you sure you want to leave organization?"),
+                        alertSubtitle: Text("Are you sure you want to leave organization?",maxLines: 1,),
                         alertType: RichAlertType.WARNING,
                         dialogIcon: Icon(
                           Icons.warning,
@@ -178,7 +180,39 @@ class _OrganizationsState extends State<Organizations> {
                             onPressed: () async{
                               String url="http://3.81.22.120:3000/api/deleteorg";
                               Response response =await post(url, headers:{'authorization': token}, body:{'orgid': orgObjs[i].id.toString()});
-                              if(response.statusCode != 200)
+                              if(response.statusCode==400)
+                                {
+                                  Map data= jsonDecode(response.body);
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return RichAlertDialog(
+                                          alertTitle: richTitle(data['error']),
+                                          alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                          alertType: RichAlertType.WARNING,
+                                          dialogIcon: Icon(
+                                            Icons.warning,
+                                            color: Colors.red,
+                                            size: 80,
+                                          ),
+                                          actions: <Widget>[
+                                            new OutlineButton(
+                                              shape: StadiumBorder(),
+                                              textColor: Colors.blue,
+                                              child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                              borderSide: BorderSide(
+                                                  color: Colors.indigo[400], style: BorderStyle.solid,
+                                                  width: 1),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      });
+                                  Navigator.pop(context);
+                                }
+                              else if(response.statusCode != 200)
                               {
                                 Map data= jsonDecode(response.body);
                                 showDialog(
@@ -186,7 +220,7 @@ class _OrganizationsState extends State<Organizations> {
                                     builder: (BuildContext context) {
                                       return RichAlertDialog(
                                         alertTitle: richTitle("User error"),
-                                        alertSubtitle: richSubtitle(data['message']),
+                                        alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
                                         alertType: RichAlertType.WARNING,
                                         dialogIcon: Icon(
                                           Icons.warning,
@@ -280,8 +314,8 @@ class _OrganizationsState extends State<Organizations> {
           context: context,
           builder: (BuildContext context) {
             return RichAlertDialog(
-              alertTitle: richTitle(data['error']),
-              alertSubtitle: richSubtitle(data['message']),
+              alertTitle: richTitle("User error"),
+              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -325,8 +359,8 @@ class _OrganizationsState extends State<Organizations> {
                 backgroundColor: Colors.white,
                 child: Image.asset("images/org.png",height: 100,),
               ),
-              title: Text(orgJoinObjs[i].name,style: TextStyle(color: Colors.indigo),),
-              subtitle: Text(orgJoinObjs[i].domain),
+              title: AutoSizeText(orgJoinObjs[i].name, maxLines: 1, minFontSize:2,style: TextStyle(color: Colors.indigo[400], fontSize: 13)),
+              subtitle: AutoSizeText(orgJoinObjs[i].domain, maxLines: 1,minFontSize: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12)),
               trailing: IconButton(
                 icon: Icon(
                   Icons.location_on,
@@ -405,14 +439,14 @@ class _OrganizationsState extends State<Organizations> {
                                              ),
                                              Padding(
                                                padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                                               child: Text("Organization e-mail:", style: TextStyle(color:Colors.indigo,fontSize: 18)),
+                                               child: AutoSizeText("Organization e-mail:", style: TextStyle(color:Colors.indigo,fontSize: 18),maxLines: 1, minFontSize: 2,),
                                              ),
                                              SizedBox(
                                                height: 3,
                                              ),
                                              Padding(
                                                padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                                               child: Text(orgJoinObjs[i].domain, style: TextStyle(color:Colors.blueGrey,fontSize: 15)),
+                                               child: AutoSizeText(orgJoinObjs[i].domain, style: TextStyle(color:Colors.blueGrey,fontSize: 15),maxLines: 1,minFontSize: 2,),
                                              ),
                                              SizedBox(
                                                height: 3,
@@ -457,7 +491,7 @@ class _OrganizationsState extends State<Organizations> {
                                                ),
                                                height:40,
                                                minWidth:100,
-                                               color: Colors.indigo,
+                                               color: Colors.indigo[400],
                                                elevation: 15,
                                                highlightColor: Colors.grey,
                                                splashColor: Colors.blueGrey,
@@ -510,7 +544,7 @@ class _OrganizationsState extends State<Organizations> {
                                                      };
                                                      String url="http://3.81.22.120:3000/api/chooseorg";
                                                      Response response =await post(url, headers:{'authorization': token}, body: body);
-                                                     if(response.statusCode != 200)
+                                                     if(response.statusCode == 400)
                                                      {
                                                        Map data= jsonDecode(response.body);
                                                        showDialog(
@@ -518,7 +552,38 @@ class _OrganizationsState extends State<Organizations> {
                                                            builder: (BuildContext context) {
                                                              return RichAlertDialog(
                                                                alertTitle: richTitle(data['error']),
-                                                               alertSubtitle: richSubtitle(data['message']),
+                                                               alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                               alertType: RichAlertType.WARNING,
+                                                               dialogIcon: Icon(
+                                                                 Icons.warning,
+                                                                 color: Colors.red,
+                                                                 size: 80,
+                                                               ),
+                                                               actions: <Widget>[
+                                                                 new OutlineButton(
+                                                                   shape: StadiumBorder(),
+                                                                   textColor: Colors.blue,
+                                                                   child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                   borderSide: BorderSide(
+                                                                       color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                       width: 1),
+                                                                   onPressed: () {
+                                                                     Navigator.pop(context);
+                                                                   },
+                                                                 ),
+                                                               ],
+                                                             );
+                                                           });
+                                                     }
+                                                     else if(response.statusCode!=200)
+                                                     {
+                                                       Map data= jsonDecode(response.body);
+                                                       showDialog(
+                                                           context: context,
+                                                           builder: (BuildContext context) {
+                                                             return RichAlertDialog(
+                                                               alertTitle: richTitle('User error'),
+                                                               alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
                                                                alertType: RichAlertType.WARNING,
                                                                dialogIcon: Icon(
                                                                  Icons.warning,
@@ -621,18 +686,20 @@ class _OrganizationsState extends State<Organizations> {
             return Padding(
               padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
               child: Container(
-                child: noOrgs == 1 ? Center(child: Text("No organizations to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),)) :
+                child: noOrgs == 1 ? Center(child: AutoSizeText("No organizations to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),maxLines: 1,minFontSize: 2,)) :
                 Column(
                   children: <Widget>[
                     SizedBox(
                       height: 20,
                     ),
-                    Text(
+                    AutoSizeText(
                       "Tap to leave Organization.",
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontSize: 15,
                       ),
+                      minFontSize: 2,
+                      maxLines: 1,
                     ),
                     Expanded(
                       child: ListView(
@@ -663,18 +730,20 @@ class _OrganizationsState extends State<Organizations> {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                 child: Container(
-                  child: noOrgsJoin == 1 ? Center(child: Text("No organizations to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),)) :
+                  child: noOrgsJoin == 1 ? Center(child: AutoSizeText("No organizations to show yet.",minFontSize:2,maxLines:1,style: TextStyle(color: Colors.indigo, fontSize: 20,),)) :
                   Column(
                     children: <Widget>[
                       SizedBox(
                         height: 20,
                       ),
-                      Text(
+                      AutoSizeText(
                         "Tap to join Organization.",
                         style: TextStyle(
                           color: Colors.blueGrey,
                           fontSize: 15,
                         ),
+                        minFontSize: 2,
+                        maxLines: 1,
                       ),
                       Expanded(
                         child: ListView(
@@ -713,11 +782,14 @@ class _OrganizationsState extends State<Organizations> {
                   Icons.add_circle,
                   color:Colors.redAccent,
                 ),
+                SizedBox(
+                  width: 5,
+                ),
                 Text(
                   "Add Organization:",
                   style: TextStyle(
                   color: Colors.indigo,
-                    fontSize: 20,
+                    fontSize: 16,
                 ),
                 ),
               ],
@@ -731,7 +803,7 @@ class _OrganizationsState extends State<Organizations> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Organization name:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  child: Text("Organization name:", style: TextStyle(color:Colors.indigo[400],fontSize: 15)),
                 ),
                 SizedBox(
                   height: 3,
@@ -769,7 +841,7 @@ class _OrganizationsState extends State<Organizations> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("E-mail domain:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  child: Text("E-mail domain:", style: TextStyle(color:Colors.indigo[400],fontSize: 15)),
                 ),
                 SizedBox(
                   height: 3,
@@ -811,7 +883,7 @@ class _OrganizationsState extends State<Organizations> {
               child: Text("Choose location",
                 style: TextStyle(
                   color: Colors.indigo,
-                  fontSize: 20.0,
+                  fontSize: 16.0,
                   fontFamily: "Kodchasan",
                 ),
               ),
@@ -845,11 +917,10 @@ class _OrganizationsState extends State<Organizations> {
                 );
               },
             ),
-            selectedPlace == null ? Container() : Text(selectedPlace.formattedAddress ?? "", textAlign: TextAlign.center,),
-
+            selectedPlace == null ? Container() : AutoSizeText(selectedPlace.formattedAddress ?? "", textAlign: TextAlign.center,maxLines: 2,minFontSize: 2,),
             Padding(
               padding: const EdgeInsets.fromLTRB(25, 15, 25, 50),
-              child: Text("Your request for adding this organization will be processed and if it is accepted, you will be able to join this organization in Join Organization tab.", textAlign: TextAlign.center, style:TextStyle(color: Colors.blueGrey)),
+              child: AutoSizeText("Your request for adding this organization will be processed and if it is accepted, you will be able to join this organization in Join Organization tab.", textAlign: TextAlign.center, style:TextStyle(color: Colors.blueGrey),maxLines: 3,minFontSize: 2,),
             ),
             MaterialButton(
               child: Text("Add",
@@ -861,7 +932,7 @@ class _OrganizationsState extends State<Organizations> {
               ),
               height:40,
               minWidth:100,
-              color: Colors.indigo,
+              color: Colors.indigo[400],
               elevation: 15,
               highlightColor: Colors.grey,
               splashColor: Colors.blueGrey,
@@ -980,7 +1051,7 @@ class _OrganizationsState extends State<Organizations> {
                     };
                     String url="http://3.81.22.120:3000/api/addorg";
                     Response response =await post(url, headers:{'authorization': token}, body: body);
-                    if(response.statusCode != 200)
+                    if(response.statusCode == 400)
                     {
                       Map data= jsonDecode(response.body);
                       showDialog(
@@ -988,7 +1059,7 @@ class _OrganizationsState extends State<Organizations> {
                           builder: (BuildContext context) {
                             return RichAlertDialog(
                               alertTitle: richTitle(data['error']),
-                              alertSubtitle: richSubtitle(data['message']),
+                              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
                               alertType: RichAlertType.WARNING,
                               dialogIcon: Icon(
                                 Icons.warning,
@@ -1011,6 +1082,37 @@ class _OrganizationsState extends State<Organizations> {
                             );
                           });
                     }
+                    else if(response.statusCode!=200)
+                      {
+                        Map data= jsonDecode(response.body);
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return RichAlertDialog(
+                                alertTitle: richTitle('User error'),
+                                alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                alertType: RichAlertType.WARNING,
+                                dialogIcon: Icon(
+                                  Icons.warning,
+                                  color: Colors.red,
+                                  size: 80,
+                                ),
+                                actions: <Widget>[
+                                  new OutlineButton(
+                                    shape: StadiumBorder(),
+                                    textColor: Colors.blue,
+                                    child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                    borderSide: BorderSide(
+                                        color: Colors.indigo[400], style: BorderStyle.solid,
+                                        width: 1),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      }
                     else{
                       nameController.text="";
                       domainController.text="";
@@ -1061,7 +1163,15 @@ class _OrganizationsState extends State<Organizations> {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.indigo,
+                gradient: LinearGradient(
+                    begin: Alignment.center,
+                    colors: [
+                      Colors.indigo[600],
+                      Colors.indigo[500],
+                      Colors.indigo[400],
+                      Colors.indigo[300]
+                    ]
+                ),
               ),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(10.0,10,10,0),
@@ -1081,19 +1191,22 @@ class _OrganizationsState extends State<Organizations> {
                         items: [
                           FlashyTabBarItem(
                             icon: Icon(Icons.location_city),
-                            title: Text('My Organizations', style: TextStyle(fontSize: 12,color: Colors.indigo),),
+                            title: Text('My Organizations', style: TextStyle(fontSize: 8,color: Colors.indigo[400]),),
                           ),
                           FlashyTabBarItem(
                             icon: Icon(Icons.search),
-                            title: Text('Join Organization', style: TextStyle(fontSize: 12,color: Colors.indigo),),
+                            title: Text('Join Organization', style: TextStyle(fontSize: 8,color: Colors.indigo[400]),),
                           ),
                           FlashyTabBarItem(
                             icon: Icon(Icons.add),
-                            title: Text('Add Organization', style: TextStyle(fontSize: 12,color: Colors.indigo),),
+                            title: Text('Add Organization', style: TextStyle(fontSize: 8,color: Colors.indigo[400]),),
                           ),
                         ],
                       ),
-                      body: tabs[_selectedIndex],
+                      body: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: tabs[_selectedIndex],
+                      ),
                     ),
                 ),
               ),

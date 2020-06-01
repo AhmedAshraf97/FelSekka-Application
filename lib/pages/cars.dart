@@ -5,14 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flashy_tab_bar/flashy_tab_bar.dart';
-import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:http/http.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'AnimatedPage Route.dart';
 
 class Car{
   int id=0;
@@ -173,7 +170,7 @@ class _CarsState extends State<Cars> {
       child: Text("CUV"),
       value: "CUV",
     ),DropdownMenuItem(
-      child: Text("Htachback"),
+      child: Text("Hatchback"),
       value: "Hatchback",
     ),DropdownMenuItem(
       child: Text("Micro"),
@@ -936,6 +933,7 @@ class _CarsState extends State<Cars> {
                   Icons.add_circle,
                   color:Colors.redAccent,
                 ),
+                SizedBox(width:5,),
                 Text(
                   "Add Car:",
                   style: TextStyle(
@@ -954,11 +952,21 @@ class _CarsState extends State<Cars> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Brand:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  child: Text("Brand:", style: TextStyle(color:Colors.indigo[400],fontSize: 15)),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(22.0,0,22,3),
                   child: SearchableDropdown.single(
+                    selectedValueWidgetFn: (value){
+                      return Row(
+                        children: <Widget>[
+                          Text(
+                            selectedBrand.toString(),
+                            textAlign: TextAlign.start,
+                          ),
+                        ],
+                      );
+                    },
                     iconDisabledColor: Colors.grey,
                     iconEnabledColor: Colors.indigo,
                     items: branditems,
@@ -967,7 +975,14 @@ class _CarsState extends State<Cars> {
                     searchHint: "Select brand",
                     onChanged: (value) {
                       setState(() {
-                        selectedBrand = value;
+                        if(value==null)
+                          {
+                            selectedBrand="";
+                          }
+                        else
+                          {
+                            selectedBrand = value;
+                          }
                       });
                     },
                     isExpanded: true,
@@ -975,16 +990,16 @@ class _CarsState extends State<Cars> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Model:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  child: Text("Model:", style: TextStyle(color:Colors.indigo[400],fontSize: 15)),
                 ),
                 SizedBox(
-                  height: 3,
+                  height: 1,
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(33,5.0,22,13),
+                  padding: const EdgeInsets.fromLTRB(33,1.0,22,13),
                   child: Container(
                     decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Colors.grey[200])),
+                      border: Border(bottom: BorderSide(color: Colors.grey[300])),
                     ),
                     child: TextField(
                       controller: modelController,
@@ -992,7 +1007,7 @@ class _CarsState extends State<Cars> {
                       decoration: InputDecoration(
                         counterText: "",
                         hintText: "Model",
-                        hintStyle: TextStyle(color:Colors.grey),
+                        hintStyle: TextStyle(color:Colors.grey[600]),
                         border: InputBorder.none,
                       ),
                     ),
@@ -1000,11 +1015,21 @@ class _CarsState extends State<Cars> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Type:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  child: Text("Type:", style: TextStyle(color:Colors.indigo[400],fontSize: 15)),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(22.0,0,22,3),
                   child: SearchableDropdown.single(
+                    selectedValueWidgetFn: (value){
+                      return Row(
+                        children: <Widget>[
+                          Text(
+                            selectedType.toString(),
+                            textAlign: TextAlign.start,
+                          ),
+                        ],
+                      );
+                    },
                     iconDisabledColor: Colors.grey,
                     iconEnabledColor: Colors.indigo,
                     items: typeitems,
@@ -1013,7 +1038,14 @@ class _CarsState extends State<Cars> {
                     searchHint: "Select type",
                     onChanged: (value) {
                       setState(() {
-                        selectedType = value;
+                        if(value==null)
+                          {
+                            selectedType = "";
+                          }
+                        else
+                          {
+                            selectedType = value;
+                          }
                       });
                     },
                     isExpanded: true,
@@ -1021,11 +1053,21 @@ class _CarsState extends State<Cars> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Color:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  child: Text("Color:", style: TextStyle(color:Colors.indigo[400],fontSize: 15)),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(22.0,0,22,3),
                   child: SearchableDropdown.single(
+                    selectedValueWidgetFn: (value){
+                      return Row(
+                        children: <Widget>[
+                          Text(
+                            selectedColor.toString(),
+                            textAlign: TextAlign.start,
+                          ),
+                        ],
+                      );
+                    },
                     iconDisabledColor: Colors.grey,
                     iconEnabledColor: Colors.indigo,
                     items: coloritems,
@@ -1034,7 +1076,14 @@ class _CarsState extends State<Cars> {
                     searchHint: "Select color",
                     onChanged: (value) {
                       setState(() {
-                        selectedColor = value;
+                        if(value==null)
+                          {
+                            selectedColor="";
+                          }
+                        else
+                          {
+                            selectedColor = value;
+                          }
                       });
                     },
                     isExpanded: true,
@@ -1042,14 +1091,21 @@ class _CarsState extends State<Cars> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Year:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
-                ),
-                SizedBox(
-                  height: 0,
+                  child: Text("Year:", style: TextStyle(color:Colors.indigo[400],fontSize: 15)),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(22.0,0,22,3),
                   child: SearchableDropdown.single(
+                    selectedValueWidgetFn: (value){
+                      return Row(
+                        children: <Widget>[
+                          Text(
+                            selectedYear.toString(),
+                            textAlign: TextAlign.start,
+                          ),
+                        ],
+                      );
+                    },
                     iconDisabledColor: Colors.grey,
                     iconEnabledColor: Colors.indigo,
                     items: yearitems,
@@ -1058,7 +1114,14 @@ class _CarsState extends State<Cars> {
                     searchHint: "Select year",
                     onChanged: (value) {
                       setState(() {
-                        selectedYear = value;
+                        if(value==null)
+                          {
+                            selectedYear="";
+                          }
+                        else
+                          {
+                            selectedYear=value;
+                          }
                       });
                     },
                     isExpanded: true,
@@ -1066,7 +1129,7 @@ class _CarsState extends State<Cars> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Plate letters:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  child: Text("Plate letters:", style: TextStyle(color:Colors.indigo[400],fontSize: 15)),
                 ),
                 SizedBox(
                   height: 3,
@@ -1091,7 +1154,7 @@ class _CarsState extends State<Cars> {
                       ),
                       child: TextField(
                         controller: platelettersController,
-                        maxLength: 30,
+                        maxLength: 3,
                         decoration: InputDecoration(
                           counterText: "",
                           hintText: "Plate letters",
@@ -1104,7 +1167,7 @@ class _CarsState extends State<Cars> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Plate numbers:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  child: Text("Plate numbers:", style: TextStyle(color:Colors.indigo[400],fontSize: 15)),
                 ),
                 SizedBox(
                   height: 3,
@@ -1129,7 +1192,7 @@ class _CarsState extends State<Cars> {
                       ),
                       child: TextField(
                         controller: platenumbersController,
-                        maxLength: 30,
+                        maxLength: 3,
                         decoration: InputDecoration(
                           counterText: "",
                           hintText: "Plate numbers",
@@ -1142,7 +1205,7 @@ class _CarsState extends State<Cars> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Number of seats:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  child: Text("Number of seats:", style: TextStyle(color:Colors.indigo[400],fontSize: 15)),
                 ),
                 SizedBox(
                   height: 3,
@@ -1166,6 +1229,7 @@ class _CarsState extends State<Cars> {
                         border: Border(bottom: BorderSide(color: Colors.grey[200])),
                       ),
                       child: TextField(
+                        keyboardType: TextInputType.number,
                         controller: numberofseatsController,
                         maxLength: 30,
                         decoration: InputDecoration(
@@ -1180,7 +1244,7 @@ class _CarsState extends State<Cars> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("National ID:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  child: Text("National ID:", style: TextStyle(color:Colors.indigo[400],fontSize: 15)),
                 ),
                 SizedBox(
                   height: 3,
@@ -1204,6 +1268,7 @@ class _CarsState extends State<Cars> {
                         border: Border(bottom: BorderSide(color: Colors.grey[200])),
                       ),
                       child: TextField(
+                        keyboardType: TextInputType.number,
                         controller: nationalidController,
                         maxLength: 14,
                         decoration: InputDecoration(
@@ -1222,13 +1287,13 @@ class _CarsState extends State<Cars> {
                 child: Text("Add",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 20.0,
+                    fontSize: 17.0,
                     fontFamily: "Kodchasan",
                   ),
                 ),
-                height:40,
+                height:35,
                 minWidth:100,
-                color: Colors.indigo,
+                color: Colors.indigo[400],
                 elevation: 15,
                 highlightColor: Colors.grey,
                 splashColor: Colors.blueGrey,
@@ -1552,8 +1617,38 @@ class _CarsState extends State<Cars> {
                       };
                       String url="http://3.81.22.120:3000/api/addcar";
                       Response response =await post(url, headers:{'authorization': token}, body: body);
-                      print(response.body);
-                      if(response.statusCode != 200)
+                      if(response.statusCode==401 || response.statusCode==404)
+                        {
+                          Map data= jsonDecode(response.body);
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return RichAlertDialog(
+                                  alertTitle: richTitle("User error"),
+                                  alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                  alertType: RichAlertType.WARNING,
+                                  dialogIcon: Icon(
+                                    Icons.warning,
+                                    color: Colors.red,
+                                    size: 80,
+                                  ),
+                                  actions: <Widget>[
+                                    new OutlineButton(
+                                      shape: StadiumBorder(),
+                                      textColor: Colors.blue,
+                                      child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                      borderSide: BorderSide(
+                                          color: Colors.indigo[400], style: BorderStyle.solid,
+                                          width: 1),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+                        }
+                      else if(response.statusCode != 200)
                       {
                         Map data= jsonDecode(response.body);
                         showDialog(
@@ -1561,7 +1656,7 @@ class _CarsState extends State<Cars> {
                             builder: (BuildContext context) {
                               return RichAlertDialog(
                                 alertTitle: richTitle(data['error']),
-                                alertSubtitle: richSubtitle(data['message']),
+                                alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
                                 alertType: RichAlertType.WARNING,
                                 dialogIcon: Icon(
                                   Icons.warning,
@@ -1596,6 +1691,7 @@ class _CarsState extends State<Cars> {
                           numberofseatsController.text="";
                           nationalidController.text="";
                           domainController.text="";
+                          _selectedIndex=0;
                         });
                         showDialog(
                             context: context,
@@ -1619,9 +1715,10 @@ class _CarsState extends State<Cars> {
                                         width: 1),
                                     onPressed: () {
                                       Navigator.pop(context);
-                                      Navigator.pop(context);
-                                      Navigator.push(context, AnimatedPageRoute(widget: Cars()));
-                                    },
+                                      setState(() {
+
+                                      });
+                                      },
                                   ),
                                 ],
                               );
@@ -1642,7 +1739,15 @@ class _CarsState extends State<Cars> {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.indigo,
+                gradient: LinearGradient(
+                    begin: Alignment.center,
+                    colors: [
+                      Colors.indigo[600],
+                      Colors.indigo[500],
+                      Colors.indigo[400],
+                      Colors.indigo[300]
+                    ]
+                ),
               ),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(10.0,10,10,0),
