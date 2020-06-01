@@ -249,9 +249,9 @@ router.post('/', async(req, res) => {
                 status: "pending"
             }
             if (!existinorg) {
-                res.status(401).send({ error: "Organization", message: "You aren't assigned to this organization" });
+                res.status(400).send({ error: "Organization", message: "You aren't assigned to this organization" });
             } else if (error) {
-                res.status(401).send({ error: "error", message: "You can't request two rides at the same time" });
+                res.status(400).send({ error: "error", message: "You can't request two rides at the same time" });
             } else {
                 await requestRideTo.create(rideData).then(ride => {
                     res.status(200).send({ message: "Request is made successfully" });

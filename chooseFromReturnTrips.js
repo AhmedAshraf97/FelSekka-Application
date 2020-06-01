@@ -32,7 +32,7 @@ function add_minutes(d1, miuntes) {
 
 function SetDropOffTime(DriverObj) {
 
-    if (DriverObj.AssignedRiders.length == 1) {
+    if (DriverObj.AssignedRiders.length == 0) {
         return; //Driver has no passengers
     }
 
@@ -43,11 +43,11 @@ function SetDropOffTime(DriverObj) {
     DriverObj.TotalDurationTaken = 0;
     DriverObj.TotalDistanceCoveredToDestination = 0;
 
-    for (var i = DriverObj.AssignedRiders.length - 1; i >= 0; i--) {
+    for (var i = DriverObj.AssignedRiders.length - 1; i >= -1; i--) {
 
-        if (i == 0) { // Last iteration ( driver dropoff )
-            fromIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[1]))
-            fromRiderID = DriverObj.AssignedRiders[1];
+        if (i == -1) { // Last iteration ( driver dropoff )
+            fromIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[0]))
+            fromRiderID = DriverObj.AssignedRiders[0];
             DriverIndexinDriverRidersDuration = DriversRidersDuration.indexOf(DriversRidersDuration.find(n => n.ID === DriverObj.ID))
             DriverIndexinDriverRiders = DriversRider.indexOf(DriversRider.find(n => n.ID === DriverObj.ID))
             var datee = new Date(Riders[fromIndex].DropOffTime);
@@ -111,7 +111,7 @@ async function Reorder() {
     var OrganizationID = "ORG";
     g.setNode(DriverIDstr)
     g.setNode(OrganizationID)
-    for (var l = 1; l < AvailableDriver.AssignedRiders.length; l++) {
+    for (var l = 0; l < AvailableDriver.AssignedRiders.length; l++) {
         var RiderID = AvailableDriver.AssignedRiders[l];
         RiderIDstr = `${RiderID}`
         var Durationn = DriversRidersDuration.find(n => n.ID === DriverID).data.find(n => n.from === RiderID).duration;
@@ -120,8 +120,8 @@ async function Reorder() {
         g.setEdge(OrganizationID, RiderIDstr, Riders.find(n => n.ID === RiderID).TimeFromOrganizationMinutes)
     }
 
-    for (var p = 1; p < AvailableDriver.AssignedRiders.length; p++) {
-        for (var m = 1; m < AvailableDriver.AssignedRiders.length; m++) {
+    for (var p = 0; p < AvailableDriver.AssignedRiders.length; p++) {
+        for (var m = 0; m < AvailableDriver.AssignedRiders.length; m++) {
 
             if (m != p) {
                 var SourceID = AvailableDriver.AssignedRiders[p]
@@ -134,7 +134,7 @@ async function Reorder() {
         }
     }
 
-    var n = AvailableDriver.AssignedRiders.length - 1;
+    var n = AvailableDriver.AssignedRiders.length;
     var count = n;
     var kValue = 0;
 
@@ -152,7 +152,7 @@ async function Reorder() {
 
     for (var d = 0; d < response.length; d++) {
         var AssignedTemp = []
-        for (var j = response[d].edges.length - 1; j >= 0; j--) {
+        for (var j = response[d].edges.length - 2; j >= 0; j--) {
             AssignedTemp.push(parseInt(response[d].edges[j].toNode))
         }
         AvailableDriver.AssignedRiders = AssignedTemp;

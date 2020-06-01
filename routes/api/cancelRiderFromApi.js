@@ -62,7 +62,7 @@ class Driver {
 
 
         this.ID = ID
-        this.AssignedRiders = [ID];
+        this.AssignedRiders = [];
         this.TotalDistanceCoveredToDestination = 0;
         this.TotalDurationTaken = 0;
         this.DistanceFromOrganization = DistanceFromOrganization;
@@ -484,7 +484,7 @@ router.post('/', async(req, res) => {
 
                 var z = await CancelRiderFrom();
                 await Trips.update({
-                    numberofseats: driver.AssignedRiders.length - 1,
+                    numberofseats: driver.AssignedRiders.length,
                 }, {
                     where: {
                         id: trip.id
@@ -523,7 +523,7 @@ router.post('/', async(req, res) => {
                     }
                 }).catch(errHandler)
 
-                for (var i = 1; i < driver.AssignedRiders.length; i++) {
+                for (var i = 0; i < driver.AssignedRiders.length; i++) {
                     await RiderDB.update({
                         arrivaltime: Riders.find(n => n.ID === driver.AssignedRiders[i]).DropOffTime,
                     }, {

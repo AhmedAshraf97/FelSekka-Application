@@ -67,7 +67,7 @@ class Driver {
 
         this.userID = ID
         this.ID = offerid;
-        this.AssignedRiders = [offerid];
+        this.AssignedRiders = [];
         this.TotalDistanceCoveredToDestination = 0;
         this.TotalDurationTaken = 0;
         this.DistanceFromOrganization = DistanceFromOrganization;
@@ -80,7 +80,7 @@ class Driver {
         this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
         this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
         this.MaxDropoffDiffToNormalize = Number.NEGATIVE_INFINITY;
-
+        this.status = 0
         this.countDrivers = 0
 
         this.countRiders = 0
@@ -341,7 +341,7 @@ router.post('/', async(req, res) => {
                             Drivers[i].MaxDistanceToNormalize = Math.max(DRDistanceDurationValue[j].valueDistance, Drivers[i].MaxDistanceToNormalize)
                             Drivers[i].MaxDurationToNormalize = Math.max(DRDistanceDurationValue[j].valueDuration, Drivers[i].MaxDurationToNormalize)
 
-                            diffDropOff = diff_minutes(Drivers[i].LatestDropOff, Riders.find(n => n.ID === DRDistanceDurationValue[j].from).LatestDropOff) - DRDistanceDurationValue[j].valueDuration
+                            diffDropOff = diff_minutes(Drivers[i].LatestDropOff, Riders.find(n => n.ID === DRDistanceDurationValue[j].from).LatestDropOff)
 
                             Drivers[i].MaxDropoffDiffToNormalize = Math.max(diffDropOff, Drivers[i].MaxDropoffDiffToNormalize)
                             DriverRow.push(distanceDurationObj);
@@ -449,9 +449,9 @@ router.post('/', async(req, res) => {
 
 
                 for (var i = 0; i < Drivers.length; i++) {
-                    if (Drivers[i].AssignedRiders.length > 1) {
+                    if (Drivers[i].AssignedRiders.length > 0) {
                         OffersToupdate.push(Drivers[i].offerid)
-                        for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
+                        for (var j = 0; j < Drivers[i].AssignedRiders.length; j++) {
                             RequestsToupdate.push(Drivers[i].AssignedRiders[j])
                         }
                     }
@@ -484,7 +484,7 @@ router.post('/', async(req, res) => {
                 var RidersArray = []
                 var countAssigned = 0;
                 for (var i = 0; i < Drivers.length; i++) {
-                    if (Drivers[i].AssignedRiders.length > 1) {
+                    if (Drivers[i].AssignedRiders.length > 0) {
                         countAssigned++;
                         const organization = organizationObj.find(n => n.id === Drivers[i].fromorgid);
                         var Trip = {}
@@ -498,7 +498,7 @@ router.post('/', async(req, res) => {
                         Trip.totaldistance = 0
                         Trip.totaltime = 0
                         Trip.totalfare = 0
-                        Trip.numberofseats = Drivers[i].AssignedRiders.length - 1
+                        Trip.numberofseats = Drivers[i].AssignedRiders.length
                         Trip.date = Drivers[i].date
                         Trip.status = "scheduled"
 
@@ -511,7 +511,7 @@ router.post('/', async(req, res) => {
 
                 var tripscounter = 0;
                 for (var i = 0; i < Drivers.length; i++) {
-                    if (Drivers[i].AssignedRiders.length > 1) {
+                    if (Drivers[i].AssignedRiders.length > 0) {
                         var Driverr = {}
                         Driverr.tripid = trip[tripscounter].dataValues.id
                         Driverr.tofrom = "from"
@@ -528,7 +528,7 @@ router.post('/', async(req, res) => {
 
                         DriversArray.push(Driverr)
 
-                        for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
+                        for (var j = 0; j < Drivers[i].AssignedRiders.length; j++) {
 
                             var Riderr = {}
                             Riderr.tripid = trip[tripscounter].dataValues.id

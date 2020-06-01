@@ -18,11 +18,11 @@ module.exports = async function main() {
     CurrentDriver.TotalDurationTaken = 0;
     CurrentDriver.TotalDistanceCoveredToDestination = 0;
 
-    for (var i = CurrentDriver.AssignedRiders.length - 1; i >= 0; i--) {
+    for (var i = CurrentDriver.AssignedRiders.length - 1; i >= -1; i--) {
 
-        if (i == 0) { // Last iteration ( driver dropoff )
-            fromIndex = Riders.indexOf(Riders.find(n => n.ID === CurrentDriver.AssignedRiders[1]))
-            fromRiderID = CurrentDriver.AssignedRiders[1];
+        if (i == -1) { // Last iteration ( driver dropoff )
+            fromIndex = Riders.indexOf(Riders.find(n => n.ID === CurrentDriver.AssignedRiders[0]))
+            fromRiderID = CurrentDriver.AssignedRiders[0];
             DriverIndexinDriverRidersDuration = DriversRidersDuration.indexOf(DriversRidersDuration.find(n => n.ID === CurrentDriver.ID))
             DriverIndexinDriverRiders = DriversRider.indexOf(DriversRider.find(n => n.ID === CurrentDriver.ID))
             var datee = new Date(Riders[fromIndex].DropOffTime);

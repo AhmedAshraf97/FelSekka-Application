@@ -61,7 +61,7 @@ class Driver {
 
 
         this.ID = ID
-        this.AssignedRiders = [ID];
+        this.AssignedRiders = [];
         this.TotalDistanceCoveredToDestination = 0;
         this.TotalDurationTaken = 0;
         this.DistanceFromOrganization = DistanceFromOrganization;
@@ -468,7 +468,7 @@ router.post('/', async(req, res) => {
 
                                             if (Riders[Riders.length - 1].isAssigned === true) {
                                                 await Trips.update({
-                                                    numberofseats: driver.AssignedRiders.length - 1,
+                                                    numberofseats: driver.AssignedRiders.length,
                                                 }, {
                                                     where: {
                                                         id: Trip.id
@@ -489,7 +489,7 @@ router.post('/', async(req, res) => {
 
 
 
-                                                for (var i = 1; i < driver.AssignedRiders.length; i++) {
+                                                for (var i = 0; i < driver.AssignedRiders.length; i++) {
                                                     if (driver.AssignedRiders[i] === user.id) {
 
                                                         const rideData = {
@@ -557,21 +557,21 @@ router.post('/', async(req, res) => {
                                 }
                             }
                             if (countfromorg == 0) {
-                                res.status(400).send("You aren't a member in this organization")
+                                res.status(400).send({ error: "Can't join this trip", message: "You aren't a member in this organization" })
                                 res.end();
                             }
 
                         } else {
-                            res.status(400).send("You aren't a member in this organization")
+                            res.status(400).send({ error: "Can't join this trip", message: "You aren't a member in this organization" })
                             res.end();
 
                         }
                     } else {
-                        res.status(400).send("You are a driver in this trip")
+                        res.status(400).send({ error: "Can't join this trip", message: "You are a driver in this trip" })
                         res.end();
                     }
                 } else {
-                    res.status(400).send("No available seats in this trip")
+                    res.status(400).send({ error: "No seats in this trip", message: "No seats in this trip" })
                     res.end()
                 }
             } else {

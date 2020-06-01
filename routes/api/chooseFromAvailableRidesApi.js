@@ -60,7 +60,7 @@ class Driver {
         EarliestStartTime, ridewith, smoking, toorgid, date, latitude, longitude) {
 
         this.ID = ID
-        this.AssignedRiders = [ID];
+        this.AssignedRiders = [];
         this.TotalDistanceCoveredToDestination = 0;
         this.TotalDurationTaken = 0;
         this.DistanceToOrganization = DistanceToOrganization;
@@ -466,7 +466,7 @@ router.post('/', async(req, res) => {
                                             var z = await chooseFromAvailableRides();
                                             if (Riders[Riders.length - 1].isAssigned === true) {
                                                 await Trips.update({
-                                                    numberofseats: driver.AssignedRiders.length - 1,
+                                                    numberofseats: driver.AssignedRiders.length,
                                                 }, {
                                                     where: {
                                                         id: Trip.id
@@ -487,7 +487,7 @@ router.post('/', async(req, res) => {
 
 
 
-                                                for (var i = 1; i < driver.AssignedRiders.length; i++) {
+                                                for (var i = 0; i < driver.AssignedRiders.length; i++) {
                                                     if (driver.AssignedRiders[i] === user.id) {
 
                                                         const rideData = {

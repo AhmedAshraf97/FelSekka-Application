@@ -68,7 +68,7 @@ class Driver {
 
         this.userID = ID
         this.ID = offerid;
-        this.AssignedRiders = [offerid];
+        this.AssignedRiders = [];
         this.TotalDistanceCoveredToDestination = 0;
         this.TotalDurationTaken = 0;
         this.DistanceToOrganization = DistanceToOrganization;
@@ -99,6 +99,7 @@ class Driver {
         this.skipFlag = 0;
         this.countRiders = 0;
         this.countDrivers = 0
+        this.status = 0;
     }
 };
 
@@ -460,9 +461,9 @@ router.post('/', async(req, res) => {
 
 
                 for (var i = 0; i < Drivers.length; i++) {
-                    if (Drivers[i].AssignedRiders.length > 1) {
+                    if (Drivers[i].AssignedRiders.length > 0) {
                         OffersToupdate.push(Drivers[i].offerid)
-                        for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
+                        for (var j = 0; j < Drivers[i].AssignedRiders.length; j++) {
                             RequestsToupdate.push(Drivers[i].AssignedRiders[j])
                         }
                     }
@@ -495,7 +496,7 @@ router.post('/', async(req, res) => {
                 var RidersArray = []
                 for (var i = 0; i < Drivers.length; i++) {
                     const organization = organizationObj.find(n => n.id === Drivers[i].toorgid);
-                    if (Drivers[i].AssignedRiders.length > 1) {
+                    if (Drivers[i].AssignedRiders.length > 0) {
                         countAssigned++;
                         var Trip = {}
 
@@ -509,7 +510,7 @@ router.post('/', async(req, res) => {
                         Trip.totaldistance = 0
                         Trip.totaltime = 0
                         Trip.totalfare = 0
-                        Trip.numberofseats = Drivers[i].AssignedRiders.length - 1
+                        Trip.numberofseats = Drivers[i].AssignedRiders.length
                         Trip.date = Drivers[i].date
                         Trip.status = "scheduled"
                         TripsArray.push(Trip)
@@ -522,7 +523,7 @@ router.post('/', async(req, res) => {
 
                 var tripscounter = 0;
                 for (var i = 0; i < Drivers.length; i++) {
-                    if (Drivers[i].AssignedRiders.length > 1) {
+                    if (Drivers[i].AssignedRiders.length > 0) {
                         var Driverr = {}
                         Driverr.tripid = trip[tripscounter].dataValues.id
                         Driverr.tofrom = "to"
@@ -537,7 +538,7 @@ router.post('/', async(req, res) => {
                         Driverr.fare = 0
                         Driverr.status = "scheduled"
                         DriversArray.push(Driverr)
-                        for (var j = 1; j < Drivers[i].AssignedRiders.length; j++) {
+                        for (var j = 0; j < Drivers[i].AssignedRiders.length; j++) {
 
                             var Riderr = {}
                             Riderr.tripid = trip[tripscounter].dataValues.id

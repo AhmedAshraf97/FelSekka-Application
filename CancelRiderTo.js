@@ -18,15 +18,15 @@ module.exports = async function main() {
         CurrentDriver.TotalDurationTaken = 0;
         CurrentDriver.TotalDistanceCoveredToDestination = 0;
 
-        for (var j = CurrentDriver.AssignedRiders.length - 1; j >= 0; j--) {
-            if (j == 0) { // Last iteration ( First Rider )
+        for (var j = CurrentDriver.AssignedRiders.length - 1; j >= -1; j--) {
+            if (j == -1) { // Last iteration ( First Rider )
 
 
-                toIndex = Riders.indexOf(Riders.find(n => n.ID === CurrentDriver.AssignedRiders[1]))
+                toIndex = Riders.indexOf(Riders.find(n => n.ID === CurrentDriver.AssignedRiders[0]))
                 var DriverIndexinDriverRidersDuration = DriversRidersDuration.indexOf(DriversRidersDuration.find(n => n.ID === CurrentDriver.ID))
                 var DriverIndexinDriverRiders = DriversRider.indexOf(DriversRider.find(n => n.ID === CurrentDriver.ID))
 
-                toRiderID = CurrentDriver.AssignedRiders[1];
+                toRiderID = CurrentDriver.AssignedRiders[0];
                 var datee = new Date(Riders[toIndex].PickupTime);
 
                 CurrentDriver.TotalDurationTaken += DriversRidersDuration[DriverIndexinDriverRidersDuration].data.find(n => n.to === toRiderID).duration

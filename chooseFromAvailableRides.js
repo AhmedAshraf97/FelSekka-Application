@@ -28,22 +28,22 @@ function add_minutes(d1, miuntes) {
 
 
 function SetPickUpTime(DriverObj) {
-    if (DriverObj.AssignedRiders.length === 1) {
+    if (DriverObj.AssignedRiders.length === 0) {
         return; //Driver has no passengers
     }
     var fromIndex;
     var toIndex;
     DriverObj.TotalDurationTaken = 0;
     DriverObj.TotalDistanceCoveredToDestination = 0;
-    for (var j = DriverObj.AssignedRiders.length - 1; j >= 0; j--) {
+    for (var j = DriverObj.AssignedRiders.length - 1; j >= -1; j--) {
 
-        if (j === 0)
+        if (j === -1)
 
         { // Last iteration ( First Rider )
-            toIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[1]))
+            toIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[0]))
             DriverIndexinDriverRidersDuration = DriversRidersDuration.indexOf(DriversRidersDuration.find(n => n.ID === DriverObj.ID))
             DriverIndexinDriverRidersDistance = DriversRider.indexOf(DriversRider.find(n => n.ID === DriverObj.ID))
-            toRiderID = DriverObj.AssignedRiders[1];
+            toRiderID = DriverObj.AssignedRiders[0];
             var datee = new Date(Riders[toIndex].PickupTime);
             DriverObj.PoolStartTime = datee
             DriverObj.PoolStartTime.setMinutes(Riders[toIndex].PickupTime.getMinutes() - DriversRidersDuration[DriverIndexinDriverRidersDuration].data.find(n => n.to === toRiderID).duration)
@@ -94,7 +94,7 @@ async function MatchingReorder() {
     var OrganizationID = "ORG";
     g.setNode(DriverIDstr)
     g.setNode(OrganizationID)
-    for (var l = 1; l < AvailableDriver.AssignedRiders.length; l++) {
+    for (var l = 0; l < AvailableDriver.AssignedRiders.length; l++) {
         var RiderID = AvailableDriver.AssignedRiders[l];
         RiderIDstr = `${RiderID}`
         var Durationn = DriversRidersDuration.find(n => n.ID === DriverID).data.find(n => n.to === RiderID).duration;
@@ -103,8 +103,8 @@ async function MatchingReorder() {
         g.setEdge(RiderIDstr, OrganizationID, Riders.find(n => n.ID === RiderID).TimeToOrganizationMinutes)
     }
 
-    for (var p = 1; p < AvailableDriver.AssignedRiders.length; p++) {
-        for (var m = 1; m < AvailableDriver.AssignedRiders.length; m++) {
+    for (var p = 0; p < AvailableDriver.AssignedRiders.length; p++) {
+        for (var m = 0; m < AvailableDriver.AssignedRiders.length; m++) {
 
             if (m != p) {
                 var SourceID = AvailableDriver.AssignedRiders[p]
@@ -117,7 +117,7 @@ async function MatchingReorder() {
         }
     }
 
-    var n = AvailableDriver.AssignedRiders.length - 1;
+    var n = AvailableDriver.AssignedRiders.length;
 
     var count = n;
     var kValue = 0;
@@ -146,7 +146,6 @@ async function MatchingReorder() {
 
     for (var d = 0; d < response.length; d++) {
         var AssignedTemp = []
-        AssignedTemp.push(DriverID)
         for (var j = 0; j < response[d].edges.length - 1; j++) {
             AssignedTemp.push(parseInt(response[d].edges[j].toNode))
         }
