@@ -350,7 +350,7 @@ router.post('/', async(req, res) => {
                             var distanceDurationObj = new distanceDuration(DRDistanceDurationValue[j].from, DRDistanceDurationValue[j].to, DRDistanceDurationValue[j].valueDistance, DRDistanceDurationValue[j].valueDuration);
                             Drivers[i].MaxDistanceToNormalize = Math.max(DRDistanceDurationValue[j].valueDistance, Drivers[i].MaxDistanceToNormalize)
                             Drivers[i].MaxDurationToNormalize = Math.max(DRDistanceDurationValue[j].valueDuration, Drivers[i].MaxDurationToNormalize)
-                            diffEarliest = diff_minutes(Riders.find(n => n.ID === DRDistanceDurationValue[j].to).EarliestPickup, Drivers[i].EarliestStartTime) - DRDistanceDurationValue[j].valueDuration
+                            diffEarliest = diff_minutes(Riders.find(n => n.ID === DRDistanceDurationValue[j].to).EarliestPickup, Drivers[i].EarliestStartTime)
                             Drivers[i].MaxEarliestDiffToNormalize = Math.max(diffEarliest, Drivers[i].MaxEarliestDiffToNormalize)
                             DriverRow.push(distanceDurationObj);
                         }
@@ -567,6 +567,7 @@ router.post('/', async(req, res) => {
                     res.status(400).send({ error: "No trips to be scheduled", message: "No trips to be scheduled" })
                     res.end()
                 } else {
+                    console.log("TIMEEEEE ", diff)
                     res.status(200).send({ message: "Matching Done" })
                     res.end()
 

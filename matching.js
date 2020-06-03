@@ -1,6 +1,6 @@
 const graphlib = require('graphlib');
-const ksp = require('k-shortest-path');
-//const ksp = require('../FelSekka-Application/yenKSP')
+//const ksp = require('k-shortest-path');
+const ksp = require('../FelSekka-Application/yenKSP')
 var Combinatorics = require('js-combinatorics');
 var Riders;
 var Drivers
@@ -129,8 +129,10 @@ async function StepByStepReorder(AvailableDriver) {
         //var delta = ((AvailableDriver.AssignedRiders.length - 2) / AvailableDriver.capacity) * RemainingMaxDuration
 
     //  delta = Math.min(delta, RemainingToDest)
-    var response = ksp.ksp(g, DriverIDstr, OrganizationID, kValue);
-    filteredresponse = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.TotalDurationTaken + delta && p.totalCost <= AvailableDriver.MaxDuration)
+    //   var response = ksp.ksp(g, DriverIDstr, OrganizationID, kValue);
+    var response = ksp.yenKSP(g, DriverIDstr, OrganizationID, kValue, AvailableDriver.TotalDurationTaken + delta, AvailableDriver.MaxDuration);
+
+    filteredresponse = response.filter(p => (p.edges.length === n + 1))
 
     //     var response = ksp.yenKSP(g, DriverIDstr, OrganizationID, kValue, AvailableDriver.TotalDurationTaken + delta, AvailableDriver.MaxDuration);
     //    var filteredresponse = response.filter(p => (p.edges.length === n + 1))
@@ -185,6 +187,9 @@ module.exports = async function main() {
 
             if (NumberOfUnAssignedRiders === 0)
                 break;
+            if (Drivers[j].ID === 46 || Drivers[j].ID === 74) {
+                var x = 5;
+            }
 
             var DriverID = Drivers[j].ID;
             var chosenDuration = -1
@@ -214,6 +219,7 @@ module.exports = async function main() {
                     var Distance = DriversRiders[indexinDriverRider].data[k].distance
                     var Duration = DriversRiders[indexinDriverRider].data[k].duration;
                     var Trust = 0;
+
                     if (diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) > 30 || diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) < 0) {
                         DriversRiders[indexinDriverRider].data.find(n => n.to === RiderID).checked = 1;
                         DriversRiders[indexinDriverRider].checked++;
@@ -236,9 +242,9 @@ module.exports = async function main() {
                             0.3 * Trust -
                             0.04 * diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) / 30; ///arrival time diff
 
-                        if (diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) > 0) {
-                            WeightFunction -= 0.15 * (diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) / Drivers[j].MaxEarliestDiffToNormalize)
-                        }
+                        // if (diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) > 0) {
+                        //     WeightFunction -= 0.1 * (diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) / Drivers[j].MaxEarliestDiffToNormalize)
+                        // }
 
                         WeightArray.push(WeightFunction)
                         WeightIndex.push(RiderID)
@@ -252,6 +258,9 @@ module.exports = async function main() {
                 var WeightIndexForDrivers = []
 
                 if (WeightArray.length > 0) {
+                    if (Drivers[j].ID === 46 || Drivers[j].ID === 74) {
+                        var x = 5;
+                    }
                     ChosenRiderID = WeightIndex[WeightArray.indexOf(Math.max.apply(Math, WeightArray))]
                     chosenDistance = DriversRiders[indexinDriverRider].data.find(n => n.to === ChosenRiderID).distance
                     chosenDuration = DriversRiders[indexinDriverRider].data.find(n => n.to === ChosenRiderID).duration
@@ -272,6 +281,9 @@ module.exports = async function main() {
                             continue;
 
                         if (CurrentDriver.AssignedRiders.length > 0) {
+                            if (Drivers[j].ID === 74) {
+                                var x = 5;
+                            }
                             LastRiderForDriverID = CurrentDriver.AssignedRiders[CurrentDriver.AssignedRiders.length - 1]
                             var indexinRiderRider = RidersRiders.findIndex(n => n.ID === LastRiderForDriverID);
                             DistanceFromRider = RidersRiders[indexinRiderRider].data.find(n => n.to === ChosenRiderID).distance
@@ -300,6 +312,9 @@ module.exports = async function main() {
                     }
 
                     if (Drivers[j].countDrivers == WeightArray.length) {
+                        if (Drivers[j].ID === 46 || Drivers[j].ID === 74) {
+                            var x = 5;
+                        }
 
                         var filteredDrivers = Drivers.filter(n => n.lastChosenRider === ChosenRiderID && n.status === 0 && n.AssignedRiders.length === 0);
                         if (filteredDrivers.length != 0) {
@@ -331,6 +346,9 @@ module.exports = async function main() {
                         Drivers[j].countDrivers = WeightArray.length
 
                         if (WeightArrayForDrivers.length > 0) {
+                            if (Drivers[j].ID === 46 || Drivers[j].ID === 74) {
+                                var x = 5;
+                            }
                             var ChosenDriverID = WeightIndexForDrivers[WeightArrayForDrivers.indexOf(Math.max.apply(Math, WeightArrayForDrivers))]
                             if (ChosenDriverID !== Drivers[j].ID) {
                                 Drivers[j].lastChosenRider = ChosenRiderID;
@@ -403,6 +421,9 @@ module.exports = async function main() {
 
                 }
                 if (WeightArray.length > 0) {
+                    if (Drivers[j].ID === 46 || Drivers[j].ID === 74) {
+                        var x = 5;
+                    }
 
                     ChosenRiderID = WeightIndex[WeightArray.indexOf(Math.max.apply(null, WeightArray))]
                     chosenDistance = RidersRiders[indexinRiderRider].data.find(n => n.to === ChosenRiderID).distance
@@ -450,7 +471,9 @@ module.exports = async function main() {
 
                     if (Drivers[j].countRiders == WeightArrayForRiders.length) {
 
-
+                        if (Drivers[j].ID === 46 || Drivers[j].ID === 74) {
+                            var x = 5;
+                        }
                         var filteredDrivers = Drivers.filter(n => n.lastChosenRider === ChosenRiderID && n.status === 0 && n.AssignedRiders.length != 0);
                         if (filteredDrivers.length != 0) {
                             var durations = [],
@@ -482,7 +505,9 @@ module.exports = async function main() {
 
                     } else {
                         Drivers[j].countRiders = WeightArrayForRiders.length
-
+                        if (Drivers[j].ID === 46 || Drivers[j].ID === 74) {
+                            var x = 5;
+                        }
                         if (WeightArrayForRiders.length > 0) {
                             var ChosenMaxRider = WeightIndexForRiders[WeightArrayForRiders.indexOf(Math.max.apply(Math, WeightArrayForRiders))]
                             var isExist = Drivers[j].AssignedRiders.find(n => n === ChosenMaxRider)
