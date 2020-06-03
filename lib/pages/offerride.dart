@@ -138,7 +138,6 @@ class _OfferRideState extends State<OfferRide> {
     //retrieve user data
     String url="http://3.81.22.120:3000/api/retrieveuserdata";
     Response response =await post(url, headers:{'authorization': token});
-    print(response.body);
     if(response.statusCode != 200)
     {
       Map data= jsonDecode(response.body);
@@ -147,7 +146,7 @@ class _OfferRideState extends State<OfferRide> {
           builder: (BuildContext context) {
             return RichAlertDialog(
               alertTitle: richTitle("User error"),
-              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+              alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -235,7 +234,7 @@ class _OfferRideState extends State<OfferRide> {
           builder: (BuildContext context) {
             return RichAlertDialog(
               alertTitle: richTitle('User error'),
-              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+              alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -601,13 +600,11 @@ class _OfferRideState extends State<OfferRide> {
                   ],
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
                       child: Text("Date:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
-                    ),
-                    SizedBox(
-                      width: 190,
                     ),
                     Container(
                       height: 30,
@@ -621,8 +618,6 @@ class _OfferRideState extends State<OfferRide> {
                               onConfirm: (datepick) {
                                 dateselected= DateFormat('yyyy-MM-dd').format(datepick).toString();
                                 date= DateFormat('dd-MM-yyyy').format(datepick).toString();
-                                print(date);
-                                print(dateselected);
                                 setState(() {
                                 });
                               }, currentTime: DateTime.now(), locale: LocaleType.en);
@@ -646,6 +641,7 @@ class _OfferRideState extends State<OfferRide> {
                   height: 5,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
@@ -686,13 +682,11 @@ class _OfferRideState extends State<OfferRide> {
                   height: 5,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
                       child: Text("Arrival time:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
-                    ),
-                    SizedBox(
-                      width: 140,
                     ),
                     Container(
                       height: 30,
@@ -1456,13 +1450,11 @@ class _OfferRideState extends State<OfferRide> {
                   ],
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
                       child: Text("Date:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
-                    ),
-                    SizedBox(
-                      width: 177,
                     ),
                     Container(
                       height: 30,
@@ -1499,13 +1491,11 @@ class _OfferRideState extends State<OfferRide> {
                   height: 5,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
                       child: Text("Departure time:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
-                    ),
-                    SizedBox(
-                      width: 101,
                     ),
                     Container(
                       height: 30,
@@ -1542,6 +1532,7 @@ class _OfferRideState extends State<OfferRide> {
                   height: 5,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),

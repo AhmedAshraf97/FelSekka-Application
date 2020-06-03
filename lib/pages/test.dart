@@ -7,7 +7,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flashy_tab_bar/flashy_tab_bar.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:geocoder/geocoder.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +14,6 @@ import 'package:progress_indicators/progress_indicators.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class Trip{
   String tofrom="";
@@ -60,9 +58,6 @@ class Org{
     return '{ ${this.id}, ${this.name},${this.domain}, ${this.latitude},${this.longitude} }';
   }
 }
-
-
-
 class JoinRide extends StatefulWidget with NavigationStates{
   @override
   _JoinRideState createState() => _JoinRideState();
@@ -84,14 +79,13 @@ class _JoinRideState extends State<JoinRide> {
   String earliestjoin="";
   String ridewithjoin="";
   String smokingjoin="";
-   List<DropdownMenuItem> orgitems = [];
+  final List<DropdownMenuItem> orgitems = [];
   List<Card> ListOrgs=[];
   List<GestureDetector> ListRides=[];
   List<GestureDetector> ListRidesSearch=[];
   int _selectedIndex = 0;
   int noOrgs=0;
   int noRides=0;
-  int noRidesSearch=0;
   String token;
   int id;
   String firstname="";
@@ -126,8 +120,6 @@ class _JoinRideState extends State<JoinRide> {
   String departuretime="";
   String departuretimeselected="";
   final TimeOfDay _time = new TimeOfDay.now();
-
-
   static String getDisplayRating(double rating) {
     rating = rating.abs();
     final str = rating.toStringAsFixed(rating.truncateToDouble() ==rating ? 0 : 2);
@@ -141,7 +133,7 @@ class _JoinRideState extends State<JoinRide> {
   Future<String> getData() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = await (prefs.getString('token')??'');
-    //retrieve user data
+//retrieve user data
     String url="http://3.81.22.120:3000/api/retrieveuserdata";
     Response response =await post(url, headers:{'authorization': token});
     if(response.statusCode != 200)
@@ -152,7 +144,7 @@ class _JoinRideState extends State<JoinRide> {
           builder: (BuildContext context) {
             return RichAlertDialog(
               alertTitle: richTitle("User error"),
-              alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -176,7 +168,8 @@ class _JoinRideState extends State<JoinRide> {
           });
     }
     else{
-        Map data= jsonDecode(response.body);
+      setState(() {
+        Map data = jsonDecode(response.body);
         Map userInfo = data['decoded'];
         id = userInfo['id'];
         firstname = userInfo['firstname'];
@@ -193,33 +186,28 @@ class _JoinRideState extends State<JoinRide> {
         latitude = userInfo['latitude'];
         longitude = userInfo['longitude'];
         username = userInfo['username'];
-        fullname = firstname + " "+ lastname;
+        fullname = firstname + " " + lastname;
         doubleRating = double.parse(rating);
         trimRating = getDisplayRating(doubleRating);
-        if(ridewith=="female")
-        {
-          ridewithselected=2;
+        if (ridewith == "female") {
+          ridewithselected = 2;
         }
-        else if(ridewith=="male")
-        {
-          ridewithselected=1;
+        else if (ridewith == "male") {
+          ridewithselected = 1;
         }
-        else
-        {
-          ridewithselected=3;
+        else {
+          ridewithselected = 3;
         }
-        if(smoking=="yes")
-        {
-          smokingselected=1;
+        if (smoking == "yes") {
+          smokingselected = 1;
         }
-        else if(smoking=="no")
-        {
-          smokingselected=2;
+        else if (smoking == "no") {
+          smokingselected = 2;
         }
-        else
-        {
-          smokingselected=3;
+        else {
+          smokingselected = 3;
         }
+      });
     }
 
 
@@ -238,7 +226,7 @@ class _JoinRideState extends State<JoinRide> {
           builder: (BuildContext context) {
             return RichAlertDialog(
               alertTitle: richTitle('User error'),
-              alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -261,9 +249,9 @@ class _JoinRideState extends State<JoinRide> {
             );
           });
     }
-    else{
+    else {
       noOrgs = 0;
-      orgitems = [];
+      ListOrgs = [];
       Map data = jsonDecode(responseMyOrgs.body);
       var orgObjsJson = data['organizations'] as List;
       List<Org> orgObjs = orgObjsJson.map((reviewJson) =>
@@ -334,7 +322,6 @@ class _JoinRideState extends State<JoinRide> {
     }
 
 
-    ////////////////////////////////////////////////////////////////////////////////////////
     Map<String, String> body = {
       'tofrom' : "",
       'toorgid': "",
@@ -399,39 +386,6 @@ class _JoinRideState extends State<JoinRide> {
         String typetime="";
         String displaytimetype="";
         String displaytimetexttype="";
-        String displaydate=DateFormat('dd-MM-yyyy').format(DateTime.parse(tripObjs[i].datetrip));
-        String displayridewith="";
-
-
-        if(tripObjs[i].ridewith=="female")
-          {
-            displayridewith="Female";
-          }
-        else if(tripObjs[i].ridewith=="male")
-          {
-            displayridewith="Male";
-          }
-        else
-          {
-            displayridewith="Any";
-          }
-
-
-        String displaysmoking="";
-        if(tripObjs[i].smoking=="yes")
-        {
-          displaysmoking="Yes";
-        }
-        else if(tripObjs[i].smoking=="no")
-        {
-          displaysmoking="No";
-        }
-        else
-        {
-          displaysmoking="Any";
-        }
-
-
 
         if(tripObjs[i].departuretime=="")
         {
@@ -457,15 +411,13 @@ class _JoinRideState extends State<JoinRide> {
           displaytimetype="Latest time possible to go home:";
           displaytimetexttype="Please pick latest time";
         }
-        // Join trip address
         /*List<Placemark> newPlace = await Geolocator().placemarkFromCoordinates(lat, lng);
         Placemark placeMark  = newPlace[0];
         String name = placeMark.name;
         String locality = placeMark.locality;
         String administrativeArea = placeMark.administrativeArea;
         String country = placeMark.country;
-        String address= name +" - "+locality+" - "+administrativeArea+" - " +country;
-        */
+        String address= name +" - "+locality+" - "+administrativeArea+" - " +country;*/
         String address="";
         ListRides.add(
           GestureDetector(
@@ -504,14 +456,13 @@ class _JoinRideState extends State<JoinRide> {
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               children: <Widget>[
-                                                AutoSizeText(displaytimetype, style: TextStyle(color:Colors.indigo,fontSize: 11),maxLines: 1,minFontSize: 2,),
+                                                AutoSizeText(displaytimetype, style: TextStyle(color:Colors.indigo,fontSize: 15),maxLines: 1,minFontSize: 2,),
                                                 Container(
                                                   height: 30,
                                                   child: IconButton(
                                                     icon: Icon(Icons.alarm),
                                                     color: Colors.redAccent,
                                                     iconSize: 25,
-                                                    alignment: Alignment.center,
                                                     onPressed: () {
                                                       DatePicker.showTimePicker(context,
                                                           showTitleActions: true,
@@ -831,8 +782,8 @@ class _JoinRideState extends State<JoinRide> {
                 children: <Widget>[
                   Image.asset(
                     "images/bluelogonobg.png",
-                    height: 60,
-                    width: 50,
+                    height: 70,
+                    width: 70,
                   ),
                   Container(
                     width: 1,
@@ -848,27 +799,20 @@ class _JoinRideState extends State<JoinRide> {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          Text(
-                            tofromorg,
+                          AutoSizeText(
+                            tofromorg+""+tripObjs[i].orgname ,
                             maxLines: 1,
+                            minFontSize: 2,
                             style: TextStyle(color: Colors.indigo[400],
-                                fontSize: 12
-                            ),
-                          ),
-                          Text(
-                            tripObjs[i].orgname,
-                            maxLines: 1,
-                            style: TextStyle(color: Colors.grey,
-                                fontSize: 11
+                                fontSize: 15
                             ),
                           ),
                           IconButton(
-                            alignment: Alignment.center,
+                            alignment: Alignment.topRight,
                             splashColor: Colors.grey,
                             icon: Icon(
                               Icons.location_on,
                               color:Colors.blueGrey[400],
-                              size: 20,
                             ),
                             onPressed: (){
                               Navigator.push(
@@ -910,11 +854,11 @@ class _JoinRideState extends State<JoinRide> {
                       ),
                       Container(
                         height: 1,
-                        width: 220,
+                        width: 240,
                         color: Colors.grey[300],
                       ),
                       SizedBox(
-                        height: 5,
+                        height: 8,
                       ),
                       Row(
                         children: <Widget>[
@@ -927,22 +871,64 @@ class _JoinRideState extends State<JoinRide> {
                                   Text(
                                     tofromhome ,
                                     style: TextStyle(color: Colors.indigo[400],
-                                        fontSize: 10
+                                        fontSize: 15
                                     ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 5,
                                   ),
                                   Flexible(
                                     child: Text(
                                       address,
                                       style: TextStyle(color: Colors.blueGrey,
-                                          fontSize: 9
+                                          fontSize: 12
                                       ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 5,
                                     ),
                                   ),
                                 ],
                               )
                           ),
+                          /*IconButton(
+                            splashColor: Colors.grey,
+                            icon: Icon(
+                              Icons.location_on,
+                              color:Colors.blueGrey,
+                            ),
+                            onPressed: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    List<Marker> allMarkers = [];
+                                    allMarkers.add(Marker(
+                                        markerId: MarkerId('myMarker'),
+                                        draggable: true,
+                                        onTap: () {
+                                          print('Marker Tapped');
+                                        },
+                                        position: LatLng(lat,lng)));
+                                    return Scaffold(
+                                        body: GoogleMap(
+                                          initialCameraPosition: CameraPosition(
+                                            target: LatLng(lat,lng),
+                                            zoom: 16,
+                                          ),
+                                          markers: Set.from(allMarkers),
+                                        ),
+                                        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+                                        floatingActionButton: new FloatingActionButton(
+                                            elevation: 0.0,
+                                            child: new Icon(Icons.close),
+                                            backgroundColor: Colors.indigo[400],
+                                            onPressed: (){
+                                              Navigator.pop(context);
+                                            }
+                                        )
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),*/
                         ],
                       ),
                       Row(
@@ -950,28 +936,34 @@ class _JoinRideState extends State<JoinRide> {
                           Text(
                             "Date: " ,
                             style: TextStyle(color: Colors.indigo[400],
-                                fontSize: 10
+                                fontSize: 15
                             ),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 5,
                           ),
                           Text(
-                            displaydate ,
+                            tripObjs[i].datetrip ,
                             style: TextStyle(color: Colors.blueGrey,
-                                fontSize: 9
+                                fontSize: 12
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
                           ),
                           Text(
                             " Time:",
                             style: TextStyle(color: Colors.indigo[400],
-                                fontSize: 10
+                                fontSize: 15
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
                           ),
                           Text(
                             datetimetrip,
                             style: TextStyle(color: Colors.blueGrey,
-                                fontSize: 9
+                                fontSize: 12
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
                           ),
                         ],
                       ),
@@ -980,14 +972,19 @@ class _JoinRideState extends State<JoinRide> {
                           Text(
                             "Number of available seats: " ,
                             style: TextStyle(color: Colors.indigo[400],
-                                fontSize: 10
+                                fontSize: 15
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
                           ),
                           Text(
                             tripObjs[i].avaialbleseats.toString(),
                             style: TextStyle(color: Colors.blueGrey,
-                                fontSize: 9
-                            ),                          ),
+                                fontSize: 14
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
+                          ),
                         ],
                       ),
 
@@ -996,16 +993,18 @@ class _JoinRideState extends State<JoinRide> {
                           Text(
                             "Ride with: " ,
                             style: TextStyle(color: Colors.indigo[400],
-                                fontSize: 10
+                                fontSize: 15
                             ),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 5,
                           ),
                           Text(
-                            displayridewith ,
+                            tripObjs[i].ridewith ,
                             style: TextStyle(color: Colors.blueGrey,
-                                fontSize: 9
+                                fontSize: 14
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
                           ),
                         ],
                       ),
@@ -1014,14 +1013,18 @@ class _JoinRideState extends State<JoinRide> {
                           Text(
                             "Smoking: " ,
                             style: TextStyle(color: Colors.indigo[400],
-                                fontSize: 10
+                                fontSize: 15
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
                           ),
                           Text(
-                            displaysmoking,
+                            tripObjs[i].smoking,
                             style: TextStyle(color: Colors.blueGrey,
-                                fontSize: 9
+                                fontSize: 14
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
                           ),
                         ],
                       ),
@@ -1049,21 +1052,19 @@ class _JoinRideState extends State<JoinRide> {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Container(
-                  child: noRides == 1 ? Center(child: AutoSizeText("No rides to show yet.",maxLines:1,minFontSize:2,style: TextStyle(color: Colors.indigo, fontSize: 20,),)) :
+                  child: noRides == 1 ? Center(child: Text("No rides to show yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),)) :
                   Column(
 
                     children: <Widget>[
                       SizedBox(
                         height: 20,
                       ),
-                      AutoSizeText(
+                      Text(
                         "Tap to join ride.",
                         style: TextStyle(
                           color: Colors.blueGrey,
                           fontSize: 15,
                         ),
-                        minFontSize: 2,
-                        maxLines: 1,
                       ),
                       Expanded(
                         child: ListView(
@@ -1097,8 +1098,6 @@ class _JoinRideState extends State<JoinRide> {
 
 
 
-
-
       //Tab 2 search ride
       SingleChildScrollView(
         child: Column(
@@ -1119,14 +1118,12 @@ class _JoinRideState extends State<JoinRide> {
                 SizedBox(
                   width: 7,
                 ),
-                AutoSizeText(
+                Text(
                   "Search for ride",
                   style: TextStyle(
                     color: Colors.indigo,
-                    fontSize: 15,
+                    fontSize: 20,
                   ),
-                  minFontSize: 2,
-                  maxLines: 1,
                 ),
               ],
             ),
@@ -1201,11 +1198,13 @@ class _JoinRideState extends State<JoinRide> {
                   ),
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
                       child: Text("Date:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                    ),
+                    SizedBox(
+                      width: 213,
                     ),
                     Container(
                       height: 30,
@@ -1241,11 +1240,13 @@ class _JoinRideState extends State<JoinRide> {
                   height: 5,
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
                       child: Text(searchtofromint==1? "Arrival time:" : "Departure time:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                    ),
+                    SizedBox(
+                      width: searchtofromint==1? 165 : 137,
                     ),
                     Container(
                       height: 30,
@@ -1281,135 +1282,146 @@ class _JoinRideState extends State<JoinRide> {
                 SizedBox(
                   height: 5,
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(33,0,0,0),
-                  child: Text("Ride with:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
-                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Radio(
-                      activeColor: Colors.indigo[400],
-                      value: 1,
-                      groupValue: searchridewithint,
-                      onChanged: (T){
-                        setState(() {
-                          searchridewithint=T;
-                        });
-                      },
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(33,0,0,0),
+                      child: Text("Ride with:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
                     ),
-                    Text(
-                      "Male",
-                      style: TextStyle(
-                        color: Colors.blueGrey,
-                        fontFamily: "Kodchasan",
-                        fontSize: 15.0,
-                      ),
-                    ),
-                    Radio(
-                      activeColor: Colors.indigo[400],
-                      value: 2,
-                      groupValue: searchridewithint,
-                      onChanged: (T){
-                        setState(() {
-                          searchridewithint=T;
-                        });
-                      },
-                    ),
-                    Text(
-                      "Female",
-                      style: TextStyle(
-                        color: Colors.blueGrey,
-                        fontFamily: "Kodchasan",
-                        fontSize: 15.0,
-                      ),
-                    ),
-                    Radio(
-                      activeColor: Colors.indigo[400],
-                      value: 3,
-                      groupValue: searchridewithint,
-                      onChanged: (T){
-                        setState(() {
-                          searchridewithint=T;
-                        });
-                      },
-                    ),
-                    Text(
-                      "Any",
-                      style: TextStyle(
-                        color: Colors.blueGrey,
-                        fontFamily: "Kodchasan",
-                        fontSize: 15.0,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Radio(
+                          activeColor: Colors.indigo[400],
+                          value: 1,
+                          groupValue: searchridewithint,
+                          onChanged: (T){
+                            setState(() {
+                              searchridewithint=T;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Male",
+                          style: TextStyle(
+                            color: Colors.blueGrey,
+                            fontFamily: "Kodchasan",
+                            fontSize: 15.0,
+                          ),
+                        ),
+                        Radio(
+                          activeColor: Colors.indigo[400],
+                          value: 2,
+                          groupValue: searchridewithint,
+                          onChanged: (T){
+                            setState(() {
+                              searchridewithint=T;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Female",
+                          style: TextStyle(
+                            color: Colors.blueGrey,
+                            fontFamily: "Kodchasan",
+                            fontSize: 15.0,
+                          ),
+                        ),
+                        Radio(
+                          activeColor: Colors.indigo[400],
+                          value: 3,
+                          groupValue: searchridewithint,
+                          onChanged: (T){
+                            setState(() {
+                              searchridewithint=T;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Any",
+                          style: TextStyle(
+                            color: Colors.blueGrey,
+                            fontFamily: "Kodchasan",
+                            fontSize: 15.0,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(33,0,0,0),
-                  child: Text("Smoking:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
-                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Radio(
-                      activeColor: Colors.indigo[400],
-                      value: 1,
-                      groupValue: searchsmokingint,
-                      onChanged: (T){
-                        setState(() {
-                          searchsmokingint=T;
-                        });
-                      },
-                    ),
-                    Text(
-                      "Yes",
-                      style: TextStyle(
-                        color: Colors.blueGrey,
-                        fontFamily: "Kodchasan",
-                        fontSize: 15.0,
-                      ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(33,0,0,0),
+                      child: Text("Smoking:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
                     ),
                     SizedBox(
-                      width: 10,
+                      width: 5,
                     ),
-                    Radio(
-                      activeColor: Colors.indigo[400],
-                      value: 2,
-                      groupValue: searchsmokingint,
-                      onChanged: (T){
-                        setState(() {
-                          searchsmokingint=T;
-                        });
-                      },
-                    ),
-                    Text(
-                      "No",
-                      style: TextStyle(
-                        color: Colors.blueGrey,
-                        fontFamily: "Kodchasan",
-                        fontSize: 15.0,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 30,
-                    ),
-                    Radio(
-                      activeColor: Colors.indigo[400],
-                      value: 3,
-                      groupValue: searchsmokingint,
-                      onChanged: (T){
-                        setState(() {
-                          searchsmokingint=T;
-                        });
-                      },
-                    ),
-                    Text(
-                      "Any",
-                      style: TextStyle(
-                        color: Colors.blueGrey,
-                        fontFamily: "Kodchasan",
-                        fontSize: 15.0,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Radio(
+                          activeColor: Colors.indigo[400],
+                          value: 1,
+                          groupValue: searchsmokingint,
+                          onChanged: (T){
+                            setState(() {
+                              searchsmokingint=T;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Yes",
+                          style: TextStyle(
+                            color: Colors.blueGrey,
+                            fontFamily: "Kodchasan",
+                            fontSize: 15.0,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Radio(
+                          activeColor: Colors.indigo[400],
+                          value: 2,
+                          groupValue: searchsmokingint,
+                          onChanged: (T){
+                            setState(() {
+                              searchsmokingint=T;
+                            });
+                          },
+                        ),
+                        Text(
+                          "No",
+                          style: TextStyle(
+                            color: Colors.blueGrey,
+                            fontFamily: "Kodchasan",
+                            fontSize: 15.0,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 30,
+                        ),
+                        Radio(
+                          activeColor: Colors.indigo[400],
+                          value: 3,
+                          groupValue: searchsmokingint,
+                          onChanged: (T){
+                            setState(() {
+                              searchsmokingint=T;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Any",
+                          style: TextStyle(
+                            color: Colors.blueGrey,
+                            fontFamily: "Kodchasan",
+                            fontSize: 15.0,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -1425,11 +1437,11 @@ class _JoinRideState extends State<JoinRide> {
                     child: Text("Search",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 15.0,
+                        fontSize: 20.0,
                         fontFamily: "Kodchasan",
                       ),
                     ),
-                    height:35,
+                    height:40,
                     minWidth:100,
                     color: Colors.indigo[400],
                     elevation: 15,
@@ -1444,17 +1456,17 @@ class _JoinRideState extends State<JoinRide> {
                       String searcharrival="";
                       String searchdeparture="";
                       if(searchtofromint==1)
-                        {
-                          searchtofrom="to";
-                          searchtoorg=searchorg;
-                          searcharrival=searchtime;
-                        }
+                      {
+                        searchtofrom="to";
+                        searchtoorg=searchorg;
+                        searcharrival=searchtime;
+                      }
                       else
-                        {
-                          searchtofrom="from";
-                          searchfromorg=searchorg;
-                          searchdeparture=searchtime;
-                        }
+                      {
+                        searchtofrom="from";
+                        searchfromorg=searchorg;
+                        searchdeparture=searchtime;
+                      }
                       if(searchridewithint==1)
                       {
                         searchridewith="male";
@@ -1491,9 +1503,10 @@ class _JoinRideState extends State<JoinRide> {
                       };
                       String urlTrips="http://3.81.22.120:3000/api/searchtrip";
                       Response responseMyTrips =await post(urlTrips, headers:{'authorization': token},body: body);
+                      print(responseMyTrips.body);
                       if(responseMyTrips.statusCode==409)
                       {
-                        noRidesSearch=1;
+                        noRides=1;
                         showDialog(
                             context: context,
                             builder: (BuildContext context)
@@ -1523,7 +1536,13 @@ class _JoinRideState extends State<JoinRide> {
                                                       borderRadius: BorderRadius.all(
                                                           Radius.circular(30)),
                                                     ),
-                                                    child: Center(child: AutoSizeText("No rides to show yet.",maxLines:1,minFontSize:2,style: TextStyle(color: Colors.indigo, fontSize: 20,),))
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      children: <Widget>[
+                                                        Center(child: Text("No rides yet.",style: TextStyle(color: Colors.indigo, fontSize: 20,),))
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -1552,8 +1571,8 @@ class _JoinRideState extends State<JoinRide> {
                             context: context,
                             builder: (BuildContext context) {
                               return RichAlertDialog(
-                                alertTitle: richTitle('User error'),
-                                alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                alertTitle: richTitle(data['error']),
+                                alertSubtitle: richSubtitle(data['message']),
                                 alertType: RichAlertType.WARNING,
                                 dialogIcon: Icon(
                                   Icons.warning,
@@ -1577,7 +1596,7 @@ class _JoinRideState extends State<JoinRide> {
                             });
                       }
                       else{
-                        noRidesSearch=0;
+                        noRides=0;
                         ListRidesSearch=[];
                         Map data= jsonDecode(responseMyTrips.body);
                         var tripObjsJson = data['Trips'] as List;
@@ -1593,37 +1612,6 @@ class _JoinRideState extends State<JoinRide> {
                           String typetime="";
                           String displaytimetype="";
                           String displaytimetexttype="";
-                          String displaydate=DateFormat('dd-MM-yyyy').format(DateTime.parse(tripObjs[i].datetrip));
-                          String displayridewith="";
-
-
-                          if(tripObjs[i].ridewith=="female")
-                          {
-                            displayridewith="Female";
-                          }
-                          else if(tripObjs[i].ridewith=="male")
-                          {
-                            displayridewith="Male";
-                          }
-                          else
-                          {
-                            displayridewith="Any";
-                          }
-
-
-                          String displaysmoking="";
-                          if(tripObjs[i].smoking=="yes")
-                          {
-                            displaysmoking="Yes";
-                          }
-                          else if(tripObjs[i].smoking=="no")
-                          {
-                            displaysmoking="No";
-                          }
-                          else
-                          {
-                            displaysmoking="Any";
-                          }
 
                           if(tripObjs[i].departuretime=="")
                           {
@@ -1658,7 +1646,7 @@ class _JoinRideState extends State<JoinRide> {
                           String address= name +" - "+locality+" - "+administrativeArea+" - " +country;
                           */
                           String address="";
-                           ListRidesSearch.add(
+                          ListRidesSearch.add(
                             GestureDetector(
                               onTap: (){
                                 selectedtime="";
@@ -1695,7 +1683,7 @@ class _JoinRideState extends State<JoinRide> {
                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                                 children: <Widget>[
-                                                                  AutoSizeText(displaytimetype, style: TextStyle(color:Colors.indigo,fontSize: 11),maxLines: 1,minFontSize: 2,),
+                                                                  Text(displaytimetype, style: TextStyle(color:Colors.indigo,fontSize: 15)),
                                                                   Container(
                                                                     height: 30,
                                                                     child: IconButton(
@@ -1720,11 +1708,11 @@ class _JoinRideState extends State<JoinRide> {
                                                                 child: Text("Join",
                                                                   style: TextStyle(
                                                                     color: Colors.white,
-                                                                    fontSize: 15.0,
+                                                                    fontSize: 20.0,
                                                                     fontFamily: "Kodchasan",
                                                                   ),
                                                                 ),
-                                                                height:35,
+                                                                height:40,
                                                                 minWidth:100,
                                                                 color: Colors.indigo[400],
                                                                 elevation: 15,
@@ -1780,7 +1768,7 @@ class _JoinRideState extends State<JoinRide> {
                                                                         };
                                                                         String url="http://3.81.22.120:3000/api/chooseFromAvailableRides";
                                                                         Response response =await post(url, headers:{'authorization': token}, body: body);
-                                                                        if(response.statusCode == 400)
+                                                                        if(response.statusCode != 200)
                                                                         {
                                                                           Map data= jsonDecode(response.body);
                                                                           showDialog(
@@ -1788,38 +1776,7 @@ class _JoinRideState extends State<JoinRide> {
                                                                               builder: (BuildContext context) {
                                                                                 return RichAlertDialog(
                                                                                   alertTitle: richTitle(data['error']),
-                                                                                  alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
-                                                                                  alertType: RichAlertType.WARNING,
-                                                                                  dialogIcon: Icon(
-                                                                                    Icons.warning,
-                                                                                    color: Colors.red,
-                                                                                    size: 80,
-                                                                                  ),
-                                                                                  actions: <Widget>[
-                                                                                    new OutlineButton(
-                                                                                      shape: StadiumBorder(),
-                                                                                      textColor: Colors.blue,
-                                                                                      child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
-                                                                                      borderSide: BorderSide(
-                                                                                          color: Colors.indigo[400], style: BorderStyle.solid,
-                                                                                          width: 1),
-                                                                                      onPressed: () {
-                                                                                        Navigator.pop(context);
-                                                                                      },
-                                                                                    ),
-                                                                                  ],
-                                                                                );
-                                                                              });
-                                                                        }
-                                                                        else if(response.statusCode != 200)
-                                                                        {
-                                                                          Map data= jsonDecode(response.body);
-                                                                          showDialog(
-                                                                              context: context,
-                                                                              builder: (BuildContext context) {
-                                                                                return RichAlertDialog(
-                                                                                  alertTitle: richTitle('User error'),
-                                                                                  alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                                                  alertSubtitle: richSubtitle(data['message']),
                                                                                   alertType: RichAlertType.WARNING,
                                                                                   dialogIcon: Icon(
                                                                                     Icons.warning,
@@ -1888,7 +1845,7 @@ class _JoinRideState extends State<JoinRide> {
                                                                         };
                                                                         String url="http://3.81.22.120:3000/api/chooseFromReturnTripsApi";
                                                                         Response response =await post(url, headers:{'authorization': token}, body: body);
-                                                                        if(response.statusCode == 400)
+                                                                        if(response.statusCode != 200)
                                                                         {
                                                                           Map data= jsonDecode(response.body);
                                                                           showDialog(
@@ -1896,38 +1853,7 @@ class _JoinRideState extends State<JoinRide> {
                                                                               builder: (BuildContext context) {
                                                                                 return RichAlertDialog(
                                                                                   alertTitle: richTitle(data['error']),
-                                                                                  alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
-                                                                                  alertType: RichAlertType.WARNING,
-                                                                                  dialogIcon: Icon(
-                                                                                    Icons.warning,
-                                                                                    color: Colors.red,
-                                                                                    size: 80,
-                                                                                  ),
-                                                                                  actions: <Widget>[
-                                                                                    new OutlineButton(
-                                                                                      shape: StadiumBorder(),
-                                                                                      textColor: Colors.blue,
-                                                                                      child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
-                                                                                      borderSide: BorderSide(
-                                                                                          color: Colors.indigo[400], style: BorderStyle.solid,
-                                                                                          width: 1),
-                                                                                      onPressed: () {
-                                                                                        Navigator.pop(context);
-                                                                                      },
-                                                                                    ),
-                                                                                  ],
-                                                                                );
-                                                                              });
-                                                                        }
-                                                                        else if(response.statusCode != 200)
-                                                                        {
-                                                                          Map data= jsonDecode(response.body);
-                                                                          showDialog(
-                                                                              context: context,
-                                                                              builder: (BuildContext context) {
-                                                                                return RichAlertDialog(
-                                                                                  alertTitle: richTitle('User error'),
-                                                                                  alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                                                  alertSubtitle: richSubtitle(data['message']),
                                                                                   alertType: RichAlertType.WARNING,
                                                                                   dialogIcon: Icon(
                                                                                     Icons.warning,
@@ -2010,7 +1936,7 @@ class _JoinRideState extends State<JoinRide> {
                                     });
                               },
                               child: Card(
-                                margin: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                                margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
                                 elevation: 14,
                                 color: Colors.white,
                                 shape: RoundedRectangleBorder(
@@ -2020,8 +1946,8 @@ class _JoinRideState extends State<JoinRide> {
                                   children: <Widget>[
                                     Image.asset(
                                       "images/bluelogonobg.png",
-                                      height: 60,
-                                      width: 50,
+                                      height: 70,
+                                      width: 70,
                                     ),
                                     Container(
                                       width: 1,
@@ -2029,7 +1955,7 @@ class _JoinRideState extends State<JoinRide> {
                                       color: Colors.grey[300],
                                     ),
                                     SizedBox(
-                                      width: 5,
+                                      width: 10,
                                     ),
                                     Column(
                                       mainAxisAlignment: MainAxisAlignment.start,
@@ -2038,26 +1964,24 @@ class _JoinRideState extends State<JoinRide> {
                                         Row(
                                           children: <Widget>[
                                             Text(
-                                              tofromorg,
-                                              maxLines: 1,
+                                              tofromorg ,
                                               style: TextStyle(color: Colors.indigo[400],
-                                                  fontSize: 12
+                                                  fontSize: 15
                                               ),
                                             ),
                                             Text(
-                                              tripObjs[i].orgname,
-                                              maxLines: 1,
-                                              style: TextStyle(color: Colors.grey,
-                                                  fontSize: 11
+                                              tripObjs[i].orgname ,
+                                              style: TextStyle(color: Colors.blueGrey,
+                                                  fontSize: 14
                                               ),
                                             ),
+
                                             IconButton(
-                                              alignment: Alignment.center,
+                                              alignment: Alignment.topRight,
                                               splashColor: Colors.grey,
                                               icon: Icon(
                                                 Icons.location_on,
                                                 color:Colors.blueGrey[400],
-                                                size: 20,
                                               ),
                                               onPressed: (){
                                                 Navigator.push(
@@ -2099,11 +2023,11 @@ class _JoinRideState extends State<JoinRide> {
                                         ),
                                         Container(
                                           height: 1,
-                                          width: 220,
+                                          width: 240,
                                           color: Colors.grey[300],
                                         ),
                                         SizedBox(
-                                          height: 5,
+                                          height: 8,
                                         ),
                                         Row(
                                           children: <Widget>[
@@ -2116,22 +2040,64 @@ class _JoinRideState extends State<JoinRide> {
                                                     Text(
                                                       tofromhome ,
                                                       style: TextStyle(color: Colors.indigo[400],
-                                                          fontSize: 10
+                                                          fontSize: 15
                                                       ),
+                                                      overflow: TextOverflow.ellipsis,
+                                                      maxLines: 5,
                                                     ),
                                                     Flexible(
                                                       child: Text(
                                                         address,
                                                         style: TextStyle(color: Colors.blueGrey,
-                                                            fontSize: 9
+                                                            fontSize: 12
                                                         ),
-                                                        overflow: TextOverflow.ellipsis,
-                                                        maxLines: 5,
                                                       ),
                                                     ),
                                                   ],
                                                 )
                                             ),
+                                            /*IconButton(
+                            splashColor: Colors.grey,
+                            icon: Icon(
+                              Icons.location_on,
+                              color:Colors.blueGrey,
+                            ),
+                            onPressed: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    List<Marker> allMarkers = [];
+                                    allMarkers.add(Marker(
+                                        markerId: MarkerId('myMarker'),
+                                        draggable: true,
+                                        onTap: () {
+                                          print('Marker Tapped');
+                                        },
+                                        position: LatLng(lat,lng)));
+                                    return Scaffold(
+                                        body: GoogleMap(
+                                          initialCameraPosition: CameraPosition(
+                                            target: LatLng(lat,lng),
+                                            zoom: 16,
+                                          ),
+                                          markers: Set.from(allMarkers),
+                                        ),
+                                        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+                                        floatingActionButton: new FloatingActionButton(
+                                            elevation: 0.0,
+                                            child: new Icon(Icons.close),
+                                            backgroundColor: Colors.indigo[400],
+                                            onPressed: (){
+                                              Navigator.pop(context);
+                                            }
+                                        )
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),*/
                                           ],
                                         ),
                                         Row(
@@ -2139,28 +2105,34 @@ class _JoinRideState extends State<JoinRide> {
                                             Text(
                                               "Date: " ,
                                               style: TextStyle(color: Colors.indigo[400],
-                                                  fontSize: 10
+                                                  fontSize: 15
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                               maxLines: 5,
                                             ),
                                             Text(
-                                              displaydate ,
+                                              tripObjs[i].datetrip ,
                                               style: TextStyle(color: Colors.blueGrey,
-                                                  fontSize: 9
+                                                  fontSize: 12
                                               ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 5,
                                             ),
                                             Text(
                                               " Time:",
                                               style: TextStyle(color: Colors.indigo[400],
-                                                  fontSize: 10
+                                                  fontSize: 15
                                               ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 5,
                                             ),
                                             Text(
                                               datetimetrip,
                                               style: TextStyle(color: Colors.blueGrey,
-                                                  fontSize: 9
+                                                  fontSize: 12
                                               ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 5,
                                             ),
                                           ],
                                         ),
@@ -2169,14 +2141,19 @@ class _JoinRideState extends State<JoinRide> {
                                             Text(
                                               "Number of available seats: " ,
                                               style: TextStyle(color: Colors.indigo[400],
-                                                  fontSize: 10
+                                                  fontSize: 15
                                               ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 5,
                                             ),
                                             Text(
                                               tripObjs[i].avaialbleseats.toString(),
                                               style: TextStyle(color: Colors.blueGrey,
-                                                  fontSize: 9
-                                              ),                          ),
+                                                  fontSize: 14
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 5,
+                                            ),
                                           ],
                                         ),
 
@@ -2185,16 +2162,18 @@ class _JoinRideState extends State<JoinRide> {
                                             Text(
                                               "Ride with: " ,
                                               style: TextStyle(color: Colors.indigo[400],
-                                                  fontSize: 10
+                                                  fontSize: 15
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                               maxLines: 5,
                                             ),
                                             Text(
-                                              displayridewith ,
+                                              tripObjs[i].ridewith ,
                                               style: TextStyle(color: Colors.blueGrey,
-                                                  fontSize: 9
+                                                  fontSize: 14
                                               ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 5,
                                             ),
                                           ],
                                         ),
@@ -2203,14 +2182,18 @@ class _JoinRideState extends State<JoinRide> {
                                             Text(
                                               "Smoking: " ,
                                               style: TextStyle(color: Colors.indigo[400],
-                                                  fontSize: 10
+                                                  fontSize: 15
                                               ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 5,
                                             ),
                                             Text(
-                                              displaysmoking,
+                                              tripObjs[i].smoking,
                                               style: TextStyle(color: Colors.blueGrey,
-                                                  fontSize: 9
+                                                  fontSize: 14
                                               ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 5,
                                             ),
                                           ],
                                         ),
@@ -2227,60 +2210,58 @@ class _JoinRideState extends State<JoinRide> {
                             builder: (BuildContext context)
                             {
                               return Scaffold(
-                                body: Column(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Container(
-                                          width: double.infinity,
-                                          decoration: BoxDecoration(
-                                            color: Colors.indigo,
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                10.0, 10, 10, 10),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(130)),
-                                              ),
-                                              child: Scaffold(
-                                                body: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.all(
-                                                        Radius.circular(30)),
-                                                  ),
-                                                  child: Column(
-                                                    children: <Widget>[
-                                                      SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                      AutoSizeText(
-                                                        "Tap to join ride.",
-                                                        style: TextStyle(
-                                                          color: Colors.blueGrey,
-                                                          fontSize: 15,
+                                  body: Column(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Container(
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                              color: Colors.indigo,
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.fromLTRB(
+                                                  10.0, 10, 10, 10),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(130)),
+                                                ),
+                                                child: Scaffold(
+                                                  body: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(30)),
+                                                    ),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        SizedBox(
+                                                          height: 20,
                                                         ),
-                                                        minFontSize: 2,
-                                                        maxLines: 1,
-                                                      ),
-                                                      Expanded(
-                                                        child: ListView(
-                                                          children: ListRidesSearch,
+                                                        Text(
+                                                          "Tap to join ride.",
+                                                          style: TextStyle(
+                                                            color: Colors.blueGrey,
+                                                            fontSize: 15,
+                                                          ),
                                                         ),
-                                                      ),
+                                                        Expanded(
+                                                          child: ListView(
+                                                            children: ListRidesSearch,
+                                                          ),
+                                                        ),
 
-                                                    ],
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ]
-                                ),
+                                      ]
+                                  ),
                                   floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
                                   floatingActionButton: new FloatingActionButton(
                                       elevation: 0.0,
@@ -2310,15 +2291,7 @@ class _JoinRideState extends State<JoinRide> {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.center,
-                    colors: [
-                      Colors.indigo[600],
-                      Colors.indigo[500],
-                      Colors.indigo[400],
-                      Colors.indigo[300]
-                    ]
-                ),
+                color: Colors.indigo,
               ),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(10.0,10,10,0),
@@ -2338,11 +2311,11 @@ class _JoinRideState extends State<JoinRide> {
                       items: [
                         FlashyTabBarItem(
                           icon: Icon(Icons.directions_run,color: Colors.indigo,),
-                          title: Text('Join ride', style: TextStyle(fontSize: 10,color: Colors.indigo),),
+                          title: Text('Join ride', style: TextStyle(fontSize: 15,color: Colors.indigo),),
                         ),
                         FlashyTabBarItem(
                           icon: Icon(Icons.search,color: Colors.indigo,),
-                          title: Text('Search for ride', style: TextStyle(fontSize: 10,color: Colors.indigo),),
+                          title: Text('Search for ride', style: TextStyle(fontSize: 15,color: Colors.indigo),),
                         ),
                       ],
                     ),

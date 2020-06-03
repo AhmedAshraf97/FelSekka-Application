@@ -1,17 +1,14 @@
 import 'dart:convert';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
-import 'package:felsekka/pages/signup2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flashy_tab_bar/flashy_tab_bar.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
-import 'package:progress_indicators/progress_indicators.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -110,7 +107,7 @@ class _RequestRideState extends State<RequestRide> {
           builder: (BuildContext context) {
             return RichAlertDialog(
               alertTitle: richTitle("User error"),
-              alertSubtitle: richSubtitle(data['message']),
+              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -135,7 +132,7 @@ class _RequestRideState extends State<RequestRide> {
     }
     else{
       setState(() {
-        Map data= jsonDecode(response.body);
+        Map data = jsonDecode(response.body);
         Map userInfo = data['decoded'];
         id = userInfo['id'];
         firstname = userInfo['firstname'];
@@ -152,41 +149,37 @@ class _RequestRideState extends State<RequestRide> {
         latitude = userInfo['latitude'];
         longitude = userInfo['longitude'];
         username = userInfo['username'];
-        fullname = firstname + " "+ lastname;
+        fullname = firstname + " " + lastname;
         doubleRating = double.parse(rating);
         trimRating = getDisplayRating(doubleRating);
-        if(ridewith=="female")
-          {
-            ridewithselected=2;
-            ridewithselectedfrom=2;
-          }
-        else if(ridewith=="male")
-          {
-            ridewithselected=1;
-            ridewithselectedfrom=1;
-          }
-        else
-          {
-            ridewithselected=3;
-            ridewithselectedfrom=3;
-          }
-        if(smoking=="yes")
-        {
-          smokingselected=1;
-          smokingselectedfrom=1;
+        if (ridewith == "female") {
+          ridewithselected = 2;
+          ridewithselectedfrom = 2;
         }
-        else if(smoking=="no")
-        {
-          smokingselected=2;
-          smokingselectedfrom=2;
+        else if (ridewith == "male") {
+          ridewithselected = 1;
+          ridewithselectedfrom = 1;
         }
-        else
-        {
-          smokingselected=3;
-          smokingselectedfrom=3;
+        else {
+          ridewithselected = 3;
+          ridewithselectedfrom = 3;
+        }
+        if (smoking == "yes") {
+          smokingselected = 1;
+          smokingselectedfrom = 1;
+        }
+        else if (smoking == "no") {
+          smokingselected = 2;
+          smokingselectedfrom = 2;
+        }
+        else {
+          smokingselected = 3;
+          smokingselectedfrom = 3;
         }
       });
     }
+
+
     //User orgs
     String urlMyOrgs="http://3.81.22.120:3000/api/showmyorg";
     Response responseMyOrgs =await post(urlMyOrgs, headers:{'authorization': token});
@@ -201,8 +194,8 @@ class _RequestRideState extends State<RequestRide> {
           context: context,
           builder: (BuildContext context) {
             return RichAlertDialog(
-              alertTitle: richTitle(data['error']),
-              alertSubtitle: richSubtitle(data['message']),
+              alertTitle: richTitle('User error'),
+              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -225,73 +218,78 @@ class _RequestRideState extends State<RequestRide> {
             );
           });
     }
-    else{
-      noOrgs=0;
-      ListOrgs=[];
-      Map data= jsonDecode(responseMyOrgs.body);
+    else {
+      noOrgs = 0;
+      ListOrgs = [];
+      Map data = jsonDecode(responseMyOrgs.body);
       var orgObjsJson = data['organizations'] as List;
-      List<Org> orgObjs = orgObjsJson.map((reviewJson) => Org.fromJson(reviewJson)).toList();
-      for(int i=0; i<orgObjs.length; i++)
-      {
+      List<Org> orgObjs = orgObjsJson.map((reviewJson) =>
+          Org.fromJson(reviewJson)).toList();
+      for (int i = 0; i < orgObjs.length; i++) {
         orgitems.add(
-          DropdownMenuItem(
-            child: ListTile(
-              contentPadding: EdgeInsets.all(10),
-              leading: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Image.asset("images/org.png",height: 100,),
-              ),
-              title: Text(orgObjs[i].name,style: TextStyle(color: Colors.indigo),),
-              subtitle: Text(orgObjs[i].domain),
-              trailing: IconButton(
-                icon: Icon(
-                  Icons.location_on,
-                  color:Colors.redAccent,
+            DropdownMenuItem(
+              child: ListTile(
+                contentPadding: EdgeInsets.all(10),
+                leading: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Image.asset("images/org.png", height: 100,),
                 ),
-                onPressed: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        List<Marker> allMarkers = [];
-                        allMarkers.add(Marker(
-                            markerId: MarkerId('myMarker'),
-                            draggable: true,
-                            onTap: () {
-                              print('Marker Tapped');
-                            },
-                            position: LatLng(double.parse(orgObjs[i].latitude), double.parse(orgObjs[i].longitude))));
-                        return Scaffold(
-                            body: GoogleMap(
-                              initialCameraPosition: CameraPosition(
-                                target: LatLng(double.parse(orgObjs[i].latitude), double.parse(orgObjs[i].longitude)),
-                                zoom: 16,
+                title: AutoSizeText(
+                  orgObjs[i].name, style: TextStyle(color: Colors.indigo), maxLines: 1, minFontSize: 2,),
+                subtitle: AutoSizeText(orgObjs[i].domain,maxLines: 1,minFontSize: 2,),
+                trailing: IconButton(
+                  icon: Icon(
+                    Icons.location_on,
+                    color: Colors.redAccent,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          List<Marker> allMarkers = [];
+                          allMarkers.add(Marker(
+                              markerId: MarkerId('myMarker'),
+                              draggable: true,
+                              onTap: () {
+                                print('Marker Tapped');
+                              },
+                              position: LatLng(
+                                  double.parse(orgObjs[i].latitude),
+                                  double.parse(orgObjs[i].longitude))));
+                          return Scaffold(
+                              body: GoogleMap(
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(
+                                      double.parse(orgObjs[i].latitude),
+                                      double.parse(orgObjs[i].longitude)),
+                                  zoom: 16,
+                                ),
+                                markers: Set.from(allMarkers),
                               ),
-                              markers: Set.from(allMarkers),
-                            ),
-                            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-                            floatingActionButton: new FloatingActionButton(
-                                elevation: 0.0,
-                                child: new Icon(Icons.close),
-                                backgroundColor: Colors.indigo[400],
-                                onPressed: (){
-                                  Navigator.pop(context);
-                                }
-                            )
-                        );
-                      },
-                    ),
-                  );
-                },
+                              floatingActionButtonLocation: FloatingActionButtonLocation
+                                  .centerFloat,
+                              floatingActionButton: new FloatingActionButton(
+                                  elevation: 0.0,
+                                  child: new Icon(Icons.close),
+                                  backgroundColor: Colors.indigo[400],
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  }
+                              )
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-            value: orgObjs[i].id.toString(),
-          )
+              value: orgObjs[i].id.toString(),
+            )
         );
       }
     }
-    setState(() {
-    });
+    setState(() {});
     return null;
   }
 
@@ -324,14 +322,16 @@ class _RequestRideState extends State<RequestRide> {
                   color:Colors.redAccent,
                 ),
                 SizedBox(
-                  width: 7,
+                  width: 5,
                 ),
-                Text(
+                AutoSizeText(
                   "Request ride to organization.",
                   style: TextStyle(
-                    color: Colors.indigo,
-                    fontSize: 20,
+                    color: Colors.indigo[400],
+                    fontSize: 14,
                   ),
+                  maxLines: 1,
+                  minFontSize: 2,
                 ),
               ],
             ),
@@ -346,12 +346,12 @@ class _RequestRideState extends State<RequestRide> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                      child: Text("From:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                      child: Text("From:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
                     ),
                     new OutlineButton(
                       shape: StadiumBorder(),
                       textColor: Colors.blue,
-                      child: Text('View home location', style: TextStyle(color: Colors.indigo[400]),),
+                      child: Text('Home location', style: TextStyle(color: Colors.indigo[400],fontSize: 11),),
                       borderSide: BorderSide(
                           color: Colors.indigo[400], style: BorderStyle.solid,
                           width: 1),
@@ -395,7 +395,7 @@ class _RequestRideState extends State<RequestRide> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("To:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  child: Text("To:", style: TextStyle(color:Colors.indigo,fontSize: 11)),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(22.0,0,22,3),
@@ -404,24 +404,29 @@ class _RequestRideState extends State<RequestRide> {
                     iconEnabledColor: Colors.indigo,
                     items: orgitems,
                     value: selectedOrg,
-                    hint: "Select organization",
-                    searchHint: "Select organization",
+                    hint: Text("Select organization",style: TextStyle(fontSize: 10),),
+                    searchHint: Text("Select organization",style: TextStyle(fontSize: 10),),
                     onChanged: (value) {
                       setState(() {
-                        selectedOrg = value;
+                        if(value==null)
+                        {
+                          selectedOrg="";
+                        }
+                        else
+                        {
+                          selectedOrg=value;
+                        }
                       });
                     },
                     isExpanded: true,
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                      child: Text("Date:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
-                    ),
-                    SizedBox(
-                      width: 205,
+                      child: Text("Date:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
                     ),
                     Container(
                       height: 30,
@@ -435,10 +440,7 @@ class _RequestRideState extends State<RequestRide> {
                               onConfirm: (datepick) {
                                 dateselected= DateFormat('yyyy-MM-dd').format(datepick).toString();
                                 date= DateFormat('dd-MM-yyyy').format(datepick).toString();
-                                print(date);
-                                print(dateselected);
                                 setState(() {
-
                                 });
                               }, currentTime: DateTime.now(), locale: LocaleType.en);
                         },
@@ -453,18 +455,19 @@ class _RequestRideState extends State<RequestRide> {
                     style: TextStyle(
                       color: Colors.blueGrey,
                       fontFamily: "Kodchasan",
-                      fontSize: 15.0,
+                      fontSize: 11.0,
                     ),
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                      child: Text("Earliest time possible to join ride:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                      child: Text("Earliest time possible to start ride:", style: TextStyle(color:Colors.indigo,fontSize: 10)),
                     ),
                     Container(
                       height: 30,
@@ -475,11 +478,11 @@ class _RequestRideState extends State<RequestRide> {
                         onPressed: () {
                           DatePicker.showTimePicker(context,
                               showTitleActions: true,
-                               onConfirm: (date) {
-                            earliesttime= DateFormat('Hms').format(date).toString();
-                            setState(() {
+                              onConfirm: (date) {
+                                earliesttime= DateFormat('Hms').format(date).toString();
+                                setState(() {
 
-                            });
+                                });
                               }, currentTime: DateTime.now(), locale: LocaleType.en);
                         },
                       ),
@@ -493,21 +496,19 @@ class _RequestRideState extends State<RequestRide> {
                     style: TextStyle(
                       color: Colors.blueGrey,
                       fontFamily: "Kodchasan",
-                      fontSize: 15.0,
+                      fontSize: 11.0,
                     ),
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                      child: Text("Arrival time:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
-                    ),
-                    SizedBox(
-                      width: 155,
+                      child: Text("Arrival time:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
                     ),
                     Container(
                       height: 30,
@@ -536,16 +537,16 @@ class _RequestRideState extends State<RequestRide> {
                     style: TextStyle(
                       color: Colors.blueGrey,
                       fontFamily: "Kodchasan",
-                      fontSize: 15.0,
+                      fontSize: 11.0,
                     ),
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Ride with:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  padding: const EdgeInsets.fromLTRB(33,0,0,0),
+                  child: Text("Ride with:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -565,7 +566,7 @@ class _RequestRideState extends State<RequestRide> {
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontFamily: "Kodchasan",
-                        fontSize: 15.0,
+                        fontSize: 10.0,
                       ),
                     ),
                     Radio(
@@ -583,7 +584,7 @@ class _RequestRideState extends State<RequestRide> {
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontFamily: "Kodchasan",
-                        fontSize: 15.0,
+                        fontSize: 10.0,
                       ),
                     ),
                     Radio(
@@ -601,14 +602,14 @@ class _RequestRideState extends State<RequestRide> {
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontFamily: "Kodchasan",
-                        fontSize: 15.0,
+                        fontSize: 10.0,
                       ),
                     ),
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Smoking:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  padding: const EdgeInsets.fromLTRB(33,0,0,0),
+                  child: Text("Smoking:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -628,8 +629,11 @@ class _RequestRideState extends State<RequestRide> {
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontFamily: "Kodchasan",
-                        fontSize: 15.0,
+                        fontSize: 11.0,
                       ),
+                    ),
+                    SizedBox(
+                      width: 10,
                     ),
                     Radio(
                       activeColor: Colors.indigo[400],
@@ -646,8 +650,11 @@ class _RequestRideState extends State<RequestRide> {
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontFamily: "Kodchasan",
-                        fontSize: 15.0,
+                        fontSize: 11.0,
                       ),
+                    ),
+                    SizedBox(
+                      width: 30,
                     ),
                     Radio(
                       activeColor: Colors.indigo[400],
@@ -664,7 +671,7 @@ class _RequestRideState extends State<RequestRide> {
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontFamily: "Kodchasan",
-                        fontSize: 15.0,
+                        fontSize: 11.0,
                       ),
                     ),
                   ],
@@ -681,11 +688,11 @@ class _RequestRideState extends State<RequestRide> {
                     child: Text("Request",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20.0,
+                        fontSize: 15.0,
                         fontFamily: "Kodchasan",
                       ),
                     ),
-                    height:40,
+                    height:35,
                     minWidth:100,
                     color: Colors.indigo[400],
                     elevation: 15,
@@ -863,9 +870,7 @@ class _RequestRideState extends State<RequestRide> {
                           };
                           String url="http://3.81.22.120:3000/api/requestrideto";
                           Response response =await post(url, headers:{'authorization': token}, body: body);
-                          print(response.statusCode);
-                          print(response.body);
-                          if(response.statusCode != 200)
+                          if(response.statusCode==400)
                           {
                             Map data= jsonDecode(response.body);
                             showDialog(
@@ -873,7 +878,38 @@ class _RequestRideState extends State<RequestRide> {
                                 builder: (BuildContext context) {
                                   return RichAlertDialog(
                                     alertTitle: richTitle(data['error']),
-                                    alertSubtitle: richSubtitle(data['message']),
+                                    alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                    alertType: RichAlertType.WARNING,
+                                    dialogIcon: Icon(
+                                      Icons.warning,
+                                      color: Colors.red,
+                                      size: 80,
+                                    ),
+                                    actions: <Widget>[
+                                      new OutlineButton(
+                                        shape: StadiumBorder(),
+                                        textColor: Colors.blue,
+                                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                        borderSide: BorderSide(
+                                            color: Colors.indigo[400], style: BorderStyle.solid,
+                                            width: 1),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
+                          }
+                          if(response.statusCode != 200)
+                          {
+                            Map data= jsonDecode(response.body);
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return RichAlertDialog(
+                                    alertTitle: richTitle('User error'),
+                                    alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
                                     alertType: RichAlertType.WARNING,
                                     dialogIcon: Icon(
                                       Icons.warning,
@@ -927,7 +963,6 @@ class _RequestRideState extends State<RequestRide> {
                             dateselected="";
                             selectedOrg="";
                             setState(() {
-
                             });
                             showDialog(
                                 context: context,
@@ -969,11 +1004,11 @@ class _RequestRideState extends State<RequestRide> {
                     child: Text("Back",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20.0,
+                        fontSize: 15.0,
                         fontFamily: "Kodchasan",
                       ),
                     ),
-                    height:40,
+                    height:35,
                     minWidth:100,
                     color: Colors.indigo[400],
                     elevation: 15,
@@ -1015,14 +1050,16 @@ class _RequestRideState extends State<RequestRide> {
                   color:Colors.redAccent,
                 ),
                 SizedBox(
-                  width: 7,
+                  width: 5,
                 ),
-                Text(
+                AutoSizeText(
                   "Request ride from organization.",
                   style: TextStyle(
-                    color: Colors.indigo,
-                    fontSize: 20,
+                    color: Colors.indigo[400],
+                    fontSize: 14,
                   ),
+                  maxLines: 1,
+                  minFontSize: 2,
                 ),
               ],
             ),
@@ -1035,7 +1072,7 @@ class _RequestRideState extends State<RequestRide> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("From:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  child: Text("From:", style: TextStyle(color:Colors.indigo,fontSize: 11)),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(22.0,0,22,3),
@@ -1044,11 +1081,18 @@ class _RequestRideState extends State<RequestRide> {
                     iconEnabledColor: Colors.indigo,
                     items: orgitems,
                     value: selectedOrgfrom,
-                    hint: "Select organization",
-                    searchHint: "Select organization",
+                    hint: Text("Select organization",style: TextStyle(fontSize: 10),),
+                    searchHint: Text("Select organization",style: TextStyle(fontSize: 10),),
                     onChanged: (value) {
                       setState(() {
-                        selectedOrgfrom = value;
+                        if(value==null)
+                        {
+                          selectedOrgfrom="";
+                        }
+                        else
+                        {
+                          selectedOrgfrom=value;
+                        }
                       });
                     },
                     isExpanded: true,
@@ -1058,12 +1102,12 @@ class _RequestRideState extends State<RequestRide> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                      child: Text("To:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                      child: Text("To:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
                     ),
                     new OutlineButton(
                       shape: StadiumBorder(),
                       textColor: Colors.blue,
-                      child: Text('View home location', style: TextStyle(color: Colors.indigo[400]),),
+                      child: Text('Home location', style: TextStyle(color: Colors.indigo[400],fontSize: 11),),
                       borderSide: BorderSide(
                           color: Colors.indigo[400], style: BorderStyle.solid,
                           width: 1),
@@ -1106,13 +1150,11 @@ class _RequestRideState extends State<RequestRide> {
                   ],
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                      child: Text("Date:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
-                    ),
-                    SizedBox(
-                      width: 205,
+                      child: Text("Date:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
                     ),
                     Container(
                       height: 30,
@@ -1141,21 +1183,19 @@ class _RequestRideState extends State<RequestRide> {
                     style: TextStyle(
                       color: Colors.blueGrey,
                       fontFamily: "Kodchasan",
-                      fontSize: 15.0,
+                      fontSize: 11.0,
                     ),
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                      child: Text("Departure time:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
-                    ),
-                    SizedBox(
-                      width: 128,
+                      child: Text("Departure time:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
                     ),
                     Container(
                       height: 30,
@@ -1184,18 +1224,19 @@ class _RequestRideState extends State<RequestRide> {
                     style: TextStyle(
                       color: Colors.blueGrey,
                       fontFamily: "Kodchasan",
-                      fontSize: 15.0,
+                      fontSize: 11.0,
                     ),
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                      child: Text("Latest time possible to go home: ", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                      child: Text("Latest time possible to go home:", style: TextStyle(color:Colors.indigo,fontSize: 10)),
                     ),
                     Container(
                       height: 30,
@@ -1209,6 +1250,7 @@ class _RequestRideState extends State<RequestRide> {
                               onConfirm: (date) {
                                 latesttime= DateFormat('Hms').format(date).toString();
                                 setState(() {
+
                                 });
                               }, currentTime: DateTime.now(), locale: LocaleType.en);
                         },
@@ -1223,16 +1265,16 @@ class _RequestRideState extends State<RequestRide> {
                     style: TextStyle(
                       color: Colors.blueGrey,
                       fontFamily: "Kodchasan",
-                      fontSize: 15.0,
+                      fontSize: 11.0,
                     ),
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Ride with:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  padding: const EdgeInsets.fromLTRB(33,0,0,0),
+                  child: Text("Ride with:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1252,7 +1294,7 @@ class _RequestRideState extends State<RequestRide> {
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontFamily: "Kodchasan",
-                        fontSize: 15.0,
+                        fontSize: 10.0,
                       ),
                     ),
                     Radio(
@@ -1270,7 +1312,7 @@ class _RequestRideState extends State<RequestRide> {
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontFamily: "Kodchasan",
-                        fontSize: 15.0,
+                        fontSize: 10.0,
                       ),
                     ),
                     Radio(
@@ -1288,14 +1330,14 @@ class _RequestRideState extends State<RequestRide> {
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontFamily: "Kodchasan",
-                        fontSize: 15.0,
+                        fontSize: 10.0,
                       ),
                     ),
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(33,0,22,0),
-                  child: Text("Smoking:", style: TextStyle(color:Colors.indigo,fontSize: 15)),
+                  padding: const EdgeInsets.fromLTRB(33,0,0,0),
+                  child: Text("Smoking:", style: TextStyle(color:Colors.indigo[400],fontSize: 11)),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1315,8 +1357,11 @@ class _RequestRideState extends State<RequestRide> {
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontFamily: "Kodchasan",
-                        fontSize: 15.0,
+                        fontSize: 11.0,
                       ),
+                    ),
+                    SizedBox(
+                      width: 10,
                     ),
                     Radio(
                       activeColor: Colors.indigo[400],
@@ -1333,8 +1378,11 @@ class _RequestRideState extends State<RequestRide> {
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontFamily: "Kodchasan",
-                        fontSize: 15.0,
+                        fontSize: 11.0,
                       ),
+                    ),
+                    SizedBox(
+                      width: 30,
                     ),
                     Radio(
                       activeColor: Colors.indigo[400],
@@ -1351,14 +1399,16 @@ class _RequestRideState extends State<RequestRide> {
                       style: TextStyle(
                         color: Colors.blueGrey,
                         fontFamily: "Kodchasan",
-                        fontSize: 15.0,
+                        fontSize: 11.0,
                       ),
                     ),
                   ],
                 ),
               ],
             ),
-            SizedBox(height: 8,),
+            SizedBox(
+              height: 5,
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(33,0,33,0),
               child: Row(
@@ -1368,11 +1418,11 @@ class _RequestRideState extends State<RequestRide> {
                     child: Text("Request",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20.0,
+                        fontSize: 15.0,
                         fontFamily: "Kodchasan",
                       ),
                     ),
-                    height:40,
+                    height:35,
                     minWidth:100,
                     color: Colors.indigo[400],
                     elevation: 15,
@@ -1550,9 +1600,38 @@ class _RequestRideState extends State<RequestRide> {
                           };
                           String url="http://3.81.22.120:3000/api/requestridefrom";
                           Response response =await post(url, headers:{'authorization': token}, body: body);
-                          print(response.statusCode);
-                          print(response.body);
-                          if(response.statusCode != 200)
+                          if(response.statusCode==400)
+                          {
+                            Map data= jsonDecode(response.body);
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return RichAlertDialog(
+                                    alertTitle: richTitle(data['error']),
+                                    alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                    alertType: RichAlertType.WARNING,
+                                    dialogIcon: Icon(
+                                      Icons.warning,
+                                      color: Colors.red,
+                                      size: 80,
+                                    ),
+                                    actions: <Widget>[
+                                      new OutlineButton(
+                                        shape: StadiumBorder(),
+                                        textColor: Colors.blue,
+                                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                        borderSide: BorderSide(
+                                            color: Colors.indigo[400], style: BorderStyle.solid,
+                                            width: 1),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
+                          }
+                          else if(response.statusCode != 200)
                           {
                             Map data= jsonDecode(response.body);
                             showDialog(
@@ -1655,11 +1734,11 @@ class _RequestRideState extends State<RequestRide> {
                     child: Text("Back",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20.0,
+                        fontSize: 15.0,
                         fontFamily: "Kodchasan",
                       ),
                     ),
-                    height:40,
+                    height:35,
                     minWidth:100,
                     color: Colors.indigo[400],
                     elevation: 15,
@@ -1707,11 +1786,11 @@ class _RequestRideState extends State<RequestRide> {
                       items: [
                         FlashyTabBarItem(
                           icon: Icon(Icons.arrow_forward,color: Colors.indigo,),
-                          title: Text('Request ride to organization', style: TextStyle(fontSize: 11,color: Colors.indigo),),
+                          title: Text('To organization', style: TextStyle(fontSize: 10,color: Colors.indigo[400]),),
                         ),
                         FlashyTabBarItem(
                           icon: Icon(Icons.arrow_back,color: Colors.indigo,),
-                          title: Text('Request ride from organization', style: TextStyle(fontSize: 11,color: Colors.indigo),),
+                          title: Text('From organization', style: TextStyle(fontSize: 10,color: Colors.indigo[400]),),
                         ),
                       ],
                     ),

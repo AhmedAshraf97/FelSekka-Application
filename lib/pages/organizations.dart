@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flashy_tab_bar/flashy_tab_bar.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:http/http.dart';
@@ -47,7 +48,15 @@ class _OrganizationsState extends State<Organizations> {
   int noOrgs=0;
   int noOrgsJoin=0;
   String token;
+  Position position;
+  LatLng currentlocation;
 
+  //LocationResult result;
+  void getlocation() async{
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager = true;
+    position = await geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    currentlocation = LatLng(position.latitude,position.longitude);
+  }
 
 
   Future<String> getData() async{
@@ -904,6 +913,8 @@ class _OrganizationsState extends State<Organizations> {
                       return PlacePicker(
                         apiKey: "AIzaSyC6NQ_ODwiORDBTsuB5k9J8prDQ_MTZgB4",
                         useCurrentLocation: true,
+                        enableMyLocationButton: true,
+                        initialMapType: MapType.normal,
                         onPlacePicked: (result) {
                           selectedPlace = result;
                           latitude=selectedPlace.geometry.location.lat.toString();
@@ -911,6 +922,7 @@ class _OrganizationsState extends State<Organizations> {
                           Navigator.of(context).pop();
                           setState(() {});
                         },
+                        initialPosition: currentlocation,
                       );
                     },
                   ),
