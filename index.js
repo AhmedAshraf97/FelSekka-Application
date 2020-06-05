@@ -56,6 +56,8 @@ app.use('/api/scheduledtrips', require('./routes/api/scheduledtrips'));
 app.use('/api/signout', require('./routes/api/sign_out'));
 app.use('/api/deleteaccount', require('./routes/api/delete_account'));
 
+app.use('/api/scheduledtrips2', require('./routes/api/scheduled'));
+
 app.use('/api/searchTrip', require('./routes/api/searchTrip'));
 app.use('/api/matching', require('./routes/api/matchingApi').router);
 app.use('/api/ReturnTripMatch', require('./routes/api/ReturnTripMatchingApi').router);

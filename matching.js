@@ -187,7 +187,7 @@ module.exports = async function main() {
 
             if (NumberOfUnAssignedRiders === 0)
                 break;
-            if (Drivers[j].ID === 46 || Drivers[j].ID === 74) {
+            if (Drivers[j].ID === 50) {
                 var x = 5;
             }
 
@@ -243,7 +243,7 @@ module.exports = async function main() {
                             0.04 * diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) / 30; ///arrival time diff
 
                         if (diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) > 0) {
-                            WeightFunction -= 0.1 * (diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) / Drivers[j].MaxEarliestDiffToNormalize)
+                            WeightFunction -= 0.05 * (diff_minutes(Riders.find(n => n.ID === RiderID).EarliestPickup, Drivers[j].EarliestStartTime) / Drivers[j].MaxEarliestDiffToNormalize)
                         }
 
                         WeightArray.push(WeightFunction)
@@ -260,9 +260,6 @@ module.exports = async function main() {
                 if (WeightArray.length > 0) {
                     ChosenRiderID = WeightIndex[WeightArray.indexOf(Math.max.apply(Math, WeightArray))]
 
-                    if (ChosenRiderID == 155 || ChosenRiderID == 166) {
-                        var x = 5;
-                    }
                     chosenDistance = DriversRiders[indexinDriverRider].data.find(n => n.to === ChosenRiderID).distance
                     chosenDuration = DriversRiders[indexinDriverRider].data.find(n => n.to === ChosenRiderID).duration
                     var indexinAllDriversToRider = AllDriversToRider.findIndex(n => n.ID === ChosenRiderID);
@@ -320,9 +317,10 @@ module.exports = async function main() {
 
 
 
-                        if (ChosenRiderID == 155 || ChosenRiderID == 166) {
+                        if (Drivers[j].ID === 50) {
                             var x = 5;
                         }
+
 
                         var filteredDrivers = Drivers.filter(n => n.lastChosenRider === ChosenRiderID && n.status === 0 && n.AssignedRiders.length === 0);
                         if (filteredDrivers.length != 0) {
@@ -356,7 +354,7 @@ module.exports = async function main() {
                         if (WeightArrayForDrivers.length > 0) {
 
 
-                            if (ChosenRiderID == 155 || ChosenRiderID == 166) {
+                            if (Drivers[j].ID === 50) {
                                 var x = 5;
                             }
                             var ChosenDriverID = WeightIndexForDrivers[WeightArrayForDrivers.indexOf(Math.max.apply(Math, WeightArrayForDrivers))]
@@ -435,7 +433,7 @@ module.exports = async function main() {
                     ChosenRiderID = WeightIndex[WeightArray.indexOf(Math.max.apply(null, WeightArray))]
 
 
-                    if (ChosenRiderID == 155 || ChosenRiderID == 166) {
+                    if (Drivers[j].ID === 50) {
                         var x = 5;
                     }
                     chosenDistance = RidersRiders[indexinRiderRider].data.find(n => n.to === ChosenRiderID).distance
@@ -455,9 +453,7 @@ module.exports = async function main() {
                             continue;
                         }
 
-                        if (ChosenRiderID == 155 || ChosenRiderID == 166) {
-                            var x = 5;
-                        }
+
                         var DriverOfRiderToCheck = Drivers.find(n => n.ID === RiderToCheckobj.DriverAssigned)
 
                         var Trust, NumberofEmptyPlaces, NumberofOccSeats;
@@ -495,7 +491,7 @@ module.exports = async function main() {
                     if (Drivers[j].countRiders == WeightArrayForRiders.length) {
 
 
-                        if (ChosenRiderID == 155 || ChosenRiderID == 166) {
+                        if (Drivers[j].ID === 50) {
                             var x = 5;
                         }
                         var filteredDrivers = Drivers.filter(n => n.lastChosenRider === ChosenRiderID && n.status === 0 && n.AssignedRiders.length != 0);
@@ -530,7 +526,7 @@ module.exports = async function main() {
                     } else {
                         Drivers[j].countRiders = WeightArrayForRiders.length
 
-                        if (ChosenRiderID == 155 || ChosenRiderID == 166) {
+                        if (Drivers[j].ID === 50) {
                             var x = 5;
                         }
                         if (WeightArrayForRiders.length > 0) {

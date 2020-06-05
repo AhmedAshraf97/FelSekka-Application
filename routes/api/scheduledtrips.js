@@ -142,8 +142,9 @@ router.post('/', async(req, res) => {
                                                                                                 "firstname": AllRidersTripDetails.firstname,
                                                                                                 "lastname": AllRidersTripDetails.lastname,
                                                                                                 "phonenumber": AllRidersTripDetails.phonenumber,
-                                                                                                "photo": AllRidersTripDetails.photo
-
+                                                                                                "photo": AllRidersTripDetails.photo,
+                                                                                                "latitude": AllRidersTripDetails.latitude,
+                                                                                                "longitude": AllRidersTripDetails.longitude
                                                                                             })
                                                                                             c++;
                                                                                         }
@@ -278,7 +279,9 @@ router.post('/', async(req, res) => {
                                                                                                 "firstname": AllRidersTripDetails.firstname,
                                                                                                 "lastname": AllRidersTripDetails.lastname,
                                                                                                 "phonenumber": AllRidersTripDetails.phonenumber,
-                                                                                                "photo": AllRidersTripDetails.photo
+                                                                                                "photo": AllRidersTripDetails.photo,
+                                                                                                "latitude": AllRidersTripDetails.latitude,
+                                                                                                "longitude": AllRidersTripDetails.longitude
 
                                                                                             })
                                                                                             c++;
@@ -435,7 +438,9 @@ router.post('/', async(req, res) => {
                                                                                         "firstname": AllRidersTripDetails.firstname,
                                                                                         "lastname": AllRidersTripDetails.lastname,
                                                                                         "phonenumber": AllRidersTripDetails.phonenumber,
-                                                                                        "photo": AllRidersTripDetails.photo
+                                                                                        "photo": AllRidersTripDetails.photo,
+                                                                                        "latitude": AllRidersTripDetails.latitude,
+                                                                                        "longitude": AllRidersTripDetails.longitude
 
                                                                                     })
                                                                                     c++;
@@ -537,7 +542,9 @@ router.post('/', async(req, res) => {
                                                                                         "firstname": AllRidersTripDetails.firstname,
                                                                                         "lastname": AllRidersTripDetails.lastname,
                                                                                         "phonenumber": AllRidersTripDetails.phonenumber,
-                                                                                        "photo": AllRidersTripDetails.photo
+                                                                                        "photo": AllRidersTripDetails.photo,
+                                                                                        "latitude": AllRidersTripDetails.latitude,
+                                                                                        "longitude": AllRidersTripDetails.longitude
 
                                                                                     })
                                                                                     c++;
