@@ -136,6 +136,13 @@ router.post('/', async(req, res) => {
 
                             if (AllRidersTrip.length > 0) {
                                 jsonStr1 = '{"RiderTrip":[]}';
+                                var DriverDB = await Driver.findOne({
+                                    where: {
+                                        driverid: OfferRideToDetails.userid,
+                                        tripid: trip.id,
+                                        status: "scheduled"
+                                    }
+                                }).catch(errHandler)
 
                                 objRider = JSON.parse(jsonStr1);
                                 const orgDetails = await Organization.findOne({
@@ -213,7 +220,10 @@ router.post('/', async(req, res) => {
                                         "Driverphonenumber": DriverOftrip.phonenumber,
                                         "Driverphoto": DriverOftrip.photo,
                                         "DriverGender": DriverOftrip.gender,
-                                        "DriverRating": DriverOftrip.rating
+                                        "DriverRating": DriverOftrip.rating,
+                                        "time": DriverDB.actualpickuptime,
+                                        "longitude": OfferRideToDetails.fromlongitude,
+                                        "latitude": OfferRideToDetails.fromlatitude
                                     }),
 
                                     "Riders in the trip": objRider
@@ -272,6 +282,14 @@ router.post('/', async(req, res) => {
 
                                     }
                                 }).catch(errHandler)
+                                var DriverDB = await Driver.findOne({
+                                    where: {
+                                        driverid: OfferRideFromDetails.userid,
+                                        tripid: trip.id,
+                                        status: "scheduled"
+                                    }
+                                }).catch(errHandler)
+
                                 for (AllRidersTripEach of AllRidersTrip) {
 
                                     const AllRidersTripDetails = await User.findOne({
@@ -339,7 +357,10 @@ router.post('/', async(req, res) => {
                                         "Driverphonenumber": DriverOftrip.phonenumber,
                                         "Driverphoto": DriverOftrip.photo,
                                         "DriverGender": DriverOftrip.gender,
-                                        "DriverRating": DriverOftrip.rating
+                                        "DriverRating": DriverOftrip.rating,
+                                        "time": DriverDB.actualarrivaltime,
+                                        "longitude": OfferRideToDetails.tolongitude,
+                                        "latitude": OfferRideToDetails.tolatitude
                                     }),
 
                                     "Riders in the trip": objRider
