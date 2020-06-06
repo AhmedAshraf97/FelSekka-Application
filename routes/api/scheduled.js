@@ -211,7 +211,7 @@ router.post('/', async(req, res) => {
                                     "pickuptime": RiderRide.pickuptime,
                                     "arrivaltime": RiderRide.arrivaltime,
                                     "date": trip.date,
-                                    "fare": RiderRide.fare,
+                                    "fare": RiderRide.expectedfare,
                                     "numberRiders": trip.numberofseats,
                                     "Driver": ({
                                         "Driverusername": DriverOftrip.username,
@@ -348,7 +348,7 @@ router.post('/', async(req, res) => {
                                     "pickuptime": RiderRide.pickuptime,
                                     "arrivaltime": RiderRide.arrivaltime,
                                     "date": trip.date,
-                                    "fare": RiderRide.fare,
+                                    "fare": RiderRide.expectedfare,
                                     "numberRiders": trip.numberofseats,
                                     "Driver": ({
                                         "Driverusername": DriverOftrip.username,
@@ -463,7 +463,7 @@ router.post('/', async(req, res) => {
                                                 "gender": AllRidersTripDetails.gender,
                                                 "latitude": RiderRequestRideToDetails.fromlatitude,
                                                 "longitude": RiderRequestRideToDetails.fromlongitude,
-                                                "fare": RiderRequestRideToDetails.fare,
+                                                "fare": AllRidersTripEach.expectedfare,
                                                 "time": AllRidersTripEach.pickuptime
 
                                             })
@@ -493,7 +493,7 @@ router.post('/', async(req, res) => {
                                         "pickuptime": DriverRide.pickuptime,
                                         "arrivaltime": DriverRide.arrivaltime,
                                         "date": trip.date,
-                                        "fare": DriverRide.fare,
+                                        "fare": DriverRide.expectedfare,
                                         "numberRiders": trip.numberofseats,
                                         "Riders in the trip": objRider
 
@@ -565,7 +565,7 @@ router.post('/', async(req, res) => {
                                                 "gender": AllRidersTripDetails.gender,
                                                 "latitude": RiderRequestRideFromDetails.tolatitude,
                                                 "longitude": RiderRequestRideFromDetails.tolongitude,
-                                                "fare": RiderRequestRideFromDetails.fare,
+                                                "fare": AllRidersTripEach.expectedfare,
                                                 "time": AllRidersTripEach.arrivaltime
 
                                             })
@@ -597,7 +597,7 @@ router.post('/', async(req, res) => {
                                         "pickuptime": DriverRide.pickuptime,
                                         "arrivaltime": DriverRide.arrivaltime,
                                         "date": trip.date,
-                                        "fare": DriverRide.fare,
+                                        "fare": DriverRide.expectedfare,
                                         "numberRiders": trip.numberofseats,
                                         "Riders in the trip": objRider
 
