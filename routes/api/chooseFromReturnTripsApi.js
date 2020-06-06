@@ -55,6 +55,7 @@ class Rider {
         this.smoking = smoking
         this.fromorgid = fromorgid
         this.date = date
+        this.ExpectedFare;
 
     }
 };
@@ -75,6 +76,7 @@ class Driver {
         this.MaxDistance = 1.5 * DistanceFromOrganization //removeee
 
 
+        this.ExpectedFare;
         //Timing
         this.DropOffTime = this.PoolStartTime
         this.PoolStartTime = PoolStartTime
@@ -485,6 +487,7 @@ router.post('/', async(req, res) => {
 
                                                 await DriverDB.update({
                                                     arrivaltime: driver.DropOffTime,
+                                                    expectedfare: driver.ExpectedFare
                                                 }, {
                                                     where: {
                                                         driverid: driver.ID,
@@ -527,12 +530,14 @@ router.post('/', async(req, res) => {
                                                             distance: 0,
                                                             time: 0,
                                                             fare: 0,
-                                                            status: "scheduled"
+                                                            status: "scheduled",
+                                                            expectedfare: Riders.find(n => n.ID === driver.AssignedRiders[i]).ExpectedFare
 
                                                         }).catch(errHandler)
                                                     } else {
                                                         await RiderDB.update({
                                                             arrivaltime: Riders.find(n => n.ID === driver.AssignedRiders[i]).DropOffTime,
+                                                            expectedfare: Riders.find(n => n.ID === driver.AssignedRiders[i]).ExpectedFare
                                                         }, {
                                                             where: {
                                                                 riderid: driver.AssignedRiders[i],
