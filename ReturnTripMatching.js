@@ -132,7 +132,7 @@ async function StepByStepReorder(AvailableDriver) {
 
 
 
-    var delta = Math.max(0.25 * AvailableDriver.MaxDuration, 10)
+    var delta = Math.max(0.25 * AvailableDriver.MaxDuration, 15)
         // var response = ksp.ksp(g, OrganizationID, DriverIDstr, kValue);
 
     var response = ksp.yenKSP(g, OrganizationID, DriverIDstr, kValue, AvailableDriver.TotalDurationTaken + delta, AvailableDriver.MaxDuration);
@@ -182,7 +182,7 @@ module.exports = async function main() {
             break;
 
         for (var j = 0; j < Drivers.length; j++) {
-            if (Drivers[j].ID === 64 || Drivers[j].ID === 61) {
+            if (Drivers[j].ID === 79) {
                 var x = 5;
             }
 
@@ -238,13 +238,12 @@ module.exports = async function main() {
                         var WeightFunction = -0.45 * Duration / Drivers[j].MaxDurationToNormalize - 0.25 * Distance / Drivers[j].MaxDistanceToNormalize + 0.3 * Trust -
                             0.04 * diff_minutes(Drivers[j].PoolStartTime, Riders.find(n => n.ID === RiderID).DepartureTime) / 30; ///arrival time diff
 
-                        if (Drivers[j].ID == 55 && RiderID == 15) {
+                        if (Drivers[j].ID == 79 && RiderID == 75) {
                             var x = 6;
                         }
-                        //- 0.15(-driver latest+duration+rider laatest)
-                        //   console.log(Drivers[j].ID, RiderID)
+
                         if (diff_minutes(Drivers[j].LatestDropOff, Riders.find(n => n.ID === RiderID).LatestDropOff) > 0) {
-                            WeightFunction -= 0.1 *
+                            WeightFunction -= 0.05 *
                                 (diff_minutes(Drivers[j].LatestDropOff, (Riders.find(n => n.ID === RiderID).LatestDropOff)) / Drivers[j].MaxDropoffDiffToNormalize)
                         }
                         WeightArray.push(WeightFunction)
@@ -280,13 +279,32 @@ module.exports = async function main() {
                             Trust = 1
                         else if (CurrentRider.UnTrustedDrivers.find(n => n === DriverToCheckID))
                             Trust = -1;
+                        else if (CurrentDriver.status === 1)
+                            continue;
+
+                        if (CurrentDriver.AssignedRiders.length > 0) {
+
+                            LastRiderForDriverID = CurrentDriver.AssignedRiders[CurrentDriver.AssignedRiders.length - 1]
+                            var indexinRiderRider = RidersRiders.findIndex(n => n.ID === LastRiderForDriverID);
+                            DistanceToRider = RidersRiders[indexinRiderRider].data.find(n => n.from === ChosenRiderID).distance
+                            DurationToRider = RidersRiders[indexinRiderRider].data.find(n => n.from === ChosenRiderID).duration
+
+                            var WeightFunctionDriver = -0.45 * DurationToRider / CurrentRider.MaxDurationToNormalizeDrivers -
+                                0.25 * DistanceToRider / CurrentRider.MaxDistanceToNormalizeDrivers +
+                                0.3 * Trust -
+                                0.04 * diff_minutes(CurrentDriver.PoolStartTime, CurrentRider.DepartureTime) / 30 +
+                                0.1 * NumberofEmptyPlaces / CurrentDriver.capacity
 
 
-                        var WeightFunctionDriver = -0.45 * DurationToDriver / CurrentRider.MaxDurationToNormalizeDrivers -
-                            0.25 * DistanceToDriver / CurrentRider.MaxDistanceToNormalizeDrivers +
-                            0.3 * Trust -
-                            0.04 * diff_minutes(CurrentDriver.PoolStartTime, CurrentRider.DepartureTime) / 30 +
-                            0.075 * NumberofEmptyPlaces
+                        } else {
+
+
+                            var WeightFunctionDriver = -0.45 * DurationToDriver / CurrentRider.MaxDurationToNormalizeDrivers -
+                                0.25 * DistanceToDriver / CurrentRider.MaxDistanceToNormalizeDrivers +
+                                0.3 * Trust -
+                                0.04 * diff_minutes(CurrentDriver.PoolStartTime, CurrentRider.DepartureTime) / 30 +
+                                0.1 * NumberofEmptyPlaces / CurrentDriver.capacity
+                        }
 
                         WeightArrayForDrivers.push(WeightFunctionDriver)
                         WeightIndexForDrivers.push(DriverToCheckID)
@@ -436,7 +454,8 @@ module.exports = async function main() {
 
                         NumberofEmptyPlaces = DriverOfRiderToCheck.capacity - (DriverOfRiderToCheck.AssignedRiders.length)
 
-
+                        if (DriverOfRiderToCheck.status === 1) //driver of rider has no emty place
+                            continue;
                         if (RiderToCheckobj.TrustedDrivers.find(n => n === DriverOfRiderToCheck.ID))
                             Trust = 1
                         else if (RiderToCheckobj.UnTrustedDrivers.find(n => n === DriverOfRiderToCheck.ID))
@@ -447,7 +466,7 @@ module.exports = async function main() {
                             0.25 * DistanceToRider / CurrentRider.MaxDurationToNormalizeRiders +
                             0.3 * Trust -
                             0.04 * diff_minutes(DriverOfRiderToCheck.PoolStartTime, RiderToCheckobj.DepartureTime) / 30 +
-                            0.075 * NumberofEmptyPlaces
+                            0.1 * NumberofEmptyPlaces / DriverOfRiderToCheck.capacity
 
                         WeightArrayForRiders.push(WeightFunctionRider)
                         WeightIndexForRiders.push(RiderToCheckID)
@@ -535,9 +554,9 @@ module.exports = async function main() {
                         Drivers[j].TotalDurationTaken = 0;
                         Drivers[j].TotalDistanceCoveredToDestination = 0;
                     } else {
-                        var delta = Math.max(0.25 * Drivers[j].MaxDuration, 10)
+                        var delta = Math.max(0.25 * Drivers[j].MaxDuration, 15)
                         var TimeWithoutRider = Drivers[j].TimeFromOrganizationMinutes
-                        if (Drivers[j].TotalDurationTaken - TimeWithoutRider < delta) {
+                        if (Drivers[j].TotalDurationTaken - TimeWithoutRider <= delta) {
                             Riders.find(n => n.ID === ChosenRiderID).isAssigned = true;
                             Riders.find(n => n.ID === ChosenRiderID).DriverAssigned = DriverID;
                             NumberOfUnAssignedRiders--;

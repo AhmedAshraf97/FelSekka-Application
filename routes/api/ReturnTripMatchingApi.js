@@ -209,7 +209,7 @@ router.post('/', async(req, res) => {
             const orguser = orguserObj.find(n => n.orgid === offer.fromorgid && n.userid === offer.userid)
 
             var driver = new Driver(offer.userid, parseFloat(orguser.distancefromorg), new Date(offer.date + " " + offer.departuretime),
-                Math.round(orguser.timetoorg),
+                Math.round(orguser.timefromorg),
                 offer.numberofseats,
                 new Date(offer.date + " " + offer.latesttime),
                 offer.ridewith,
@@ -249,7 +249,7 @@ router.post('/', async(req, res) => {
                 var rider = new Rider(request.userid,
                     parseFloat(orguser.distancefromorg),
                     new Date(request.date + " " + request.departuretime),
-                    Math.round(orguser.timetoorg),
+                    Math.round(orguser.timefromorg),
                     new Date(request.date + " " + request.latesttime),
                     request.ridewith,
                     request.smoking,

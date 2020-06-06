@@ -51,10 +51,12 @@ app.use('/api/addcar', require('./routes/api/add_car'));
 app.use('/api/deletecar', require('./routes/api/delete_car'));
 app.use('/api/showmycars', require('./routes/api/show_my_cars'));
 app.use('/api/addrating', require('./routes/api/add_rating'));
-app.use('/api/scheduledtrips', require('./routes/api/scheduledtrips'));
+//app.use('/api/scheduledtrips2', require('./routes/api/scheduledtrips'));
 //app.use('/api/showAvailableRides', require('./routes/api/NotUsedshowAvailableRides'));
 app.use('/api/signout', require('./routes/api/sign_out'));
 app.use('/api/deleteaccount', require('./routes/api/delete_account'));
+
+app.use('/api/scheduledtrips', require('./routes/api/scheduled'));
 
 app.use('/api/searchTrip', require('./routes/api/searchTrip'));
 app.use('/api/matching', require('./routes/api/matchingApi').router);
