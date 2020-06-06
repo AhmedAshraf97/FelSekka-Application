@@ -6,8 +6,8 @@ module.exports = async function main() {
     Riders = obj.Riders;
     Drivers = obj.Drivers;
     CurrentDriver = Drivers[0]
-    RiderRider = obj.RiderRider;
-    RiderRiderDuration = obj.RiderRiderDuration;
+    RidersRiders = obj.RidersRiders;
+    RidersRidersDuration = obj.RidersRidersDuration;
     DriversRidersDuration = obj.DriversRidersDuration;
     DriversRider = obj.DriversRider;
 
@@ -49,13 +49,13 @@ module.exports = async function main() {
             toIndex = Riders.indexOf(Riders.find(n => n.ID === CurrentDriver.AssignedRiders[i]));
             var toID = CurrentDriver.AssignedRiders[i];
             var fromID = CurrentDriver.AssignedRiders[i + 1]
-            ToIndexinRiderRiderDuration = RiderRiderDuration.indexOf(RiderRiderDuration.find(n => n.ID === toID));
-            ToIndexinRiderRider = RiderRider.indexOf(RiderRider.find(n => n.ID === toID));
+            ToIndexinRidersRidersDuration = RidersRidersDuration.indexOf(RidersRidersDuration.find(n => n.ID === toID));
+            ToIndexinRidersRiders = RidersRiders.indexOf(RidersRiders.find(n => n.ID === toID));
             var datee = new Date(Riders[fromIndex].DropOffTime);
             RiderDropOff = datee
-            Riders[toIndex].DropOffTime.setMinutes(Riders[fromIndex].DropOffTime.getMinutes() + RiderRiderDuration[ToIndexinRiderRiderDuration].data.find(n => n.from === fromID).duration)
-            CurrentDriver.TotalDurationTaken += RiderRiderDuration[ToIndexinRiderRiderDuration].data.find(n => n.from === fromID).duration;
-            CurrentDriver.TotalDistanceCoveredToDestination += RiderRider[ToIndexinRiderRiderDuration].data.find(n => n.from === fromID).distance;
+            Riders[toIndex].DropOffTime.setMinutes(Riders[fromIndex].DropOffTime.getMinutes() + RidersRidersDuration[ToIndexinRidersRidersDuration].data.find(n => n.from === fromID).duration)
+            CurrentDriver.TotalDurationTaken += RidersRidersDuration[ToIndexinRidersRidersDuration].data.find(n => n.from === fromID).duration;
+            CurrentDriver.TotalDistanceCoveredToDestination += RidersRiders[ToIndexinRidersRidersDuration].data.find(n => n.from === fromID).distance;
 
 
         }

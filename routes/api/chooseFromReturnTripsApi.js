@@ -151,11 +151,11 @@ class userArray {
 }
 
 var DriversRider = new Array();
-var RiderRider = new Array();
+var RidersRiders = new Array();
 
 var DriversRidersDuration = new Array();
 
-var RiderRiderDuration = new Array();
+var RidersRidersDuration = new Array();
 
 
 
@@ -430,7 +430,7 @@ router.post('/', async(req, res) => {
                                                 }
 
                                                 if (RiderRow.length > 0) {
-                                                    RiderRider.push(RiderRow);
+                                                    RidersRiders.push(RiderRow);
                                                 }
 
 
@@ -462,7 +462,7 @@ router.post('/', async(req, res) => {
 
                                                 if (RiderRowDuration.length > 0) {
 
-                                                    RiderRiderDuration.push(RiderRowDuration);
+                                                    RidersRidersDuration.push(RiderRowDuration);
                                                 }
 
 
@@ -598,9 +598,9 @@ router.post('/', async(req, res) => {
 
 
         DriversRider = []
-        RiderRider = []
+        RidersRiders = []
         DriversRidersDuration = []
-        RiderRiderDuration = []
+        RidersRidersDuration = []
         Riders = []
         Drivers = []
         driver = {}
@@ -610,7 +610,7 @@ router.post('/', async(req, res) => {
 
 
 function getters() {
-    return { Riders, driver, RiderRider, RiderRiderDuration, DriversRidersDuration, DriversRider }
+    return { Riders, driver, RidersRiders, RidersRidersDuration, DriversRidersDuration, DriversRider }
 }
 
 

@@ -3,8 +3,8 @@ const ksp = require('k-shortest-path');
 var Combinatorics = require('js-combinatorics');
 var Riders;
 var AvailableDriver;
-var RiderRider
-var RiderRiderDuration
+var RidersRiders
+var RidersRidersDuration
 var DriversRidersDuration
 var DriversRider
 
@@ -86,13 +86,13 @@ function SetDropOffTime(DriverObj) {
             toIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[i]));
             var toID = DriverObj.AssignedRiders[i];
             var fromID = DriverObj.AssignedRiders[i + 1]
-            ToIndexinRiderRiderDuration = RiderRiderDuration.indexOf(RiderRiderDuration.find(n => n.ID === toID));
-            ToIndexinRiderRider = RiderRider.indexOf(RiderRider.find(n => n.ID === toID));
+            ToIndexinRidersRidersDuration = RidersRidersDuration.indexOf(RidersRidersDuration.find(n => n.ID === toID));
+            ToIndexinRidersRiders = RidersRiders.indexOf(RidersRiders.find(n => n.ID === toID));
             var datee = new Date(Riders[fromIndex].DropOffTime);
             RiderDropOff = datee
-            Riders[toIndex].DropOffTime.setMinutes(Riders[fromIndex].DropOffTime.getMinutes() + RiderRiderDuration[ToIndexinRiderRiderDuration].data.find(n => n.from === fromID).duration)
-            DriverObj.TotalDurationTaken += RiderRiderDuration[ToIndexinRiderRiderDuration].data.find(n => n.from === fromID).duration;
-            DriverObj.TotalDistanceCoveredToDestination += RiderRider[ToIndexinRiderRiderDuration].data.find(n => n.from === fromID).distance;
+            Riders[toIndex].DropOffTime.setMinutes(Riders[fromIndex].DropOffTime.getMinutes() + RidersRidersDuration[ToIndexinRidersRidersDuration].data.find(n => n.from === fromID).duration)
+            DriverObj.TotalDurationTaken += RidersRidersDuration[ToIndexinRidersRidersDuration].data.find(n => n.from === fromID).duration;
+            DriverObj.TotalDistanceCoveredToDestination += RidersRiders[ToIndexinRidersRidersDuration].data.find(n => n.from === fromID).distance;
 
             if (Riders[toIndex].DropOffTime > Riders[toIndex].LatestDropOff) {
                 DriverObj.TotalDistanceCoveredToDestination = OldTotalDistanceCoveredToDestination
@@ -126,7 +126,7 @@ async function Reorder() {
             if (m != p) {
                 var SourceID = AvailableDriver.AssignedRiders[p]
                 var DestID = AvailableDriver.AssignedRiders[m]
-                var Durationn = RiderRiderDuration.find(n => n.ID === DestID).data.find(n => n.from === SourceID).duration
+                var Durationn = RidersRidersDuration.find(n => n.ID === DestID).data.find(n => n.from === SourceID).duration
                 SourceID = `${SourceID}`
                 DestID = `${DestID}`
                 g.setEdge(SourceID, DestID, Durationn)
@@ -174,8 +174,8 @@ module.exports = async function main() {
 
     Riders = obj.Riders;
     AvailableDriver = obj.driver;
-    RiderRider = obj.RiderRider;
-    RiderRiderDuration = obj.RiderRiderDuration;
+    RidersRiders = obj.RidersRiders;
+    RidersRidersDuration = obj.RidersRidersDuration;
     DriversRidersDuration = obj.DriversRidersDuration;
     DriversRider = obj.DriversRider;
 
