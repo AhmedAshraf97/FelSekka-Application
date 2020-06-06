@@ -55,6 +55,7 @@ class Rider {
         this.smoking = smoking
         this.fromorgid = fromorgid
         this.date = date
+        this.ExpectedFare = 0;
 
     }
 };
@@ -75,6 +76,7 @@ class Driver {
         this.MaxDistance = 1.5 * DistanceFromOrganization //removeee
 
 
+        this.ExpectedFare = 0;
         //Timing
         this.DropOffTime = this.PoolStartTime
         this.PoolStartTime = PoolStartTime
@@ -498,6 +500,7 @@ router.post('/', async(req, res) => {
 
                 await DriverDB.update({
                     arrivaltime: driver.DropOffTime,
+                    expectedfare: driver.ExpectedFare
                 }, {
                     where: {
                         driverid: driver.ID,
@@ -530,6 +533,7 @@ router.post('/', async(req, res) => {
                 for (var i = 0; i < driver.AssignedRiders.length; i++) {
                     await RiderDB.update({
                         arrivaltime: Riders.find(n => n.ID === driver.AssignedRiders[i]).DropOffTime,
+                        expectedfare: Riders.find(n => n.ID === driver.AssignedRiders[i]).ExpectedFare
                     }, {
                         where: {
                             riderid: driver.AssignedRiders[i],
