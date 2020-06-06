@@ -359,8 +359,8 @@ router.post('/', async(req, res) => {
                                         "DriverGender": DriverOftrip.gender,
                                         "DriverRating": DriverOftrip.rating,
                                         "time": DriverDB.actualarrivaltime,
-                                        "longitude": OfferRideToDetails.tolongitude,
-                                        "latitude": OfferRideToDetails.tolatitude
+                                        "longitude": OfferRideFromDetails.tolongitude,
+                                        "latitude": OfferRideFromDetails.tolatitude
                                     }),
 
                                     "Riders in the trip": objRider
