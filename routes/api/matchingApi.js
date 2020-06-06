@@ -542,7 +542,7 @@ router.post('/', async(req, res) => {
                         Driverr.time = 0
                         Driverr.fare = 0
                         Driverr.status = "scheduled"
-                        Driverr.expectedfare = 0.8 * Drivers[i].ExpectedFare
+                        Driverr.expectedfare = Drivers[i].ExpectedFare
                         DriversArray.push(Driverr)
                         for (var j = 0; j < Drivers[i].AssignedRiders.length; j++) {
 
