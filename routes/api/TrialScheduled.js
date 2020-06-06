@@ -17,7 +17,8 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-
+//to from,number of rider,car details,location of rider to from,gender,all details
+//
 
 //Error handler
 const errHandler = err => {

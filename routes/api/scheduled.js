@@ -5,7 +5,7 @@ const Rider = require('../../models/riders');
 
 const RequestRideFrom = require('../../models/requestridefrom');
 const RequestRideTo = require('../../models/requestrideto');
-
+const Organization = require('../../models/organizations');
 const OfferRideFrom = require('../../models/offerridefrom');
 const OfferRideTo = require('../../models/offerrideto');
 const Car = require('../../models/cars');
@@ -27,14 +27,16 @@ const errHandler = err => {
 router.post('/', async(req, res) => {
 
     var jsonStr = '{"ScheduledTrips":[]}';
+    var jsonStr1 = '{"RiderTrip":[]}';
     var obj = JSON.parse(jsonStr);
+    var objRider = JSON.parse(jsonStr1);
 
-    var RiderTrip = {}
+    //var RiderTrip = {}
     var ValidChecks = true;
     var c = 0;
     var count = 0
     var decoded;
-    var countcheck = 0;
+
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
@@ -73,6 +75,7 @@ router.post('/', async(req, res) => {
         var RiderRidesOfferIDFrom = []
         var TripsTo = []
         var TripsFrom = []
+        var countobj = 0;
         if (user) {
             const RiderRides = await Rider.findAll({
                 where: {
@@ -94,7 +97,7 @@ router.post('/', async(req, res) => {
                     }).catch(errHandler)
 
                     if (trip) {
-                        countcheck++;
+
 
 
                         if (RiderRide.tofrom === "to") {
@@ -130,75 +133,93 @@ router.post('/', async(req, res) => {
                                 }
 
                             }).catch(errHandler)
+
                             if (AllRidersTrip.length > 0) {
+                                jsonStr1 = '{"RiderTrip":[]}';
+
+                                objRider = JSON.parse(jsonStr1);
+                                const orgDetails = await Organization.findOne({
+                                    where: {
+
+                                        id: OfferRideToDetails.toorgid
+
+
+                                    }
+                                }).catch(errHandler)
                                 for (AllRidersTripEach of AllRidersTrip) {
 
                                     const AllRidersTripDetails = await User.findOne({
                                         where: {
                                             id: AllRidersTripEach.riderid
+
                                         }
 
                                     }).catch(errHandler)
 
+
+                                    const RiderRequestRideToDetails = await RequestRideTo.findOne({
+                                        where: {
+                                            id: AllRidersTripEach.requestid
+
+                                        }
+                                    }).catch(errHandler)
+
+
                                     if (AllRidersTripDetails) {
                                         if (AllRidersTripDetails.id !== RiderRide.riderid) {
-                                            RiderTrip[c] = ({
+                                            objRider['RiderTrip'].push({
                                                 "username": AllRidersTripDetails.username,
                                                 "firstname": AllRidersTripDetails.firstname,
                                                 "lastname": AllRidersTripDetails.lastname,
                                                 "phonenumber": AllRidersTripDetails.phonenumber,
                                                 "photo": AllRidersTripDetails.photo,
-                                                "latitude": AllRidersTripDetails.latitude,
-                                                "longitude": AllRidersTripDetails.longitude
+                                                "rating": AllRidersTripDetails.rating,
+                                                "gender": AllRidersTripDetails.gender,
+                                                "latitude": RiderRequestRideToDetails.fromlatitude,
+                                                "longitude": RiderRequestRideToDetails.fromlongitude,
+                                                "time": AllRidersTripEach.pickuptime
                                             })
-                                            c++;
+
                                         }
                                     }
-
-                                    if (c === AllRidersTrip.length - 1) {
-                                        obj['ScheduledTrips'].push({
-                                            type: "Rider",
-                                            "tripid": trip.id,
-                                            "carDetails.model": carDetails.model,
-                                            "carDetails.brand": carDetails.brand,
-                                            "pickuplongitude": RequestRideToDetails.fromlongitude,
-                                            "pickuplatitude": RequestRideToDetails.fromlatitude,
-                                            "arrivalloclatitude": trip.endloclatitude,
-                                            "arrivalloclongitude": trip.endloclongitude,
-                                            "pickuptime": RiderRide.pickuptime,
-                                            "arrivaltime": RiderRide.arrivaltime,
-                                            "date": trip.date,
-                                            "fare": RiderRide.fare,
-                                            "Driverusername": DriverOftrip.username,
-                                            "Driverfirstname": DriverOftrip.firstname,
-                                            "Driverlastname": DriverOftrip.lastname,
-                                            "Driverphonenumber": DriverOftrip.phonenumber,
-                                            "Driverphoto": DriverOftrip.photo,
-                                            "Riders in the trip": RiderTrip
-
-                                        })
-
-
-                                        count++;
-                                        c = 0;
-                                        RiderTrip = {}
-
-
-                                        if (count === RiderRides.length) {
-                                            res.send(obj)
-                                        }
-
-
-                                    }
-
-
-
-
-
 
 
 
                                 }
+                                obj['ScheduledTrips'].push({
+                                    tofrom: "to",
+                                    type: "Rider",
+                                    "tripid": trip.id,
+                                    "carModel": carDetails.model,
+                                    "carBrand": carDetails.brand,
+                                    "carYear": carDetails.year,
+                                    "carType": carDetails.type,
+                                    "carPlateletters": carDetails.plateletters,
+                                    "carPlatenumbers": carDetails.platenumbers,
+                                    "homelongitude": RequestRideToDetails.fromlongitude,
+                                    "homelatitude": RequestRideToDetails.fromlatitude,
+                                    "orgname": orgDetails.name,
+                                    "orglatitude": orgDetails.latitude,
+                                    "orglongitude": orgDetails.longitude,
+                                    "pickuptime": RiderRide.pickuptime,
+                                    "arrivaltime": RiderRide.arrivaltime,
+                                    "date": trip.date,
+                                    "fare": RiderRide.fare,
+                                    "numberRiders": trip.numberofseats,
+                                    "Driver": ({
+                                        "Driverusername": DriverOftrip.username,
+                                        "Driverfirstname": DriverOftrip.firstname,
+                                        "Driverlastname": DriverOftrip.lastname,
+                                        "Driverphonenumber": DriverOftrip.phonenumber,
+                                        "Driverphoto": DriverOftrip.photo,
+                                        "DriverGender": DriverOftrip.gender,
+                                        "DriverRating": DriverOftrip.rating
+                                    }),
+
+                                    "Riders in the trip": objRider
+
+                                })
+                                countobj++;
 
                             }
 
@@ -240,6 +261,17 @@ router.post('/', async(req, res) => {
                             }).catch(errHandler)
 
                             if (AllRidersTrip.length > 0) {
+                                jsonStr1 = '{"RiderTrip":[]}';
+
+                                objRider = JSON.parse(jsonStr1);
+                                const orgDetails = await Organization.findOne({
+                                    where: {
+
+                                        id: OfferRideFromDetails.fromorgid
+
+
+                                    }
+                                }).catch(errHandler)
                                 for (AllRidersTripEach of AllRidersTrip) {
 
                                     const AllRidersTripDetails = await User.findOne({
@@ -248,74 +280,82 @@ router.post('/', async(req, res) => {
                                         }
 
                                     }).catch(errHandler)
+
+
+                                    const RiderRequestRideFromDetails = await RequestRideFrom.findOne({
+                                        where: {
+                                            id: AllRidersTripEach.requestid
+
+                                        }
+                                    }).catch(errHandler)
                                     if (AllRidersTripDetails) {
 
                                         if (AllRidersTripDetails.id !== RiderRide.riderid) {
-                                            RiderTrip[c] = ({
+                                            objRider['RiderTrip'].push({
                                                 "username": AllRidersTripDetails.username,
                                                 "firstname": AllRidersTripDetails.firstname,
                                                 "lastname": AllRidersTripDetails.lastname,
                                                 "phonenumber": AllRidersTripDetails.phonenumber,
                                                 "photo": AllRidersTripDetails.photo,
-                                                "latitude": AllRidersTripDetails.latitude,
-                                                "longitude": AllRidersTripDetails.longitude
+                                                "rating": AllRidersTripDetails.rating,
+                                                "gender": AllRidersTripDetails.gender,
+                                                "latitude": RiderRequestRideFromDetails.tolatitude,
+                                                "longitude": RiderRequestRideFromDetails.tolongitude,
+                                                "time": AllRidersTripEach.arrivaltime
 
                                             })
-                                            c++;
+
                                         }
 
                                     }
 
-                                    if (c === AllRidersTrip.length - 1) {
-                                        obj['ScheduledTrips'].push({
-                                            type: "Rider",
-                                            "tripid": trip.id,
-                                            "carDetails.model": carDetails.model,
-                                            "carDetails.brand": carDetails.brand,
-                                            "arrivallongitude": RequestRideFromDetails.tolongitude,
-                                            "arrivallatitude": RequestRideFromDetails.tolatitude,
-                                            "pickuploclatitude": trip.endloclatitude,
-                                            "pickuploclongitude": trip.endloclongitude,
-                                            "date": trip.date,
-                                            "pickuptime": RiderRide.pickuptime,
-                                            "arrivaltime": RiderRide.aarrivaltime,
-                                            "fare": RiderRide.fare,
-                                            "Driverusername": DriverOftrip.username,
-                                            "Driverfirstname": DriverOftrip.firstname,
-                                            "Driverlastname": DriverOftrip.lastname,
-                                            "Driverphonenumber": DriverOftrip.phonenumber,
-                                            "Driverphoto": DriverOftrip.photo,
-                                            "Riders in the trip": RiderTrip
 
-                                        })
-
-                                        count++;
-                                        c = 0;
-                                        RiderTrip = {}
-
-
-                                        if (count === RiderRides.length) {
-                                            res.send(obj)
-                                        }
-
-
-                                    }
 
                                 }
+                                obj['ScheduledTrips'].push({
+                                    "tofrom": "from",
+                                    type: "Rider",
+                                    "tripid": trip.id,
+                                    "carModel": carDetails.model,
+                                    "carBrand": carDetails.brand,
+                                    "carYear": carDetails.year,
+                                    "carType": carDetails.type,
+                                    "carPlateletters": carDetails.plateletters,
+                                    "carPlatenumbers": carDetails.platenumbers,
+                                    "homelongitude": RequestRideFromDetails.tolongitude,
+                                    "homelatitude": RequestRideFromDetails.tolatitude,
+                                    "orgname": orgDetails.name,
+                                    "orglatitude": orgDetails.latitude,
+                                    "orglongitude": orgDetails.longitude,
+                                    "pickuptime": RiderRide.pickuptime,
+                                    "arrivaltime": RiderRide.arrivaltime,
+                                    "date": trip.date,
+                                    "fare": RiderRide.fare,
+                                    "numberRiders": trip.numberofseats,
+                                    "Driver": ({
+                                        "Driverusername": DriverOftrip.username,
+                                        "Driverfirstname": DriverOftrip.firstname,
+                                        "Driverlastname": DriverOftrip.lastname,
+                                        "Driverphonenumber": DriverOftrip.phonenumber,
+                                        "Driverphoto": DriverOftrip.photo,
+                                        "DriverGender": DriverOftrip.gender,
+                                        "DriverRating": DriverOftrip.rating
+                                    }),
+
+                                    "Riders in the trip": objRider
+
+                                })
+                                countobj++;
 
                             }
 
                         }
 
-                    } else if (countcheck == RiderRides.length) {
-                        res.status(409).send({ error: "No Trips found", message: "No Trips found" })
-                        res.end()
-
                     }
                 }
             }
 
-            var DriverRides = Driver.findAll({
+            var DriverRides = await Driver.findAll({
                 where: {
                     driverid: decoded.id,
                     status: "scheduled"
@@ -329,7 +369,7 @@ router.post('/', async(req, res) => {
                 for (DriverRide of DriverRides) {
 
                     if (DriverRide) {
-                        countcheck++;
+
                         const trip = await Trips.findOne({
                             where: {
                                 id: DriverRide.tripid,
@@ -356,12 +396,24 @@ router.post('/', async(req, res) => {
                                 const AllRidersTrip = await Rider.findAll({
                                     where: {
                                         offerid: DriverRide.offerid,
-                                        status: "scheduled"
+                                        status: "scheduled",
+                                        tofrom: "to"
                                     }
 
                                 }).catch(errHandler)
                                 if (AllRidersTrip.length > 0) {
-                                    c = 0
+
+                                    jsonStr1 = '{"RiderTrip":[]}';
+
+                                    objRider = JSON.parse(jsonStr1);
+                                    const orgDetails = await Organization.findOne({
+                                        where: {
+
+                                            id: OfferRideToDetails.toorgid
+
+
+                                        }
+                                    }).catch(errHandler)
                                     for (AllRidersTripEach of AllRidersTrip) {
 
                                         const AllRidersTripDetails = await User.findOne({
@@ -370,59 +422,62 @@ router.post('/', async(req, res) => {
                                             }
 
                                         }).catch(errHandler)
+                                        const RiderRequestRideToDetails = await RequestRideTo.findOne({
+                                            where: {
+                                                id: AllRidersTripEach.requestid
+
+
+                                            }
+                                        }).catch(errHandler)
 
                                         if (AllRidersTripDetails) {
 
-                                            RiderTrip[c] = ({
+                                            objRider['RiderTrip'].push({
                                                 "username": AllRidersTripDetails.username,
                                                 "firstname": AllRidersTripDetails.firstname,
                                                 "lastname": AllRidersTripDetails.lastname,
                                                 "phonenumber": AllRidersTripDetails.phonenumber,
                                                 "photo": AllRidersTripDetails.photo,
-                                                "latitude": AllRidersTripDetails.latitude,
-                                                "longitude": AllRidersTripDetails.longitude
+                                                "rating": AllRidersTripDetails.rating,
+                                                "gender": AllRidersTripDetails.gender,
+                                                "latitude": RiderRequestRideToDetails.fromlatitude,
+                                                "longitude": RiderRequestRideToDetails.fromlongitude,
+                                                "fare": RiderRequestRideToDetails.fare,
+                                                "time": AllRidersTripEach.pickuptime
 
                                             })
-                                            c++;
+
 
 
 
                                         }
-
-
-                                        if (c === AllRidersTrip.length) {
-
-                                            obj['ScheduledTrips'].push({
-                                                type: "driver",
-                                                "tripid": trip.id,
-                                                "carDetails.model": carDetails.model,
-                                                "carDetails.brand": carDetails.brand,
-                                                "date": trip.date,
-                                                "pickuptime": DriverRide.pickuptime,
-                                                "arrivaltime": DriverRide.arrivaltime,
-                                                "fare": DriverRide.fare,
-                                                "startloclatitude": trip.startloclatitude,
-                                                "startloclongitude": trip.startloclongitude,
-                                                "endloclatitude": trip.endloclatitude,
-                                                "endloclongitude": trip.endloclongitude,
-                                                "Riders in the trip": RiderTrip
-
-                                            })
-
-                                            c = 0;
-                                            RiderTrip = {}
-                                            count++;
-                                            if (count === DriverRides.length) {
-                                                res.send(obj)
-                                            }
-
-
-                                        }
-
-
 
 
                                     }
+                                    obj['ScheduledTrips'].push({
+                                        "tofrom": "to",
+                                        type: "driver",
+                                        "tripid": trip.id,
+                                        "carModel": carDetails.model,
+                                        "carBrand": carDetails.brand,
+                                        "carYear": carDetails.year,
+                                        "carType": carDetails.type,
+                                        "carPlateletters": carDetails.plateletters,
+                                        "carPlatenumbers": carDetails.platenumbers,
+                                        "homelongitude": trip.startloclongitude,
+                                        "homelatitude": trip.startloclatitude,
+                                        "orgname": orgDetails.name,
+                                        "orglatitude": orgDetails.latitude,
+                                        "orglongitude": orgDetails.longitude,
+                                        "pickuptime": DriverRide.pickuptime,
+                                        "arrivaltime": DriverRide.arrivaltime,
+                                        "date": trip.date,
+                                        "fare": DriverRide.fare,
+                                        "numberRiders": trip.numberofseats,
+                                        "Riders in the trip": objRider
+
+                                    })
+                                    countobj++;
 
                                 }
 
@@ -451,7 +506,18 @@ router.post('/', async(req, res) => {
                                 }).catch(errHandler)
 
                                 if (AllRidersTrip.length > 0) {
-                                    for (AllRidersTrip of AllRidersTripEach) {
+                                    jsonStr1 = '{"RiderTrip":[]}';
+
+                                    objRider = JSON.parse(jsonStr1);
+                                    const orgDetails = await Organization.findOne({
+                                        where: {
+
+                                            id: OfferRideFromDetails.fromorgid
+
+
+                                        }
+                                    }).catch(errHandler)
+                                    for (AllRidersTripEach of AllRidersTrip) {
 
                                         const AllRidersTripDetails = await User.findOne({
                                             where: {
@@ -459,17 +525,27 @@ router.post('/', async(req, res) => {
                                             }
 
                                         }).catch(errHandler)
+                                        const RiderRequestRideFromDetails = await RequestRideFrom.findOne({
+                                            where: {
+                                                id: AllRidersTripEach.requestid
+
+                                            }
+                                        }).catch(errHandler)
 
                                         if (AllRidersTripDetails) {
 
-                                            RiderTrip[c] = ({
+                                            objRider['RiderTrip'].push({
                                                 "username": AllRidersTripDetails.username,
                                                 "firstname": AllRidersTripDetails.firstname,
                                                 "lastname": AllRidersTripDetails.lastname,
                                                 "phonenumber": AllRidersTripDetails.phonenumber,
                                                 "photo": AllRidersTripDetails.photo,
-                                                "latitude": AllRidersTripDetails.latitude,
-                                                "longitude": AllRidersTripDetails.longitude
+                                                "rating": AllRidersTripDetails.rating,
+                                                "gender": AllRidersTripDetails.gender,
+                                                "latitude": RiderRequestRideFromDetails.tolatitude,
+                                                "longitude": RiderRequestRideFromDetails.tolongitude,
+                                                "fare": RiderRequestRideFromDetails.fare,
+                                                "time": AllRidersTripEach.arrivaltime
 
                                             })
                                             c++;
@@ -477,64 +553,44 @@ router.post('/', async(req, res) => {
 
                                         }
 
-                                        if (c === AllRidersTrip.length) {
-
-
-                                            obj['ScheduledTrips'].push({
-                                                type: "driver",
-                                                "tripid": trip.id,
-                                                "carDetails.model": carDetails.model,
-                                                "carDetails.brand": carDetails.brand,
-                                                "date": trip.date,
-                                                "pickuptime": DriverRide.pickuptime,
-                                                "arrivaltime": DriverRide.arrivaltime,
-                                                "fare": DriverRide.fare,
-                                                "startloclatitude": trip.startloclatitude,
-                                                "startloclongitude": trip.startloclongitude,
-                                                "endloclatitude": trip.endloclatitude,
-                                                "endloclongitude": trip.endloclongitude,
-                                                "Riders in the trip": RiderTrip
-
-                                            })
-
-                                            c = 0;
-                                            RiderTrip = {}
-                                            count++;
-
-
-                                            if (count === DriverRides.length) {
-                                                res.send(obj)
-                                            }
-
-
-                                        }
-
-
-
-
-
-
 
 
 
                                     }
+                                    obj['ScheduledTrips'].push({
+
+                                        "tofrom": "from",
+                                        type: "driver",
+                                        "tripid": trip.id,
+                                        "carModel": carDetails.model,
+                                        "carBrand": carDetails.brand,
+                                        "carYear": carDetails.year,
+                                        "carType": carDetails.type,
+                                        "carPlateletters": carDetails.plateletters,
+                                        "carPlatenumbers": carDetails.platenumbers,
+                                        "homelongitude": trip.endloclongitude,
+                                        "homelatitude": trip.endloclatitude,
+                                        "orgname": orgDetails.name,
+                                        "orglatitude": orgDetails.latitude,
+                                        "orglongitude": orgDetails.longitude,
+                                        "pickuptime": DriverRide.pickuptime,
+                                        "arrivaltime": DriverRide.arrivaltime,
+                                        "date": trip.date,
+                                        "fare": DriverRide.fare,
+                                        "numberRiders": trip.numberofseats,
+                                        "Riders in the trip": objRider
+
+
+
+
+                                    })
+                                    countobj++;
 
                                 }
 
 
 
-
-
-
-
-
-
-
                             }
-                        } else if (countcheck == DriverRides.length) {
-                            res.status(409).send({ error: "No Trips found", message: "No Trips found" })
-                            res.end()
-
                         }
 
 
@@ -542,6 +598,10 @@ router.post('/', async(req, res) => {
 
                     }
                 }
+            }
+            if (countobj !== 0) {
+                res.status(200).send(obj)
+                res.end()
             } else {
 
                 res.status(409).send({ error: "No Trips found", message: "No Trips found" })
