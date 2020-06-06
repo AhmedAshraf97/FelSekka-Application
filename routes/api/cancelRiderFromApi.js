@@ -17,6 +17,8 @@ const Trips = require('../../models/trips')
 const DriverDB = require('../../models/drivers');
 const RiderDB = require('../../models/riders');
 
+const ReturnTripMatchingFare = require('../../ReturnMatchingFareCalculator');
+
 
 const CancelRiderFrom = require('../../CancelRiderFrom');
 
@@ -483,6 +485,8 @@ router.post('/', async(req, res) => {
                 }
 
                 var z = await CancelRiderFrom();
+                var p = await ReturnTripMatchingFare('./routes/api/cancelRiderFromApi')
+
                 await Trips.update({
                     numberofseats: driver.AssignedRiders.length,
                 }, {

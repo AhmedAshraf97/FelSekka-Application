@@ -30,6 +30,10 @@ module.exports = sequelize.define("drivers", {
         type: Sequelize.TIME,
         allowNull: false,
     },
+    expectedfare: {
+        type: Sequelize.DECIMAL,
+        allowNull: false
+    },
     actualpickuptime: {
         type: Sequelize.TIME,
         allowNull: false,

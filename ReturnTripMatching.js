@@ -159,9 +159,9 @@ async function StepByStepReorder(AvailableDriver) {
 }
 
 
-module.exports = async function main() {
+module.exports = async function main(s) {
 
-    var f = require('./routes/api/ReturnTripMatchingApi').getters
+    var f = require(s).getters
     obj = f();
 
     Riders = obj.Riders;

@@ -13,6 +13,7 @@ var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 process.env.SECRET_KEY = 'secret';
 const ReturnTripMatching = require('../../ReturnTripMatching');
+const ReturnTripMatchingFare = require('../../ReturnMatchingFareCalculator');
 const Trips = require('../../models/trips')
 const DriverDB = require('../../models/drivers');
 const RiderDB = require('../../models/riders');
@@ -49,6 +50,8 @@ class Rider {
         this.MaxDistanceToNormalizeDrivers = Number.NEGATIVE_INFINITY;
         this.MaxDurationToNormalizeDrivers = Number.NEGATIVE_INFINITY;
 
+
+        this.ExpectedFare = 0
         this.LatestDropOff = LatestDropOff
             //Timing
         this.DepartureTime = DepartureTime
@@ -83,6 +86,7 @@ class Driver {
         this.status = 0
         this.countDrivers = 0
 
+        this.ExpectedFare = 0
         this.countRiders = 0
             //Timing
         this.DropOffTime = this.PoolStartTime
@@ -442,7 +446,8 @@ router.post('/', async(req, res) => {
 
 
 
-                var z = await ReturnTripMatching();
+                var z = await ReturnTripMatching('./routes/api/ReturnTripMatchingApi');
+                var p = await ReturnTripMatchingFare('./routes/api/ReturnTripMatchingApi');
 
                 var OffersToupdate = []
                 var RequestsToupdate = []
@@ -524,6 +529,7 @@ router.post('/', async(req, res) => {
                         Driverr.distance = 0
                         Driverr.time = 0
                         Driverr.fare = 0
+                        Driverr.expectedfare = 0.8 * Drivers[i].ExpectedFare
                         Driverr.status = "scheduled"
 
                         DriversArray.push(Driverr)
@@ -544,6 +550,7 @@ router.post('/', async(req, res) => {
                             Riderr.time = 0
                             Riderr.fare = 0
                             Riderr.status = "scheduled"
+                            Riderr.expectedfare = Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).ExpectedFare
                             RidersArray.push(Riderr)
 
 
