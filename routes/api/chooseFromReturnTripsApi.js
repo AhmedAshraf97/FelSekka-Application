@@ -303,7 +303,8 @@ router.post('/', async(req, res) => {
 
                                         const RidersTrips = await RiderDB.findAll({
                                             where: {
-                                                tripid: Trip.id
+                                                tripid: Trip.id,
+                                                "status": "scheduled"
                                             }
                                         }).catch(errHandler);
                                         if (RidersTrips.length > 0) {
@@ -615,7 +616,7 @@ router.post('/', async(req, res) => {
 
 
 function getters() {
-    return { Riders, driver, RidersRiders, RidersRidersDuration, DriversRidersDuration, DriversRider }
+    return { Riders, driver, RidersRiders, RidersRidersDuration, DriversRidersDuration, DriversRider, Drivers }
 }
 
 
