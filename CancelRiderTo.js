@@ -6,8 +6,8 @@ module.exports = async function main() {
         Riders = obj.Riders;
         Drivers = obj.Drivers;
         CurrentDriver = Drivers[0]
-        RiderRider = obj.RiderRider;
-        RiderRiderDuration = obj.RiderRiderDuration;
+        RidersRiders = obj.RidersRiders;
+        RidersRidersDuration = obj.RidersRidersDuration;
         DriversRidersDuration = obj.DriversRidersDuration;
         DriversRider = obj.DriversRider;
 
@@ -51,13 +51,13 @@ module.exports = async function main() {
                 toIndex = Riders.indexOf(Riders.find(n => n.ID === CurrentDriver.AssignedRiders[j + 1]));
                 toID = CurrentDriver.AssignedRiders[j + 1];
                 fromID = CurrentDriver.AssignedRiders[j]
-                FromIndexinRiderRiderDuration = RiderRiderDuration.indexOf(RiderRiderDuration.find(n => n.ID === fromID));
-                FromIndexinRiderRider = RiderRider.indexOf(RiderRider.find(n => n.ID === fromID))
-                CurrentDriver.TotalDurationTaken += RiderRiderDuration[FromIndexinRiderRiderDuration].data.find(n => n.to === toID).duration
-                CurrentDriver.TotalDistanceCoveredToDestination += RiderRider[FromIndexinRiderRider].data.find(n => n.to === toID).distance
+                FromIndexinRidersRidersDuration = RidersRidersDuration.indexOf(RidersRidersDuration.find(n => n.ID === fromID));
+                FromIndexinRidersRiders = RidersRiders.indexOf(RidersRiders.find(n => n.ID === fromID))
+                CurrentDriver.TotalDurationTaken += RidersRidersDuration[FromIndexinRidersRidersDuration].data.find(n => n.to === toID).duration
+                CurrentDriver.TotalDistanceCoveredToDestination += RidersRiders[FromIndexinRidersRiders].data.find(n => n.to === toID).distance
                 var datee = new Date(Riders[toIndex].PickupTime);
                 Riders[fromIndex].PickupTime = datee
-                Riders[fromIndex].PickupTime.setMinutes(Riders[toIndex].PickupTime.getMinutes() - RiderRiderDuration[FromIndexinRiderRiderDuration].data.find(n => n.to === toID).duration)
+                Riders[fromIndex].PickupTime.setMinutes(Riders[toIndex].PickupTime.getMinutes() - RidersRidersDuration[FromIndexinRidersRidersDuration].data.find(n => n.to === toID).duration)
 
             }
 

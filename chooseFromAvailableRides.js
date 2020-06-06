@@ -3,8 +3,8 @@ const ksp = require('k-shortest-path');
 var Combinatorics = require('js-combinatorics');
 var Riders;
 var AvailableDriver;
-var RiderRider
-var RiderRiderDuration
+var RidersRiders
+var RidersRidersDuration
 var DriversRidersDuration
 var DriversRider
 
@@ -68,13 +68,13 @@ function SetPickUpTime(DriverObj) {
             toIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[j + 1]));
             toID = DriverObj.AssignedRiders[j + 1];
             fromID = DriverObj.AssignedRiders[j]
-            FromIndexinRiderRiderDuration = RiderRiderDuration.indexOf(RiderRiderDuration.find(n => n.ID === fromID));
-            FromIndexinRiderRiderDistance = RiderRider.indexOf(RiderRider.find(n => n.ID === fromID));
+            FromIndexinRidersRidersDuration = RidersRidersDuration.indexOf(RidersRidersDuration.find(n => n.ID === fromID));
+            FromIndexinRidersRidersDistance = RidersRiders.indexOf(RidersRiders.find(n => n.ID === fromID));
             var datee = new Date(Riders[toIndex].PickupTime);
             Riders[fromIndex].PickupTime = datee
-            Riders[fromIndex].PickupTime.setMinutes(Riders[toIndex].PickupTime.getMinutes() - RiderRiderDuration[FromIndexinRiderRiderDuration].data.find(n => n.to === toID).duration)
-            DriverObj.TotalDurationTaken += RiderRiderDuration[FromIndexinRiderRiderDuration].data.find(n => n.to === toID).duration;
-            DriverObj.TotalDistanceCoveredToDestination += RiderRider[FromIndexinRiderRiderDistance].data.find(n => n.to === toID).distance;
+            Riders[fromIndex].PickupTime.setMinutes(Riders[toIndex].PickupTime.getMinutes() - RidersRidersDuration[FromIndexinRidersRidersDuration].data.find(n => n.to === toID).duration)
+            DriverObj.TotalDurationTaken += RidersRidersDuration[FromIndexinRidersRidersDuration].data.find(n => n.to === toID).duration;
+            DriverObj.TotalDistanceCoveredToDestination += RidersRiders[FromIndexinRidersRidersDistance].data.find(n => n.to === toID).distance;
             if (Riders[fromIndex].PickupTime < Riders[fromIndex].EarliestPickup)
                 return Promise.resolve(-1);
         }
@@ -109,7 +109,7 @@ async function MatchingReorder() {
             if (m != p) {
                 var SourceID = AvailableDriver.AssignedRiders[p]
                 var DestID = AvailableDriver.AssignedRiders[m]
-                var Durationn = RiderRiderDuration.find(n => n.ID === SourceID).data.find(n => n.to === DestID).duration
+                var Durationn = RidersRidersDuration.find(n => n.ID === SourceID).data.find(n => n.to === DestID).duration
                 SourceID = `${SourceID}`
                 DestID = `${DestID}`
                 g.setEdge(SourceID, DestID, Durationn)
@@ -169,8 +169,8 @@ module.exports = async function main() {
 
     Riders = obj.Riders;
     AvailableDriver = obj.driver;
-    RiderRider = obj.RiderRider;
-    RiderRiderDuration = obj.RiderRiderDuration;
+    RidersRiders = obj.RidersRiders;
+    RidersRidersDuration = obj.RidersRidersDuration;
     DriversRidersDuration = obj.DriversRidersDuration;
     DriversRider = obj.DriversRider;
 

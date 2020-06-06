@@ -17,6 +17,8 @@ const Trips = require('../../models/trips')
 const DriverDB = require('../../models/drivers');
 const RiderDB = require('../../models/riders');
 
+const matchingfare = require('../../MatchingFareCalculator');
+
 
 const CancelRiderTo = require('../../CancelRiderTo');
 
@@ -53,6 +55,7 @@ class Rider {
         this.smoking = smoking
         this.toorgid = toorgid
         this.date = date
+        this.ExpectedFare = 0;
 
     }
 };
@@ -82,6 +85,7 @@ class Driver {
         this.date = date
         this.latitude = latitude
         this.longitude = longitude
+        this.ExpectedFare = 0;
     }
 };
 
@@ -146,11 +150,11 @@ class userArray {
 }
 
 var DriversRider = new Array();
-var RiderRider = new Array();
+var RidersRiders = new Array();
 
 var DriversRidersDuration = new Array();
 
-var RiderRiderDuration = new Array();
+var RidersRidersDuration = new Array();
 
 var Drivers = []
 var Riders = []
@@ -432,7 +436,7 @@ router.post('/', async(req, res) => {
                     }
 
                     if (RiderRow.length > 0) {
-                        RiderRider.push(RiderRow);
+                        RidersRiders.push(RiderRow);
                     }
 
                 }
@@ -463,13 +467,15 @@ router.post('/', async(req, res) => {
 
                     if (RiderRowDuration.length > 0) {
 
-                        RiderRiderDuration.push(RiderRowDuration);
+                        RidersRidersDuration.push(RiderRowDuration);
                     }
 
 
                 }
 
                 var z = await CancelRiderTo();
+                var p = await matchingfare('./routes/api/cancelRiderToApi');
+
                 await Trips.update({
                     numberofseats: driver.AssignedRiders.length,
                 }, {
@@ -481,6 +487,7 @@ router.post('/', async(req, res) => {
 
                 await DriverDB.update({
                     pickuptime: driver.PoolStartTime,
+                    expectedfare: driver.ExpectedFare
                 }, {
                     where: {
                         driverid: driver.ID,
@@ -513,6 +520,8 @@ router.post('/', async(req, res) => {
                 for (var i = 0; i < driver.AssignedRiders.length; i++) {
                     await RiderDB.update({
                         pickuptime: Riders.find(n => n.ID === driver.AssignedRiders[i]).PickupTime,
+
+                        expectedfare: Riders.find(n => n.ID === driver.AssignedRiders[i]).ExpectedFare
                     }, {
                         where: {
                             riderid: driver.AssignedRiders[i],
@@ -538,16 +547,16 @@ router.post('/', async(req, res) => {
     }
 
     DriversRider = []
-    RiderRider = []
+    RidersRiders = []
     DriversRidersDuration = []
-    RiderRiderDuration = []
+    RidersRidersDuration = []
     Drivers = []
     Riders = []
 })
 
 
 function getters() {
-    return { Riders, Drivers, RiderRider, RiderRiderDuration, DriversRidersDuration, DriversRider }
+    return { Riders, Drivers, RidersRiders, RidersRidersDuration, DriversRidersDuration, DriversRider }
 }
 
 

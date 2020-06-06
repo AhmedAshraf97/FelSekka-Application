@@ -14,6 +14,8 @@ var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 process.env.SECRET_KEY = 'secret';
 
+const matchingfare = require('../../MatchingFareCalculator');
+
 const chooseFromAvailableRides = require('../../chooseFromAvailableRides');
 
 const Trips = require('../../models/trips')
@@ -52,6 +54,7 @@ class Rider {
         this.smoking = smoking
         this.toorgid = toorgid
         this.date = date
+        this.ExpectedFare = 0;
 
     }
 };
@@ -81,6 +84,8 @@ class Driver {
         this.date = date
         this.latitude = latitude
         this.longitude = longitude
+
+        this.ExpectedFare = 0;
     }
 };
 
@@ -145,11 +150,11 @@ class userArray {
 }
 
 var DriversRider = new Array();
-var RiderRider = new Array();
+var RidersRiders = new Array();
 
 var DriversRidersDuration = new Array();
 
-var RiderRiderDuration = new Array();
+var RidersRidersDuration = new Array();
 
 
 
@@ -296,7 +301,8 @@ router.post('/', async(req, res) => {
 
                                         const RidersTrips = await RiderDB.findAll({
                                             where: {
-                                                tripid: Trip.id
+                                                tripid: Trip.id,
+                                                status: "scheduled"
                                             }
                                         }).catch(errHandler);
                                         if (RidersTrips.length > 0) {
@@ -424,7 +430,7 @@ router.post('/', async(req, res) => {
                                                 }
 
                                                 if (RiderRow.length > 0) {
-                                                    RiderRider.push(RiderRow);
+                                                    RidersRiders.push(RiderRow);
                                                 }
 
 
@@ -456,7 +462,7 @@ router.post('/', async(req, res) => {
 
                                                 if (RiderRowDuration.length > 0) {
 
-                                                    RiderRiderDuration.push(RiderRowDuration);
+                                                    RidersRidersDuration.push(RiderRowDuration);
                                                 }
 
 
@@ -464,6 +470,7 @@ router.post('/', async(req, res) => {
                                             Drivers.push(driver)
 
                                             var z = await chooseFromAvailableRides();
+                                            var p = await matchingfare('./routes/api/chooseFromAvailableRidesApi');
                                             if (Riders[Riders.length - 1].isAssigned === true) {
                                                 await Trips.update({
                                                     numberofseats: driver.AssignedRiders.length,
@@ -476,6 +483,7 @@ router.post('/', async(req, res) => {
 
                                                 await DriverDB.update({
                                                     pickuptime: driver.PoolStartTime,
+                                                    expectedfare: driver.ExpectedFare
                                                 }, {
                                                     where: {
                                                         driverid: driver.ID,
@@ -518,12 +526,15 @@ router.post('/', async(req, res) => {
                                                             distance: 0,
                                                             time: 0,
                                                             fare: 0,
-                                                            status: "scheduled"
+                                                            status: "scheduled",
+                                                            expectedfare: Riders.find(n => n.ID === driver.AssignedRiders[i]).ExpectedFare
+
 
                                                         }).catch(errHandler)
                                                     } else {
                                                         await RiderDB.update({
                                                             pickuptime: Riders.find(n => n.ID === driver.AssignedRiders[i]).PickupTime,
+                                                            expectedfare: Riders.find(n => n.ID === driver.AssignedRiders[i]).ExpectedFare
                                                         }, {
                                                             where: {
                                                                 riderid: driver.AssignedRiders[i],
@@ -584,9 +595,9 @@ router.post('/', async(req, res) => {
     }
 
     DriversRider = []
-    RiderRider = []
+    RidersRiders = []
     DriversRidersDuration = []
-    RiderRiderDuration = []
+    RidersRidersDuration = []
     Riders = []
     Drivers = []
     driver = {}
@@ -595,7 +606,7 @@ router.post('/', async(req, res) => {
 })
 
 function getters() {
-    return { Riders, driver, RiderRider, RiderRiderDuration, DriversRidersDuration, DriversRider }
+    return { Riders, driver, RidersRiders, RidersRidersDuration, DriversRidersDuration, DriversRider, Drivers }
 }
 
 

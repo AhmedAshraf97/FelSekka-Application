@@ -454,7 +454,7 @@ router.post('/', async(req, res) => {
                 var date1 = new Date();
 
                 var z = await matching();
-                var c = await matchingfare();
+                var c = await matchingfare('./routes/api/matchingApi');
 
                 var date2 = new Date();
                 var diff = date2 - date1;

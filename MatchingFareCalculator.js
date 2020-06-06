@@ -2,8 +2,8 @@ var Riders;
 var Drivers
 var RidersRiders
 
-module.exports = async function main() {
-    var f = require('./routes/api/matchingApi').getters
+module.exports = async function main(s) {
+    var f = require(s).getters
     obj = f();
 
     Riders = obj.Riders;
