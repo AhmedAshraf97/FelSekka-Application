@@ -16,6 +16,9 @@ process.env.SECRET_KEY = 'secret';
 
 const chooseFromAvailableRides = require('../../chooseFromReturnTrips');
 
+const ReturnTripMatchingFare = require('../../ReturnMatchingFareCalculator');
+
+
 const Trips = require('../../models/trips')
 const DriverDB = require('../../models/drivers');
 const RiderDB = require('../../models/riders');
@@ -467,6 +470,8 @@ router.post('/', async(req, res) => {
                                             Drivers.push(driver)
 
                                             var z = await chooseFromAvailableRides();
+                                            var p = await ReturnTripMatchingFare('./routes/api/chooseFromReturnTripsApi')
+
 
                                             if (Riders[Riders.length - 1].isAssigned === true) {
                                                 await Trips.update({

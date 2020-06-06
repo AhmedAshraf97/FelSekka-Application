@@ -13,6 +13,7 @@ var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 process.env.SECRET_KEY = 'secret';
 const matching = require('../../matching');
+const matchingfare = require('../../MatchingFareCalculator');
 const Trips = require('../../models/trips')
 const DriverDB = require('../../models/drivers');
 const RiderDB = require('../../models/riders');
@@ -50,6 +51,7 @@ class Rider {
         this.MaxDurationToNormalizeRiders = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
 
 
+        this.ExpectedFare = 0
         this.EarliestPickup = EarliestPickup
             //Timing
         this.ArrivalTime = ArrivalTime
@@ -95,6 +97,8 @@ class Driver {
         this.latitude = latitude
         this.longitude = longitude
 
+
+        this.ExpectedFare = 0
         this.closestFlag = 0
         this.skipFlag = 0;
         this.countRiders = 0;
@@ -450,6 +454,7 @@ router.post('/', async(req, res) => {
                 var date1 = new Date();
 
                 var z = await matching();
+                var c = await matchingfare();
 
                 var date2 = new Date();
                 var diff = date2 - date1;
@@ -537,6 +542,7 @@ router.post('/', async(req, res) => {
                         Driverr.time = 0
                         Driverr.fare = 0
                         Driverr.status = "scheduled"
+                        Driverr.expectedfare = 0.8 * Drivers[i].ExpectedFare
                         DriversArray.push(Driverr)
                         for (var j = 0; j < Drivers[i].AssignedRiders.length; j++) {
 
@@ -554,6 +560,7 @@ router.post('/', async(req, res) => {
                             Riderr.time = 0
                             Riderr.fare = 0
                             Riderr.status = "scheduled"
+                            Riderr.expectedfare = Riders.find(n => n.requestid === Drivers[i].AssignedRiders[j]).ExpectedFare
                             RidersArray.push(Riderr)
                         }
                         tripscounter++

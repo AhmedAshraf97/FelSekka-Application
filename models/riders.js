@@ -42,6 +42,10 @@ module.exports = sequelize.define("riders", {
         type: Sequelize.TIME,
         allowNull: false,
     },
+    expectedfare: {
+        type: Sequelize.DECIMAL,
+        allowNull: false
+    },
     distance: {
         type: Sequelize.DECIMAL,
         allowNull: false,
