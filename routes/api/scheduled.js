@@ -214,6 +214,8 @@ router.post('/', async(req, res) => {
                                     "date": trip.date,
                                     "fare": RiderRide.expectedfare,
                                     "numberRiders": trip.numberofseats,
+                                    "ridewith": RequestRideToDetails.ridewith,
+                                    "smoking": RequestRideToDetails.smoking,
                                     "Driver": ({
                                         "Driverusername": DriverOftrip.username,
                                         "Driverfirstname": DriverOftrip.firstname,
@@ -352,6 +354,8 @@ router.post('/', async(req, res) => {
                                     "date": trip.date,
                                     "fare": RiderRide.expectedfare,
                                     "numberRiders": trip.numberofseats,
+                                    "ridewith": RequestRideFromDetails.ridewith,
+                                    "smoking": RequestRideFromDetails.smoking,
                                     "Driver": ({
                                         "Driverusername": DriverOftrip.username,
                                         "Driverfirstname": DriverOftrip.firstname,
@@ -418,6 +422,7 @@ router.post('/', async(req, res) => {
                                 }).catch(errHandler)
                                 const AllRidersTrip = await Rider.findAll({
                                     where: {
+                                        tripid: trip.id,
                                         offerid: DriverRide.offerid,
                                         status: "scheduled",
                                         tofrom: "to"
@@ -498,6 +503,8 @@ router.post('/', async(req, res) => {
                                         "date": trip.date,
                                         "fare": DriverRide.expectedfare,
                                         "numberRiders": trip.numberofseats,
+                                        "ridewith": OfferRideToDetails.ridewith,
+                                        "smoking": OfferRideToDetails.smoking,
                                         "Riders in the trip": objRider
 
                                     })
@@ -523,6 +530,7 @@ router.post('/', async(req, res) => {
                                 }).catch(errHandler)
                                 const AllRidersTrip = await Rider.findAll({
                                     where: {
+                                        tripid: trip.id,
                                         offerid: DriverRide.offerid,
                                         status: "scheduled"
                                     }
@@ -603,6 +611,8 @@ router.post('/', async(req, res) => {
                                         "date": trip.date,
                                         "fare": DriverRide.expectedfare,
                                         "numberRiders": trip.numberofseats,
+                                        "ridewith": OfferRideFromDetails.ridewith,
+                                        "smoking": OfferRideFromDetails.smoking,
                                         "Riders in the trip": objRider
 
 
