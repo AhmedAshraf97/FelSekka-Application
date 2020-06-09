@@ -65,7 +65,6 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
     token = (prefs.getString('token')??'');
     String url="http://3.81.22.120:3000/api/retrieveuserdata";
     Response response =await post(url, headers:{'authorization': token});
-    print(response.body);
     if(response.statusCode != 200)
     {
       Map data= jsonDecode(response.body);
@@ -123,7 +122,6 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
     }
     String urltrust = "http://3.81.22.120:3000/api/peopletrustme";
     Response responsetrust = await post(urltrust, headers:{'authorization': token});
-    print(response.body);
     if(responsetrust.statusCode != 200)
     {
       Map data= jsonDecode(responsetrust.body);
@@ -466,7 +464,6 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                                 onPressed: () async{
                                                   String url="http://3.81.22.120:3000/api/signout";
                                                   Response response =await post(url, headers:{'authorization': token});
-                                                  print(response.body);
                                                   if(response.statusCode != 200)
                                                   {
                                                     Map data= jsonDecode(response.body);

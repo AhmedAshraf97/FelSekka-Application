@@ -291,8 +291,6 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin{
                                 };
                                 String url="http://3.81.22.120:3000/api/signin";
                                 Response response =await post(url, body: body);
-                                print(response.statusCode);
-                                print(response.body);
                                 if(response.statusCode != 200)
                                 {
                                   Map data= jsonDecode(response.body);
