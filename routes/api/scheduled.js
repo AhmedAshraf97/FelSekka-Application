@@ -80,7 +80,8 @@ router.post('/', async(req, res) => {
             const RiderRides = await Rider.findAll({
                 where: {
                     riderid: decoded.id,
-                    status: "scheduled"
+                    status: {
+                        [Op.or]: ["scheduled", "ongoing"] }
                 }
             }).catch(errHandler)
 
@@ -91,7 +92,8 @@ router.post('/', async(req, res) => {
                     const trip = await Trips.findOne({
                         where: {
                             id: RiderRide.tripid,
-                            status: "scheduled"
+                            status: {
+                                [Op.or]: ["scheduled", "ongoing"] }
 
                         }
                     }).catch(errHandler)
@@ -129,7 +131,8 @@ router.post('/', async(req, res) => {
                             const AllRidersTrip = await Rider.findAll({
                                 where: {
                                     tripid: trip.id,
-                                    status: "scheduled"
+                                    status: {
+                                        [Op.or]: ["scheduled", "ongoing"] }
                                 }
 
                             }).catch(errHandler)
@@ -140,7 +143,8 @@ router.post('/', async(req, res) => {
                                     where: {
                                         driverid: OfferRideToDetails.userid,
                                         tripid: trip.id,
-                                        status: "scheduled"
+                                        status: {
+                                            [Op.or]: ["scheduled", "ongoing"] }
                                     }
                                 }).catch(errHandler)
 
@@ -268,7 +272,8 @@ router.post('/', async(req, res) => {
                             const AllRidersTrip = await Rider.findAll({
                                 where: {
                                     tripid: trip.id,
-                                    status: "scheduled"
+                                    status: {
+                                        [Op.or]: ["scheduled", "ongoing"] }
                                 }
 
                             }).catch(errHandler)
@@ -289,7 +294,8 @@ router.post('/', async(req, res) => {
                                     where: {
                                         driverid: OfferRideFromDetails.userid,
                                         tripid: trip.id,
-                                        status: "scheduled"
+                                        status: {
+                                            [Op.or]: ["scheduled", "ongoing"] }
                                     }
                                 }).catch(errHandler)
 
@@ -385,7 +391,8 @@ router.post('/', async(req, res) => {
             var DriverRides = await Driver.findAll({
                 where: {
                     driverid: decoded.id,
-                    status: "scheduled"
+                    status: {
+                        [Op.or]: ["scheduled", "ongoing"] }
                 }
             }).catch(errHandler)
 
@@ -400,7 +407,8 @@ router.post('/', async(req, res) => {
                         const trip = await Trips.findOne({
                             where: {
                                 id: DriverRide.tripid,
-                                status: "scheduled"
+                                status: {
+                                    [Op.or]: ["scheduled", "ongoing"] }
 
                             }
                         }).catch(errHandler)
@@ -424,7 +432,8 @@ router.post('/', async(req, res) => {
                                     where: {
                                         tripid: trip.id,
                                         offerid: DriverRide.offerid,
-                                        status: "scheduled",
+                                        status: {
+                                            [Op.or]: ["scheduled", "ongoing"] },
                                         tofrom: "to"
                                     }
 
@@ -532,7 +541,8 @@ router.post('/', async(req, res) => {
                                     where: {
                                         tripid: trip.id,
                                         offerid: DriverRide.offerid,
-                                        status: "scheduled"
+                                        status: {
+                                            [Op.or]: ["scheduled", "ongoing"] }
                                     }
 
                                 }).catch(errHandler)
