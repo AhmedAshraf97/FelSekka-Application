@@ -377,6 +377,7 @@ module.exports = async function main() {
             } else { // Not First Rider
 
                 var indexinRiderRider = RidersRiders.findIndex(n => n.ID === lastRiderID);
+                var indexLastRider = Riders.findIndex(n => n.ID === lastRiderID);
                 if (indexinRiderRider === -1) {
                     continue;
                 }
@@ -415,7 +416,7 @@ module.exports = async function main() {
 
 
                     if (Riders.find(n => n.ID === RiderID).isAssigned === false) {
-                        var WeightFunction = -0.45 * Duration / Riders[IndexInRiders].MaxDurationToNormalize - 0.25 * Distance / Riders[IndexInRiders].MaxDistanceToNormalize + 0.3 * Trust -
+                        var WeightFunction = -0.45 * Duration / Riders[indexLastRider].MaxDurationToNormalize - 0.25 * Distance / Riders[indexLastRider].MaxDistanceToNormalize + 0.3 * Trust -
                             0.04 * diff_minutes(Riders.find(n => n.ID === RiderID).ArrivalTime, Drivers[j].ArrivalTime) / 30
                         WeightArray.push(WeightFunction)
                         WeightIndex.push(RiderID)
@@ -473,8 +474,8 @@ module.exports = async function main() {
                             Trust = -1;
 
 
-                        var WeightFunctionRider = -0.45 * DurationFromRider / CurrentRider.MaxDistanceToNormalizeRiders -
-                            0.25 * DistanceFromRider / CurrentRider.MaxDurationToNormalizeRiders +
+                        var WeightFunctionRider = -0.45 * DurationFromRider / CurrentRider.MaxDurationToNormalizeRiders -
+                            0.25 * DistanceFromRider / CurrentRider.MaxDistanceToNormalizeRiders +
                             0.3 * Trust -
                             0.04 * diff_minutes(CurrentRider.ArrivalTime, DriverOfRiderToCheck.ArrivalTime) / 30 +
                             0.1 * NumberofEmptyPlaces / DriverOfRiderToCheck.capacity

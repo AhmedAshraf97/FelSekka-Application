@@ -1,6 +1,6 @@
 const graphlib = require('graphlib');
-//const ksp = require('k-shortest-path');
-const ksp = require('../FelSekka-Application/yenKSP')
+const ksp = require('k-shortest-path');
+//const ksp = require('../FelSekka-Application/yenKSP')
 var Combinatorics = require('js-combinatorics');
 
 var Riders;
@@ -133,12 +133,12 @@ async function StepByStepReorder(AvailableDriver) {
 
 
     var delta = Math.max(0.25 * AvailableDriver.MaxDuration, 15)
-        // var response = ksp.ksp(g, OrganizationID, DriverIDstr, kValue);
+    var response = ksp.ksp(g, OrganizationID, DriverIDstr, kValue);
 
-    var response = ksp.yenKSP(g, OrganizationID, DriverIDstr, kValue, AvailableDriver.TotalDurationTaken + delta, AvailableDriver.MaxDuration);
+    // var response = ksp.yenKSP(g, OrganizationID, DriverIDstr, kValue, AvailableDriver.TotalDurationTaken + delta, AvailableDriver.MaxDuration);
 
-    //  response = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.TotalDurationTaken + delta && p.totalCost <= AvailableDriver.MaxDuration)
-    response = response.filter(p => (p.edges.length === n + 1))
+    response = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.TotalDurationTaken + delta && p.totalCost <= AvailableDriver.MaxDuration)
+        //  response = response.filter(p => (p.edges.length === n + 1))
     var ValidDuration = -1
 
     for (var d = 0; d < response.length; d++) {
@@ -182,7 +182,7 @@ module.exports = async function main(s) {
             break;
 
         for (var j = 0; j < Drivers.length; j++) {
-            if (Drivers[j].ID === 79) {
+            if (Drivers[j].ID === 56) {
                 var x = 5;
             }
 
@@ -314,7 +314,7 @@ module.exports = async function main(s) {
 
                     if (Drivers[j].countDrivers == WeightArray.length) { //to prevent loop
 
-                        if (Drivers[j].ID === 64 || Drivers[j].ID === 61) {
+                        if (Drivers[j].ID === 63) {
                             var x = 5;
                         }
                         var filteredDrivers = Drivers.filter(n => n.lastChosenRider === ChosenRiderID && n.status === 0 && n.AssignedRiders.length === 0);
@@ -381,6 +381,7 @@ module.exports = async function main(s) {
 
                 }
                 var indexinRiderRider = RidersRiders.indexOf(RidersRiders.find(n => n.ID == lastRiderID));
+                var indexLastRider = Riders.findIndex(n => n.ID === lastRiderID);
                 var WeightArray = []
                 var WeightIndex = []
                 for (var k = 0; k < RidersRiders[indexinRiderRider].length; k++) {
@@ -413,7 +414,7 @@ module.exports = async function main(s) {
 
                     if (Riders.find(n => n.ID === RiderID).isAssigned === false) {
 
-                        var WeightFunction = -0.45 * Duration / Riders[IndexInRiders].MaxDurationToNormalize - 0.25 * Distance / Riders[IndexInRiders].MaxDistanceToNormalize + 0.3 * Trust -
+                        var WeightFunction = -0.45 * Duration / Riders[indexLastRider].MaxDurationToNormalize - 0.25 * Distance / Riders[indexLastRider].MaxDistanceToNormalize + 0.3 * Trust -
                             0.04 * diff_minutes(Drivers[j].PoolStartTime, Riders.find(n => n.ID === RiderID).DepartureTime) / 30
                         WeightArray.push(WeightFunction)
                         WeightIndex.push(RiderID)
@@ -462,8 +463,8 @@ module.exports = async function main(s) {
                             Trust = -1;
 
 
-                        var WeightFunctionRider = -0.45 * DurationToRider / CurrentRider.MaxDistanceToNormalizeRiders -
-                            0.25 * DistanceToRider / CurrentRider.MaxDurationToNormalizeRiders +
+                        var WeightFunctionRider = -0.45 * DurationToRider / CurrentRider.MaxDurationToNormalizeRiders -
+                            0.25 * DistanceToRider / CurrentRider.MaxDistanceToNormalizeRiders +
                             0.3 * Trust -
                             0.04 * diff_minutes(DriverOfRiderToCheck.PoolStartTime, RiderToCheckobj.DepartureTime) / 30 +
                             0.1 * NumberofEmptyPlaces / DriverOfRiderToCheck.capacity
@@ -540,6 +541,9 @@ module.exports = async function main(s) {
 
             if (ChosenRiderID != -1 && chosenDuration != -1) {
 
+                if (Drivers[j].ID === 63) {
+                    var x = 5;
+                }
                 Drivers[j].lastChosenRider = -1;
 
                 var old_Assigned = JSON.parse(JSON.stringify(Drivers[j].AssignedRiders));
@@ -574,6 +578,9 @@ module.exports = async function main(s) {
 
                     }
                 } else {
+                    if (Drivers[j].ID === 56) {
+                        var x = 5;
+                    }
                     var ValidAssign = await StepByStepReorder(Drivers[j])
                     if (ValidAssign === -1) {
                         Drivers[j].AssignedRiders = old_Assigned
