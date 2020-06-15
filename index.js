@@ -12,7 +12,10 @@ const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
+//app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
+
 //DB connection
 require("./database/connection");
 //Uers API route
@@ -177,3 +180,5 @@ var choose2 = schedule.scheduleJob('50 * * * * *', function() {
 // g.setEdge('G', 'H', 2);
 
 // var response = ksp.yenKSP(g, "C", "H", 100);
+
+module.exports = app
