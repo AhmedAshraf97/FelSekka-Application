@@ -60,7 +60,7 @@ router.post('/', async(req, res) => {
         ValidChecks = false;
         res.status(400).send({ error: "distance ", message: "distance paramter is missing" });
         res.end();
-    } else if (!((typeof(req.body.distance) === 'number'))) {
+    } else if (!((typeof(parseFloat(req.body.distance)) === 'number'))) {
         ValidChecks = false;
         res.status(400).send({ error: "distance", message: "distance must be a number" });
         res.end();
@@ -68,18 +68,10 @@ router.post('/', async(req, res) => {
         ValidChecks = false;
         res.status(400).send({ error: "time ", message: "time paramter is missing" });
         res.end();
-    } else if (!((typeof(req.body.time) === 'number'))) {
+    } else if (!((typeof(parseFloat(req.body.time)) === 'number'))) {
         ValidChecks = false;
 
         res.status(400).send({ error: "time", message: "time must be a number" });
-        res.end();
-    } else if (req.body.fare == null) {
-        ValidChecks = false;
-        res.status(400).send({ error: "fare ", message: "fare paramter is missing" });
-        res.end();
-    } else if (!((typeof(req.body.fare) === 'number'))) {
-        ValidChecks = false;
-        res.status(400).send({ error: "fare", message: "fare must be a number" });
         res.end();
     }
 
@@ -89,16 +81,16 @@ router.post('/', async(req, res) => {
 
         const DriverTrip = await DriverDB.findOne({
             where: {
-                tripid: req.body.tripid,
-                driverid: req.body.driverid,
+                tripid: parseInt(req.body.tripid),
+                driverid: parseInt(req.body.driverid),
                 status: "done" ////// 
             }
         }).catch(errHandler)
         if (DriverTrip) {
             const RiderTrip = await RiderDB.findOne({
                 where: {
-                    riderid: req.body.riderid,
-                    tripid: req.body.tripid,
+                    riderid: parseInt(req.body.riderid),
+                    tripid: parseInt(req.body.tripid),
                     status: "ongoing"
                 }
 
@@ -107,14 +99,14 @@ router.post('/', async(req, res) => {
                 await RiderDB.update({
 
                     actualarrivaltime: req.body.actualarrivaltime,
-                    distance: req.body.distance,
-                    time: req.body.time,
-                    fare: req.body.fare,
+                    distance: parseFloat(req.body.distance),
+                    time: parseFloat(req.body.time),
+                    fare: 0,
                     status: "done"
                 }, {
                     where: {
-                        riderid: req.body.riderid,
-                        tripid: req.body.tripid,
+                        riderid: parseInt(req.body.riderid),
+                        tripid: parseInt(req.body.tripid),
                         status: "ongoing"
                     }
                 }).catch(errHandler)

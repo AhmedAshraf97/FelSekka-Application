@@ -2,9 +2,11 @@ const request = require("supertest")
 const express = require('express');
 const app = require('./index');
 const dbConnection = require('./database/connection')
-
+const requestRideFrom = require('./models/requestridefrom');
+//scheduledTrip,offerTo/From,requestTo/From,
 var CurrentToken = 0;
-
+process.env.SECRET_KEY = 'secret';
+const jwt = require('jsonwebtoken');
 beforeAll(done => {
     done()
 })
@@ -25,13 +27,13 @@ test('Signing in', async() => {
 
 })
 
-test('Scheduled trips', async() => {
-    const response = await request(app)
-        .post('/api/scheduledtrips')
-        .set('Authorization', CurrentToken).expect(200)
-        // console.log(JSON.stringify(response.body))
+// test('Scheduled trips', async() => {
+//     const response = await request(app)
+//         .post('/api/scheduledtrips')
+//         .set('Authorization', CurrentToken).expect(200)
+//         // console.log(JSON.stringify(response.body))
 
-})
+// })
 
 
 // test('offer to-organization trip', async() => {
@@ -257,39 +259,12 @@ test('Scheduled trips', async() => {
 
 //////////////////////////////////////
 
-test('request to-organization trip with invalid earliest pick-up time', async() => {
-    const response = await request(app)
-        .post('/api/requestrideto')
-        .send({
-
-            "earliesttime": "05:00:00",
-            "arrivaltime": "04:00:00",
-
-            "date": "2020-06-27",
-            "toorgid": 9,
-            "ridewith": "female",
-            "smoking": "no"
-
-        })
-        .set('Authorization', CurrentToken).expect(400)
-
-    expect(response.body.message).toBe("Arrival time can't be before earliest time")
-
-
-})
-
-
-
-
-
-
-
-// test('request to-organization trip ', async() => {
+// test('request to-organization trip with invalid earliest pick-up time', async() => {
 //     const response = await request(app)
 //         .post('/api/requestrideto')
 //         .send({
 
-//             "earliesttime": "01:00:00",
+//             "earliesttime": "05:00:00",
 //             "arrivaltime": "04:00:00",
 
 //             "date": "2020-06-27",
@@ -298,12 +273,60 @@ test('request to-organization trip with invalid earliest pick-up time', async() 
 //             "smoking": "no"
 
 //         })
-//         .set('Authorization', CurrentToken).expect(200)
+//         .set('Authorization', CurrentToken).expect(400)
 
-//     expect(response.body.message).toBe("Request is made successfully")
+//     expect(response.body.message).toBe("Arrival time can't be before earliest time")
 
 
 // })
+
+
+
+
+
+
+
+test('request return-from-organization trip ', async() => {
+    var decoded = jwt.verify(CurrentToken, process.env.SECRET_KEY)
+    const resultbefore = await requestRideFrom.findOne({
+        where: {
+            userid: decoded.id,
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ],
+    });
+
+    const response = await request(app)
+
+    .post('/api/requestridefrom')
+        .send({
+
+            "latesttime": "07:00:00",
+            "departuretime": "05:00:00",
+
+            "date": "2020-06-27",
+            "fromorgid": 9,
+            "ridewith": "female",
+            "smoking": "no"
+
+        })
+        .set('Authorization', CurrentToken).expect(200)
+
+    expect(response.body.message).toBe("Request is made successfully")
+    const resultafter = await requestRideFrom.findOne({
+        where: {
+            userid: decoded.id,
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ],
+    });
+    console.log(resultbefore.dataValues.id, resultafter.dataValues.id)
+    expect(resultbefore.dataValues.id).not.toBe(resultafter.dataValues.id)
+
+
+})
 
 
 // test('request to-organization trip at the same time', async() => {

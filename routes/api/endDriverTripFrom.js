@@ -83,7 +83,7 @@ router.post('/', async(req, res) => {
             ValidChecks = false;
             res.end();
 
-        } else if (!((typeof(req.body.distance) === 'number'))) {
+        } else if (!((typeof(parseFloat(req.body.distance)) === 'number'))) {
             res.status(400).send({ error: "distance", message: "distance must be a number" });
             ValidChecks = false;
             res.end();
@@ -93,16 +93,8 @@ router.post('/', async(req, res) => {
             ValidChecks = false;
             res.end();
 
-        } else if (!((typeof(req.body.time) === 'number'))) {
+        } else if (!((typeof(parseFloat(req.body.time)) === 'number'))) {
             res.status(400).send({ error: "Time", message: "Time must be a number" });
-            ValidChecks = false;
-            res.end();
-        } else if (req.body.fare == null) {
-            res.status(400).send({ error: "Fare ", message: "Fare paramter is missing" });
-            ValidChecks = false;
-            res.end();
-        } else if (!((typeof(req.body.fare) === 'number'))) {
-            res.status(400).send({ error: "Fare", message: "Fare must be a number" });
             ValidChecks = false;
             res.end();
         } else if (req.body.latitude == null) {
@@ -113,7 +105,7 @@ router.post('/', async(req, res) => {
             res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
             ValidChecks = false;
             res.end();
-        } else if (!((typeof(req.body.latitude) === 'number'))) {
+        } else if (!((typeof(parseFloat(req.body.latitude)) === 'number'))) {
             res.status(400).send({ error: "Latitude", message: "Latitude must be a number" });
             ValidChecks = false;
             res.end();
@@ -125,7 +117,7 @@ router.post('/', async(req, res) => {
             res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
             ValidChecks = false;
             res.end();
-        } else if (!((typeof(req.body.longitude) === 'number'))) {
+        } else if (!((typeof(parseFloat((req.body.longitude))) === 'number'))) {
             res.status(400).send({ error: "Longitude", message: "Longitude must be a number" });
             ValidChecks = false;
             res.end();
@@ -138,7 +130,7 @@ router.post('/', async(req, res) => {
         const DriverTrip = await DriverDB.findOne({
             where: {
                 driverid: decoded.id,
-                tripid: req.body.tripid,
+                tripid: parseInt(req.body.tripid),
                 status: "ongoing"
             }
         }).catch(errHandler)
@@ -146,14 +138,14 @@ router.post('/', async(req, res) => {
         if (DriverTrip) {
             await DriverDB.update({
                 actualarrivaltime: req.body.actualarrivaltime,
-                distance: req.body.distance,
-                time: req.body.time,
-                fare: req.body.fare,
+                distance: parseFloat(req.body.distance),
+                time: parseFloat(req.body.time),
+                fare: 0,
                 status: "done"
             }, {
                 where: {
                     driverid: decoded.id,
-                    tripid: req.body.tripid,
+                    tripid: parseInt(req.body.tripid),
                     status: "ongoing"
                 }
             }).catch(errHandler)
@@ -168,16 +160,16 @@ router.post('/', async(req, res) => {
             }).catch(errHandler)
 
             await Trips.update({
-                endloclatitude: req.body.latitude,
-                endloclongitude: req.body.longitude,
+                endloclatitude: parseFloat(req.body.latitude),
+                endloclongitude: parseFloat(req.body.longitude),
                 endtime: req.body.actualarrivaltime,
-                totaldistance: req.body.distance,
-                totaltime: req.body.time,
-                totalfare: req.body.fare,
+                totaldistance: parseFloat(req.body.distance),
+                totaltime: parseFloat(req.body.time),
+                totalfare: 0,
                 status: "done"
             }, {
                 where: {
-                    id: req.body.tripid,
+                    id: parseInt(req.body.tripid),
                     status: "ongoing"
                 }
             })
