@@ -37,6 +37,8 @@ app.use('/api/offerridefrom', require('./routes/api/offerridefrom'));
 app.use('/api/showmyorg', require('./routes/api/showmyorg'));
 app.use('/api/deleteorg', require('./routes/api/deleteorg'));
 app.use('/api/editcar', require('./routes/api/edit_car'));
+app.use('/api/inserttrackinglocation', require('./routes/api/inserttrackinglocation'));
+app.use('/api/gettrackinglocation', require('./routes/api/gettrackinglocation'));
 
 app.use('/api/editprofile', require('./routes/api/editprofile'));
 app.use('/api/changepassword', require('./routes/api/changepassword'));
