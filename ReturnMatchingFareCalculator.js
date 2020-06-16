@@ -46,6 +46,7 @@ module.exports = async function main(s) {
                 (lastDuration / Drivers[j].TotalDurationTaken) * TotalMoneyTobePaidToDriverDur
             Riders.find(n => n.ID === RidersDistCoveredIds[0]).ExpectedFare = Math.max(ExpectedFare * ProfitFactor, 10);
             Drivers[j].ExpectedFare = Math.max(ExpectedFare, 10);
+            FloosKeteer += 0.2 * Drivers[j].ExpectedFare
             continue;
         }
 
@@ -73,6 +74,7 @@ module.exports = async function main(s) {
 
                 Riders.find(n => n.ID === RidersDistCoveredIds[f]).ExpectedFare = Math.max(ExpectedFare * ProfitFactor, 10);
                 DriverCollects += Math.max(ExpectedFare * ProfitFactor, 10)
+
             }
         } else {
             for (var f = 0; f < RidersDistCoveredinTrip.length; f++) {

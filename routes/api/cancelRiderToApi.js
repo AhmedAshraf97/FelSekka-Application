@@ -26,10 +26,11 @@ const ExpiredToken = require('../../models/expiredtokens');
 
 
 class values {
-    constructor(from, to, value) {
+    constructor(from, to, valueDistance, valueDuration) {
         this.from = from;
         this.to = to;
-        this.value = value;
+        this.valueDistance = valueDistance;
+        this.valueDuration = valueDuration
     }
 }
 
@@ -90,20 +91,11 @@ class Driver {
 };
 
 
-class distance {
-    constructor(from, to, distance) {
+class distanceDuration {
+    constructor(from, to, distance, duration) {
         this.from = from;
         this.to = to;
         this.distance = distance;
-        this.checked = 0;
-
-    }
-
-}
-class duration {
-    constructor(from, to, duration) {
-        this.from = from;
-        this.to = to;
         this.duration = duration;
         this.checked = 0;
 
@@ -149,12 +141,10 @@ class userArray {
     }
 }
 
-var DriversRider = new Array();
+
+
+var DriversRiders = new Array();
 var RidersRiders = new Array();
-
-var DriversRidersDuration = new Array();
-
-var RidersRidersDuration = new Array();
 
 var Drivers = []
 var Riders = []
@@ -175,10 +165,12 @@ const errHandler = err => {
 
 
 router.post('/', async(req, res) => {
-    var DRdistanceValue = []
-    var DRdurationValue = []
-    var RRdistanceValue = []
-    var RRdurationValue = []
+
+
+    var DRDistanceDurationValue = []
+    var RRDistanceDurationValue = []
+
+
     var DeletedRequest;
     var decoded;
     var ValidChecks = true;
@@ -378,10 +370,12 @@ router.post('/', async(req, res) => {
 
                     }).catch(errHandler)
                     if (FromDriverToRider) {
-                        var valueDuration = new values(driver.ID, Riders[rider].ID, parseFloat(FromDriverToRider.time))
-                        var valueDistance = new values(driver.ID, Riders[rider].ID, parseFloat(FromDriverToRider.distance))
-                        DRdurationValue.push(valueDuration)
-                        DRdistanceValue.push(valueDistance)
+
+
+                        var valueDistanceDuration = new values(driver.ID, Riders[rider].ID, parseFloat(FromDriverToRider.distance), Math.round(FromDriverToRider.time))
+
+                        DRDistanceDurationValue.push(valueDistanceDuration)
+
                     }
                 }
 
@@ -396,10 +390,10 @@ router.post('/', async(req, res) => {
 
                             }).catch(errHandler)
                             if (FromRiderToRider) {
-                                var valueDuration = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.time))
-                                var valueDistance = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.distance))
-                                RRdurationValue.push(valueDuration)
-                                RRdistanceValue.push(valueDistance)
+
+
+                                var valueDistanceDuration = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.distance), Math.round(FromRiderToRider.time))
+                                RRDistanceDurationValue.push(valueDistanceDuration)
                             }
 
                         }
@@ -413,25 +407,25 @@ router.post('/', async(req, res) => {
                 var DriverRow = new userArray(driverID);
 
 
-                for (var j = 0; j < DRdistanceValue.length; j++) {
-                    if (DRdistanceValue[j].from === driverID) {
-                        var distanceObj = new distance(DRdistanceValue[j].from, DRdistanceValue[j].to, DRdistanceValue[j].value);
-                        DriverRow.push(distanceObj);
+                for (var j = 0; j < DRDistanceDurationValue.length; j++) {
+                    if (DRDistanceDurationValue[j].from === driverID) {
+                        var distanceDurationObj = new distanceDuration(DRDistanceDurationValue[j].from, DRDistanceDurationValue[j].to, DRDistanceDurationValue[j].valueDistance, DRDistanceDurationValue[j].valueDuration);
+                        DriverRow.push(distanceDurationObj);
                     }
 
                 }
 
                 if (DriverRow.length > 0) {
-                    DriversRider.push(DriverRow);
+                    DriversRiders.push(DriverRow);
                 }
                 for (var i = 0; i < Riders.length; i++) {
                     var riderID = Riders[i].ID
                     var RiderRow = new userArray(riderID);
-                    for (var j = 0; j < RRdistanceValue.length; j++) {
-                        if (RRdistanceValue[j].from === riderID) {
-                            var distanceObj = new distance(RRdistanceValue[j].from, RRdistanceValue[j].to, RRdistanceValue[j].value);
+                    for (var j = 0; j < RRDistanceDurationValue.length; j++) {
+                        if (RRDistanceDurationValue[j].from === riderID) {
+                            var distanceDurationObj = new distanceDuration(RRDistanceDurationValue[j].from, RRDistanceDurationValue[j].to, RRDistanceDurationValue[j].valueDistance, RRDistanceDurationValue[j].valueDuration);
 
-                            RiderRow.push(distanceObj);
+                            RiderRow.push(distanceDurationObj);
                         }
                     }
 
@@ -440,38 +434,7 @@ router.post('/', async(req, res) => {
                     }
 
                 }
-                var DriverRowDuration = new userArray(driverID);
-                for (var j = 0; j < DRdurationValue.length; j++) {
-                    if (DRdurationValue[j].from === driverID) {
-                        var durationObj = new duration(DRdurationValue[j].from, DRdurationValue[j].to, DRdurationValue[j].value);
-                        DriverRowDuration.push(durationObj);
-                    }
 
-                }
-
-                if (DriverRowDuration.length > 0) {
-
-                    DriversRidersDuration.push(DriverRowDuration);
-                }
-
-                for (var i = 0; i < Riders.length; i++) {
-                    var riderID = Riders[i].ID
-                    var RiderRowDuration = new userArray(riderID);
-
-                    for (var j = 0; j < RRdurationValue.length; j++) {
-                        if (RRdurationValue[j].from === riderID) {
-                            var durationObj = new duration(RRdurationValue[j].from, RRdurationValue[j].to, RRdurationValue[j].value);
-                            RiderRowDuration.push(durationObj);
-                        }
-                    }
-
-                    if (RiderRowDuration.length > 0) {
-
-                        RidersRidersDuration.push(RiderRowDuration);
-                    }
-
-
-                }
 
                 var z = await CancelRiderTo();
                 var p = await matchingfare('./routes/api/cancelRiderToApi');
@@ -546,17 +509,15 @@ router.post('/', async(req, res) => {
 
     }
 
-    DriversRider = []
+    DriversRiders = []
     RidersRiders = []
-    DriversRidersDuration = []
-    RidersRidersDuration = []
     Drivers = []
     Riders = []
 })
 
 
 function getters() {
-    return { Riders, Drivers, RidersRiders, RidersRidersDuration, DriversRidersDuration, DriversRider }
+    return { Riders, Drivers, RidersRiders, DriversRiders }
 }
 
 
