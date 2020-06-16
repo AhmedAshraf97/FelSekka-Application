@@ -566,22 +566,26 @@ router.post('/', async(req, res) => {
 
                 if (countAssigned === 0) {
 
-                    res.status(200).send("No trips will be scheduled")
+                    res.status(400).send({ error: "No trips to be scheduled", message: "No trips to be scheduled" })
+                    res.end()
                 } else {
-                    res.status(200).send("Matching Done")
-
+                    res.status(200).send({ message: "Matching Done" })
+                    res.end()
                 }
 
             } else {
-                res.status(200).send("No trips will be scheduled")
+                res.status(400).send({ error: "No trips to be scheduled", message: "No trips to be scheduled" })
+                res.end()
             }
 
         } else {
-            res.status(200).send("no requests")
+            res.status(400).send({ error: "No requests", message: "No requests" })
+            res.end()
         }
 
     } else {
-        res.status(200).send("no offers")
+        res.status(400).send({ error: "No offers", message: "No offers" })
+        res.end()
     }
 
 
