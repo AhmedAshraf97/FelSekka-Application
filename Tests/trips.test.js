@@ -1,8 +1,8 @@
 const request = require("supertest")
 const express = require('express');
-const app = require('./index');
-const dbConnection = require('./database/connection')
-const requestRideFrom = require('./models/requestridefrom');
+const app = require('../index');
+const dbConnection = require('../database/connection')
+const requestRideFrom = require('../models/requestridefrom');
 //scheduledTrip,offerTo/From,requestTo/From,
 var CurrentToken = 0;
 process.env.SECRET_KEY = 'secret';

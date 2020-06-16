@@ -1,8 +1,8 @@
 const request = require("supertest")
 const express = require('express');
-const app = require('./index');
-const dbConnection = require('./database/connection')
-const User = require('./models/users');
+const app = require('../index');
+const dbConnection = require('../database/connection')
+const User = require('../models/users');
 const jwt = require('jsonwebtoken');
 var CurrentToken = 0;
 
