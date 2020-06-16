@@ -43,7 +43,6 @@ router.post('/', async(req, res) => {
         status: "existing",
         photo: req.body.photo,
     }
-    console.log(userData);
     let usernameExists = 0;
     let emailExists = 0;
     let phonenumberExists = 0;
