@@ -86,7 +86,7 @@ router.post('/', async(req, res) => {
                     res.status(400).send({ error: "Request not found", message: "you can't cancel this request " })
                     res.end()
                 } else {
-                    res.status(200).send({ message: "The Request is cancelled " })
+                    res.status(200).send({ message: "The Request is cancelled" })
                     res.end()
                 }
             } else {
@@ -103,7 +103,7 @@ router.post('/', async(req, res) => {
                     res.status(400).send({ error: "Request not found", message: "you can't cancel this request " })
                     res.end()
                 } else {
-                    res.status(200).send({ message: "The Request is cancelled " })
+                    res.status(200).send({ message: "The Request is cancelled" })
                     res.end()
                 }
 

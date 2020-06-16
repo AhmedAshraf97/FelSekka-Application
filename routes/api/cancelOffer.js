@@ -87,7 +87,7 @@ router.post('/', async(req, res) => {
                     res.status(400).send({ error: "Offer not found", message: "you can't cancel this offer " })
                     res.end()
                 } else {
-                    res.status(200).send({ message: "The offer is cancelled " })
+                    res.status(200).send({ message: "The offer is cancelled" })
                     res.end()
                 }
             } else {
@@ -104,7 +104,7 @@ router.post('/', async(req, res) => {
                     res.status(400).send({ error: "Offer not found", message: "you can't cancel this offer " })
                     res.end()
                 } else {
-                    res.status(200).send({ message: "The offer is cancelled " })
+                    res.status(200).send({ message: "The offer is cancelled" })
                     res.end()
                 }
 
