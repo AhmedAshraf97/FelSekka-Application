@@ -77,7 +77,7 @@ router.post('/', async(req, res) => {
         res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
         ValidChecks = false;
         res.end();
-    } else if (!((typeof(req.body.latitude) === 'number'))) {
+    } else if (!((typeof(parseFloat(req.body.latitude)) === 'number'))) {
         res.status(400).send({ error: "latitude", message: "latitude must be a number" });
         ValidChecks = false;
         res.end();
@@ -89,7 +89,7 @@ router.post('/', async(req, res) => {
         res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
         ValidChecks = false;
         res.end();
-    } else if (!((typeof(req.body.longitude) === 'number'))) {
+    } else if (!((typeof(parseFloat(req.body.longitude)) === 'number'))) {
         res.status(400).send({ error: "longitude", message: "longitude must be a number" });
         ValidChecks = false;
         res.end();
@@ -108,7 +108,7 @@ router.post('/', async(req, res) => {
             const DriverTrip = await DriverDB.findOne({
                 where: {
                     driverid: decoded.id,
-                    tripid: req.body.tripid,
+                    tripid: parseInt(req.body.tripid),
                     status: "scheduled"
                 }
             }).catch(errHandler)
@@ -120,7 +120,7 @@ router.post('/', async(req, res) => {
                 }, {
                     where: {
                         driverid: decoded.id,
-                        tripid: req.body.tripid,
+                        tripid: parseInt(req.body.tripid),
                         status: "scheduled"
                     }
                 }).catch(errHandler)
@@ -135,13 +135,13 @@ router.post('/', async(req, res) => {
                 }).catch(errHandler)
 
                 await Trips.update({
-                    startloclatitude: req.body.latitude,
-                    startloclongitude: req.body.longitude,
+                    startloclatitude: parseFloat(req.body.latitude),
+                    startloclongitude: parseFloat(req.body.longitude),
                     starttime: req.body.actualpickuptime,
                     status: "ongoing"
                 }, {
                     where: {
-                        id: req.body.tripid,
+                        id: parseInt(req.body.tripid),
                         status: "scheduled"
                     }
                 })

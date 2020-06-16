@@ -58,8 +58,8 @@ router.post('/', async(req, res) => {
 
         const DriverTrip = await DriverDB.findOne({
             where: {
-                driverid: req.body.driverid,
-                tripid: req.body.tripid,
+                driverid: parseInt(req.body.driverid),
+                tripid: parseInt(req.body.tripid),
                 status: "scheduled"
             }
         }).catch(errHandler)
@@ -67,8 +67,8 @@ router.post('/', async(req, res) => {
         if (DriverTrip) {
             const RiderTrip = await RiderDB.findOne({
                 where: {
-                    riderid: req.body.riderid,
-                    tripid: req.body.tripid,
+                    riderid: parseInt(req.body.riderid),
+                    tripid: parseInt(req.body.tripid),
                     status: "scheduled"
                 }
 
@@ -79,8 +79,8 @@ router.post('/', async(req, res) => {
                     status: "ongoing"
                 }, {
                     where: {
-                        tripid: req.body.tripid,
-                        riderid: req.body.riderid,
+                        tripid: parseInt(req.body.tripid),
+                        riderid: parseInt(req.body.riderid),
                         status: "scheduled"
                     }
                 }).catch(errHandler)
