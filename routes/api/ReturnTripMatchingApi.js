@@ -529,7 +529,7 @@ router.post('/', async(req, res) => {
                         Driverr.distance = 0
                         Driverr.time = 0
                         Driverr.fare = 0
-                        Driverr.expectedfare = 0.8 * Drivers[i].ExpectedFare
+                        Driverr.expectedfare = Drivers[i].ExpectedFare
                         Driverr.status = "scheduled"
 
                         DriversArray.push(Driverr)
