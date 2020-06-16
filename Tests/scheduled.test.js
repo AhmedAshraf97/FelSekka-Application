@@ -1,11 +1,11 @@
 const request = require("supertest")
 const express = require('express');
-const app = require('./index');
-const dbConnection = require('./database/connection')
-const requestRideFrom = require('./models/requestridefrom');
-const requestRideTo = require('./models/requestrideto');
-const offerRideFrom = require('./models/offerridefrom');
-const offerRideTo = require('./models/offerrideto');
+const app = require('../index');
+const dbConnection = require('../database/connection')
+const requestRideFrom = require('../models/requestridefrom');
+const requestRideTo = require('../models/requestrideto');
+const offerRideFrom = require('../models/offerridefrom');
+const offerRideTo = require('../models/offerrideto');
 
 process.env.SECRET_KEY = 'secret';
 const jwt = require('jsonwebtoken');
