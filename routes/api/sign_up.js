@@ -193,11 +193,11 @@ router.post('/', async(req, res) => {
     } else if (((req.body.longitude).toString()).trim().length === 0) {
         res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
     } else if (usernameExists === 1) {
-        res.status(409).send({ error: "Username", message: "This username already exists" });
+        res.status(400).send({ error: "Username", message: "This username already exists" });
     } else if (emailExists === 1) {
-        res.status(409).send({ error: "Email", message: "This email already exists" });
+        res.status(400).send({ error: "Email", message: "This email already exists" });
     } else if (phonenumberExists === 1) {
-        res.status(409).send({ error: "Phone number", message: "This phone number already exists" });
+        res.status(400).send({ error: "Phone number", message: "This phone number already exists" });
     } else {
         var createdUserID = 0;
         var distance12 = 0;
