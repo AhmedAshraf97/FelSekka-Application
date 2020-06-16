@@ -49,7 +49,7 @@ router.post('/', async(req, res) => {
     let phonenumberExists = 0;
     //Check wether username already exists
     if (req.body.username != null) {
-        await User.findOne({ where: { username: req.body.username } }).then(user => {
+        await User.findOne({ where: { username: req.body.username, status: "existing" } }).then(user => {
             if (user) {
                 usernameExists = 1;
             }
@@ -57,7 +57,7 @@ router.post('/', async(req, res) => {
     }
     //Check wether email already exists
     if (req.body.email != null) {
-        await User.findOne({ where: { email: req.body.email } }).then(user => {
+        await User.findOne({ where: { email: req.body.email, status: "existing" } }).then(user => {
             if (user) {
                 emailExists = 1;
             }
@@ -65,7 +65,7 @@ router.post('/', async(req, res) => {
     }
     //Check wether phone number already exists
     if (req.body.phonenumber != null) {
-        await User.findOne({ where: { phonenumber: req.body.phonenumber } }).then(user => {
+        await User.findOne({ where: { phonenumber: req.body.phonenumber, status: "existing" } }).then(user => {
             if (user) {
                 phonenumberExists = 1;
             }
@@ -193,11 +193,11 @@ router.post('/', async(req, res) => {
     } else if (((req.body.longitude).toString()).trim().length === 0) {
         res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
     } else if (usernameExists === 1) {
-        res.status(409).send({ error: "Username", message: "This username already exists" });
+        res.status(400).send({ error: "Username", message: "This username already exists" });
     } else if (emailExists === 1) {
-        res.status(409).send({ error: "Email", message: "This email already exists" });
+        res.status(400).send({ error: "Email", message: "This email already exists" });
     } else if (phonenumberExists === 1) {
-        res.status(409).send({ error: "Phone number", message: "This phone number already exists" });
+        res.status(400).send({ error: "Phone number", message: "This phone number already exists" });
     } else {
         var createdUserID = 0;
         var distance12 = 0;
