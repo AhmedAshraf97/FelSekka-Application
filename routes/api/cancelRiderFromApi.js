@@ -434,7 +434,6 @@ router.post('/', async(req, res) => {
                     for (var j = 0; j < RRDistanceDurationValue.length; j++) {
                         if (RRDistanceDurationValue[j].to === riderID) {
                             var distanceDurationObj = new distanceDuration(RRDistanceDurationValue[j].from, RRDistanceDurationValue[j].to, RRDistanceDurationValue[j].valueDistance, RRDistanceDurationValue[j].valueDuration);
-
                             RiderRow.push(distanceDurationObj);
                         }
                     }

@@ -4,9 +4,7 @@ var Combinatorics = require('js-combinatorics');
 var Riders;
 var AvailableDriver;
 var RidersRiders
-var RidersRidersDuration
-var DriversRidersDuration
-var DriversRider
+var DriversRiders
 
 function diff_minutes(dt2, dt1) {
 
@@ -15,20 +13,6 @@ function diff_minutes(dt2, dt1) {
     return (Math.round(diff));
 
 }
-
-
-function add_minutes(d1, miuntes) {
-
-    var d2 = new Date(d1);
-    d2.setMinutes(d1.getMinutes() + miuntes);
-    return d2
-}
-
-
-
-
-
-
 
 function SetDropOffTime(DriverObj) {
 
@@ -48,14 +32,13 @@ function SetDropOffTime(DriverObj) {
         if (i == -1) { // Last iteration ( driver dropoff )
             fromIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[0]))
             fromRiderID = DriverObj.AssignedRiders[0];
-            DriverIndexinDriverRidersDuration = DriversRidersDuration.indexOf(DriversRidersDuration.find(n => n.ID === DriverObj.ID))
-            DriverIndexinDriverRiders = DriversRider.indexOf(DriversRider.find(n => n.ID === DriverObj.ID))
+            DriverIndexinDriverRiders = DriversRiders.indexOf(DriversRiders.find(n => n.ID === DriverObj.ID))
             var datee = new Date(Riders[fromIndex].DropOffTime);
             DriverObj.DropOffTime = datee
-            DriverObj.DropOffTime.setMinutes(Riders[fromIndex].DropOffTime.getMinutes() + DriversRidersDuration[DriverIndexinDriverRidersDuration].data.find(n => n.from === fromRiderID).duration)
+            DriverObj.DropOffTime.setMinutes(Riders[fromIndex].DropOffTime.getMinutes() + DriversRiders[DriverIndexinDriverRiders].data.find(n => n.from === fromRiderID).duration)
 
-            DriverObj.TotalDurationTaken += DriversRidersDuration[DriverIndexinDriverRidersDuration].data.find(n => n.from === fromRiderID).duration;
-            DriverObj.TotalDistanceCoveredToDestination += DriversRider[DriverIndexinDriverRiders].data.find(n => n.from === fromRiderID).distance;
+            DriverObj.TotalDurationTaken += DriversRiders[DriverIndexinDriverRiders].data.find(n => n.from === fromRiderID).duration;
+            DriverObj.TotalDistanceCoveredToDestination += DriversRiders[DriverIndexinDriverRiders].data.find(n => n.from === fromRiderID).distance;
 
             if (DriverObj.DropOffTime > DriverObj.LatestDropOff) {
 
@@ -86,13 +69,12 @@ function SetDropOffTime(DriverObj) {
             toIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[i]));
             var toID = DriverObj.AssignedRiders[i];
             var fromID = DriverObj.AssignedRiders[i + 1]
-            ToIndexinRidersRidersDuration = RidersRidersDuration.indexOf(RidersRidersDuration.find(n => n.ID === toID));
             ToIndexinRidersRiders = RidersRiders.indexOf(RidersRiders.find(n => n.ID === toID));
             var datee = new Date(Riders[fromIndex].DropOffTime);
             RiderDropOff = datee
-            Riders[toIndex].DropOffTime.setMinutes(Riders[fromIndex].DropOffTime.getMinutes() + RidersRidersDuration[ToIndexinRidersRidersDuration].data.find(n => n.from === fromID).duration)
-            DriverObj.TotalDurationTaken += RidersRidersDuration[ToIndexinRidersRidersDuration].data.find(n => n.from === fromID).duration;
-            DriverObj.TotalDistanceCoveredToDestination += RidersRiders[ToIndexinRidersRidersDuration].data.find(n => n.from === fromID).distance;
+            Riders[toIndex].DropOffTime.setMinutes(Riders[fromIndex].DropOffTime.getMinutes() + RidersRiders[ToIndexinRidersRiders].data.find(n => n.from === fromID).duration)
+            DriverObj.TotalDurationTaken += RidersRiders[ToIndexinRidersRiders].data.find(n => n.from === fromID).duration;
+            DriverObj.TotalDistanceCoveredToDestination += RidersRiders[ToIndexinRidersRiders].data.find(n => n.from === fromID).distance;
 
             if (Riders[toIndex].DropOffTime > Riders[toIndex].LatestDropOff) {
                 DriverObj.TotalDistanceCoveredToDestination = OldTotalDistanceCoveredToDestination
@@ -114,7 +96,7 @@ async function Reorder() {
     for (var l = 0; l < AvailableDriver.AssignedRiders.length; l++) {
         var RiderID = AvailableDriver.AssignedRiders[l];
         RiderIDstr = `${RiderID}`
-        var Durationn = DriversRidersDuration.find(n => n.ID === DriverID).data.find(n => n.from === RiderID).duration;
+        var Durationn = DriversRiders.find(n => n.ID === DriverID).data.find(n => n.from === RiderID).duration;
         g.setNode(RiderIDstr)
         g.setEdge(RiderIDstr, DriverIDstr, Durationn)
         g.setEdge(OrganizationID, RiderIDstr, Riders.find(n => n.ID === RiderID).TimeFromOrganizationMinutes)
@@ -126,7 +108,7 @@ async function Reorder() {
             if (m != p) {
                 var SourceID = AvailableDriver.AssignedRiders[p]
                 var DestID = AvailableDriver.AssignedRiders[m]
-                var Durationn = RidersRidersDuration.find(n => n.ID === DestID).data.find(n => n.from === SourceID).duration
+                var Durationn = RidersRiders.find(n => n.ID === DestID).data.find(n => n.from === SourceID).duration
                 SourceID = `${SourceID}`
                 DestID = `${DestID}`
                 g.setEdge(SourceID, DestID, Durationn)
@@ -175,9 +157,7 @@ module.exports = async function main() {
     Riders = obj.Riders;
     AvailableDriver = obj.driver;
     RidersRiders = obj.RidersRiders;
-    RidersRidersDuration = obj.RidersRidersDuration;
-    DriversRidersDuration = obj.DriversRidersDuration;
-    DriversRider = obj.DriversRider;
+    DriversRiders = obj.DriversRiders;
 
     TimeWithoutTakingRider = AvailableDriver.TotalDurationTaken;
     let cloneDriver = Object.assign(Object.create(Object.getPrototypeOf(AvailableDriver)), AvailableDriver)

@@ -10,11 +10,9 @@ const Trips = require('../models/trips')
 const Rider = require('../models/riders');
 //scheduledTrip,offerTo/From,requestTo/From,cancel to/from,
 var CurrentToken = 0;
-var offerToId = 0
-var offerFromId = 0
-var requestToId = 0
-var requestFromId = 0
 
+var tripidFrom = 0
+var tripidTo = 0
 process.env.SECRET_KEY = 'secret';
 const jwt = require('jsonwebtoken');
 beforeAll(done => {
@@ -50,13 +48,14 @@ test('Signing in', async() => {
 //     const resultbefore = await Rider.findOne({
 //         where: {
 //             riderid: decoded.id,
-//             tofrom: "to"
+//             tofrom: "to",
+//             status: "scheduled"
 //         },
 //         order: [
 //             ['createdAt', 'DESC']
 //         ],
 //     });
-
+//     tripidTo = resultbefore.tripid
 //     const resultbeforeTrip = await Trips.findOne({
 //         where: {
 //             id: resultbefore.tripid
@@ -79,8 +78,8 @@ test('Signing in', async() => {
 
 //         },
 //         order: [
-//             ['createdAt', 'DESC']
-//         ],
+//             ['updatedAt', 'DESC']
+//         ]
 //     });
 
 //     const resultAfterTrip = await Trips.findOne({
@@ -101,59 +100,161 @@ test('Signing in', async() => {
 
 // }, 100000)
 
-
-// test('cancel rider From-Organization trip', async() => {
+// test('Choose from available to-organization trips', async() => {
 //     var decoded = jwt.verify(CurrentToken, process.env.SECRET_KEY)
-//     const resultbefore = await Rider.findOne({
-//         where: {
-//             riderid: decoded.id,
-//             tofrom: "from"
-//         },
-//         order: [
-//             ['createdAt', 'DESC']
-//         ],
-//     });
-
 //     const resultbeforeTrip = await Trips.findOne({
 //         where: {
-//             id: resultbefore.tripid
+//             id: tripidTo
 
 //         }
 //     });
-
 //     const response = await request(app)
-//         .post('/api/cancelRiderFrom')
-//         .send({
-//             tripid: resultbefore.tripid
-//         }).set('Authorization', CurrentToken).expect(200)
 
+//     .post('/api/chooseFromAvailableRides')
+//         .send({
+//             "tripid": tripidTo,
+//             "earliesttime": "02:40:00"
+//         }).set('Authorization', CurrentToken).expect(200)
+//     console.log(response.body.message)
+//     const resultAfterTrip = await Trips.findOne({
+//         where: {
+//             id: tripidTo
+//         }
+//     })
+
+//     const resultAfterRequest = await requestRideTo.findOne({
+//         where: {
+//             userid: decoded.id
+
+//         },
+//         order: [
+//             ['updatedAt', 'DESC']
+//         ],
+//     })
 
 //     const resultAfterRider = await Rider.findOne({
 //         where: {
 //             riderid: decoded.id,
-//             tofrom: "from",
-//             tripid: resultbefore.dataValues.tripid
+//             tofrom: "to",
+//             tripid: tripidTo
 
 //         },
 //         order: [
-//             ['createdAt', 'DESC']
-//         ],
+//             ['updatedAt', 'DESC']
+//         ]
 //     });
 
-//     const resultAfterTrip = await Trips.findOne({
-//         where: {
-//             id: resultbefore.dataValues.tripid
-//         }
-//     })
+//     expect(resultAfterRider.dataValues.status).toBe("scheduled")
+//     expect(resultAfterRequest.dataValues.status).toBe("scheduled")
+//     expect(resultAfterTrip.dataValues.numberofseats).toBe(resultbeforeTrip.dataValues.numberofseats + 1)
 
-//     const resultAfterRequest = await requestRideFrom.findOne({
-//         where: {
-//             id: resultbefore.dataValues.requestid
-//         }
-//     })
-
-//     expect(resultAfterRider.dataValues.status).toBe("cancelled")
-//     expect(resultAfterRequest.dataValues.status).toBe("cancelled")
-//     expect(resultAfterTrip.dataValues.numberofseats).toBe(resultbeforeTrip.dataValues.numberofseats - 1)
 
 // }, 100000)
+
+test('cancel rider From-Organization trip', async() => {
+    var decoded = jwt.verify(CurrentToken, process.env.SECRET_KEY)
+    const resultbefore = await Rider.findOne({
+        where: {
+            riderid: decoded.id,
+            tofrom: "from",
+            status: "scheduled"
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ],
+    });
+    tripidFrom = resultbefore.tripid
+    const resultbeforeTrip = await Trips.findOne({
+        where: {
+            id: resultbefore.tripid
+
+        }
+    });
+
+    const response = await request(app)
+        .post('/api/cancelRiderFrom')
+        .send({
+            tripid: resultbefore.tripid
+        }).set('Authorization', CurrentToken).expect(200)
+
+
+    const resultAfterRider = await Rider.findOne({
+        where: {
+            riderid: decoded.id,
+            tofrom: "from",
+            tripid: resultbefore.dataValues.tripid
+
+        },
+        order: [
+            ['updatedAt', 'DESC']
+        ]
+    });
+
+    const resultAfterTrip = await Trips.findOne({
+        where: {
+            id: resultbefore.dataValues.tripid
+        }
+    })
+
+    const resultAfterRequest = await requestRideFrom.findOne({
+        where: {
+            id: resultbefore.dataValues.requestid
+        }
+    })
+
+    expect(resultAfterRider.dataValues.status).toBe("cancelled")
+    expect(resultAfterRequest.dataValues.status).toBe("cancelled")
+    expect(resultAfterTrip.dataValues.numberofseats).toBe(resultbeforeTrip.dataValues.numberofseats - 1)
+
+}, 100000)
+
+test('Choose from available return-from-organization trips', async() => {
+    var decoded = jwt.verify(CurrentToken, process.env.SECRET_KEY)
+    const resultbeforeTrip = await Trips.findOne({
+        where: {
+            id: tripidFrom
+
+        }
+    });
+    const response = await request(app)
+
+    .post('/api/chooseFromReturnTripsApi')
+        .send({
+            "tripid": tripidFrom,
+            "latesttime": "05:30:00"
+        }).set('Authorization', CurrentToken).expect(200)
+    console.log(response.body.message)
+    const resultAfterTrip = await Trips.findOne({
+        where: {
+            id: tripidFrom
+        }
+    })
+
+    const resultAfterRequest = await requestRideFrom.findOne({
+        where: {
+            userid: decoded.id
+
+        },
+        order: [
+            ['updatedAt', 'DESC']
+        ],
+    })
+
+    const resultAfterRider = await Rider.findOne({
+        where: {
+            riderid: decoded.id,
+            tofrom: "from",
+            tripid: tripidFrom
+
+        },
+        order: [
+            ['updatedAt', 'DESC']
+        ]
+    });
+
+    expect(resultAfterRider.dataValues.status).toBe("scheduled")
+    expect(resultAfterRequest.dataValues.status).toBe("scheduled")
+    expect(resultAfterTrip.dataValues.numberofseats).toBe(resultbeforeTrip.dataValues.numberofseats + 1)
+
+
+}, 100000)

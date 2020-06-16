@@ -4,9 +4,7 @@ var Combinatorics = require('js-combinatorics');
 var Riders;
 var AvailableDriver;
 var RidersRiders
-var RidersRidersDuration
-var DriversRidersDuration
-var DriversRider
+var DriversRiders
 
 function diff_minutes(dt2, dt1) {
 
@@ -41,14 +39,12 @@ function SetPickUpTime(DriverObj) {
 
         { // Last iteration ( First Rider )
             toIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[0]))
-            DriverIndexinDriverRidersDuration = DriversRidersDuration.indexOf(DriversRidersDuration.find(n => n.ID === DriverObj.ID))
-            DriverIndexinDriverRidersDistance = DriversRider.indexOf(DriversRider.find(n => n.ID === DriverObj.ID))
+            DriverIndexinDriversRiders = DriversRiders.indexOf(DriversRiders.find(n => n.ID === DriverObj.ID))
             toRiderID = DriverObj.AssignedRiders[0];
             var datee = new Date(Riders[toIndex].PickupTime);
             DriverObj.PoolStartTime = datee
-            DriverObj.PoolStartTime.setMinutes(Riders[toIndex].PickupTime.getMinutes() - DriversRidersDuration[DriverIndexinDriverRidersDuration].data.find(n => n.to === toRiderID).duration)
-            DriverObj.TotalDurationTaken += DriversRidersDuration[DriverIndexinDriverRidersDuration].data.find(n => n.to === toRiderID).duration;
-            DriverObj.TotalDistanceCoveredToDestination += DriversRider[DriverIndexinDriverRidersDistance].data.find(n => n.to === toRiderID).distance;
+            DriverObj.TotalDurationTaken += DriversRiders[DriverIndexinDriversRiders].data.find(n => n.to === toRiderID).duration;
+            DriverObj.TotalDistanceCoveredToDestination += DriversRiders[DriverIndexinDriversRiders].data.find(n => n.to === toRiderID).distance;
             if (DriverObj.PoolStartTime < DriverObj.EarliestStartTime) {
                 return Promise.resolve(-1);
             } else {
@@ -68,13 +64,12 @@ function SetPickUpTime(DriverObj) {
             toIndex = Riders.indexOf(Riders.find(n => n.ID === DriverObj.AssignedRiders[j + 1]));
             toID = DriverObj.AssignedRiders[j + 1];
             fromID = DriverObj.AssignedRiders[j]
-            FromIndexinRidersRidersDuration = RidersRidersDuration.indexOf(RidersRidersDuration.find(n => n.ID === fromID));
-            FromIndexinRidersRidersDistance = RidersRiders.indexOf(RidersRiders.find(n => n.ID === fromID));
+            FromIndexinRidersRiders = RidersRiders.indexOf(RidersRiders.find(n => n.ID === fromID));
             var datee = new Date(Riders[toIndex].PickupTime);
             Riders[fromIndex].PickupTime = datee
-            Riders[fromIndex].PickupTime.setMinutes(Riders[toIndex].PickupTime.getMinutes() - RidersRidersDuration[FromIndexinRidersRidersDuration].data.find(n => n.to === toID).duration)
-            DriverObj.TotalDurationTaken += RidersRidersDuration[FromIndexinRidersRidersDuration].data.find(n => n.to === toID).duration;
-            DriverObj.TotalDistanceCoveredToDestination += RidersRiders[FromIndexinRidersRidersDistance].data.find(n => n.to === toID).distance;
+            Riders[fromIndex].PickupTime.setMinutes(Riders[toIndex].PickupTime.getMinutes() - RidersRiders[FromIndexinRidersRiders].data.find(n => n.to === toID).duration)
+            DriverObj.TotalDurationTaken += RidersRiders[FromIndexinRidersRiders].data.find(n => n.to === toID).duration;
+            DriverObj.TotalDistanceCoveredToDestination += RidersRiders[FromIndexinRidersRiders].data.find(n => n.to === toID).distance;
             if (Riders[fromIndex].PickupTime < Riders[fromIndex].EarliestPickup)
                 return Promise.resolve(-1);
         }
@@ -97,7 +92,7 @@ async function MatchingReorder() {
     for (var l = 0; l < AvailableDriver.AssignedRiders.length; l++) {
         var RiderID = AvailableDriver.AssignedRiders[l];
         RiderIDstr = `${RiderID}`
-        var Durationn = DriversRidersDuration.find(n => n.ID === DriverID).data.find(n => n.to === RiderID).duration;
+        var Durationn = DriversRiders.find(n => n.ID === DriverID).data.find(n => n.to === RiderID).duration;
         g.setNode(RiderIDstr)
         g.setEdge(DriverIDstr, RiderIDstr, Durationn)
         g.setEdge(RiderIDstr, OrganizationID, Riders.find(n => n.ID === RiderID).TimeToOrganizationMinutes)
@@ -109,7 +104,7 @@ async function MatchingReorder() {
             if (m != p) {
                 var SourceID = AvailableDriver.AssignedRiders[p]
                 var DestID = AvailableDriver.AssignedRiders[m]
-                var Durationn = RidersRidersDuration.find(n => n.ID === SourceID).data.find(n => n.to === DestID).duration
+                var Durationn = RidersRiders.find(n => n.ID === SourceID).data.find(n => n.to === DestID).duration
                 SourceID = `${SourceID}`
                 DestID = `${DestID}`
                 g.setEdge(SourceID, DestID, Durationn)
@@ -129,17 +124,7 @@ async function MatchingReorder() {
             break;
 
     }
-    ////////////////////////
-    /* var TimeWithTakingRider = diff_minutes(cloneDriver.ArrivalTime, cloneDriver.PoolStartTime);
-    var delta = TimeWithTakingRider - TimeWithoutTakingRider;
 
-    if (diff_minutes(cloneDriver.ArrivalTime, cloneDriver.PoolStartTime) > cloneDriver.MaxDuration || delta > 30 || flag === 1) {
-        continue;
-    }
-     */
-
-    ////////////////////////
-    //////////////
     var delta = Math.max(0.25 * AvailableDriver.MaxDuration, 10)
     var response = ksp.ksp(g, DriverIDstr, OrganizationID, kValue);
     response = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.TotalDurationTaken + delta && p.totalCost <= AvailableDriver.MaxDuration)
@@ -170,12 +155,9 @@ module.exports = async function main() {
     Riders = obj.Riders;
     AvailableDriver = obj.driver;
     RidersRiders = obj.RidersRiders;
-    RidersRidersDuration = obj.RidersRidersDuration;
-    DriversRidersDuration = obj.DriversRidersDuration;
-    DriversRider = obj.DriversRider;
+    DriversRiders = obj.DriversRiders;
 
     TimeWithoutTakingRider = AvailableDriver.TotalDurationTaken;
-    let cloneDriver = Object.assign(Object.create(Object.getPrototypeOf(AvailableDriver)), AvailableDriver)
 
 
     //Setting Pickup Time and Pool Start Time
