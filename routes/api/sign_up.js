@@ -49,7 +49,7 @@ router.post('/', async(req, res) => {
     let phonenumberExists = 0;
     //Check wether username already exists
     if (req.body.username != null) {
-        await User.findOne({ where: { username: req.body.username } }).then(user => {
+        await User.findOne({ where: { username: req.body.username, status: "existing" } }).then(user => {
             if (user) {
                 usernameExists = 1;
             }
@@ -57,7 +57,7 @@ router.post('/', async(req, res) => {
     }
     //Check wether email already exists
     if (req.body.email != null) {
-        await User.findOne({ where: { email: req.body.email } }).then(user => {
+        await User.findOne({ where: { email: req.body.email, status: "existing" } }).then(user => {
             if (user) {
                 emailExists = 1;
             }
@@ -65,7 +65,7 @@ router.post('/', async(req, res) => {
     }
     //Check wether phone number already exists
     if (req.body.phonenumber != null) {
-        await User.findOne({ where: { phonenumber: req.body.phonenumber } }).then(user => {
+        await User.findOne({ where: { phonenumber: req.body.phonenumber, status: "existing" } }).then(user => {
             if (user) {
                 phonenumberExists = 1;
             }
