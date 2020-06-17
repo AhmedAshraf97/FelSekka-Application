@@ -47,7 +47,7 @@ module.exports = async function main(s) {
             var ExpectedFare = (lastDistance / Drivers[j].TotalDistanceCoveredToDestination) * TotalMoneyTobePaidToDriverDist + (lastDuration / Drivers[j].TotalDurationTaken) * TotalMoneyTobePaidToDriverDur
             Riders.find(n => n.ID === RidersDistCoveredIds[0]).ExpectedFare = Math.max(ExpectedFare * ProfitFactor, 10);
             Drivers[j].ExpectedFare = (Math.max(ExpectedFare, 10))
-            FloosKeteer = Drivers[j].ExpectedFare * 0.2;
+            FloosKeteer += Drivers[j].ExpectedFare * 0.2;
             continue;
         }
 
