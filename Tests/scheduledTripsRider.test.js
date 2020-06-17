@@ -446,4 +446,5 @@ test('Choose from available return-from-organization trips', async() => {
     expect(resultAfterTrip.dataValues.numberofseats).toBe(resultbeforeTrip.dataValues.numberofseats + 1)
 
 
+
 }, 100000)
