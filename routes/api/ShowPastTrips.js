@@ -5,7 +5,7 @@ const Rider = require('../../models/riders');
 
 const RequestRideFrom = require('../../models/requestridefrom');
 const RequestRideTo = require('../../models/requestrideto');
-
+const Organization = require('../../models/organizations');
 const OfferRideFrom = require('../../models/offerridefrom');
 const OfferRideTo = require('../../models/offerrideto');
 const Car = require('../../models/cars');
@@ -14,10 +14,7 @@ const ExpiredToken = require('../../models/expiredtokens');
 
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi');
 const jwt = require('jsonwebtoken');
-const regex = require('regex');
-const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
@@ -28,16 +25,18 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 router.post('/', async(req, res) => {
-    var TripsDetailsArr = {}
-    var RiderTrip = {}
-    var jsonStr = '{"PastTrips":[]}';
+
+    var jsonStr = '{"ScheduledTrips":[]}';
+    var jsonStr1 = '{"RiderTrip":[]}';
     var obj = JSON.parse(jsonStr);
+    var objRider = JSON.parse(jsonStr1);
+
+    //var RiderTrip = {}
     var ValidChecks = true;
     var c = 0;
     var count = 0
-    countcheck = 0;
-
     var decoded;
+
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
@@ -59,570 +58,603 @@ router.post('/', async(req, res) => {
     }).catch(errHandler)
 
     if (ValidChecks) {
-        await User.findOne({
+        const user = await User.findOne({
             where: {
                 id: decoded.id,
                 "status": "existing"
             }
-        }).then(user => {
-                if (user) {
-                    Rider.findAll({
+        }).catch(err => {
+            console.log('error :' + err)
+        })
+        var RiderRidesTripIDTo = []
+        var RiderRidesRequestIDTo = []
+        var RiderRidesOfferIDTo = []
+
+        var RiderRidesTripIDFrom = []
+        var RiderRidesRequestIDFrom = []
+        var RiderRidesOfferIDFrom = []
+        var TripsTo = []
+        var TripsFrom = []
+        var countobj = 0;
+        if (user) {
+            const RiderRides = await Rider.findAll({
+                where: {
+                    riderid: decoded.id,
+                    status: "done"
+                }
+            }).catch(errHandler)
+
+
+            if (RiderRides.length > 0) {
+
+                for (RiderRide of RiderRides) {
+                    const trip = await Trips.findOne({
                         where: {
-                            riderid: decoded.id,
+                            id: RiderRide.tripid,
                             status: "done"
+
                         }
-                    }).then(RiderRides => {
+                    }).catch(errHandler)
+
+                    if (trip) {
 
 
-                        if (RiderRides.length > 0) {
 
-                            RiderRides.forEach(RiderRide => {
+                        if (RiderRide.tofrom === "to") {
+                            const RequestRideToDetails = await RequestRideTo.findOne({
+                                where: {
+                                    id: RiderRide.requestid
 
-                                if (RiderRide) {
+                                }
+                            }).catch(errHandler)
+                            const OfferRideToDetails = await OfferRideTo.findOne({
+                                where: {
+                                    id: RiderRide.offerid
 
-                                    Trips.findOne({
+                                }
+                            }).catch(errHandler)
+
+                            const carDetails = await Car.findOne({
+                                where: {
+                                    id: OfferRideToDetails.carid
+                                }
+                            }).catch(errHandler)
+
+
+                            const DriverOftrip = await User.findOne({
+                                where: {
+                                    id: OfferRideToDetails.userid
+                                }
+                            }).catch(errHandler)
+                            const AllRidersTrip = await Rider.findAll({
+                                where: {
+                                    tripid: trip.id,
+                                    status: "done"
+                                }
+
+                            }).catch(errHandler)
+
+                            if (AllRidersTrip.length > 0) {
+                                jsonStr1 = '{"RiderTrip":[]}';
+                                var DriverDB = await Driver.findOne({
+                                    where: {
+                                        driverid: OfferRideToDetails.userid,
+                                        tripid: trip.id,
+                                        status: "done"
+                                    }
+                                }).catch(errHandler)
+
+                                objRider = JSON.parse(jsonStr1);
+                                const orgDetails = await Organization.findOne({
+                                    where: {
+
+                                        id: OfferRideToDetails.toorgid
+
+
+                                    }
+                                }).catch(errHandler)
+                                for (AllRidersTripEach of AllRidersTrip) {
+
+                                    const AllRidersTripDetails = await User.findOne({
                                         where: {
-                                            id: RiderRide.tripid,
-                                            status: "done"
+                                            id: AllRidersTripEach.riderid
 
-                                        }
-                                    }).then(trip => {
-                                        if (trip) {
-                                            countcheck++;
-
-                                            if (RiderRide.tofrom === "to") {
-                                                RequestRideTo.findOne({
-                                                    where: {
-                                                        id: RiderRide.requestid
-
-                                                    }
-                                                }).then(RequestRideToDetails => {
-
-                                                        OfferRideTo.findOne({
-                                                            where: {
-                                                                id: RiderRide.offerid
-
-                                                            }
-                                                        }).then(OfferRideToDetails => {
-                                                            Car.findOne({
-                                                                where: {
-                                                                    id: OfferRideToDetails.carid
-
-                                                                }
-                                                            }).then(carDetails => {
-                                                                User.findOne({
-                                                                    where: {
-                                                                        id: OfferRideToDetails.userid
-                                                                    }
-                                                                }).then(DriverOftrip => {
-                                                                    ///
-                                                                    Rider.findAll({
-                                                                        where: {
-                                                                            tripid: trip.id
-                                                                        }
-
-                                                                    }).then(AllRidersTrip => {
-                                                                        if (AllRidersTrip.length > 0) {
-                                                                            AllRidersTrip.forEach(AllRidersTripEach => {
-
-                                                                                User.findOne({
-                                                                                    where: {
-                                                                                        id: AllRidersTripEach.riderid
-                                                                                    }
-
-                                                                                }).then(AllRidersTripDetails => {
-                                                                                    if (AllRidersTripDetails) {
-                                                                                        if (AllRidersTripDetails.id !== RiderRide.riderid) {
-                                                                                            RiderTrip[c] = ({
-                                                                                                "username": AllRidersTripDetails.username,
-                                                                                                "firstname": AllRidersTripDetails.firstname,
-                                                                                                "lastname": AllRidersTripDetails.lastname,
-                                                                                                "phonenumber": AllRidersTripDetails.phonenumber,
-                                                                                                "photo": AllRidersTripDetails.photo
-
-                                                                                            })
-                                                                                            c++;
-                                                                                        }
-                                                                                    }
-
-                                                                                    if (c === AllRidersTrip.length - 1) {
-
-
-                                                                                        obj['PastTrips'].push({
-                                                                                            type: "Rider",
-                                                                                            "carDetails.model": carDetails.model,
-                                                                                            "carDetails.brand": carDetails.brand,
-                                                                                            "pickuplongitude": RequestRideToDetails.fromlongitude,
-                                                                                            "pickuplatitude": RequestRideToDetails.fromlatitude,
-                                                                                            "arrivalloclatitude": trip.endloclatitude,
-                                                                                            "arrivalloclongitude": trip.endloclongitude,
-                                                                                            "actualpickuptime": RiderRide.actualpickuptime,
-                                                                                            "actualarrivaltime": RiderRide.actualarrivaltime,
-                                                                                            "date": trip.date,
-                                                                                            "starttime": trip.starttime,
-                                                                                            "fare": RiderRide.fare,
-                                                                                            "total time": RiderRide.time,
-                                                                                            "Driverusername": DriverOftrip.username,
-                                                                                            "Driverfirstname": DriverOftrip.firstname,
-                                                                                            "Driverlastname": DriverOftrip.lastname,
-                                                                                            "Driverphonenumber": DriverOftrip.phonenumber,
-                                                                                            "Driverphoto": DriverOftrip.photo,
-                                                                                            "Riders in the trip": RiderTrip
-
-                                                                                        })
-                                                                                        count++;
-                                                                                        c = 0;
-                                                                                        RiderTrip = {}
-
-
-                                                                                        if (count === RiderRides.length) {
-                                                                                            res.status(200).send(obj)
-                                                                                        }
-
-
-                                                                                    }
-
-
-
-
-                                                                                }).catch(errHandler)
-
-
-
-
-                                                                            })
-
-                                                                        }
-
-
-
-                                                                    })
-
-
-                                                                }).catch(errHandler)
-
-
-
-
-
-
-
-
-                                                            }).catch(errHandler)
-
-
-
-                                                        }).catch(errHandler)
-
-
-                                                    }
-
-
-
-                                                ).catch(errHandler)
-
-
-                                            } else {
-                                                //from
-
-                                                RequestRideFrom.findOne({
-                                                    where: {
-                                                        id: RiderRide.requestid
-
-                                                    }
-                                                }).then(RequestRideFromDetails => {
-
-                                                        OfferRideFrom.findOne({
-                                                            where: {
-                                                                id: RiderRide.offerid
-
-                                                            }
-                                                        }).then(OfferRideFromDetails => {
-                                                            Car.findOne({
-                                                                where: {
-                                                                    id: OfferRideFromDetails.carid
-
-                                                                }
-                                                            }).then(carDetails => {
-                                                                User.findOne({
-                                                                    where: {
-                                                                        id: OfferRideFromDetails.userid
-                                                                    }
-                                                                }).then(DriverOftrip => {
-                                                                    ///
-                                                                    Rider.findAll({
-                                                                        where: {
-                                                                            tripid: trip.id
-                                                                        }
-
-                                                                    }).then(AllRidersTrip => {
-                                                                        if (AllRidersTrip.length > 0) {
-                                                                            AllRidersTrip.forEach(AllRidersTripEach => {
-
-                                                                                User.findOne({
-                                                                                    where: {
-                                                                                        id: AllRidersTripEach.riderid
-                                                                                    }
-
-                                                                                }).then(AllRidersTripDetails => {
-
-                                                                                    if (AllRidersTripDetails) {
-                                                                                        if (AllRidersTripDetails.id !== RiderRide.riderid) {
-                                                                                            RiderTrip[c] = ({
-                                                                                                "username": AllRidersTripDetails.username,
-                                                                                                "firstname": AllRidersTripDetails.firstname,
-                                                                                                "lastname": AllRidersTripDetails.lastname,
-                                                                                                "phonenumber": AllRidersTripDetails.phonenumber,
-                                                                                                "photo": AllRidersTripDetails.photo
-
-                                                                                            })
-                                                                                            c++;
-                                                                                        }
-
-                                                                                    }
-
-                                                                                    if (c === AllRidersTrip.length - 1) {
-
-                                                                                        obj['PastTrips'].push({
-                                                                                            type: "Rider",
-                                                                                            "carDetails.model": carDetails.model,
-                                                                                            "carDetails.brand": carDetails.brand,
-                                                                                            "arrivallongitude": RequestRideFromDetails.tolongitude,
-                                                                                            "arrivallatitude": RequestRideFromDetails.tolatitude,
-                                                                                            "pickuploclatitude": trip.endloclatitude,
-                                                                                            "pickuploclongitude": trip.endloclongitude,
-                                                                                            "date": trip.date,
-                                                                                            "starttime": trip.starttime,
-                                                                                            "actualpickuptime": RiderRide.actualpickuptime,
-                                                                                            "actualarrivaltime": RiderRide.actualarrivaltime,
-                                                                                            "fare": RiderRide.fare,
-                                                                                            "total time": RiderRide.time,
-                                                                                            "Driverusername": DriverOftrip.username,
-                                                                                            "Driverfirstname": DriverOftrip.firstname,
-                                                                                            "Driverlastname": DriverOftrip.lastname,
-                                                                                            "Driverphonenumber": DriverOftrip.phonenumber,
-                                                                                            "Driverphoto": DriverOftrip.photo,
-                                                                                            "Riders in the trip": RiderTrip
-
-                                                                                        })
-                                                                                        count++;
-                                                                                        c = 0;
-                                                                                        RiderTrip = {}
-
-
-                                                                                        if (count === RiderRides.length) {
-                                                                                            res.status(200).send(obj)
-                                                                                        }
-
-
-                                                                                    }
-
-
-
-
-                                                                                }).catch(errHandler)
-
-
-
-
-                                                                            })
-
-                                                                        }
-
-
-
-                                                                    }).catch(errHandler)
-
-
-                                                                }).catch(errHandler)
-
-
-
-
-
-
-
-
-                                                            }).catch(errHandler)
-
-
-
-                                                        }).catch(errHandler)
-
-
-                                                    }
-
-
-
-                                                ).catch(errHandler)
-
-                                            }
-                                        } else if (countcheck == RiderRides.length) {
-                                            res.status(409).send({ error: "No Trips", message: "No Trips" })
-                                            res.end()
                                         }
 
                                     }).catch(errHandler)
-                                }
-                            })
-                        } else {
 
-                            Driver.findAll({
-                                where: {
-                                    driverid: decoded.id,
-                                    status: "done"
-                                }
-                            }).then(DriverRides => {
 
-
-                                if (DriverRides.length > 0) {
-
-                                    DriverRides.forEach(DriverRide => {
-                                        if (DriverRide) {
-                                            Trips.findOne({
-                                                where: {
-                                                    id: DriverRide.tripid,
-                                                    status: "done"
-
-                                                }
-                                            }).then(trip => {
-                                                if (trip) {
-                                                    countcheck++;
-
-                                                    if (DriverRide.tofrom === "to") {
-
-
-                                                        OfferRideTo.findOne({
-                                                            where: {
-                                                                id: DriverRide.offerid
-
-                                                            }
-                                                        }).then(OfferRideToDetails => {
-
-                                                            Car.findOne({
-                                                                where: {
-                                                                    id: OfferRideToDetails.carid
-
-                                                                }
-                                                            }).then(carDetails => {
-                                                                Rider.findAll({
-                                                                    where: {
-                                                                        offerid: DriverRide.offerid
-                                                                    }
-
-                                                                }).then(AllRidersTrip => {
-                                                                    if (AllRidersTrip.length > 0) {
-                                                                        AllRidersTrip.forEach(AllRidersTripEach => {
-
-                                                                            User.findOne({
-                                                                                where: {
-                                                                                    id: AllRidersTripEach.riderid
-                                                                                }
-
-                                                                            }).then(AllRidersTripDetails => {
-
-                                                                                if (AllRidersTripDetails) {
-
-                                                                                    RiderTrip[c] = ({
-                                                                                        "username": AllRidersTripDetails.username,
-                                                                                        "firstname": AllRidersTripDetails.firstname,
-                                                                                        "lastname": AllRidersTripDetails.lastname,
-                                                                                        "phonenumber": AllRidersTripDetails.phonenumber,
-                                                                                        "photo": AllRidersTripDetails.photo
-
-                                                                                    })
-                                                                                    c++;
-
-
-                                                                                }
-
-
-                                                                                if (c === AllRidersTrip.length) {
-
-
-                                                                                    obj['PastTrips'].push({
-                                                                                        type: "driver",
-                                                                                        "carDetails.model": carDetails.model,
-                                                                                        "carDetails.brand": carDetails.brand,
-                                                                                        "date": trip.date,
-                                                                                        "actualpickuptime": DriverRide.actualpickuptime,
-                                                                                        "actualarrivaltime": DriverRide.actualarrivaltime,
-                                                                                        "fare": DriverRide.fare,
-                                                                                        "total time": DriverRide.time,
-                                                                                        "startloclatitude": trip.startloclatitude,
-                                                                                        "startloclongitude": trip.startloclongitude,
-                                                                                        "endloclatitude": trip.endloclatitude,
-                                                                                        "endloclongitude": trip.endloclongitude,
-                                                                                        "Riders in the trip": RiderTrip
-
-                                                                                    })
-                                                                                    count++;
-                                                                                    c = 0;
-                                                                                    RiderTrip = {}
-
-
-                                                                                    if (count === DriverRides.length) {
-                                                                                        res.status(200).send(obj)
-                                                                                    }
-
-
-                                                                                }
-
-
-
-
-                                                                            }).catch(errHandler)
-
-
-
-
-                                                                        })
-
-                                                                    }
-
-
-
-                                                                }).catch(errHandler)
-
-
-
-
-
-
-                                                            }).catch(errHandler)
-
-                                                        }).catch(errHandler)
-
-                                                    } else {
-
-
-
-                                                        OfferRideFrom.findOne({
-                                                            where: {
-                                                                id: DriverRide.offerid
-
-                                                            }
-                                                        }).then(OfferRideFromDetails => {
-
-                                                            Car.findOne({
-                                                                where: {
-                                                                    id: OfferRideFromDetails.carid
-
-                                                                }
-                                                            }).then(carDetails => {
-                                                                Rider.findAll({
-                                                                    where: {
-                                                                        offerid: DriverRide.offerid
-                                                                    }
-
-                                                                }).then(AllRidersTrip => {
-                                                                    if (AllRidersTrip.length > 0) {
-                                                                        AllRidersTrip.forEach(AllRidersTripEach => {
-
-                                                                            User.findOne({
-                                                                                where: {
-                                                                                    id: AllRidersTripEach.riderid
-                                                                                }
-
-                                                                            }).then(AllRidersTripDetails => {
-
-                                                                                if (AllRidersTripDetails) {
-
-                                                                                    RiderTrip[c] = ({
-                                                                                        "username": AllRidersTripDetails.username,
-                                                                                        "firstname": AllRidersTripDetails.firstname,
-                                                                                        "lastname": AllRidersTripDetails.lastname,
-                                                                                        "phonenumber": AllRidersTripDetails.phonenumber,
-                                                                                        "photo": AllRidersTripDetails.photo
-
-                                                                                    })
-                                                                                    c++;
-
-
-                                                                                }
-
-                                                                                if (c === AllRidersTrip.length) {
-
-                                                                                    obj['PastTrips'].push({
-                                                                                        type: "driver",
-                                                                                        "carDetails.model": carDetails.model,
-                                                                                        "carDetails.brand": carDetails.brand,
-                                                                                        "date": trip.date,
-                                                                                        "actualpickuptime": DriverRide.actualpickuptime,
-                                                                                        "actualarrivaltime": DriverRide.actualarrivaltime,
-                                                                                        "fare": DriverRide.fare,
-                                                                                        "total time": DriverRide.time,
-                                                                                        "startloclatitude": trip.startloclatitude,
-                                                                                        "startloclongitude": trip.startloclongitude,
-                                                                                        "endloclatitude": trip.endloclatitude,
-                                                                                        "endloclongitude": trip.endloclongitude,
-                                                                                        "Riders in the trip": RiderTrip
-
-                                                                                    })
-                                                                                    count++;
-                                                                                    c = 0;
-                                                                                    RiderTrip = {}
-
-                                                                                    if (count === DriverRides.length) {
-                                                                                        res.status(200).send(obj)
-                                                                                    }
-
-
-                                                                                }
-
-
-
-
-                                                                            }).catch(errHandler)
-
-
-
-
-                                                                        })
-
-                                                                    }
-
-
-
-                                                                }).catch(errHandler)
-
-                                                            }).catch(errHandler)
-
-                                                        }).catch(errHandler)
-
-
-
-                                                    }
-                                                } else if (countcheck == DriverRides.length) {
-                                                    res.status(409).send({ error: "No Trips", message: "No Trips" })
-                                                    res.end()
-
-                                                }
-                                            }).catch(errHandler)
-
+                                    const RiderRequestRideToDetails = await RequestRideTo.findOne({
+                                        where: {
+                                            id: AllRidersTripEach.requestid
 
                                         }
-                                    })
-                                } else {
+                                    }).catch(errHandler)
 
-                                    res.status(409).send({ error: "No Trips", message: "No Trips" })
-                                    res.end()
+
+                                    if (AllRidersTripDetails) {
+                                        if (AllRidersTripDetails.id !== RiderRide.riderid) {
+                                            objRider['RiderTrip'].push({
+                                                "id": AllRidersTripDetails.id,
+                                                "username": AllRidersTripDetails.username,
+                                                "firstname": AllRidersTripDetails.firstname,
+                                                "lastname": AllRidersTripDetails.lastname,
+                                                "phonenumber": AllRidersTripDetails.phonenumber,
+                                                "photo": AllRidersTripDetails.photo,
+                                                "rating": AllRidersTripDetails.rating,
+                                                "gender": AllRidersTripDetails.gender,
+                                                "latitude": RiderRequestRideToDetails.fromlatitude,
+                                                "longitude": RiderRequestRideToDetails.fromlongitude,
+                                                "time": AllRidersTripEach.pickuptime
+                                            })
+
+                                        }
+                                    }
+
+
+
                                 }
-                            })
+                                obj['ScheduledTrips'].push({
+                                    tofrom: "to",
+                                    type: "Rider",
+                                    "tripid": trip.id,
+                                    "carModel": carDetails.model,
+                                    "carBrand": carDetails.brand,
+                                    "carYear": carDetails.year,
+                                    "carType": carDetails.type,
+                                    "carColor": carDetails.color,
+                                    "carPlateletters": carDetails.plateletters,
+                                    "carPlatenumbers": carDetails.platenumbers,
+                                    "homelongitude": RequestRideToDetails.fromlongitude,
+                                    "homelatitude": RequestRideToDetails.fromlatitude,
+                                    "orgname": orgDetails.name,
+                                    "orglatitude": orgDetails.latitude,
+                                    "orglongitude": orgDetails.longitude,
+                                    "pickuptime": RiderRide.pickuptime,
+                                    "arrivaltime": RiderRide.arrivaltime,
+                                    "date": trip.date,
+                                    "fare": RiderRide.fare,
+                                    "numberRiders": trip.numberofseats,
+                                    "ridewith": RequestRideToDetails.ridewith,
+                                    "smoking": RequestRideToDetails.smoking,
+                                    "Driver": ({
+                                        "Driverusername": DriverOftrip.username,
+                                        "Driverfirstname": DriverOftrip.firstname,
+                                        "Driverlastname": DriverOftrip.lastname,
+                                        "Driverphonenumber": DriverOftrip.phonenumber,
+                                        "Driverphoto": DriverOftrip.photo,
+                                        "DriverGender": DriverOftrip.gender,
+                                        "DriverRating": DriverOftrip.rating,
+                                        "time": DriverDB.actualpickuptime,
+                                        "longitude": OfferRideToDetails.fromlongitude,
+                                        "latitude": OfferRideToDetails.fromlatitude
+                                    }),
+
+                                    "Riders in the trip": objRider
+
+                                })
+                                countobj++;
+
+                            }
+
+                        } else {
+                            //from
+
+                            const RequestRideFromDetails = await RequestRideFrom.findOne({
+                                where: {
+                                    id: RiderRide.requestid
+
+                                }
+                            }).catch(errHandler)
+
+
+                            const OfferRideFromDetails = await OfferRideFrom.findOne({
+                                where: {
+                                    id: RiderRide.offerid
+
+                                }
+                            }).catch(errHandler)
+
+                            const carDetails = await Car.findOne({
+                                where: {
+                                    id: OfferRideFromDetails.carid
+
+                                }
+                            }).catch(errHandler)
+                            const DriverOftrip = await User.findOne({
+                                where: {
+                                    id: OfferRideFromDetails.userid
+                                }
+                            }).catch(errHandler)
+                            const AllRidersTrip = await Rider.findAll({
+                                where: {
+                                    tripid: trip.id,
+                                    status: "done"
+                                }
+
+                            }).catch(errHandler)
+
+                            if (AllRidersTrip.length > 0) {
+                                jsonStr1 = '{"RiderTrip":[]}';
+
+                                objRider = JSON.parse(jsonStr1);
+                                const orgDetails = await Organization.findOne({
+                                    where: {
+
+                                        id: OfferRideFromDetails.fromorgid
+
+
+                                    }
+                                }).catch(errHandler)
+                                var DriverDB = await Driver.findOne({
+                                    where: {
+                                        driverid: OfferRideFromDetails.userid,
+                                        tripid: trip.id,
+                                        status: "done"
+                                    }
+                                }).catch(errHandler)
+
+                                for (AllRidersTripEach of AllRidersTrip) {
+
+                                    const AllRidersTripDetails = await User.findOne({
+                                        where: {
+                                            id: AllRidersTripEach.riderid
+                                        }
+
+                                    }).catch(errHandler)
+
+
+                                    const RiderRequestRideFromDetails = await RequestRideFrom.findOne({
+                                        where: {
+                                            id: AllRidersTripEach.requestid
+
+                                        }
+                                    }).catch(errHandler)
+                                    if (AllRidersTripDetails) {
+
+                                        if (AllRidersTripDetails.id !== RiderRide.riderid) {
+                                            objRider['RiderTrip'].push({
+                                                "id": AllRidersTripDetails.id,
+                                                "username": AllRidersTripDetails.username,
+                                                "firstname": AllRidersTripDetails.firstname,
+                                                "lastname": AllRidersTripDetails.lastname,
+                                                "phonenumber": AllRidersTripDetails.phonenumber,
+                                                "photo": AllRidersTripDetails.photo,
+                                                "rating": AllRidersTripDetails.rating,
+                                                "gender": AllRidersTripDetails.gender,
+                                                "latitude": RiderRequestRideFromDetails.tolatitude,
+                                                "longitude": RiderRequestRideFromDetails.tolongitude,
+                                                "time": AllRidersTripEach.arrivaltime
+
+                                            })
+
+                                        }
+
+                                    }
+
+
+
+                                }
+                                obj['ScheduledTrips'].push({
+                                    "tofrom": "from",
+                                    type: "Rider",
+                                    "tripid": trip.id,
+                                    "carModel": carDetails.model,
+                                    "carBrand": carDetails.brand,
+                                    "carYear": carDetails.year,
+                                    "carType": carDetails.type,
+                                    "carColor": carDetails.color,
+                                    "carPlateletters": carDetails.plateletters,
+                                    "carPlatenumbers": carDetails.platenumbers,
+                                    "homelongitude": RequestRideFromDetails.tolongitude,
+                                    "homelatitude": RequestRideFromDetails.tolatitude,
+                                    "orgname": orgDetails.name,
+                                    "orglatitude": orgDetails.latitude,
+                                    "orglongitude": orgDetails.longitude,
+                                    "pickuptime": RiderRide.pickuptime,
+                                    "arrivaltime": RiderRide.arrivaltime,
+                                    "date": trip.date,
+                                    "fare": RiderRide.fare,
+                                    "numberRiders": trip.numberofseats,
+                                    "ridewith": RequestRideFromDetails.ridewith,
+                                    "smoking": RequestRideFromDetails.smoking,
+                                    "Driver": ({
+                                        "Driverusername": DriverOftrip.username,
+                                        "Driverfirstname": DriverOftrip.firstname,
+                                        "Driverlastname": DriverOftrip.lastname,
+                                        "Driverphonenumber": DriverOftrip.phonenumber,
+                                        "Driverphoto": DriverOftrip.photo,
+                                        "DriverGender": DriverOftrip.gender,
+                                        "DriverRating": DriverOftrip.rating,
+                                        "time": DriverDB.actualarrivaltime,
+                                        "longitude": OfferRideFromDetails.tolongitude,
+                                        "latitude": OfferRideFromDetails.tolatitude
+                                    }),
+
+                                    "Riders in the trip": objRider
+
+                                })
+                                countobj++;
+
+                            }
 
                         }
 
-                    }).catch(errHandler)
-
-                } else {
-                    res.status(404).send({ message: "User not found" })
-                    res.end()
+                    }
                 }
             }
 
-        ).catch(err => {
-            console.log('error :' + err)
-        })
+            var DriverRides = await Driver.findAll({
+                where: {
+                    driverid: decoded.id,
+                    status: "done"
+                }
+            }).catch(errHandler)
+
+
+
+            if (DriverRides.length > 0) {
+
+                for (DriverRide of DriverRides) {
+
+                    if (DriverRide) {
+
+                        const trip = await Trips.findOne({
+                            where: {
+                                id: DriverRide.tripid,
+                                status: "done"
+
+                            }
+                        }).catch(errHandler)
+
+                        if (trip) {
+
+                            if (DriverRide.tofrom === "to") {
+                                const OfferRideToDetails = await OfferRideTo.findOne({
+                                    where: {
+                                        id: DriverRide.offerid
+
+                                    }
+                                }).catch(errHandler)
+                                const carDetails = await Car.findOne({
+                                    where: {
+                                        id: OfferRideToDetails.carid
+
+                                    }
+                                }).catch(errHandler)
+                                const AllRidersTrip = await Rider.findAll({
+                                    where: {
+                                        tripid: trip.id,
+                                        offerid: DriverRide.offerid,
+                                        status: "done",
+                                        tofrom: "to"
+                                    }
+
+                                }).catch(errHandler)
+                                if (AllRidersTrip.length > 0) {
+
+                                    jsonStr1 = '{"RiderTrip":[]}';
+
+                                    objRider = JSON.parse(jsonStr1);
+                                    const orgDetails = await Organization.findOne({
+                                        where: {
+
+                                            id: OfferRideToDetails.toorgid
+
+
+                                        }
+                                    }).catch(errHandler)
+                                    for (AllRidersTripEach of AllRidersTrip) {
+
+                                        const AllRidersTripDetails = await User.findOne({
+                                            where: {
+                                                id: AllRidersTripEach.riderid
+                                            }
+
+                                        }).catch(errHandler)
+                                        const RiderRequestRideToDetails = await RequestRideTo.findOne({
+                                            where: {
+                                                id: AllRidersTripEach.requestid
+
+
+                                            }
+                                        }).catch(errHandler)
+
+                                        if (AllRidersTripDetails) {
+
+                                            objRider['RiderTrip'].push({
+                                                "id": AllRidersTripDetails.id,
+                                                "username": AllRidersTripDetails.username,
+                                                "firstname": AllRidersTripDetails.firstname,
+                                                "lastname": AllRidersTripDetails.lastname,
+                                                "phonenumber": AllRidersTripDetails.phonenumber,
+                                                "photo": AllRidersTripDetails.photo,
+                                                "rating": AllRidersTripDetails.rating,
+                                                "gender": AllRidersTripDetails.gender,
+                                                "latitude": RiderRequestRideToDetails.fromlatitude,
+                                                "longitude": RiderRequestRideToDetails.fromlongitude,
+                                                "fare": AllRidersTripEach.fare,
+                                                "time": AllRidersTripEach.pickuptime
+
+                                            })
+
+
+
+
+                                        }
+
+
+                                    }
+                                    obj['ScheduledTrips'].push({
+                                        "tofrom": "to",
+                                        type: "driver",
+                                        "tripid": trip.id,
+                                        "carModel": carDetails.model,
+                                        "carBrand": carDetails.brand,
+                                        "carYear": carDetails.year,
+                                        "carType": carDetails.type,
+                                        "carColor": carDetails.color,
+                                        "carPlateletters": carDetails.plateletters,
+                                        "carPlatenumbers": carDetails.platenumbers,
+                                        "homelongitude": trip.startloclongitude,
+                                        "homelatitude": trip.startloclatitude,
+                                        "orgname": orgDetails.name,
+                                        "orglatitude": orgDetails.latitude,
+                                        "orglongitude": orgDetails.longitude,
+                                        "pickuptime": DriverRide.pickuptime,
+                                        "arrivaltime": DriverRide.arrivaltime,
+                                        "date": trip.date,
+                                        "fare": DriverRide.fare,
+                                        "numberRiders": trip.numberofseats,
+                                        "ridewith": OfferRideToDetails.ridewith,
+                                        "smoking": OfferRideToDetails.smoking,
+                                        "Riders in the trip": objRider
+
+                                    })
+                                    countobj++;
+
+                                }
+
+
+                            } else {
+                                const OfferRideFromDetails = await OfferRideFrom.findOne({
+                                    where: {
+                                        id: DriverRide.offerid
+
+                                    }
+                                }).catch(errHandler)
+
+
+                                const carDetails = await Car.findOne({
+                                    where: {
+                                        id: OfferRideFromDetails.carid
+
+                                    }
+                                }).catch(errHandler)
+                                const AllRidersTrip = await Rider.findAll({
+                                    where: {
+                                        tripid: trip.id,
+                                        offerid: DriverRide.offerid,
+                                        status: "done"
+                                    }
+
+                                }).catch(errHandler)
+
+                                if (AllRidersTrip.length > 0) {
+                                    jsonStr1 = '{"RiderTrip":[]}';
+
+                                    objRider = JSON.parse(jsonStr1);
+                                    const orgDetails = await Organization.findOne({
+                                        where: {
+
+                                            id: OfferRideFromDetails.fromorgid
+
+
+                                        }
+                                    }).catch(errHandler)
+                                    for (AllRidersTripEach of AllRidersTrip) {
+
+                                        const AllRidersTripDetails = await User.findOne({
+                                            where: {
+                                                id: AllRidersTripEach.riderid
+                                            }
+
+                                        }).catch(errHandler)
+                                        const RiderRequestRideFromDetails = await RequestRideFrom.findOne({
+                                            where: {
+                                                id: AllRidersTripEach.requestid
+
+                                            }
+                                        }).catch(errHandler)
+
+                                        if (AllRidersTripDetails) {
+
+                                            objRider['RiderTrip'].push({
+                                                "id": AllRidersTripDetails.id,
+                                                "username": AllRidersTripDetails.username,
+                                                "firstname": AllRidersTripDetails.firstname,
+                                                "lastname": AllRidersTripDetails.lastname,
+                                                "phonenumber": AllRidersTripDetails.phonenumber,
+                                                "photo": AllRidersTripDetails.photo,
+                                                "rating": AllRidersTripDetails.rating,
+                                                "gender": AllRidersTripDetails.gender,
+                                                "latitude": RiderRequestRideFromDetails.tolatitude,
+                                                "longitude": RiderRequestRideFromDetails.tolongitude,
+                                                "fare": AllRidersTripEach.fare,
+                                                "time": AllRidersTripEach.arrivaltime
+
+                                            })
+
+
+                                        }
+
+
+
+
+                                    }
+                                    obj['ScheduledTrips'].push({
+
+                                        "tofrom": "from",
+                                        type: "driver",
+                                        "tripid": trip.id,
+                                        "carModel": carDetails.model,
+                                        "carBrand": carDetails.brand,
+                                        "carYear": carDetails.year,
+                                        "carType": carDetails.type,
+                                        "carColor": carDetails.color,
+                                        "carPlateletters": carDetails.plateletters,
+                                        "carPlatenumbers": carDetails.platenumbers,
+                                        "homelongitude": trip.endloclongitude,
+                                        "homelatitude": trip.endloclatitude,
+                                        "orgname": orgDetails.name,
+                                        "orglatitude": orgDetails.latitude,
+                                        "orglongitude": orgDetails.longitude,
+                                        "pickuptime": DriverRide.pickuptime,
+                                        "arrivaltime": DriverRide.arrivaltime,
+                                        "date": trip.date,
+                                        "fare": DriverRide.fare,
+                                        "numberRiders": trip.numberofseats,
+                                        "ridewith": OfferRideFromDetails.ridewith,
+                                        "smoking": OfferRideFromDetails.smoking,
+                                        "Riders in the trip": objRider
+
+
+
+
+                                    })
+                                    countobj++;
+
+                                }
+
+
+
+                            }
+                        }
+
+
+
+
+                    }
+                }
+            }
+            if (countobj !== 0) {
+                res.status(200).send(obj)
+                res.end()
+            } else {
+
+                res.status(409).send({ error: "No Trips found", message: "No Trips found" })
+                res.end()
+            }
+
+
+
+
+
+        } else {
+            res.status(404).send({ error: "User not found", message: "User not found" })
+            res.end()
+        }
+
     }
 })
 
