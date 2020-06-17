@@ -10,6 +10,7 @@ const offerRideTo = require('../models/offerrideto');
 
 //scheduledTrip,offerTo/From,requestTo/From,cancel to/from,
 var CurrentToken = 0;
+var CurrentToken2 = 0;
 var offerToId = 0
 var offerFromId = 0
 var requestToId = 0
@@ -26,7 +27,7 @@ afterAll(async done => {
     done();
 });
 
-test('Signing in', async() => {
+test('Signing in with rider ', async() => {
     const response = await request(app)
         .post('/api/signin')
         .send({
@@ -37,17 +38,20 @@ test('Signing in', async() => {
 
 })
 
-test('Scheduled trips', async() => {
+
+test('Signing in with driver', async() => {
     const response = await request(app)
-        .post('/api/scheduledtrips')
-        .set('Authorization', CurrentToken).expect(200)
-        // console.log(JSON.stringify(response.body))
+        .post('/api/signin')
+        .send({
+            "EmailOrPhone": "nouran.magdy@live.com",
+            "password": "12345n67-"
+        }).expect(200)
+    CurrentToken2 = response.body.token
 
 })
 
-
 test('offer to-organization trip', async() => {
-    var decoded = jwt.verify(CurrentToken, process.env.SECRET_KEY)
+    var decoded = jwt.verify(CurrentToken2, process.env.SECRET_KEY)
     const response = await request(app)
         .post('/api/offerrideto')
         .send({
@@ -61,7 +65,7 @@ test('offer to-organization trip', async() => {
             "smoking": "no",
             "numberofseats": 4
         })
-        .set('Authorization', CurrentToken).expect(200)
+        .set('Authorization', CurrentToken2).expect(200)
 
     expect(response.body.message).toBe("Offer is made successfully")
 
@@ -91,7 +95,7 @@ test('offer to-organization trip at the same time', async() => {
             "smoking": "no",
             "numberofseats": 4
         })
-        .set('Authorization', CurrentToken).expect(400)
+        .set('Authorization', CurrentToken2).expect(400)
 
     expect(response.body.message).toBe("You can't offer two rides at the same time")
         //console.log(JSON.stringify(response.body))
@@ -113,7 +117,7 @@ test('offer to-organization trip with invalid organization', async() => {
             "smoking": "no",
             "numberofseats": 4
         })
-        .set('Authorization', CurrentToken).expect(400)
+        .set('Authorization', CurrentToken2).expect(400)
 
     expect(response.body.message).toBe("You are not assigned to this organization")
         //console.log(JSON.stringify(response.body))
@@ -136,7 +140,7 @@ test('offer to-organization trip with empty number of seats', async() => {
             "smoking": "no",
             "numberofseats": ""
         })
-        .set('Authorization', CurrentToken).expect(400)
+        .set('Authorization', CurrentToken2).expect(400)
 
     expect(response.body.message).toBe("Number of seats can't be empty")
 
@@ -158,7 +162,7 @@ test('offer to-organization trip with invalid earliest trip start time', async()
             "smoking": "no",
             "numberofseats": 4
         })
-        .set('Authorization', CurrentToken).expect(400)
+        .set('Authorization', CurrentToken2).expect(400)
 
     expect(response.body.message).toBe("Arrival time can't be before earliest time")
 
@@ -168,7 +172,7 @@ test('offer to-organization trip with invalid earliest trip start time', async()
 //OFFER FROM
 
 test('offer return-from-organization trip', async() => {
-    var decoded = jwt.verify(CurrentToken, process.env.SECRET_KEY)
+    var decoded = jwt.verify(CurrentToken2, process.env.SECRET_KEY)
     const response = await request(app)
         .post('/api/offerridefrom')
         .send({
@@ -182,7 +186,7 @@ test('offer return-from-organization trip', async() => {
             "smoking": "no",
             "numberofseats": 4
         })
-        .set('Authorization', CurrentToken).expect(200)
+        .set('Authorization', CurrentToken2).expect(200)
 
     expect(response.body.message).toBe("Offer is made successfully")
 
@@ -213,7 +217,7 @@ test('offer return-from-organization trip at the same time', async() => {
             "smoking": "no",
             "numberofseats": 4
         })
-        .set('Authorization', CurrentToken).expect(400)
+        .set('Authorization', CurrentToken2).expect(400)
 
     expect(response.body.message).toBe("You can't offer two rides at the same time")
 
@@ -457,8 +461,15 @@ test('request to-organization trip with invalid organization', async() => {
 
 })
 
+
+test('Show pending offers', async() => {
+    const response = await request(app)
+        .post('/api/showoffers')
+        .set('Authorization', CurrentToken2).expect(200)
+})
+
 test('cancel to-organization offer', async() => {
-    var decoded = jwt.verify(CurrentToken, process.env.SECRET_KEY)
+    var decoded = jwt.verify(CurrentToken2, process.env.SECRET_KEY)
     const response = await request(app)
         .post('/api/cancelOffer')
         .send({
@@ -468,7 +479,7 @@ test('cancel to-organization offer', async() => {
 
 
         })
-        .set('Authorization', CurrentToken).expect(200)
+        .set('Authorization', CurrentToken2).expect(200)
 
     expect(response.body.message).toBe("The offer is cancelled")
     const resultafter = await offerRideTo.findOne({
@@ -482,8 +493,10 @@ test('cancel to-organization offer', async() => {
     expect(resultafter.dataValues.status).toBe("cancelled")
 
 })
+
+
 test('cancel from-organization offer', async() => {
-    var decoded = jwt.verify(CurrentToken, process.env.SECRET_KEY)
+    var decoded = jwt.verify(CurrentToken2, process.env.SECRET_KEY)
     const response = await request(app)
         .post('/api/cancelOffer')
         .send({
@@ -493,7 +506,7 @@ test('cancel from-organization offer', async() => {
 
 
         })
-        .set('Authorization', CurrentToken).expect(200)
+        .set('Authorization', CurrentToken2).expect(200)
 
     expect(response.body.message).toBe("The offer is cancelled")
     const resultafter = await offerRideFrom.findOne({
@@ -508,6 +521,23 @@ test('cancel from-organization offer', async() => {
 
 })
 
+
+test('Show pending offers after cancellation', async() => {
+    const response = await request(app)
+        .post('/api/showoffers')
+        .set('Authorization', CurrentToken2).expect(409)
+    expect(response.body.message).toBe("No pending offers")
+})
+
+
+test('Show pending requests', async() => {
+    const response = await request(app)
+        .post('/api/showrequests')
+        .set('Authorization', CurrentToken).expect(200)
+
+})
+
+
 test('cancel to-organization request', async() => {
     var decoded = jwt.verify(CurrentToken, process.env.SECRET_KEY)
     const response = await request(app)
@@ -516,7 +546,6 @@ test('cancel to-organization request', async() => {
 
             "tofrom": "to",
             "requestid": requestToId
-
 
         })
         .set('Authorization', CurrentToken).expect(200)
@@ -533,6 +562,7 @@ test('cancel to-organization request', async() => {
     expect(resultafter.dataValues.status).toBe("cancelled")
 
 })
+
 
 
 test('cancel from-organization request', async() => {
@@ -559,4 +589,13 @@ test('cancel from-organization request', async() => {
     });
     expect(resultafter.dataValues.status).toBe("cancelled")
 
+})
+
+
+
+test('Show pending requests after cancellation', async() => {
+    const response = await request(app)
+        .post('/api/showrequests')
+        .set('Authorization', CurrentToken).expect(409)
+    expect(response.body.message).toBe("No pending requests")
 })
