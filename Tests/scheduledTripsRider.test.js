@@ -448,3 +448,40 @@ test('Choose from available return-from-organization trips', async() => {
 
 
 }, 100000)
+
+
+
+test('Search trips', async() => {
+    const response = await request(app)
+        .post('/api/searchTrip')
+        .send({
+            "tofrom": "",
+            "toorgid": "",
+            "fromorgid": "",
+            "departuretime": "",
+            "arrivaltime": "",
+            "ridewith": "",
+            "smoking": "",
+            "date": "2020-05-27"
+        }).set('Authorization', CurrentToken).expect(200)
+
+
+}, 100000)
+
+
+test('Search for trips with invalid date', async() => {
+    const response = await request(app)
+        .post('/api/searchTrip')
+        .send({
+            "tofrom": "",
+            "toorgid": "",
+            "fromorgid": "",
+            "departuretime": "",
+            "arrivaltime": "",
+            "ridewith": "",
+            "smoking": "",
+            "date": "2020-01-29"
+        }).set('Authorization', CurrentToken).expect(409)
+    expect(response.body.message).toBe("No trips are found")
+
+}, 100000)
