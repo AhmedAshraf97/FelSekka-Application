@@ -73,7 +73,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
           builder: (BuildContext context) {
             return RichAlertDialog(
               alertTitle: richTitle("User error"),
-              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+              alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
               alertType: RichAlertType.WARNING,
               dialogIcon: Icon(
                 Icons.warning,
@@ -499,7 +499,6 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                                   else{
                                                     final pref = await SharedPreferences.getInstance();
                                                     await pref.clear();
-                                                    Navigator.pop(context);
                                                     Navigator.push(context,AnimatedPageRoute(widget: SignIn()));
                                                      }
                                                 },

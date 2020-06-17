@@ -67,6 +67,7 @@ class _ProfileState extends State<Profile> {
   Future<String> getData() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = await (prefs.getString('token')??'');
+    print(token);
     String url="http://3.81.22.120:3000/api/retrieveuserdata";
     Response response =await post(url, headers:{'authorization': token});
     if(response.statusCode != 200)

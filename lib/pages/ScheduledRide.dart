@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:felsekka/pages/navigation.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
+import 'package:felsekka/pages/signin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_phone_state/flutter_phone_state.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
@@ -13,6 +15,8 @@ import 'package:progress_indicators/progress_indicators.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'AnimatedPage Route.dart';
 
 
 String getDisplayRating(double rating) {
@@ -97,6 +101,7 @@ class ScheduledRides extends StatefulWidget with NavigationStates{
 }
 
 class _ScheduledRidesState extends State<ScheduledRides> {
+  var arrived= false;
   List<GestureDetector> listRides=[];
   int noRides=0;
   String token="";
@@ -115,9 +120,8 @@ class _ScheduledRidesState extends State<ScheduledRides> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenFont= MediaQuery.of(context).textScaleFactor;
     final dateNow = DateTime.now();
-    final datetemp= DateTime.parse("2020-05-27 01:39:00");
+    final datetemp= DateTime.parse("2020-05-27 02:00:01");
     final differenceDates = datetemp.difference(DateTime.parse(widget.date+" "+widget.pickupTime)).inSeconds; // negative old date
-    print(differenceDates);
     String beforeOrAfter="before";
     String after15="no";
     String cancel="no";
@@ -524,7 +528,160 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                                     color: Colors.indigo[400], style: BorderStyle.solid,
                                                     width: 1),
                                                 onPressed: () {
-                                                  Navigator.pop(context);
+                                                  Position position;
+                                                  var timenow= DateTime.now();
+                                                  String actualpickuptime= DateFormat('Hms').format(timenow);
+                                                  Map<String, String> body;
+                                                  void getlocation() async{
+                                                    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager = true;
+                                                    position=null;
+                                                    position = await geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+                                                    print(position.latitude);
+                                                    print(position.longitude);
+                                                    body = {
+                                                      'tripid' : widget.tripId.toString(),
+                                                      'actualpickuptime': actualpickuptime,
+                                                      'latitude':position.latitude.toString(),
+                                                      'longitude':position.longitude.toString()
+                                                    };
+                                                    print(body);
+                                                  }
+                                                  String url;
+                                                  if(widget.toFrom=="to")
+                                                    {
+                                                      url="http://3.81.22.120:3000/api/startDriverTripTo";
+                                                    }
+                                                  else
+                                                    {
+                                                      url="http://3.81.22.120:3000/api/startDriverTripFrom";
+                                                    }
+                                                  void getData() async{
+                                                    await getlocation();
+                                                    var ky = 40000 / 360;
+                                                    var kx = cos(pi *
+                                                        double.parse(widget
+                                                            .homeLatitude) /
+                                                        180.0) * ky;
+                                                    var dx = (double.parse(
+                                                        widget
+                                                            .homeLongitude) -
+                                                        position.longitude)
+                                                        .abs() * kx;
+                                                    var dy = (double.parse(
+                                                        widget.homeLatitude) -
+                                                        position.latitude) *
+                                                        ky;
+                                                    if (sqrt(
+                                                        dx * dx + dy * dy) <=
+                                                        1) {
+                                                      arrived = true;
+                                                    }
+                                                    else {
+                                                      arrived = false;
+                                                    }
+                                                    if (arrived == true) {
+                                                      Response response =await post(url, body: body, headers:{'authorization': token});
+                                                      if(response.statusCode == 400 || response.statusCode == 409)
+                                                      {
+                                                        Map data= jsonDecode(response.body);
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext context) {
+                                                              return RichAlertDialog(
+                                                                alertTitle: richTitle(data['error']),
+                                                                alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                                alertType: RichAlertType.WARNING,
+                                                                dialogIcon: Icon(
+                                                                  Icons.warning,
+                                                                  color: Colors.red,
+                                                                  size: 80,
+                                                                ),
+                                                                actions: <Widget>[
+                                                                  new OutlineButton(
+                                                                    shape: StadiumBorder(),
+                                                                    textColor: Colors.blue,
+                                                                    child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                    borderSide: BorderSide(
+                                                                        color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                        width: 1),
+                                                                    onPressed: () {
+                                                                      Navigator.pop(context);
+                                                                    },
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            });
+                                                      }
+                                                      else if(response.statusCode != 200)
+                                                      {
+                                                        Map data= jsonDecode(response.body);
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext context) {
+                                                              return RichAlertDialog(
+                                                                alertTitle: richTitle('User error'),
+                                                                alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                                alertType: RichAlertType.WARNING,
+                                                                dialogIcon: Icon(
+                                                                  Icons.warning,
+                                                                  color: Colors.red,
+                                                                  size: 80,
+                                                                ),
+                                                                actions: <Widget>[
+                                                                  new OutlineButton(
+                                                                    shape: StadiumBorder(),
+                                                                    textColor: Colors.blue,
+                                                                    child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                    borderSide: BorderSide(
+                                                                        color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                        width: 1),
+                                                                    onPressed: () {
+                                                                      Navigator.pop(context);
+                                                                    },
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            });
+                                                      }
+                                                      else {
+                                                        Map data = jsonDecode(response.body);
+                                                        print(data);
+                                                        Navigator.push(context, AnimatedPageRoute(widget: NavMap(widget.toFrom,widget.type,widget.tripId,widget.homeLongitude,widget.homeLatitude,widget.orgName,widget.orgLatitude,widget.orgLongitude,widget.numberRiders,widget.driverLongitude,widget.driverLatitude,widget.riders,position.latitude,position.longitude)));
+                                                      }
+                                                    }
+                                                    else
+                                                    {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext context) {
+                                                            return RichAlertDialog(
+                                                              alertTitle: richTitle('Can\'t start ride'),
+                                                              alertSubtitle: Text("You are far away from your start location", maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                              alertType: RichAlertType.WARNING,
+                                                              dialogIcon: Icon(
+                                                                Icons.warning,
+                                                                color: Colors.red,
+                                                                size: 80,
+                                                              ),
+                                                              actions: <Widget>[
+                                                                new OutlineButton(
+                                                                  shape: StadiumBorder(),
+                                                                  textColor: Colors.blue,
+                                                                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                  borderSide: BorderSide(
+                                                                      color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                      width: 1),
+                                                                  onPressed: () {
+                                                                    Navigator.pop(context);
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            );
+                                                          });
+                                                    }
+                                                  }
+                                                  getData();
+                                                  //Navigator.push(context, AnimatedPageRoute(widget: SignIn()));
                                                 },
                                               )
                                                       :
@@ -1056,7 +1213,7 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                                   width: 3,
                                                 ),
                                                 AutoSizeText(
-                                                  widget.type=="Rider"? "Expected to pay: " : "Wxpected to earn: ",
+                                                  widget.type=="Rider"? "Expected to pay: " : "Expected to earn: ",
                                                   textScaleFactor: screenFont*1.3,
                                                   style: TextStyle(
                                                     color: Colors.indigo[400],
