@@ -506,7 +506,7 @@ router.post('/', async(req, res) => {
                                                 }
                                                 res.status(200).send({ message: "You joined this ride" })
                                             } else {
-                                                res.status(400).send({ error: "Can't join this trip", message: "Your location or earliest time don't match" })
+                                                res.status(400).send({ error: "Can't join this trip", message: "Your location or latest time don't match" })
                                                 res.end()
                                             }
 

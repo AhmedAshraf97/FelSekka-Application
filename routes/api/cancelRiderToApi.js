@@ -170,7 +170,7 @@ router.post('/', async(req, res) => {
     var DRDistanceDurationValue = []
     var RRDistanceDurationValue = []
 
-
+    var flagExist = 0;
     var DeletedRequest;
     var decoded;
     var ValidChecks = true;
@@ -343,6 +343,7 @@ router.post('/', async(req, res) => {
                             status: "existing"
                         }
                     }).catch(errHandler);
+
                     if (RiderTrip.riderid !== user.id) {
 
                         var rider = new Rider(request.userid,
@@ -358,146 +359,157 @@ router.post('/', async(req, res) => {
 
                         Riders.push(rider);
                         driver.AssignedRiders.push(request.userid)
+                    } else {
+                        flagExist = 1;
                     }
+
                 }
 
-                for (rider in Riders) {
-                    const FromDriverToRider = await BetweenUsers.findOne({
-                        where: {
-                            user1id: driver.ID,
-                            user2id: Riders[rider].ID
+                if (flagExist === 1) {
+
+
+                    for (rider in Riders) {
+                        const FromDriverToRider = await BetweenUsers.findOne({
+                            where: {
+                                user1id: driver.ID,
+                                user2id: Riders[rider].ID
+                            }
+
+                        }).catch(errHandler)
+                        if (FromDriverToRider) {
+
+
+                            var valueDistanceDuration = new values(driver.ID, Riders[rider].ID, parseFloat(FromDriverToRider.distance), Math.round(FromDriverToRider.time))
+
+                            DRDistanceDurationValue.push(valueDistanceDuration)
+
                         }
-
-                    }).catch(errHandler)
-                    if (FromDriverToRider) {
-
-
-                        var valueDistanceDuration = new values(driver.ID, Riders[rider].ID, parseFloat(FromDriverToRider.distance), Math.round(FromDriverToRider.time))
-
-                        DRDistanceDurationValue.push(valueDistanceDuration)
-
                     }
-                }
 
-                for (riderFrom in Riders) {
-                    for (riderTo in Riders) {
-                        if (Riders[riderFrom].ID !== Riders[riderTo].ID) {
-                            const FromRiderToRider = await BetweenUsers.findOne({
-                                where: {
-                                    user1id: Riders[riderFrom].ID,
-                                    user2id: Riders[riderTo].ID
+                    for (riderFrom in Riders) {
+                        for (riderTo in Riders) {
+                            if (Riders[riderFrom].ID !== Riders[riderTo].ID) {
+                                const FromRiderToRider = await BetweenUsers.findOne({
+                                    where: {
+                                        user1id: Riders[riderFrom].ID,
+                                        user2id: Riders[riderTo].ID
+                                    }
+
+                                }).catch(errHandler)
+                                if (FromRiderToRider) {
+
+
+                                    var valueDistanceDuration = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.distance), Math.round(FromRiderToRider.time))
+                                    RRDistanceDurationValue.push(valueDistanceDuration)
                                 }
 
-                            }).catch(errHandler)
-                            if (FromRiderToRider) {
-
-
-                                var valueDistanceDuration = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.distance), Math.round(FromRiderToRider.time))
-                                RRDistanceDurationValue.push(valueDistanceDuration)
                             }
 
                         }
 
                     }
 
-                }
+
+                    var driverID = driver.ID
+                    var DriverRow = new userArray(driverID);
 
 
-                var driverID = driver.ID
-                var DriverRow = new userArray(driverID);
-
-
-                for (var j = 0; j < DRDistanceDurationValue.length; j++) {
-                    if (DRDistanceDurationValue[j].from === driverID) {
-                        var distanceDurationObj = new distanceDuration(DRDistanceDurationValue[j].from, DRDistanceDurationValue[j].to, DRDistanceDurationValue[j].valueDistance, DRDistanceDurationValue[j].valueDuration);
-                        DriverRow.push(distanceDurationObj);
-                    }
-
-                }
-
-                if (DriverRow.length > 0) {
-                    DriversRiders.push(DriverRow);
-                }
-                for (var i = 0; i < Riders.length; i++) {
-                    var riderID = Riders[i].ID
-                    var RiderRow = new userArray(riderID);
-                    for (var j = 0; j < RRDistanceDurationValue.length; j++) {
-                        if (RRDistanceDurationValue[j].from === riderID) {
-                            var distanceDurationObj = new distanceDuration(RRDistanceDurationValue[j].from, RRDistanceDurationValue[j].to, RRDistanceDurationValue[j].valueDistance, RRDistanceDurationValue[j].valueDuration);
-                            RiderRow.push(distanceDurationObj);
+                    for (var j = 0; j < DRDistanceDurationValue.length; j++) {
+                        if (DRDistanceDurationValue[j].from === driverID) {
+                            var distanceDurationObj = new distanceDuration(DRDistanceDurationValue[j].from, DRDistanceDurationValue[j].to, DRDistanceDurationValue[j].valueDistance, DRDistanceDurationValue[j].valueDuration);
+                            DriverRow.push(distanceDurationObj);
                         }
-                    }
-
-                    if (RiderRow.length > 0) {
-                        RidersRiders.push(RiderRow);
-                    }
-
-                }
-
-
-                var z = await CancelRiderTo();
-                var p = await matchingfare('./routes/api/cancelRiderToApi');
-
-                await Trips.update({
-                    numberofseats: driver.AssignedRiders.length,
-                }, {
-                    where: {
-                        id: trip.id
 
                     }
-                }).catch(errHandler)
 
-                await DriverDB.update({
-                    pickuptime: driver.PoolStartTime,
-                    expectedfare: driver.ExpectedFare
-                }, {
-                    where: {
-                        driverid: driver.ID,
-                        tripid: trip.id
+                    if (DriverRow.length > 0) {
+                        DriversRiders.push(DriverRow);
+                    }
+                    for (var i = 0; i < Riders.length; i++) {
+                        var riderID = Riders[i].ID
+                        var RiderRow = new userArray(riderID);
+                        for (var j = 0; j < RRDistanceDurationValue.length; j++) {
+                            if (RRDistanceDurationValue[j].from === riderID) {
+                                var distanceDurationObj = new distanceDuration(RRDistanceDurationValue[j].from, RRDistanceDurationValue[j].to, RRDistanceDurationValue[j].valueDistance, RRDistanceDurationValue[j].valueDuration);
+                                RiderRow.push(distanceDurationObj);
+                            }
+                        }
+
+                        if (RiderRow.length > 0) {
+                            RidersRiders.push(RiderRow);
+                        }
 
                     }
-                }).catch(errHandler)
 
-                await RiderDB.update({
-                    status: "cancelled",
-                }, {
-                    where: {
-                        riderid: user.id,
-                        tripid: trip.id
 
-                    }
-                }).catch(errHandler)
+                    var z = await CancelRiderTo();
+                    var p = await matchingfare('./routes/api/cancelRiderToApi');
 
-                await Request.update({
-                    status: "cancelled"
-
-                }, {
-                    where: {
-                        userid: user.id,
-                        id: DeletedRequest
-
-                    }
-                }).catch(errHandler)
-
-                for (var i = 0; i < driver.AssignedRiders.length; i++) {
-                    await RiderDB.update({
-                        pickuptime: Riders.find(n => n.ID === driver.AssignedRiders[i]).PickupTime,
-
-                        expectedfare: Riders.find(n => n.ID === driver.AssignedRiders[i]).ExpectedFare
+                    await Trips.update({
+                        numberofseats: driver.AssignedRiders.length,
                     }, {
                         where: {
-                            riderid: driver.AssignedRiders[i],
+                            id: trip.id
+
+                        }
+                    }).catch(errHandler)
+
+                    await DriverDB.update({
+                        pickuptime: driver.PoolStartTime,
+                        expectedfare: driver.ExpectedFare
+                    }, {
+                        where: {
+                            driverid: driver.ID,
                             tripid: trip.id
 
                         }
                     }).catch(errHandler)
 
+                    await RiderDB.update({
+                        status: "cancelled",
+                    }, {
+                        where: {
+                            riderid: user.id,
+                            tripid: trip.id
+
+                        }
+                    }).catch(errHandler)
+
+                    await Request.update({
+                        status: "cancelled"
+
+                    }, {
+                        where: {
+                            userid: user.id,
+                            id: DeletedRequest
+
+                        }
+                    }).catch(errHandler)
+
+                    for (var i = 0; i < driver.AssignedRiders.length; i++) {
+                        await RiderDB.update({
+                            pickuptime: Riders.find(n => n.ID === driver.AssignedRiders[i]).PickupTime,
+
+                            expectedfare: Riders.find(n => n.ID === driver.AssignedRiders[i]).ExpectedFare
+                        }, {
+                            where: {
+                                riderid: driver.AssignedRiders[i],
+                                tripid: trip.id
+
+                            }
+                        }).catch(errHandler)
 
 
+
+                    }
+
+                    res.status(200).send({ message: "The trip is cancelled " })
+                    res.end()
+
+                } else {
+                    res.status(401).send({ error: "you aren't assigned", message: "you aren't assigned" })
+                    res.end()
                 }
-
-                res.status(200).send({ message: "The trip is cancelled " })
-                res.end()
             }
 
         } else {

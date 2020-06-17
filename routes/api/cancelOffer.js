@@ -79,6 +79,7 @@ router.post('/', async(req, res) => {
                 }, {
                     where: {
                         id: parseInt(req.body.offerid),
+                        userid: decoded.id,
                         "status": "pending"
                     }
                 })
@@ -97,6 +98,7 @@ router.post('/', async(req, res) => {
                 }, {
                     where: {
                         id: parseInt(req.body.offerid),
+                        userid: decoded.id,
                         "status": "pending"
                     }
                 })
