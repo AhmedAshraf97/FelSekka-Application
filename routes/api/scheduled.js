@@ -81,7 +81,8 @@ router.post('/', async(req, res) => {
                 where: {
                     riderid: decoded.id,
                     status: {
-                        [Op.or]: ["scheduled", "ongoing"] }
+                        [Op.or]: ["scheduled", "ongoing"]
+                    }
                 }
             }).catch(errHandler)
 
@@ -93,7 +94,8 @@ router.post('/', async(req, res) => {
                         where: {
                             id: RiderRide.tripid,
                             status: {
-                                [Op.or]: ["scheduled", "ongoing"] }
+                                [Op.or]: ["scheduled", "ongoing"]
+                            }
 
                         }
                     }).catch(errHandler)
@@ -132,7 +134,8 @@ router.post('/', async(req, res) => {
                                 where: {
                                     tripid: trip.id,
                                     status: {
-                                        [Op.or]: ["scheduled", "ongoing"] }
+                                        [Op.or]: ["scheduled", "ongoing"]
+                                    }
                                 }
 
                             }).catch(errHandler)
@@ -144,7 +147,8 @@ router.post('/', async(req, res) => {
                                         driverid: OfferRideToDetails.userid,
                                         tripid: trip.id,
                                         status: {
-                                            [Op.or]: ["scheduled", "ongoing"] }
+                                            [Op.or]: ["scheduled", "ongoing"]
+                                        }
                                     }
                                 }).catch(errHandler)
 
@@ -179,6 +183,7 @@ router.post('/', async(req, res) => {
                                     if (AllRidersTripDetails) {
                                         if (AllRidersTripDetails.id !== RiderRide.riderid) {
                                             objRider['RiderTrip'].push({
+                                                "id": AllRidersTripDetails.id,
                                                 "username": AllRidersTripDetails.username,
                                                 "firstname": AllRidersTripDetails.firstname,
                                                 "lastname": AllRidersTripDetails.lastname,
@@ -273,7 +278,8 @@ router.post('/', async(req, res) => {
                                 where: {
                                     tripid: trip.id,
                                     status: {
-                                        [Op.or]: ["scheduled", "ongoing"] }
+                                        [Op.or]: ["scheduled", "ongoing"]
+                                    }
                                 }
 
                             }).catch(errHandler)
@@ -295,7 +301,8 @@ router.post('/', async(req, res) => {
                                         driverid: OfferRideFromDetails.userid,
                                         tripid: trip.id,
                                         status: {
-                                            [Op.or]: ["scheduled", "ongoing"] }
+                                            [Op.or]: ["scheduled", "ongoing"]
+                                        }
                                     }
                                 }).catch(errHandler)
 
@@ -319,6 +326,7 @@ router.post('/', async(req, res) => {
 
                                         if (AllRidersTripDetails.id !== RiderRide.riderid) {
                                             objRider['RiderTrip'].push({
+                                                "id": AllRidersTripDetails.id,
                                                 "username": AllRidersTripDetails.username,
                                                 "firstname": AllRidersTripDetails.firstname,
                                                 "lastname": AllRidersTripDetails.lastname,
@@ -392,7 +400,8 @@ router.post('/', async(req, res) => {
                 where: {
                     driverid: decoded.id,
                     status: {
-                        [Op.or]: ["scheduled", "ongoing"] }
+                        [Op.or]: ["scheduled", "ongoing"]
+                    }
                 }
             }).catch(errHandler)
 
@@ -408,7 +417,8 @@ router.post('/', async(req, res) => {
                             where: {
                                 id: DriverRide.tripid,
                                 status: {
-                                    [Op.or]: ["scheduled", "ongoing"] }
+                                    [Op.or]: ["scheduled", "ongoing"]
+                                }
 
                             }
                         }).catch(errHandler)
@@ -433,7 +443,8 @@ router.post('/', async(req, res) => {
                                         tripid: trip.id,
                                         offerid: DriverRide.offerid,
                                         status: {
-                                            [Op.or]: ["scheduled", "ongoing"] },
+                                            [Op.or]: ["scheduled", "ongoing"]
+                                        },
                                         tofrom: "to"
                                     }
 
@@ -470,6 +481,7 @@ router.post('/', async(req, res) => {
                                         if (AllRidersTripDetails) {
 
                                             objRider['RiderTrip'].push({
+                                                "id": AllRidersTripDetails.id,
                                                 "username": AllRidersTripDetails.username,
                                                 "firstname": AllRidersTripDetails.firstname,
                                                 "lastname": AllRidersTripDetails.lastname,
@@ -542,7 +554,8 @@ router.post('/', async(req, res) => {
                                         tripid: trip.id,
                                         offerid: DriverRide.offerid,
                                         status: {
-                                            [Op.or]: ["scheduled", "ongoing"] }
+                                            [Op.or]: ["scheduled", "ongoing"]
+                                        }
                                     }
 
                                 }).catch(errHandler)
@@ -577,6 +590,7 @@ router.post('/', async(req, res) => {
                                         if (AllRidersTripDetails) {
 
                                             objRider['RiderTrip'].push({
+                                                "id": AllRidersTripDetails.id,
                                                 "username": AllRidersTripDetails.username,
                                                 "firstname": AllRidersTripDetails.firstname,
                                                 "lastname": AllRidersTripDetails.lastname,
