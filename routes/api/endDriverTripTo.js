@@ -83,7 +83,7 @@ router.post('/', async(req, res) => {
             ValidChecks = false;
             res.end();
 
-        } else if (!((typeof(parseInt(req.body.distance)) === 'number'))) {
+        } else if (!((typeof(parseFloat(req.body.distance)) === 'number'))) {
             res.status(400).send({ error: "distance", message: "distance must be a number" });
             ValidChecks = false;
             res.end();
@@ -93,7 +93,7 @@ router.post('/', async(req, res) => {
             ValidChecks = false;
             res.end();
 
-        } else if (!((typeof(parseInt(req.body.time)) === 'number'))) {
+        } else if (!((typeof(parseFloat(req.body.time)) === 'number'))) {
             res.status(400).send({ error: "Time", message: "Time must be a number" });
             ValidChecks = false;
             res.end();
@@ -137,8 +137,8 @@ router.post('/', async(req, res) => {
             if (DriverTrip) {
                 await DriverDB.update({
                     actualarrivaltime: req.body.actualarrivaltime,
-                    distance: parseInt(req.body.distance),
-                    time: parseInt(req.body.time),
+                    distance: parseFloat(req.body.distance),
+                    time: parseFloat(req.body.time),
                     fare: 0,
                     status: "done"
                 }, {
@@ -162,8 +162,8 @@ router.post('/', async(req, res) => {
                     endloclatitude: parseFloat(req.body.latitude),
                     endloclongitude: parseFloat(req.body.longitude),
                     endtime: req.body.actualarrivaltime,
-                    totaldistance: parseInt(req.body.distance),
-                    totaltime: parseInt(req.body.time),
+                    totaldistance: parseFloat(req.body.distance),
+                    totaltime: parseFloat(req.body.time),
                     totalfare: 0,
                     status: "done"
                 }, {
