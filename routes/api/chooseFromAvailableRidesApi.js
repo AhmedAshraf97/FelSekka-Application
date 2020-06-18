@@ -5,6 +5,9 @@ const User = require('../../models/users');
 const Offer = require('../../models/offerrideto')
 const Request = require('../../models/requestrideto')
 
+const requestRideFrom = require('../../models/requestridefrom')
+const offerRideFrom = require('../../models/offerridefrom')
+
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -247,288 +250,413 @@ router.post('/', async(req, res) => {
                     }
                 }).catch(errHandler)
 
-                if (offer.numberofseats > Trip.numberofseats) {
-                    if (user.id !== DriverTrip.driverid) {
-                        const orguserdecoded = await OrgUser.findAll({
-                            where: {
+                //Check for request validity
 
-                                userid: user.id,
-                                status: "existing"
-                            }
+                var error = false;
+                const rides = await offerRideFrom.findAll({
+                    where: {
+                        userid: decoded.id,
+                        status: {
+                            [Op.or]: ["pending", "scheduled", "ongoing"]
+                        }
+                    }
+                }).catch(errHandler)
+                for (ride of rides) {
+                    var reqStart = new Date((offer.date.toString()) + " " + (req.body.earliesttime).toString());
+                    var reqEnd = new Date((offer.date.toString()) + " " + (offer.arrivaltime).toString());
+                    var rideStart = new Date((ride.date.toString()) + " " + (ride.departuretime).toString());
+                    var rideEnd = new Date((ride.date.toString()) + " " + (ride.latesttime).toString());
+                    if ((rideStart <= reqStart) && (reqStart <= rideEnd)) {
+                        error = true;
+                    } else if ((rideStart <= reqEnd) && (reqEnd <= rideEnd)) {
 
-                        }).catch(errHandler)
-                        var countorg = 0;
-                        if (orguserdecoded.length > 0) {
-                            for (const org of orguserdecoded) {
-                                if (org.orgid === offer.toorgid) {
-                                    countorg++;
-                                    if (((user.gender === offer.ridewith) || (offer.ridewith === "any"))) {
-                                        const orguser = await OrgUser.findOne({
-                                            where: {
-                                                orgid: offer.toorgid,
-                                                userid: offer.userid,
-                                                status: "existing"
-                                            }
+                        error = true;
+                    } else if ((reqStart <= rideEnd) && (rideEnd <= reqEnd)) {
 
-                                        }).catch(errHandler)
+                        error = true;
+                    } else if ((reqStart <= rideStart) && (rideStart <= reqEnd)) {
+
+                        error = true;
+                    }
+                }
+
+                const rides2 = await Offer.findAll({
+                    where: {
+                        userid: decoded.id,
+                        status: {
+                            [Op.or]: ["pending", "scheduled", "ongoing"]
+                        }
+                    }
+                }).catch(errHandler)
 
 
-                                        driver = new Driver(offer.userid, parseFloat(orguser.distancetoorg), new Date(offer.date + " " + offer.arrivaltime),
-                                            parseFloat(orguser.timetoorg),
-                                            offer.numberofseats,
-                                            new Date(offer.date + " " + offer.earliesttime),
-                                            offer.ridewith,
-                                            offer.smoking,
-                                            offer.toorgid,
-                                            new Date(offer.date), parseFloat(offer.fromlatitude), parseFloat(offer.fromlongitude))
-                                        driver.TotalDurationTaken = diff_minutes(new Date(offer.date + " " + DriverTrip.arrivaltime), new Date(offer.date + " " + DriverTrip.pickuptime))
+                for (ride of rides2) {
+                    var reqStart = new Date((offer.date.toString()) + " " + (req.body.earliesttime).toString());
+                    var reqEnd = new Date((offer.date.toString()) + " " + (offer.arrivaltime).toString());
+                    var rideStart = new Date((ride.date.toString()) + " " + (ride.earliesttime).toString());
+                    var rideEnd = new Date((ride.date.toString()) + " " + (ride.arrivaltime).toString());
 
-                                        const RidersTrips = await RiderDB.findAll({
-                                            where: {
-                                                tripid: Trip.id,
-                                                status: "scheduled"
-                                            }
-                                        }).catch(errHandler);
-                                        if (RidersTrips.length > 0) {
+                    if ((rideStart <= reqStart) && (reqStart <= rideEnd)) {
+                        error = true;
+                    } else if ((rideStart <= reqEnd) && (reqEnd <= rideEnd)) {
 
-                                            for (const riderTrip of RidersTrips) {
+                        error = true;
+                    } else if ((reqStart <= rideEnd) && (rideEnd <= reqEnd)) {
 
-                                                if (user.id !== riderTrip.riderid) {
-                                                    const orguser = await OrgUser.findOne({
-                                                        where: {
-                                                            orgid: offer.toorgid,
-                                                            userid: riderTrip.riderid,
-                                                            status: "existing"
-                                                        }
-                                                    }).catch(errHandler);
+                        error = true;
+                    } else if ((reqStart <= rideStart) && (rideStart <= reqEnd)) {
 
-                                                    const request = await Request.findOne({
-                                                        where: {
-                                                            id: riderTrip.requestid
-                                                        }
-                                                    }).catch(errHandler)
-                                                    var rider = new Rider(request.userid,
-                                                        parseFloat(orguser.distancetoorg),
-                                                        new Date(request.date + " " + request.arrivaltime),
-                                                        parseFloat(orguser.timetoorg),
-                                                        new Date(request.date + " " + request.earliesttime),
-                                                        request.ridewith,
-                                                        request.smoking,
-                                                        request.toorgid,
-                                                        new Date(request.date))
+                        error = true;
+                    }
 
-                                                    Riders.push(rider);
-                                                    driver.AssignedRiders.push(request.userid)
-                                                } else {
-                                                    invalidrider = 1;
+                }
+
+                const rides3 = await Request.findAll({
+                    where: {
+                        userid: decoded.id,
+                        status: {
+                            [Op.or]: ["pending", "scheduled", "ongoing"]
+                        }
+                    }
+                }).catch(errHandler)
+
+
+                for (ride of rides3) {
+                    var reqStart = new Date((offer.date.toString()) + " " + (req.body.earliesttime).toString());
+                    var reqEnd = new Date((offer.date.toString()) + " " + (offer.arrivaltime).toString());
+                    var rideStart = new Date((ride.date.toString()) + " " + (ride.earliesttime).toString());
+                    var rideEnd = new Date((ride.date.toString()) + " " + (ride.arrivaltime).toString());
+                    if ((rideStart <= reqStart) && (reqStart <= rideEnd)) {
+                        error = true;
+                    } else if ((rideStart <= reqEnd) && (reqEnd <= rideEnd)) {
+
+                        error = true;
+                    } else if ((reqStart <= rideEnd) && (rideEnd <= reqEnd)) {
+
+                        error = true;
+                    } else if ((reqStart <= rideStart) && (rideStart <= reqEnd)) {
+
+                        error = true;
+                    }
+
+                }
+
+                const rides4 = await requestRideFrom.findAll({
+                    where: {
+                        userid: decoded.id,
+                        status: {
+                            [Op.or]: ["pending", "scheduled", "ongoing"]
+                        }
+                    }
+                }).catch(errHandler)
+
+                for (ride of rides4) {
+                    var reqStart = new Date((offer.date.toString()) + " " + (req.body.earliesttime).toString());
+                    var reqEnd = new Date((offer.date.toString()) + " " + (offer.arrivaltime).toString());
+                    var rideStart = new Date((ride.date.toString()) + " " + (ride.departuretime).toString());
+                    var rideEnd = new Date((ride.date.toString()) + " " + (ride.latesttime).toString());
+                    if ((rideStart <= reqStart) && (reqStart <= rideEnd)) {
+                        error = true;
+                    } else if ((rideStart <= reqEnd) && (reqEnd <= rideEnd)) {
+
+                        error = true;
+                    } else if ((reqStart <= rideEnd) && (rideEnd <= reqEnd)) {
+
+                        error = true;
+                    } else if ((reqStart <= rideStart) && (rideStart <= reqEnd)) {
+
+                        error = true;
+                    }
+                }
+
+                /////////////////////////////////////
+                if (error === false) {
+                    if (offer.numberofseats > Trip.numberofseats) {
+                        if (user.id !== DriverTrip.driverid) {
+                            const orguserdecoded = await OrgUser.findAll({
+                                where: {
+
+                                    userid: user.id,
+                                    status: "existing"
+                                }
+
+                            }).catch(errHandler)
+                            var countorg = 0;
+                            if (orguserdecoded.length > 0) {
+                                for (const org of orguserdecoded) {
+                                    if (org.orgid === offer.toorgid) {
+                                        countorg++;
+                                        if (((user.gender === offer.ridewith) || (offer.ridewith === "any"))) {
+                                            const orguser = await OrgUser.findOne({
+                                                where: {
+                                                    orgid: offer.toorgid,
+                                                    userid: offer.userid,
+                                                    status: "existing"
                                                 }
 
+                                            }).catch(errHandler)
 
 
-                                            }
-
-                                        }
-                                        if (invalidrider === 0) {
-                                            var rider = new Rider(user.id,
-                                                parseFloat(org.distancetoorg),
-                                                new Date(offer.date + " " + offer.arrivaltime),
-                                                parseFloat(org.timetoorg),
-                                                new Date(offer.date + " " + req.body.earliesttime),
+                                            driver = new Driver(offer.userid, parseFloat(orguser.distancetoorg), new Date(offer.date + " " + offer.arrivaltime),
+                                                parseFloat(orguser.timetoorg),
+                                                offer.numberofseats,
+                                                new Date(offer.date + " " + offer.earliesttime),
                                                 offer.ridewith,
                                                 offer.smoking,
                                                 offer.toorgid,
-                                                new Date(offer.date))
-                                            Riders.push(rider);
-                                            driver.AssignedRiders.push(user.id)
-                                            for (rider in Riders) {
+                                                new Date(offer.date), parseFloat(offer.fromlatitude), parseFloat(offer.fromlongitude))
+                                            driver.TotalDurationTaken = diff_minutes(new Date(offer.date + " " + DriverTrip.arrivaltime), new Date(offer.date + " " + DriverTrip.pickuptime))
 
-                                                const FromDriverToRider = await BetweenUsers.findOne({
-                                                    where: {
-                                                        user1id: driver.ID,
-                                                        user2id: Riders[rider].ID
-
-                                                    }
-
-                                                }).catch(errHandler)
-                                                if (FromDriverToRider) {
-                                                    var valueDistanceDuration = new values(driver.ID, Riders[rider].ID, parseFloat(FromDriverToRider.distance), Math.round(FromDriverToRider.time))
-                                                    DRDistanceDurationValue.push(valueDistanceDuration)
+                                            const RidersTrips = await RiderDB.findAll({
+                                                where: {
+                                                    tripid: Trip.id,
+                                                    status: "scheduled"
                                                 }
+                                            }).catch(errHandler);
+                                            if (RidersTrips.length > 0) {
 
+                                                for (const riderTrip of RidersTrips) {
 
-
-                                            }
-                                            for (riderFrom in Riders) {
-                                                for (riderTo in Riders) {
-                                                    if (Riders[riderFrom].ID !== Riders[riderTo].ID) {
-
-                                                        const FromRiderToRider = await BetweenUsers.findOne({
+                                                    if (user.id !== riderTrip.riderid) {
+                                                        const orguser = await OrgUser.findOne({
                                                             where: {
-                                                                user1id: Riders[riderFrom].ID,
-                                                                user2id: Riders[riderTo].ID
-
+                                                                orgid: offer.toorgid,
+                                                                userid: riderTrip.riderid,
+                                                                status: "existing"
                                                             }
+                                                        }).catch(errHandler);
 
+                                                        const request = await Request.findOne({
+                                                            where: {
+                                                                id: riderTrip.requestid
+                                                            }
                                                         }).catch(errHandler)
-                                                        if (FromRiderToRider) {
-                                                            var valueDistanceDuration = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.distance), Math.round(FromRiderToRider.time))
-                                                            RRDistanceDurationValue.push(valueDistanceDuration)
-                                                        }
+                                                        var rider = new Rider(request.userid,
+                                                            parseFloat(orguser.distancetoorg),
+                                                            new Date(request.date + " " + request.arrivaltime),
+                                                            parseFloat(orguser.timetoorg),
+                                                            new Date(request.date + " " + request.earliesttime),
+                                                            request.ridewith,
+                                                            request.smoking,
+                                                            request.toorgid,
+                                                            new Date(request.date))
 
-                                                    }
-
-                                                }
-
-                                            }
-
-                                            var driverID = driver.ID
-                                            var DriverRow = new userArray(driverID);
-
-
-                                            for (var j = 0; j < DRDistanceDurationValue.length; j++) {
-                                                if (DRDistanceDurationValue[j].from === driverID) {
-                                                    var distanceDurationObj = new distanceDuration(DRDistanceDurationValue[j].from, DRDistanceDurationValue[j].to, DRDistanceDurationValue[j].valueDistance, DRDistanceDurationValue[j].valueDuration);
-                                                    DriverRow.push(distanceDurationObj);
-                                                }
-
-                                            }
-
-                                            if (DriverRow.length > 0) {
-                                                DriversRiders.push(DriverRow);
-                                            }
-                                            for (var i = 0; i < Riders.length; i++) {
-                                                var riderID = Riders[i].ID
-                                                var RiderRow = new userArray(riderID);
-                                                for (var j = 0; j < RRDistanceDurationValue.length; j++) {
-                                                    if (RRDistanceDurationValue[j].from === riderID) {
-                                                        var distanceDurationObj = new distanceDuration(RRDistanceDurationValue[j].from, RRDistanceDurationValue[j].to, RRDistanceDurationValue[j].valueDistance, RRDistanceDurationValue[j].valueDuration);
-                                                        RiderRow.push(distanceDurationObj);
-                                                    }
-                                                }
-
-                                                if (RiderRow.length > 0) {
-                                                    RidersRiders.push(RiderRow);
-                                                }
-
-
-                                            }
-
-                                            Drivers.push(driver)
-
-                                            var z = await chooseFromAvailableRides();
-                                            var p = await matchingfare('./routes/api/chooseFromAvailableRidesApi');
-                                            if (Riders[Riders.length - 1].isAssigned === true) {
-                                                await Trips.update({
-                                                    numberofseats: driver.AssignedRiders.length,
-                                                }, {
-                                                    where: {
-                                                        id: Trip.id
-
-                                                    }
-                                                }).catch(errHandler)
-
-                                                await DriverDB.update({
-                                                    pickuptime: driver.PoolStartTime,
-                                                    expectedfare: driver.ExpectedFare
-                                                }, {
-                                                    where: {
-                                                        driverid: driver.ID,
-                                                        tripid: Trip.id
-
-                                                    }
-                                                }).catch(errHandler)
-
-
-
-
-                                                for (var i = 0; i < driver.AssignedRiders.length; i++) {
-                                                    if (driver.AssignedRiders[i] === user.id) {
-
-                                                        const rideData = {
-                                                            userid: user.id,
-                                                            fromlatitude: user.latitude,
-                                                            fromlongitude: user.longitude,
-                                                            toorgid: offer.toorgid,
-                                                            date: offer.date,
-                                                            arrivaltime: offer.arrivaltime,
-                                                            ridewith: offer.ridewith,
-                                                            smoking: offer.smoking,
-                                                            earliesttime: req.body.earliesttime,
-                                                            status: "scheduled"
-                                                        }
-                                                        const newRequest = await Request.create(rideData)
-                                                            .catch(errHandler);
-                                                        await RiderDB.create({
-
-                                                            tripid: Trip.id,
-                                                            tofrom: "to",
-                                                            offerid: offer.id,
-                                                            requestid: newRequest.id,
-                                                            riderid: user.id,
-                                                            pickuptime: Riders.find(n => n.ID === driver.AssignedRiders[i]).PickupTime,
-                                                            arrivaltime: offer.arrivaltime,
-                                                            actualpickuptime: 0,
-                                                            actualarrivaltime: 0,
-                                                            distance: 0,
-                                                            time: 0,
-                                                            fare: 0,
-                                                            status: "scheduled",
-                                                            expectedfare: Riders.find(n => n.ID === driver.AssignedRiders[i]).ExpectedFare
-
-
-                                                        }).catch(errHandler)
+                                                        Riders.push(rider);
+                                                        driver.AssignedRiders.push(request.userid)
                                                     } else {
-                                                        await RiderDB.update({
-                                                            pickuptime: Riders.find(n => n.ID === driver.AssignedRiders[i]).PickupTime,
-                                                            expectedfare: Riders.find(n => n.ID === driver.AssignedRiders[i]).ExpectedFare
-                                                        }, {
-                                                            where: {
-                                                                riderid: driver.AssignedRiders[i],
-                                                                tripid: Trip.id
+                                                        invalidrider = 1;
+                                                    }
 
+
+
+                                                }
+
+                                            }
+                                            if (invalidrider === 0) {
+                                                var rider = new Rider(user.id,
+                                                    parseFloat(org.distancetoorg),
+                                                    new Date(offer.date + " " + offer.arrivaltime),
+                                                    parseFloat(org.timetoorg),
+                                                    new Date(offer.date + " " + req.body.earliesttime),
+                                                    offer.ridewith,
+                                                    offer.smoking,
+                                                    offer.toorgid,
+                                                    new Date(offer.date))
+                                                Riders.push(rider);
+                                                driver.AssignedRiders.push(user.id)
+                                                for (rider in Riders) {
+
+                                                    const FromDriverToRider = await BetweenUsers.findOne({
+                                                        where: {
+                                                            user1id: driver.ID,
+                                                            user2id: Riders[rider].ID
+
+                                                        }
+
+                                                    }).catch(errHandler)
+                                                    if (FromDriverToRider) {
+                                                        var valueDistanceDuration = new values(driver.ID, Riders[rider].ID, parseFloat(FromDriverToRider.distance), Math.round(FromDriverToRider.time))
+                                                        DRDistanceDurationValue.push(valueDistanceDuration)
+                                                    }
+
+
+
+                                                }
+                                                for (riderFrom in Riders) {
+                                                    for (riderTo in Riders) {
+                                                        if (Riders[riderFrom].ID !== Riders[riderTo].ID) {
+
+                                                            const FromRiderToRider = await BetweenUsers.findOne({
+                                                                where: {
+                                                                    user1id: Riders[riderFrom].ID,
+                                                                    user2id: Riders[riderTo].ID
+
+                                                                }
+
+                                                            }).catch(errHandler)
+                                                            if (FromRiderToRider) {
+                                                                var valueDistanceDuration = new values(Riders[riderFrom].ID, Riders[riderTo].ID, parseFloat(FromRiderToRider.distance), Math.round(FromRiderToRider.time))
+                                                                RRDistanceDurationValue.push(valueDistanceDuration)
                                                             }
-                                                        }).catch(errHandler)
+
+                                                        }
 
                                                     }
 
                                                 }
-                                                res.status(200).send({ message: "You joined this ride" })
+
+                                                var driverID = driver.ID
+                                                var DriverRow = new userArray(driverID);
+
+
+                                                for (var j = 0; j < DRDistanceDurationValue.length; j++) {
+                                                    if (DRDistanceDurationValue[j].from === driverID) {
+                                                        var distanceDurationObj = new distanceDuration(DRDistanceDurationValue[j].from, DRDistanceDurationValue[j].to, DRDistanceDurationValue[j].valueDistance, DRDistanceDurationValue[j].valueDuration);
+                                                        DriverRow.push(distanceDurationObj);
+                                                    }
+
+                                                }
+
+                                                if (DriverRow.length > 0) {
+                                                    DriversRiders.push(DriverRow);
+                                                }
+                                                for (var i = 0; i < Riders.length; i++) {
+                                                    var riderID = Riders[i].ID
+                                                    var RiderRow = new userArray(riderID);
+                                                    for (var j = 0; j < RRDistanceDurationValue.length; j++) {
+                                                        if (RRDistanceDurationValue[j].from === riderID) {
+                                                            var distanceDurationObj = new distanceDuration(RRDistanceDurationValue[j].from, RRDistanceDurationValue[j].to, RRDistanceDurationValue[j].valueDistance, RRDistanceDurationValue[j].valueDuration);
+                                                            RiderRow.push(distanceDurationObj);
+                                                        }
+                                                    }
+
+                                                    if (RiderRow.length > 0) {
+                                                        RidersRiders.push(RiderRow);
+                                                    }
+
+
+                                                }
+
+                                                Drivers.push(driver)
+
+                                                var z = await chooseFromAvailableRides();
+                                                var p = await matchingfare('./routes/api/chooseFromAvailableRidesApi');
+                                                if (Riders[Riders.length - 1].isAssigned === true) {
+                                                    await Trips.update({
+                                                        numberofseats: driver.AssignedRiders.length,
+                                                    }, {
+                                                        where: {
+                                                            id: Trip.id
+
+                                                        }
+                                                    }).catch(errHandler)
+
+                                                    await DriverDB.update({
+                                                        pickuptime: driver.PoolStartTime,
+                                                        expectedfare: driver.ExpectedFare
+                                                    }, {
+                                                        where: {
+                                                            driverid: driver.ID,
+                                                            tripid: Trip.id
+
+                                                        }
+                                                    }).catch(errHandler)
+
+
+
+
+                                                    for (var i = 0; i < driver.AssignedRiders.length; i++) {
+                                                        if (driver.AssignedRiders[i] === user.id) {
+
+                                                            const rideData = {
+                                                                userid: user.id,
+                                                                fromlatitude: user.latitude,
+                                                                fromlongitude: user.longitude,
+                                                                toorgid: offer.toorgid,
+                                                                date: offer.date,
+                                                                arrivaltime: offer.arrivaltime,
+                                                                ridewith: offer.ridewith,
+                                                                smoking: offer.smoking,
+                                                                earliesttime: req.body.earliesttime,
+                                                                status: "scheduled"
+                                                            }
+                                                            const newRequest = await Request.create(rideData)
+                                                                .catch(errHandler);
+                                                            await RiderDB.create({
+
+                                                                tripid: Trip.id,
+                                                                tofrom: "to",
+                                                                offerid: offer.id,
+                                                                requestid: newRequest.id,
+                                                                riderid: user.id,
+                                                                pickuptime: Riders.find(n => n.ID === driver.AssignedRiders[i]).PickupTime,
+                                                                arrivaltime: offer.arrivaltime,
+                                                                actualpickuptime: 0,
+                                                                actualarrivaltime: 0,
+                                                                distance: 0,
+                                                                time: 0,
+                                                                fare: 0,
+                                                                status: "scheduled",
+                                                                expectedfare: Riders.find(n => n.ID === driver.AssignedRiders[i]).ExpectedFare
+
+
+                                                            }).catch(errHandler)
+                                                        } else {
+                                                            await RiderDB.update({
+                                                                pickuptime: Riders.find(n => n.ID === driver.AssignedRiders[i]).PickupTime,
+                                                                expectedfare: Riders.find(n => n.ID === driver.AssignedRiders[i]).ExpectedFare
+                                                            }, {
+                                                                where: {
+                                                                    riderid: driver.AssignedRiders[i],
+                                                                    tripid: Trip.id
+
+                                                                }
+                                                            }).catch(errHandler)
+
+                                                        }
+
+                                                    }
+                                                    res.status(200).send({ message: "You joined this ride" })
+                                                } else {
+                                                    res.status(400).send({ error: "Can't join this trip", message: "Your location or earliest time don't match" })
+                                                    res.end()
+                                                }
+
                                             } else {
-                                                res.status(400).send({ error: "Can't join this trip", message: "Your location or earliest time don't match" })
-                                                res.end()
+                                                res.status(400).send({ error: "Can't join this trip", message: "You are already in this trip" })
+                                                res.end();
+
                                             }
-
                                         } else {
-                                            res.status(400).send({ error: "Can't join this trip", message: "You are already in this trip" })
+                                            res.status(400).send({ error: "Can't join this trip", message: "Ridewith/Smoking don't match" })
                                             res.end();
-
                                         }
-                                    } else {
-                                        res.status(400).send({ error: "Can't join this trip", message: "Ridewith/Smoking don't match" })
-                                        res.end();
+
+
                                     }
-
-
                                 }
-                            }
-                            if (countorg == 0) {
+                                if (countorg == 0) {
+                                    res.status(400).send({ error: "Can't join this trip", message: "Not a memeber in organization" })
+                                    res.end();
+                                }
+
+                            } else {
                                 res.status(400).send({ error: "Can't join this trip", message: "Not a memeber in organization" })
                                 res.end();
-                            }
 
+                            }
                         } else {
-                            res.status(400).send({ error: "Can't join this trip", message: "Not a memeber in organization" })
+                            res.status(400).send({ error: "Can't join this trip", message: "You are a driver in it" })
                             res.end();
 
                         }
                     } else {
-                        res.status(400).send({ error: "Can't join this trip", message: "You are a driver in it" })
-                        res.end();
-
+                        res.status(400).send({ error: "Can't join this trip", message: "No available seats" })
+                        res.end()
                     }
                 } else {
-                    res.status(400).send({ error: "Can't join this trip", message: "No available seats" })
-                    res.end()
+                    res.status(400).send({ error: "error", message: "You can't request two rides at the same time" });
+                    res.end();
                 }
             } else {
                 res.status(400).send({ error: "tripid", message: "enter valid trip id" });
