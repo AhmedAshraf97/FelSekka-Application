@@ -70,6 +70,8 @@ app.use('/api/chooseFromAvailableRides', queue({ activeLimit: 1, queuedLimit: -1
 app.use('/api/chooseFromReturnTripsApi', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/chooseFromReturnTripsApi').router)
 
 
+app.use('/api/cleanrequestsoffers', require('./routes/api/CleanRequests&Offers'));
+
 app.use('/api/betweenusers', require('./routes/api/betweenusershandler'));
 
 app.use('/api/cancelRiderTo', require('./routes/api/cancelRiderToApi').router)
