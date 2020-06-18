@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:felsekka/pages/navigation.dart';
+import 'package:felsekka/pages/navigationto.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
 import 'package:felsekka/pages/signin.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,6 +29,7 @@ String getDisplayRating(double rating) {
 }
 
 class RiderForRider{
+  int id=0;
   String username="";
   String firstname="";
   String lastname="";
@@ -38,13 +39,14 @@ class RiderForRider{
   String latitude="";
   String longitude="";
   String time="";
-  RiderForRider(this.username,this.firstname,this.lastname,this.phonenumber,this.rating,this.gender,this.latitude,this.longitude,this.time);
+  RiderForRider(this.id,this.username,this.firstname,this.lastname,this.phonenumber,this.rating,this.gender,this.latitude,this.longitude,this.time);
   factory RiderForRider.fromJson(dynamic json) {
-    return RiderForRider(json['username'] as String, json['firstname'] as String,json['lastname'] as String, json['phonenumber'] as String,json['rating'] as String, json['gender'] as String,json['latitude'] as String, json['longitude'] as String, json['time'] as String);
+    return RiderForRider(json['id'] as int,json['username'] as String, json['firstname'] as String,json['lastname'] as String, json['phonenumber'] as String,json['rating'] as String, json['gender'] as String,json['latitude'] as String, json['longitude'] as String, json['time'] as String);
   }
 }
 
 class RiderForDriver{
+  int id=0;
   String username="";
   String firstname="";
   String lastname="";
@@ -55,9 +57,9 @@ class RiderForDriver{
   String longitude="";
   String time="";
   String fare="";
-  RiderForDriver(this.username,this.firstname,this.lastname,this.phonenumber,this.rating,this.gender,this.latitude,this.longitude,this.time,this.fare);
+  RiderForDriver(this.id,this.username,this.firstname,this.lastname,this.phonenumber,this.rating,this.gender,this.latitude,this.longitude,this.time,this.fare);
   factory RiderForDriver.fromJson(dynamic json) {
-    return RiderForDriver(json['username'] as String, json['firstname'] as String,json['lastname'] as String, json['phonenumber'] as String,json['rating'] as String, json['gender'] as String,json['latitude'] as String, json['longitude'] as String, json['time'] as String, json['fare'] as String);
+    return RiderForDriver(json['id'] as int,json['username'] as String, json['firstname'] as String,json['lastname'] as String, json['phonenumber'] as String,json['rating'] as String, json['gender'] as String,json['latitude'] as String, json['longitude'] as String, json['time'] as String, json['fare'] as String);
   }
 }
 
@@ -120,7 +122,7 @@ class _ScheduledRidesState extends State<ScheduledRides> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenFont= MediaQuery.of(context).textScaleFactor;
     final dateNow = DateTime.now();
-    final datetemp= DateTime.parse("2020-05-27 02:00:01");
+    final datetemp= DateTime.parse("2020-05-27 01:09:01");
     final differenceDates = datetemp.difference(DateTime.parse(widget.date+" "+widget.pickupTime)).inSeconds; // negative old date
     String beforeOrAfter="before";
     String after15="no";
@@ -557,6 +559,44 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                                     }
                                                   void getData() async{
                                                     await getlocation();
+                                                    int driverid=0;
+                                                    Response response =await post("http://3.81.22.120:3000/api/retrieveuserdata", headers:{'authorization': token});
+                                                    if(response.statusCode != 200)
+                                                    {
+                                                      Map data= jsonDecode(response.body);
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext context) {
+                                                            return RichAlertDialog(
+                                                              alertTitle: richTitle("User error"),
+                                                              alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                              alertType: RichAlertType.WARNING,
+                                                              dialogIcon: Icon(
+                                                                Icons.warning,
+                                                                color: Colors.red,
+                                                                size: 80,
+                                                              ),
+                                                              actions: <Widget>[
+                                                                new OutlineButton(
+                                                                  shape: StadiumBorder(),
+                                                                  textColor: Colors.blue,
+                                                                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                  borderSide: BorderSide(
+                                                                      color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                      width: 1),
+                                                                  onPressed: () {
+                                                                    Navigator.pop(context);
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            );
+                                                          });
+                                                    }
+                                                    else{
+                                                      Map data= jsonDecode(response.body);
+                                                      Map userInfo = data['decoded'];
+                                                      driverid = userInfo['id'];
+                                                    }
                                                     var ky = 40000 / 360;
                                                     var kx = cos(pi *
                                                         double.parse(widget
@@ -646,7 +686,7 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                                       else {
                                                         Map data = jsonDecode(response.body);
                                                         print(data);
-                                                        Navigator.push(context, AnimatedPageRoute(widget: NavMap(widget.toFrom,widget.type,widget.tripId,widget.homeLongitude,widget.homeLatitude,widget.orgName,widget.orgLatitude,widget.orgLongitude,widget.numberRiders,widget.driverLongitude,widget.driverLatitude,widget.riders,position.latitude,position.longitude)));
+                                                        Navigator.push(context, AnimatedPageRoute(widget: NavDriverTo(driverid,screenWidth,screenHeight,screenFont,token,widget.toFrom,widget.type,widget.tripId,widget.homeLongitude,widget.homeLatitude,widget.orgName,widget.orgLatitude,widget.orgLongitude,widget.numberRiders,widget.driverLongitude,widget.driverLatitude,widget.riders,position.latitude,position.longitude)));
                                                       }
                                                     }
                                                     else
