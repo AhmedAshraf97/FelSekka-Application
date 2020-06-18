@@ -168,7 +168,7 @@ router.post('/', async(req, res) => {
                     status: "done"
                 }, {
                     where: {
-                        id: parseInt(req.body.tripi),
+                        id: parseInt(req.body.tripid),
                         status: "ongoing"
                     }
                 })
