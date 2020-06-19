@@ -23,6 +23,31 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
+function validation(datetime, review) {
+    var validChecks = true;
+    if (review === undefined || (review).trim().length > 300 || (review).trim().length === 0) {
+        validChecks = false;
+        message = { error: "review", message: "Review size must be between (1-300) characters" }
+
+    }
+
+    if (datetime == null) {
+        message = { error: "datetime", message: "datetime paramter is missing" }
+        validChecks = false;
+    } else if (!((typeof(datetime) === 'string') || ((datetime) instanceof String))) {
+        validChecks = false;
+        message = { error: "datetime", message: "datetime must be a string" }
+
+    } else if ((datetime).trim().length === 0) {
+        validChecks = false;
+        res.status(400).send({ error: "datetime", message: "datetime can't be empty" });
+        res.end()
+    } else if (!(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/.test(datetime))) {
+        res.status(400).send({ error: "datetime", message: "datetime is unvalid" });
+        validChecks = false;
+        res.end();
+    }
+}
 router.post('/', async(req, res) => {
     var decoded;
     var ValidChecks = true;
@@ -83,23 +108,7 @@ router.post('/', async(req, res) => {
 
     //2008-09-01 12:35:45
 
-    if (req.body.datetime == null) {
-        res.status(400).send({ error: "datetime", message: "datetime paramter is missing" });
-        ValidChecks = false;
-        res.end()
-    } else if (!((typeof(req.body.datetime) === 'string') || ((req.body.datetime) instanceof String))) {
-        ValidChecks = false;
-        res.status(400).send({ error: "datetime", message: "datetime must be a string" });
-        res.end()
-    } else if ((req.body.datetime).trim().length === 0) {
-        ValidChecks = false;
-        res.status(400).send({ error: "datetime", message: "datetime can't be empty" });
-        res.end()
-    } else if (!(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/.test(req.body.datetime))) {
-        res.status(400).send({ error: "datetime", message: "datetime is unvalid" });
-        ValidChecks = false;
-        res.end();
-    }
+
 
 
     await User.findOne({
