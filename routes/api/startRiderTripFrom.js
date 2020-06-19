@@ -25,7 +25,7 @@ const errHandler = err => {
 
 function validation(driverid, tripid, actualpickuptime) {
     var validChecks = true;
-    var message;
+    var message = "";
 
     if (driverid == null) {
         message = { error: "driverid", message: "driverid paramter is missing" }
