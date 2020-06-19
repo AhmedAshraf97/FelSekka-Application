@@ -91,7 +91,7 @@ test('invalid rating', async() => {
 test('invalid review', async() => {
 
 
-    var result = validationReview("20", "2020-05-27 23:04:18")
+    var result = validationReview("2020-05-27 23:04:18", "")
     expect(result.validChecks).toBe(false)
-    expect(result.message.message).toBe("Rating should be a number of value (1-5)")
+    expect(result.message.message).toBe("Review size must be between (1-300) characters")
 }, 100000)
