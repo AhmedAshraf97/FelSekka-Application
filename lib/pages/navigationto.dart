@@ -97,7 +97,7 @@ class _NavDriverToState extends State<NavDriverTo> {
   ltlng.LatLng destinationDistance;
   GoogleMapPolyline googleMapPolyline =
   new  GoogleMapPolyline(apiKey:  googleAPIKey);
-  List<List<ltlng.LatLng>> listLatLngTravelled=new List.generate(4, (i) => []);
+  List<List<ltlng.LatLng>> listLatLngTravelled=new List.generate(10, (i) => []);
   final  ltlng.Distance distance = new ltlng.Distance();
   double km=0;
   DateTime startTime;
@@ -113,7 +113,7 @@ class _NavDriverToState extends State<NavDriverTo> {
   int counterStops=0;
   List<LatLng> stopsLatLng=[];
   List listStops=[];
-  List<List<ltlng.LatLng>> listDistances= new List.generate(4, (i) => []);
+  List<List<ltlng.LatLng>> listDistances= new List.generate(10, (i) => []);
   List<DateTime> listTime= [];
   List<RiderForDriver> riderObjs;
   //////////////////////////////////////////////////////////////////////////////
@@ -121,6 +121,7 @@ class _NavDriverToState extends State<NavDriverTo> {
   void initState() {
     super.initState();
     startTime=DateTime.now();
+    listTime.add(DateTime.now());
     BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio: 2.5),
         'images/marker.png').then((onValue) {
@@ -306,8 +307,6 @@ class _NavDriverToState extends State<NavDriverTo> {
     destinationDistance= ltlng.LatLng(stopsLatLng[counterStops].latitude,stopsLatLng[counterStops].longitude);
     listLatLngTravelled[0].add(originDistance);
     print("Dist: "+ listLatLngTravelled[0].toString());
-    listTime.add(DateTime.now());
-    print("Time: "+ listTime[0].toString());
     var ky = 40000 / 360;
     var kx = cos(pi * destination.latitude / 180.0) * ky;
     var dx = (destination.longitude - origin.longitude).abs() * kx;
@@ -363,11 +362,13 @@ class _NavDriverToState extends State<NavDriverTo> {
   updateloc() {
     BackgroundLocation.startLocationService();
     BackgroundLocation.getLocationUpdates((location)async {
+      print("Length time:" +listTime.toString());
       origin= await LatLng(location.latitude,location.longitude);
       originDistance= ltlng.LatLng(position.latitude,position.longitude);
       destination= LatLng(stopsLatLng[counterStops].latitude,stopsLatLng[counterStops].longitude);
       destinationDistance= ltlng.LatLng(stopsLatLng[counterStops].latitude,stopsLatLng[counterStops].longitude);
-      for(int i=0; i<counterStops; i++)
+      print("Stops: "+counterStops.toString());
+      for(int i=0; i<counterStops+1; i++)
       {
         listDistances[i].add(originDistance);
       }
@@ -678,6 +679,8 @@ class _NavDriverToState extends State<NavDriverTo> {
       }
     }
     BackgroundLocation.stopLocationService();
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   @override
