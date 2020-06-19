@@ -21,13 +21,95 @@ const errHandler = err => {
     //Catch and log any error.
     console.error("Error: ", err);
 };
+
+function validation(res, brand, model, year, type, plateletters, platenumbers, nationalid, carlicensefront, carlicenseback, driverlicensefront, driverlicenseback, color, numberofseats) {
+    var validChecks = true
+    if (!((typeof(brand) === 'string') || ((brand) instanceof String)) || (brand).trim().length === 0) {
+        validChecks = false
+        res.status(400).send({ error: "Brand", message: "Brand must be a string of (1-300) characters" });
+        res.end();
+    }
+    if (!((typeof(model) === 'string') || ((model) instanceof String)) || (model).trim().length === 0) {
+        validChecks = false
+        res.status(400).send({ error: "Model", message: "Model must be a string of (1-300) characters" });
+        res.end();
+    }
+    if (((year).trim().length !== 4)) {
+        validChecks = false
+        res.status(400).send({ error: "Year", message: "year must be a number of 4 digits" });
+        res.end();
+    }
+    if (!((typeof(type) === 'string') || ((type) instanceof String)) || (type).trim().length === 0) {
+        validChecks = false
+        res.status(400).send({ error: "Type", message: "Type must be a string of (1-300) characters" });
+        res.end();
+    }
+    if (!((typeof(plateletters) === 'string') || ((plateletters) instanceof String)) || (plateletters).trim().length === 0) {
+        validChecks = false
+
+        res.status(400).send({ error: "Plateletters", message: "Plateletters must be a string of (1-300) characters" });
+        res.end();
+    }
+    if (((platenumbers).trim().length === 0)) {
+        validChecks = false
+        res.status(400).send({ error: "Platenumbers", message: "Plate numbers must be a number of (1-300) digits" });
+        res.end();
+    }
+
+    if (((nationalid).trim().length === 0)) {
+        validChecks = false
+        res.status(400).send({ error: "Nationalid", message: "National ID must be a number of (1-300) digits" });
+        res.end();
+    }
+
+    if (!((typeof(carlicensefront) === 'string') || ((carlicensefront) instanceof String)) || (carlicensefront).trim().length === 0) {
+        validChecks = false
+
+        res.status(400).send({ error: "Carlicensefront", message: "Car License front must be a string of (1-300) characters" });
+        res.end();
+    }
+    if (!((typeof(carlicenseback) === 'string') || ((carlicenseback) instanceof String)) || (carlicenseback).trim().length === 0) {
+        validChecks = false
+
+        res.status(400).send({ error: "Carlicenseback", message: "Car License back must be a string of (1-300) characters" });
+        res.end();
+    }
+
+    if (!((typeof(driverlicensefront) === 'string') || ((driverlicensefront) instanceof String)) || (driverlicensefront).trim().length === 0) {
+        validChecks = false
+        res.status(400).send({ error: "Driverlicensefront", message: "Driver License front must be a string of (1-300) characters" });
+        res.end();
+
+    }
+
+    if (!((typeof(driverlicenseback) === 'string') || ((driverlicenseback) instanceof String)) || (driverlicenseback).trim().length === 0) {
+        validChecks = false
+        res.status(400).send({ error: "Driverlicenseback", message: "Driver License back must be a string of (1-300) characters" });
+        res.end();
+    }
+
+
+    if (!((typeof(color) === 'string') || ((color) instanceof String)) || (color).trim().length === 0) {
+        validChecks = false
+        res.status(400).send({ error: "Color", message: "Color must be a string of (1-300) characters" });
+        res.end();
+    }
+
+    if (((numberofseats).trim().length === 0)) {
+        validChecks = false
+        res.status(400).send({ error: "Numberofseats", message: "Number of seats be a number of (1-300) digits" });
+        res.end();
+
+    }
+    return validChecks;
+}
 router.post('/', async(req, res) => {
     var decoded;
-    var validChecks = true;
+    var validChecks1 = true;
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
-        validChecks = false;
+        validChecks1 = false;
         res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
@@ -38,7 +120,7 @@ router.post('/', async(req, res) => {
         }
     }).then(expired => {
         if (expired) {
-            validChecks = false;
+            validChecks1 = false;
             res.status(401).send({ message: "You aren't authorized" })
             res.end();
         }
@@ -46,7 +128,7 @@ router.post('/', async(req, res) => {
 
     await User.findOne({ where: { id: decoded.id, status: 'existing' } }).then(user => {
         if (!user) {
-            validChecks = false;
+            validChecks1 = false;
             res.status(404).send({ message: "User not found" })
             res.end()
         }
@@ -54,85 +136,9 @@ router.post('/', async(req, res) => {
 
 
 
-    if (validChecks) {
-
-        if (!((typeof(req.body.brand) === 'string') || ((req.body.brand) instanceof String)) || (req.body.brand).trim().length === 0) {
-            validChecks = false
-            res.status(400).send({ error: "Brand", message: "Brand must be a string of (1-300) characters" });
-            res.end();
-        }
-        if (!((typeof(req.body.model) === 'string') || ((req.body.model) instanceof String)) || (req.body.model).trim().length === 0) {
-            validChecks = false
-            res.status(400).send({ error: "Model", message: "Model must be a string of (1-300) characters" });
-            res.end();
-        }
-        if (((req.body.year).trim().length !== 4)) {
-            validChecks = false
-            res.status(400).send({ error: "Year", message: "year must be a number of 4 digits" });
-            res.end();
-        }
-        if (!((typeof(req.body.type) === 'string') || ((req.body.type) instanceof String)) || (req.body.type).trim().length === 0) {
-            validChecks = false
-            res.status(400).send({ error: "Type", message: "Type must be a string of (1-300) characters" });
-            res.end();
-        }
-        if (!((typeof(req.body.plateletters) === 'string') || ((req.body.plateletters) instanceof String)) || (req.body.plateletters).trim().length === 0) {
-            validChecks = false
-
-            res.status(400).send({ error: "Plateletters", message: "Plateletters must be a string of (1-300) characters" });
-            res.end();
-        }
-        if (((req.body.platenumbers).trim().length === 0)) {
-            validChecks = false
-            res.status(400).send({ error: "Platenumbers", message: "Plate numbers must be a number of (1-300) digits" });
-            res.end();
-        }
-
-        if (((req.body.nationalid).trim().length === 0)) {
-            validChecks = false
-            res.status(400).send({ error: "Nationalid", message: "National ID must be a number of (1-300) digits" });
-            res.end();
-        }
-
-        if (!((typeof(req.body.carlicensefront) === 'string') || ((req.body.carlicensefront) instanceof String)) || (req.body.carlicensefront).trim().length === 0) {
-            validChecks = false
-
-            res.status(400).send({ error: "Carlicensefront", message: "Car License front must be a string of (1-300) characters" });
-            res.end();
-        }
-        if (!((typeof(req.body.carlicenseback) === 'string') || ((req.body.carlicenseback) instanceof String)) || (req.body.carlicenseback).trim().length === 0) {
-            validChecks = false
-
-            res.status(400).send({ error: "Carlicenseback", message: "Car License back must be a string of (1-300) characters" });
-            res.end();
-        }
-
-        if (!((typeof(req.body.driverlicensefront) === 'string') || ((req.body.driverlicensefront) instanceof String)) || (req.body.driverlicensefront).trim().length === 0) {
-            validChecks = false
-            res.status(400).send({ error: "Driverlicensefront", message: "Driver License front must be a string of (1-300) characters" });
-            res.end();
-
-        }
-
-        if (!((typeof(req.body.driverlicenseback) === 'string') || ((req.body.driverlicenseback) instanceof String)) || (req.body.driverlicenseback).trim().length === 0) {
-            validChecks = false
-            res.status(400).send({ error: "Driverlicenseback", message: "Driver License back must be a string of (1-300) characters" });
-            res.end();
-        }
+    if (validChecks1) {
 
 
-        if (!((typeof(req.body.color) === 'string') || ((req.body.color) instanceof String)) || (req.body.color).trim().length === 0) {
-            validChecks = false
-            res.status(400).send({ error: "Color", message: "Color must be a string of (1-300) characters" });
-            res.end();
-        }
-
-        if (((req.body.numberofseats).trim().length === 0)) {
-            validChecks = false
-            res.status(400).send({ error: "Numberofseats", message: "Number of seats be a number of (1-300) digits" });
-            res.end();
-
-        }
         await User.findOne({
             where: {
                 id: decoded.id,
@@ -140,7 +146,7 @@ router.post('/', async(req, res) => {
             }
         }).then(user => {
             if (user) {
-                if (validChecks) {
+                if (validation(res, req.body.brand, req.body.model, req.body.year, req.body.type, req.body.plateletters, req.body.platenumbers, req.body.nationalid, req.body.carlicensefront, req.body.carlicenseback, req.body.driverlicensefront, req.body.driverlicenseback, req.body.color, req.body.numberofseats)) {
                     Car.findOne({
                         where: {
                             plateletters: req.body.plateletters,
@@ -188,4 +194,4 @@ router.post('/', async(req, res) => {
 
 })
 
-module.exports = router;
+module.exports = { router, validation };

@@ -52,12 +52,10 @@ app.use('/api/showprofile', require('./routes/api/show_profile'));
 app.use('/api/showprofileextra', require('./routes/api/show_profile_extra'));
 app.use('/api/signin', require('./routes/api/sign_in'));
 app.use('/api/addreview', require('./routes/api/add_review'));
-app.use('/api/addcar', require('./routes/api/add_car'));
+app.use('/api/addcar', require('./routes/api/add_car').router);
 app.use('/api/deletecar', require('./routes/api/delete_car'));
 app.use('/api/showmycars', require('./routes/api/show_my_cars'));
 app.use('/api/addrating', require('./routes/api/add_rating'));
-//app.use('/api/scheduledtrips2', require('./routes/api/scheduledtrips'));
-//app.use('/api/showAvailableRides', require('./routes/api/unusedshowAvailableRides'));
 app.use('/api/signout', require('./routes/api/sign_out'));
 app.use('/api/deleteaccount', require('./routes/api/delete_account'));
 
@@ -164,25 +162,5 @@ var choose2 = schedule.scheduleJob('50 * * * * *', function() {
 
 
 
-
-
-
-
-////////////////////////////////////////////////
-
-
-// let g = new graphlib.Graph();
-
-// g.setEdge('C', 'D', 3);
-// g.setEdge('C', 'E', 2);
-// g.setEdge('D', 'F', 4);
-// g.setEdge('E', 'D', 1);
-// g.setEdge('E', 'F', 2);
-// g.setEdge('E', 'G', 3);
-// g.setEdge('F', 'G', 2);
-// g.setEdge('F', 'H', 1);
-// g.setEdge('G', 'H', 2);
-
-// var response = ksp.yenKSP(g, "C", "H", 100);
 
 module.exports = app
