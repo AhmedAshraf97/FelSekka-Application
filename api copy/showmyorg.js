@@ -1,6 +1,6 @@
 const OrgUser = require('../../models/orgusers');
-const express = require('express');
 const Organization = require('../../models/organizations');
+const express = require('express');
 const User = require('../../models/users');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -16,37 +16,16 @@ const errHandler = err => {
     //Catch and log any error.
     console.error("Error: ", err);
 };
-
-function validation(orgid, res) {
-    var validationbool = true;
-    if (orgid == null) {
-        res.status(400).send({ error: "Organization ID", message: "Organization ID paramter is missing" });
-        validationbool = false;
-    } else if (((orgid).toString()).trim().length === 0) {
-        res.status(400).send({ error: "Organization ID", message: "Organization ID can't be empty" });
-        validationbool = false;
-
-    } else if (!(/^([0-9]+)$/.test(parseInt(orgid)))) {
-        res.status(400).send({ error: "Organization ID", message: "Organization ID must be a number" });
-        validationbool = false;
-    }
-
-    return validationbool
-}
 router.post('/', async(req, res) => {
     var userExists = true;
-
     var decoded;
     try {
         decoded = jwt.verify(req.headers["authorization"], process.env.SECRET_KEY)
     } catch (e) {
         userExists = false;
-        res.status(401).send({ message: "You aren't authorized to add a rating" })
+        res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
-
-
-
     await ExpiredToken.findOne({ where: { token: req.headers["authorization"] } }).then(expired => {
         if (expired) {
             userExists = false;
@@ -54,7 +33,6 @@ router.post('/', async(req, res) => {
             res.end();
         }
     }).catch(errHandler)
-
     await User.findOne({ where: { id: decoded.id, status: 'existing' } }).then(user => {
         if (!user) {
             userExists = false;
@@ -63,25 +41,33 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler);
 
-
     if (userExists) {
-
-        if (validation(req.body.orgid, res)) {
-            await Organization.update({ status: "existing" }, {
-                where: {
-                    id: parseInt(req.body.orgid),
-                    status: "pending"
+        var org = '{"count": [], "organizations":[]}';
+        var obj = JSON.parse(org);
+        var orgUserArray = {};
+        var allExistingOrg = {};
+        var count = 0;
+        await OrgUser.findAll({ where: { userid: decoded.id, status: 'existing' } }).then(orgUsers => {
+            orgUserArray = orgUsers;
+        }).catch(errHandler);
+        await Organization.findAll({ where: { status: "existing" } }).then(existingOrganizations => {
+            allExistingOrg = existingOrganizations;
+        }).catch(errHandler);
+        orgUserArray.forEach(orgUser => {
+            allExistingOrg.forEach(existingOrg => {
+                if (orgUser.orgid === existingOrg.id) {
+                    obj['organizations'].push(existingOrg);
+                    count++;
                 }
-            }).then(user => {
-                if (user[0] !== 0) {
-                    res.status(200).send({ message: "Organization is Accepted" });
-                } else {
-                    res.status(400).send({ message: "Cannot accept the organization" });
-                }
-            }).catch(errHandler);
-
+            })
+        });
+        obj['count'].push(count);
+        if (count === 0) {
+            res.status(409).send({ error: "No organizations found", message: "No organizations found" });
+        } else {
+            res.status(200).send(obj);
         }
     }
 });
 
-module.exports = { router, validation };
+module.exports = router;
