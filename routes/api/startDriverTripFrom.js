@@ -22,6 +22,67 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
+
+
+function validation(tripid, actualpickuptime, latitude, longitude, Test = false) {
+    if (tripid == null) {
+
+        res.status(400).send({ error: "tripid", message: "tripid paramter is missing" });
+        validationbool = false;
+        res.end()
+    } else if (actualpickuptime == null) {
+        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime paramter is missing" });
+        validationbool = false;
+        res.end()
+    } else if (!((typeof(actualpickuptime) === 'string') || ((actualpickuptime) instanceof String))) {
+        validationbool = false;
+
+        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime must be a string" });
+        res.end()
+    } else if ((actualpickuptime).trim().length === 0) {
+        validationbool = false;
+        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime can't be empty" });
+        res.end()
+    } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(actualpickuptime))) {
+        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime is unvalid" });
+        validationbool = false;
+        res.end();
+    } else if (latitude == null) {
+        res.status(400).send({ error: "Latitude", message: "Latitude paramter is missing" });
+        validationbool = false;
+        res.end();
+    } else if (((latitude).toString()).trim().length === 0) {
+        res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
+        validationbool = false;
+        res.end();
+    } else if (!((typeof(parseFloat(latitude)) === 'number'))) {
+        res.status(400).send({ error: "latitude", message: "latitude must be a number" });
+        validationbool = false;
+        res.end();
+    } else if (longitude == null) {
+        res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
+        validationbool = false;
+        res.end();
+    } else if (((longitude).toString()).trim().length === 0) {
+        res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
+        validationbool = false;
+        res.end();
+    } else if (!((typeof(parseFloat(longitude)) === 'number'))) {
+        res.status(400).send({ error: "longitude", message: "longitude must be a number" });
+        validationbool = false;
+        res.end();
+    }
+
+
+
+    if (validationbool && Test)
+        res.send(validationbool)
+
+    return validationbool;
+
+
+}
+
 router.post('/', async(req, res) => {
 
     let ValidChecks = true
@@ -48,56 +109,8 @@ router.post('/', async(req, res) => {
     }).catch(errHandler)
 
 
-    if (req.body.tripid == null) {
-        res.status(400).send({ error: "tripid", message: "tripid paramter is missing" });
-        ValidChecks = false;
-        res.end()
-    } else if (req.body.actualpickuptime == null) {
-        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime paramter is missing" });
-        ValidChecks = false;
-        res.end()
-    } else if (!((typeof(req.body.actualpickuptime) === 'string') || ((req.body.actualpickuptime) instanceof String))) {
-        ValidChecks = false;
 
-        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime must be a string" });
-        res.end()
-    } else if ((req.body.actualpickuptime).trim().length === 0) {
-        ValidChecks = false;
-        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime can't be empty" });
-        res.end()
-    } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(req.body.actualpickuptime))) {
-        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime is unvalid" });
-        ValidChecks = false;
-        res.end();
-    } else if (req.body.latitude == null) {
-        res.status(400).send({ error: "Latitude", message: "Latitude paramter is missing" });
-        ValidChecks = false;
-        res.end();
-    } else if (((req.body.latitude).toString()).trim().length === 0) {
-        res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
-        ValidChecks = false;
-        res.end();
-    } else if (!((typeof(parseFloat(req.body.latitude)) === 'number'))) {
-        res.status(400).send({ error: "latitude", message: "latitude must be a number" });
-        ValidChecks = false;
-        res.end();
-    } else if (req.body.longitude == null) {
-        res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
-        ValidChecks = false;
-        res.end();
-    } else if (((req.body.longitude).toString()).trim().length === 0) {
-        res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
-        ValidChecks = false;
-        res.end();
-    } else if (!((typeof(parseFloat(req.body.longitude)) === 'number'))) {
-        res.status(400).send({ error: "longitude", message: "longitude must be a number" });
-        ValidChecks = false;
-        res.end();
-    }
-
-
-
-    if (ValidChecks) {
+    if (ValidChecks && validation(req.body.tripid, req.body.actualpickuptime, req.body.latitude, req.body.longitude)) {
         const user = await User.findOne({
             where: {
                 id: decoded.id,
@@ -163,4 +176,4 @@ router.post('/', async(req, res) => {
 
 })
 
-module.exports = router
+module.exports = { router, validation }
