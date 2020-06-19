@@ -22,38 +22,44 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
-router.post('/', async(req, res) => {
 
-    let ValidChecks = true
-    if (req.body.driverid == null) {
+function validation(driverid, tripid, actualpickuptime, res, Test = false) {
+    var validationbool = true;
+    if (driverid == null) {
         res.status(400).send({ error: "driverid", message: "driverid paramter is missing" });
-        ValidChecks = false;
+        validationbool = false;
         res.end()
-    } else if (req.body.tripid == null) {
+    } else if (tripid == null) {
         res.status(400).send({ error: "tripid", message: "tripid paramter is missing" });
-        ValidChecks = false;
+        validationbool = false;
         res.end()
-    } else if (req.body.actualpickuptime == null) {
+    } else if (actualpickuptime == null) {
         res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime paramter is missing" });
-        ValidChecks = false;
+        validationbool = false;
         res.end()
-    } else if (!((typeof(req.body.actualpickuptime) === 'string') || ((req.body.actualpickuptime) instanceof String))) {
-        ValidChecks = false;
+    } else if (!((typeof(actualpickuptime) === 'string') || ((actualpickuptime) instanceof String))) {
+        validationbool = false;
 
         res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime must be a string" });
         res.end()
-    } else if ((req.body.actualpickuptime).trim().length === 0) {
-        ValidChecks = false;
+    } else if ((actualpickuptime).trim().length === 0) {
+        validationbool = false;
         res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime can't be empty" });
         res.end()
-    } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(req.body.actualpickuptime))) {
+    } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(actualpickuptime))) {
         res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime is unvalid" });
-        ValidChecks = false;
+        validationbool = false;
         res.end();
     }
+    if (validationbool && Test)
+        res.send(validationbool)
+    return validationbool;
+}
+
+router.post('/', async(req, res) => {
 
 
-    if (ValidChecks) {
+    if (validation(req.body.driverid, req.body.trpid, req.body.actualpickuptime, res)) {
 
         const DriverTrip = await DriverDB.findOne({
             where: {
@@ -109,8 +115,5 @@ router.post('/', async(req, res) => {
 
     }
 
-
-
-
 })
-module.exports = router;
+module.exports = { router, validation };

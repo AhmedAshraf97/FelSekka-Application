@@ -15,6 +15,24 @@ const errHandler = err => {
     //Catch and log any error.
     console.error("Error: ", err);
 };
+
+
+function validation(userid, trust, res, Test = false) {
+    var validationbool = true;
+    if (userid == null) {
+        res.status(400).send({ error: "User ID", message: "User ID paramter is missing" });
+        validationbool = false;
+    }
+    //OrganTrustID check
+    else if (trust == null) {
+        res.status(400).send({ error: "Trust", message: "Trust paramter is missing" });
+        validationbool = false;
+    }
+    if (validationbool && Test)
+        res.send(validationbool)
+    return validationbool
+}
+
 router.post('/', async(req, res) => {
     var userExists = true;
 
@@ -47,14 +65,7 @@ router.post('/', async(req, res) => {
     }).catch(errHandler);
 
     if (userExists) {
-        //User ID check
-        if (req.body.userid == null) {
-            res.status(400).send({ error: "User ID", message: "User ID paramter is missing" });
-        }
-        //OrganTrustID check
-        else if (req.body.trust == null) {
-            res.status(400).send({ error: "Trust", message: "Trust paramter is missing" });
-        } else {
+        if (validation(req.body.userid, req.body.trust, res)) {
             await betweenUsers.update({ trust: req.body.trust }, {
                 where: {
                     user1id: decoded.id,
@@ -68,4 +79,4 @@ router.post('/', async(req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = { router, validation };

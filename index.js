@@ -31,7 +31,7 @@ app.use('/api/verifytwo', require('./routes/api/verifytwo'));
 app.use('/api/verifythree', require('./routes/api/verifythree'));
 app.use('/api/peopletrustme', require('./routes/api/peopletrustme'));
 app.use('/api/peopleItrust', require('./routes/api/peopleItrust'));
-app.use('/api/updatetrust', require('./routes/api/updatetrust'));
+app.use('/api/updatetrust', require('./routes/api/updatetrust').router);
 app.use('/api/requestridefrom', require('./routes/api/requestridefrom'));
 app.use('/api/requestrideto', require('./routes/api/requestrideto'));
 app.use('/api/retrieveuserdata', require('./routes/api/retrieveuserdata'));
@@ -79,12 +79,12 @@ app.use('/api/canceldriverTo', require('./routes/api/canceldriverToApi').router)
 app.use('/api/canceldriverFrom', require('./routes/api/canceldriverFromApi').router)
 
 app.use('/api/endRiderTripTo', require('./routes/api/endRiderTriptTo'))
-app.use('/api/startRiderTripTo', require('./routes/api/startRiderTripTo'))
+app.use('/api/startRiderTripTo', require('./routes/api/startRiderTripTo').router)
 
 app.use('/api/endRiderTripFrom', require('./routes/api/endRiderTripFrom'))
-app.use('/api/startRiderTripFrom', require('./routes/api/startRiderTripFrom'))
-app.use('/api/startDriverTripFrom', require('./routes/api/startDriverTripFrom'))
-app.use('/api/startDriverTripTo', require('./routes/api/startDriverTripTo'))
+app.use('/api/startRiderTripFrom', require('./routes/api/startRiderTripFrom').router)
+app.use('/api/startDriverTripFrom', require('./routes/api/startDriverTripFrom').router)
+app.use('/api/startDriverTripTo', require('./routes/api/startDriverTripTo').router)
 app.use('/api/endDriverTripFrom', require('./routes/api/endDriverTripFrom'))
 app.use('/api/endDriverTripTo', require('./routes/api/endDriverTripTo'))
 
@@ -94,6 +94,12 @@ app.use('/api/cancelOffer', require('./routes/api/cancelOffer'))
 app.use('/api/showrequests', require('./routes/api/show_requests'))
 app.use('/api/showoffers', require('./routes/api/show_offers'))
 
+
+const validation = require('./routes/api/updatetrust').validation;
+
+app.post('/api/test1', (req, res) => {
+    const output = validation(req.body.userid, req.body.trust, res, true)
+})
 
 var schedule = require('node-schedule');
 var request = require('request');
