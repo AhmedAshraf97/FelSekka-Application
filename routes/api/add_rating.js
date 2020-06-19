@@ -22,6 +22,33 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
+function validation(rating, datetime) {
+    var validChecks = true;
+    var message = ""
+    if (!((typeof(parseInt(rating)) === 'number') || parseInt(rating).trim().length === 0) || parseInt(rating) > 5 || parseInt(rating) < 0) {
+        validChecks = false
+        message = { error: "rating", message: "Rating should be a number of value (1-5)" }
+    }
+    if (datetime == null) {
+        validChecks = false;
+        message = { error: "datetime", message: "datetime paramter is missing" }
+
+    } else if (!((typeof(datetime) === 'string') || ((datetime) instanceof String))) {
+        validChecks = false;
+        message = { error: "datetime", message: "datetime must be a string" }
+
+    } else if ((datetime).trim().length === 0) {
+        validChecks = false;
+        message = { error: "datetime", message: "datetime can't be empty" }
+
+    } else if (!(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/.test(datetime))) {
+        message = { error: "datetime", message: "datetime is unvalid" }
+        validChecks = false;
+
+    }
+    console.log(message)
+    return { validChecks: validChecks, message: message }
+}
 router.post('/', async(req, res) => {
     var decoded;
     var ValidChecks = true;
@@ -76,59 +103,42 @@ router.post('/', async(req, res) => {
         }
     })
 
-    if (!((typeof(req.body.rating) === 'number') || (req.body.rating).trim().length === 0) || req.body.rating > 5 || req.body.rating < 0) {
-        ValidChecks = false
-        res.status(400).send({ error: "rating", message: "Rating should be a number of value (1-5)" });
-        res.end();
-
-    }
-    if (req.body.datetime == null) {
-        res.status(400).send({ error: "datetime", message: "datetime paramter is missing" });
-        ValidChecks = false;
-        res.end()
-    } else if (!((typeof(req.body.datetime) === 'string') || ((req.body.datetime) instanceof String))) {
-        ValidChecks = false;
-        res.status(400).send({ error: "datetime", message: "datetime must be a string" });
-        res.end()
-    } else if ((req.body.datetime).trim().length === 0) {
-        ValidChecks = false;
-        res.status(400).send({ error: "datetime", message: "datetime can't be empty" });
-        res.end()
-    } else if (!(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/.test(req.body.datetime))) {
-        res.status(400).send({ error: "datetime", message: "datetime is unvalid" });
-        ValidChecks = false;
-        res.end();
-    }
-
-
-    await User.findOne({
-        where: {
-            id: decoded.id,
-            status: 'existing'
-        }
-    }).then(user => {
-        if (user) {
-            if (ValidChecks) {
-                Rating.create({ userid: user.id, rateduserid: req.body.rateduserid, rating: req.body.rating, datetime: req.body.datetime, tripid: req.body.tripid }).
-                then(rate => {
-                    Rating.sum('rating', { where: { rateduserid: req.body.rateduserid } }).then(sum => {
-                        Rating.count({ where: { rateduserid: req.body.rateduserid } }).then(count => {
-                            User.update({ rating: (sum / count) }, { where: { id: req.body.rateduserid } }).
-                            then(result => {
-                                res.status(200).send({ message: "Rating updated" })
-                                console.log(" New Rating : ", (sum / count))
-                            }).catch(errHandler)
-                        })
-                    }).catch(errHandler)
-
-                }).catch(errHandler)
+    var result = validation(req.body.parseInt(rating), req.body.datetime)
+    if (result.validChecks) {
+        await User.findOne({
+            where: {
+                id: decoded.id,
+                status: 'existing'
             }
-        } else {
-            res.status(404).send({ error: "User not found", message: "User not found" })
-            res.end()
-        }
-    }).catch(errHandler)
+        }).then(user => {
+            if (user) {
+                if (ValidChecks) {
+                    Rating.create({ userid: user.id, rateduserid: req.body.rateduserid, rating: parseInt(req.body.rating), datetime: req.body.datetime, tripid: req.body.tripid }).
+                    then(rate => {
+                        Rating.sum('rating', { where: { rateduserid: req.body.rateduserid } }).then(sum => {
+                            Rating.count({ where: { rateduserid: req.body.rateduserid } }).then(count => {
+                                User.update({ rating: (sum / count) }, { where: { id: req.body.rateduserid } }).
+                                then(result => {
+                                    res.status(200).send({ message: "Rating updated" })
+                                    console.log(" New Rating : ", (sum / count))
+                                }).catch(errHandler)
+                            })
+                        }).catch(errHandler)
+
+                    }).catch(errHandler)
+                }
+            } else {
+                res.status(404).send({ error: "User not found", message: "User not found" })
+                res.end()
+            }
+        }).catch(errHandler)
+    } else {
+        res.status(400).send(result.message)
+        res.end();
+
+    }
+
 })
 
 
-module.exports = router
+module.exports = { router, validation }

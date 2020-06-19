@@ -189,7 +189,7 @@ router.post('/', async(req, res) => {
 
                     ).catch(errHandler)
                 } else {
-                    res.status(404).send(result.message)
+                    res.status(400).send(result.message)
                     res.end()
                 }
             } else {
