@@ -17,21 +17,22 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
-function validation(orgid, res) {
-    var validationbool = true;
+function validation(orgid) {
+    var validChecks = true;
+    var message = ""
     if (orgid == null) {
-        res.status(400).send({ error: "Organization ID", message: "Organization ID paramter is missing" });
-        validationbool = false;
+        message = { error: "Organization ID", message: "Organization ID paramter is missing" }
+        validChecks = false;
     } else if (((orgid).toString()).trim().length === 0) {
-        res.status(400).send({ error: "Organization ID", message: "Organization ID can't be empty" });
-        validationbool = false;
+        message = { error: "Organization ID", message: "Organization ID can't be empty" }
+        validChecks = false;
 
     } else if (!(/^([0-9]+)$/.test(parseInt(orgid)))) {
-        res.status(400).send({ error: "Organization ID", message: "Organization ID must be a number" });
-        validationbool = false;
+        message = { error: "Organization ID", message: "Organization ID must be a number" }
+        validChecks = false;
     }
 
-    return validationbool
+    return { validChecks: validChecks, message: message }
 }
 router.post('/', async(req, res) => {
     var userExists = true;
@@ -65,8 +66,8 @@ router.post('/', async(req, res) => {
 
 
     if (userExists) {
-
-        if (validation(req.body.orgid, res)) {
+        var result = validation(req.body.orgid, res)
+        if (result.validChecks) {
             await Organization.update({ status: "existing" }, {
                 where: {
                     id: parseInt(req.body.orgid),
@@ -80,6 +81,9 @@ router.post('/', async(req, res) => {
                 }
             }).catch(errHandler);
 
+        } else {
+            res.status(404).send(result.message)
+            res.end()
         }
     }
 });

@@ -97,6 +97,9 @@ app.use('/api/showoffers', require('./routes/api/show_offers'))
 
 const validation = require('./routes/api/updatetrust').validation;
 
+
+
+
 app.post('/api/test1', (req, res) => {
     const output = validation(req.body.userid, req.body.trust, res, true)
 })

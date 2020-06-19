@@ -22,86 +22,86 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
-function validation(res, brand, model, year, type, plateletters, platenumbers, nationalid, carlicensefront, carlicenseback, driverlicensefront, driverlicenseback, color, numberofseats) {
+function validation(brand, model, year, type, plateletters, platenumbers, nationalid, carlicensefront, carlicenseback, driverlicensefront, driverlicenseback, color, numberofseats) {
     var validChecks = true
+    var message = ""
     if (!((typeof(brand) === 'string') || ((brand) instanceof String)) || (brand).trim().length === 0) {
         validChecks = false
-        res.status(400).send({ error: "Brand", message: "Brand must be a string of (1-300) characters" });
-        res.end();
+        message = { error: "Brand", message: "Brand must be a string of (1-300) characters" }
+
     }
     if (!((typeof(model) === 'string') || ((model) instanceof String)) || (model).trim().length === 0) {
         validChecks = false
-        res.status(400).send({ error: "Model", message: "Model must be a string of (1-300) characters" });
-        res.end();
+        message = { error: "Model", message: "Model must be a string of (1-300) characters" }
+
     }
     if (((year).trim().length !== 4)) {
         validChecks = false
-        res.status(400).send({ error: "Year", message: "year must be a number of 4 digits" });
-        res.end();
+        message = { error: "Year", message: "year must be a number of 4 digits" }
+
+
     }
     if (!((typeof(type) === 'string') || ((type) instanceof String)) || (type).trim().length === 0) {
         validChecks = false
-        res.status(400).send({ error: "Type", message: "Type must be a string of (1-300) characters" });
-        res.end();
+        message = {
+            error: "Type",
+            message: "Type must be a string of (1-300) characters"
+        }
     }
     if (!((typeof(plateletters) === 'string') || ((plateletters) instanceof String)) || (plateletters).trim().length === 0) {
         validChecks = false
+        message = { error: "Plateletters", message: "Plateletters must be a string of (1-300) characters" }
 
-        res.status(400).send({ error: "Plateletters", message: "Plateletters must be a string of (1-300) characters" });
-        res.end();
     }
     if (((platenumbers).trim().length === 0)) {
         validChecks = false
-        res.status(400).send({ error: "Platenumbers", message: "Plate numbers must be a number of (1-300) digits" });
-        res.end();
+        message = { error: "Platenumbers", message: "Plate numbers must be a number of (1-300) digits" }
+
     }
 
     if (((nationalid).trim().length === 0)) {
         validChecks = false
-        res.status(400).send({ error: "Nationalid", message: "National ID must be a number of (1-300) digits" });
-        res.end();
+        message = { error: "Nationalid", message: "National ID must be a number of (1-300) digits" }
+
     }
 
     if (!((typeof(carlicensefront) === 'string') || ((carlicensefront) instanceof String)) || (carlicensefront).trim().length === 0) {
         validChecks = false
+        message = { error: "Carlicensefront", message: "Car License front must be a string of (1-300) characters" }
 
-        res.status(400).send({ error: "Carlicensefront", message: "Car License front must be a string of (1-300) characters" });
-        res.end();
     }
     if (!((typeof(carlicenseback) === 'string') || ((carlicenseback) instanceof String)) || (carlicenseback).trim().length === 0) {
         validChecks = false
 
-        res.status(400).send({ error: "Carlicenseback", message: "Car License back must be a string of (1-300) characters" });
-        res.end();
+        message = { error: "Carlicenseback", message: "Car License back must be a string of (1-300) characters" }
     }
 
     if (!((typeof(driverlicensefront) === 'string') || ((driverlicensefront) instanceof String)) || (driverlicensefront).trim().length === 0) {
         validChecks = false
-        res.status(400).send({ error: "Driverlicensefront", message: "Driver License front must be a string of (1-300) characters" });
-        res.end();
+        message = { error: "Driverlicensefront", message: "Driver License front must be a string of (1-300) characters" }
 
     }
 
     if (!((typeof(driverlicenseback) === 'string') || ((driverlicenseback) instanceof String)) || (driverlicenseback).trim().length === 0) {
         validChecks = false
-        res.status(400).send({ error: "Driverlicenseback", message: "Driver License back must be a string of (1-300) characters" });
-        res.end();
+        message = { error: "Driverlicenseback", message: "Driver License back must be a string of (1-300) characters" }
+
     }
 
 
     if (!((typeof(color) === 'string') || ((color) instanceof String)) || (color).trim().length === 0) {
         validChecks = false
-        res.status(400).send({ error: "Color", message: "Color must be a string of (1-300) characters" });
-        res.end();
+        message = { error: "Color", message: "Color must be a string of (1-300) characters" }
+
     }
 
     if (((numberofseats).trim().length === 0)) {
         validChecks = false
-        res.status(400).send({ error: "Numberofseats", message: "Number of seats be a number of (1-300) digits" });
-        res.end();
+        message = { error: "Numberofseats", message: "Number of seats be a number of (1-300) digits" }
 
     }
-    return validChecks;
+
+    return { validChecks: validChecks, message: message };
 }
 router.post('/', async(req, res) => {
     var decoded;
@@ -146,7 +146,11 @@ router.post('/', async(req, res) => {
             }
         }).then(user => {
             if (user) {
-                if (validation(res, req.body.brand, req.body.model, req.body.year, req.body.type, req.body.plateletters, req.body.platenumbers, req.body.nationalid, req.body.carlicensefront, req.body.carlicenseback, req.body.driverlicensefront, req.body.driverlicenseback, req.body.color, req.body.numberofseats)) {
+                var result = validation(req.body.brand, req.body.model, req.body.year,
+                    req.body.type, req.body.plateletters, req.body.platenumbers, req.body.nationalid,
+                    req.body.carlicensefront, req.body.carlicenseback, req.body.driverlicensefront,
+                    req.body.driverlicenseback, req.body.color, req.body.numberofseats)
+                if (result.validChecks) {
                     Car.findOne({
                         where: {
                             plateletters: req.body.plateletters,
@@ -184,6 +188,9 @@ router.post('/', async(req, res) => {
                         }
 
                     ).catch(errHandler)
+                } else {
+                    res.status(404).send(result.message)
+                    res.end()
                 }
             } else {
                 res.status(404).send({ error: "User not found", message: "User not found" })
