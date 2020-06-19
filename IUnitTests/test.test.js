@@ -29,7 +29,7 @@ test('invalid organization id', async() => {
 test('invalid rating', async() => {
 
 
-    var result = validationRating("20", "2020-05-27")
+    var result = validationRating("20", "2020-05-27 23:04:18")
     expect(result.validChecks).toBe(false)
     expect(result.message.message).toBe("Rating should be a number of value (1-5)")
 }, 100000)

@@ -76,7 +76,7 @@ router.post('/', async(req, res) => {
 
     await User.findOne({
         where: {
-            id: req.body.rateduserid,
+            id: parseInt(req.body.rateduserid),
             status: 'existing'
         }
     }).then(user => {
@@ -93,7 +93,7 @@ router.post('/', async(req, res) => {
 
     await Trip.findOne({
         where: {
-            id: req.body.tripid
+            id: parseInt(req.body.tripid)
         }
     }).then(trip => {
         if (!trip) {
@@ -103,7 +103,7 @@ router.post('/', async(req, res) => {
         }
     })
 
-    var result = validation(req.body.parseInt(rating), req.body.datetime)
+    var result = validation(req.body.rating, req.body.datetime)
     if (result.validChecks) {
         await User.findOne({
             where: {
@@ -113,11 +113,11 @@ router.post('/', async(req, res) => {
         }).then(user => {
             if (user) {
                 if (ValidChecks) {
-                    Rating.create({ userid: user.id, rateduserid: req.body.rateduserid, rating: parseInt(req.body.rating), datetime: req.body.datetime, tripid: req.body.tripid }).
+                    Rating.create({ userid: user.id, rateduserid: parseInt(req.body.rateduserid), rating: parseInt(req.body.rating), datetime: parseInt(req.body.datetime), tripid: parseInt(req.body.tripid) }).
                     then(rate => {
-                        Rating.sum('rating', { where: { rateduserid: req.body.rateduserid } }).then(sum => {
-                            Rating.count({ where: { rateduserid: req.body.rateduserid } }).then(count => {
-                                User.update({ rating: (sum / count) }, { where: { id: req.body.rateduserid } }).
+                        Rating.sum('rating', { where: { rateduserid: parseInt(req.body.rateduserid) } }).then(sum => {
+                            Rating.count({ where: { rateduserid: parseInt(req.body.rateduserid) } }).then(count => {
+                                User.update({ rating: (sum / count) }, { where: { id: parseInt(req.body.rateduserid) } }).
                                 then(result => {
                                     res.status(200).send({ message: "Rating updated" })
                                     console.log(" New Rating : ", (sum / count))
