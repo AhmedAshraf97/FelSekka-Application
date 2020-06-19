@@ -25,12 +25,11 @@ const errHandler = err => {
 
 function validation(datetime, review) {
     var validChecks = true;
+    var message;
     if (review === undefined || (review).trim().length > 300 || (review).trim().length === 0) {
         validChecks = false;
         message = { error: "review", message: "Review size must be between (1-300) characters" }
-
     }
-
     if (datetime == null) {
         message = { error: "datetime", message: "datetime paramter is missing" }
         validChecks = false;
@@ -40,13 +39,12 @@ function validation(datetime, review) {
 
     } else if ((datetime).trim().length === 0) {
         validChecks = false;
-        res.status(400).send({ error: "datetime", message: "datetime can't be empty" });
-        res.end()
+        message = { error: "datetime", message: "datetime can't be empty" }
     } else if (!(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/.test(datetime))) {
-        res.status(400).send({ error: "datetime", message: "datetime is unvalid" });
+        message = { error: "datetime", message: "datetime is unvalid" }
         validChecks = false;
-        res.end();
     }
+    return { validChecks: validChecks, message: message }
 }
 router.post('/', async(req, res) => {
     var decoded;
@@ -71,67 +69,74 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler)
 
+    var result = validation(req.body.datetime, req.body.review)
+    if (result.validChecks) {
 
-    if (req.body.review === undefined || (req.body.review).trim().length > 300 || (req.body.review).trim().length === 0) {
-        ValidChecks = false;
-        res.status(400).send({ error: "review", message: "Review size must be between (1-300) characters" });
+        await Trip.findOne({
+            where: {
+                id: parseInt(req.body.tripid)
+            }
+        }).then(trip => {
+            if (!trip) {
+                ValidChecks = false;
+                res.status(400).send({ error: "trip id", message: "Invalid trip id" })
+                res.end();
+            }
+        })
+
+
+        await User.findOne({
+            where: {
+                id: parseInt(req.body.reviewedid),
+                status: 'existing'
+            }
+        }).then(user => {
+            if (!user) {
+                ValidChecks = false;
+                res.status(400).send({ error: "Reviewed user id", message: "Reviewed user doesn't exist" });
+                res.end();
+            }
+        }).catch(errHandler)
+
+        //2008-09-01 12:35:45
+
+
+
+
+        await User.findOne({
+            where: {
+                id: decoded.id,
+                status: 'existing'
+            }
+        }).then(user => {
+            if (user) {
+                if (ValidChecks) {
+                    Review.create({
+                            userid: user.id,
+                            revieweduserid: parseInt(req.body.reviewedid),
+                            review: req.body.review,
+                            tripid: parseInt(req.body.tripid),
+                            datetime: req.body.datetime
+                        })
+                        .then(review => {
+                            res.status(200).send({ message: "Review is added" });
+                            res.end();
+                        }).catch(errHandler);
+                }
+            } else {
+                res.status(404).send({ error: "User not found", message: "User not found" })
+                res.end()
+            }
+        }).catch(errHandler)
+    } else {
+        res.status(400).send(result.message)
         res.end();
     }
 
 
 
-    await Trip.findOne({
-        where: {
-            id: req.body.tripid
-        }
-    }).then(trip => {
-        if (!trip) {
-            ValidChecks = false;
-            res.status(400).send({ error: "trip id", message: "Invalid trip id" })
-            res.end();
-        }
-    })
-
-
-    await User.findOne({
-        where: {
-            id: req.body.reviewedid,
-            status: 'existing'
-        }
-    }).then(user => {
-        if (!user) {
-            ValidChecks = false;
-            res.status(400).send({ error: "Reviewed user id", message: "Reviewed user doesn't exist" });
-            res.end();
-        }
-    }).catch(errHandler)
-
-    //2008-09-01 12:35:45
-
-
-
-
-    await User.findOne({
-        where: {
-            id: decoded.id,
-            status: 'existing'
-        }
-    }).then(user => {
-        if (user) {
-            if (ValidChecks) {
-                Review.create({ userid: user.id, revieweduserid: req.body.reviewedid, review: req.body.review, tripid: req.body.tripid, datetime: req.body.datetime })
-                    .then(review => {
-                        res.status(200).send({ message: "Review is added" });
-                        res.end();
-                    }).catch(errHandler);
-            }
-        } else {
-            res.status(404).send({ error: "User not found", message: "User not found" })
-            res.end()
-        }
-    }).catch(errHandler)
 
 })
 
 
-module.exports = router
+module.exports = { router, validation }

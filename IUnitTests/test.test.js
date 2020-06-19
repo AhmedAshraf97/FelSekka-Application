@@ -5,6 +5,7 @@ const app = require('../index');
 var validationcar = require('../routes/api/add_car').validation;
 var validationAccOrg = require('../routes/api/acceptorg').validation;
 var validationRating = require('../routes/api/add_rating').validation;
+var validationReview = require('../routes/api/add_review').validation;
 
 
 var validationAccOrg = require('../routes/api/acceptorg').validation
@@ -83,6 +84,14 @@ test('invalid rating', async() => {
 
 
     var result = validationRating("20", "2020-05-27 23:04:18")
+    expect(result.validChecks).toBe(false)
+    expect(result.message.message).toBe("Rating should be a number of value (1-5)")
+}, 100000)
+
+test('invalid review', async() => {
+
+
+    var result = validationReview("20", "2020-05-27 23:04:18")
     expect(result.validChecks).toBe(false)
     expect(result.message.message).toBe("Rating should be a number of value (1-5)")
 }, 100000)

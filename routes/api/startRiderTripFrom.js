@@ -70,7 +70,7 @@ router.post('/', async(req, res) => {
                 where: {
                     riderid: parseInt(req.body.riderid),
                     tripid: parseInt(req.body.tripid),
-                    status: "ongoing"
+                    status: "scheduled"
                 }
 
             }).catch(errHandler)

@@ -47,7 +47,7 @@ app.use('/api/editprofile', require('./routes/api/editprofile'));
 app.use('/api/changepassword', require('./routes/api/changepassword'));
 app.use('/api/forgetpassword', require('./routes/api/forgetpassword'));
 app.use('/api/showpasttrips', require('./routes/api/ShowPastTrips'));
-app.use('/api/getreviews', require('./routes/api/get_user_reviews'));
+app.use('/api/getreviews', require('./routes/api/get_user_reviews').router);
 app.use('/api/showprofile', require('./routes/api/show_profile'));
 app.use('/api/showprofileextra', require('./routes/api/show_profile_extra'));
 app.use('/api/signin', require('./routes/api/sign_in'));
@@ -94,15 +94,6 @@ app.use('/api/cancelOffer', require('./routes/api/cancelOffer'))
 app.use('/api/showrequests', require('./routes/api/show_requests'))
 app.use('/api/showoffers', require('./routes/api/show_offers'))
 
-
-const validation = require('./routes/api/updatetrust').validation;
-
-
-
-
-app.post('/api/test1', (req, res) => {
-    const output = validation(req.body.userid, req.body.trust, res, true)
-})
 
 var schedule = require('node-schedule');
 var request = require('request');
