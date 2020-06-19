@@ -131,8 +131,6 @@ router.post('/', async(req, res) => {
             res.status(404).send({ error: "Trip doesn't exist", message: "Trip doesn't exist" })
             res.end();
         }
-    } else {
-
     }
 
 })

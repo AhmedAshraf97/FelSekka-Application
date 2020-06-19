@@ -154,7 +154,7 @@ router.post('/', async(req, res) => {
                 }, {
                     where: {
                         id: DriverTrip.offerid,
-                        status: "scheduled"
+                        status: "ongoing"
                     }
                 }).catch(errHandler)
 
