@@ -23,44 +23,40 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
-function validation(driverid, tripid, actualpickuptime, res, Test = false) {
-    var validationbool = true;
+function validation(driverid, tripid, actualpickuptime) {
+    var validChecks = true;
+    var message;
 
     if (driverid == null) {
-        res.status(400).send({ error: "driverid", message: "driverid paramter is missing" });
-        validationbool = false;
-        res.end()
+        message = { error: "driverid", message: "driverid paramter is missing" }
+        validChecks = false;
     } else if (tripid == null) {
-        res.status(400).send({ error: "tripid", message: "tripid paramter is missing" });
-        validationbool = false;
-        res.end()
-    } else if (actualpickuptime == null) {
-        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime paramter is missing" });
-        validationbool = false;
-        res.end()
-    } else if (!((typeof(actualpickuptime) === 'string') || ((actualpickuptime) instanceof String))) {
-        validationbool = false;
+        message = { error: "tripid", message: "tripid paramter is missing" };
+        validChecks = false;
 
-        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime must be a string" });
-        res.end()
+    } else if (actualpickuptime == null) {
+        message = { error: "actualpickuptime", message: "actualpickuptime paramter is missing" };
+        validChecks = false;
+
+    } else if (!((typeof(actualpickuptime) === 'string') || ((actualpickuptime) instanceof String))) {
+        validChecks = false;
+
+        message = { error: "actualpickuptime", message: "actualpickuptime must be a string" };
     } else if ((actualpickuptime).trim().length === 0) {
-        validationbool = false;
-        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime can't be empty" });
-        res.end()
+        validChecks = false;
+        message = { error: "actualpickuptime", message: "actualpickuptime can't be empty" }
+
     } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(actualpickuptime))) {
-        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime is unvalid" });
-        validationbool = false;
-        res.end();
+        message = { error: "actualpickuptime", message: "actualpickuptime is unvalid" }
+        validChecks = false;
     }
-    if (validationbool && Test)
-        res.send(validationbool)
-    return validationbool;
+    return { validChecks: validChecks, message: message }
 }
 
 router.post('/', async(req, res) => {
 
-
-    if (validation(req.body.driverid, req.body.tripid, req.body.actualpickuptime, res)) {
+    var result = validation(req.body.driverid, req.body.tripid, req.body.actualpickuptime)
+    if (result.validChecks) {
         const DriverTrip = await DriverDB.findOne({
             where: {
                 driverid: parseInt(req.body.driverid),
@@ -113,6 +109,9 @@ router.post('/', async(req, res) => {
         }
 
 
+    } else {
+        res.status(400).send(result.message)
+        res.end()
     }
 
 

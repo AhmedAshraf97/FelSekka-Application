@@ -23,6 +23,186 @@ const errHandler = err => {
     //Catch and log any error.
     console.error("Error: ", err);
 };
+
+function validation(firstname, lastname, username, email,
+    phonenumber, password, confirmpassword, gender, birthdate, ridewith, smoking, longitude, latitude) {
+    var validChecks = true;
+    var message;
+
+    if (firstname == null) {
+        message = ({ error: "First name", message: "First name paramter is missing" });
+        validChecks = false;
+    } else if (!((typeof(firstname) === 'string') || ((firstname) instanceof String))) {
+        message = ({ error: "First name", message: "First name must be a string" });
+        validChecks = false;
+    } else if ((firstname).trim().length === 0) {
+        message = ({ error: "First name", message: "First name can't be empty" });
+        validChecks = false;
+    } else if (!(/^[a-zA-Z ]*$/.test(firstname))) {
+        message = ({ error: "First name", message: "First name can only contain letters" });
+        validChecks = false;
+    } else if ((firstname).trim().length > 15) {
+        message = ({ error: "First name", message: "First name has maximum length of 15 letters" });
+        validChecks = false;
+    }
+    //Last name validation 
+    else if (lastname == null) {
+        message = ({ error: "Last name", message: "Last name paramter is missing" });
+        validChecks = false;
+    } else if (!((typeof(lastname) === 'string') || ((lastname) instanceof String))) {
+        message = ({ error: "Last name", message: "Last name must be a string" });
+        validChecks = false;
+    } else if ((lastname).trim().length === 0) {
+        message = ({ error: "Last name", message: "Last name can't be empty" });
+        validChecks = false;
+    } else if (!(/^[a-zA-Z ]*$/.test(lastname))) {
+        message = ({ error: "Last name", message: "Last name can only contain letters" });
+        validChecks = false;
+    } else if ((lastname).trim().length > 15) {
+        message = ({ error: "Last name", message: "Last name has maximum length of 15 letters" });
+        validChecks = false;
+    }
+    //Username validation
+    else if (username == null) {
+        message = ({ error: "Username", message: "Username paramter is missing" });
+        validChecks = false;
+    } else if (!((typeof(username) === 'string') || ((username) instanceof String))) {
+        message = ({ error: "Username", message: "Username must be a string" });
+        validChecks = false;
+    } else if ((username).trim().length === 0) {
+        message = ({ error: "Username", message: "Username can't be empty" });
+        validChecks = false;
+    } else if (!(/^\S+$/.test(username))) {
+        message = ({ error: "Username", message: "Username can't contain spaces" });
+        validChecks = false;
+    } else if ((username).trim().length > 20) {
+        message = ({ error: "Username", message: "Username has maximum length of 20 characters" });
+        validChecks = false;
+    }
+    //Email validation
+    else if (email == null) {
+        message = ({ error: "Email", message: "Email paramter is missing" });
+        validChecks = false;
+    } else if (!((typeof(email) === 'string') || ((email) instanceof String))) {
+        message = ({ error: "Email", message: "Email must be a string" });
+        validChecks = false;
+    } else if ((email).trim().length === 0) {
+        message = ({ error: "Email", message: "Email can't be empty" });
+        validChecks = false;
+    } else if (!(/^\S+@\S+\.\S+$/.test(email))) {
+        message = ({ error: "Email", message: "Email address is unvalid" });
+        validChecks = false;
+    }
+    //Phone number validation
+    else if (phonenumber == null) {
+        message = ({ error: "Phone number", message: "Phone number paramter is missing" });
+        validChecks = false;
+    } else if (!((typeof(phonenumber) === 'string') || ((phonenumber) instanceof String))) {
+        message = ({ error: "Phone number", message: "Phone number must be a string" });
+        validChecks = false;
+    } else if ((phonenumber).trim().length === 0) {
+        message = ({ error: "Phone number", message: "Phone number can't be empty" });
+        validChecks = false;
+    } else if (!(/^[0-9]{11}$/.test(phonenumber))) {
+        message = ({ error: "Phone number", message: "Phone number is unvalid" });
+        validChecks = false;
+    }
+    //Password validation
+    else if (password == null) {
+        message = ({ error: "Password", message: "Password paramter is missing" });
+        validChecks = false;
+    } else if (!((typeof(password) === 'string') || ((password) instanceof String))) {
+        message = ({ error: "Password", message: "Password must be a string" });
+        validChecks = false;
+    } else if ((password).trim().length === 0) {
+        message = ({ error: "Password", message: "Password can't be empty" });
+        validChecks = false;
+    } else if (!(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&.-])[A-Za-z\d@$!%*#?&.-]{8,15}$/.test(password))) {
+        message = ({ error: "Password", message: "Password must be minimum eight characters,maximum 15 characters and should include at least one letter, one number and one special character" });
+        validChecks = false;
+    }
+    //Confirm password validation
+    else if (confirmpassword == null) {
+        message = ({ error: "Confirm password", message: "Confirm password paramter is missing" });
+        validChecks = false;
+    } else if (!((typeof(confirmpassword) === 'string') || ((confirmpassword) instanceof String))) {
+        message = ({ error: "Confirm password", message: "Confirm password must be a string" });
+        validChecks = false;
+    } else if ((confirmpassword).trim().length === 0) {
+        message = ({ error: "Confirm password", message: "Password can't be empty" });
+        validChecks = false;
+    } else if (!(password === confirmpassword)) {
+        message = ({ error: "Confirm password ", message: "Passwords don't match" });
+        validChecks = false;
+    }
+    //Gender validation
+    else if (gender == null) {
+        message = ({ error: "Gender", message: "Gender paramter is missing" });
+        validChecks = false;
+    } else if (!((typeof(gender) === 'string') || ((gender) instanceof String))) {
+        message = ({ error: "Gender", message: "Gender must be a string" });
+        validChecks = false;
+    } else if ((gender).trim().length === 0) {
+        message = ({ error: "Gender", message: "Gender can't be empty" });
+        validChecks = false;
+    }
+    //Birthdate validation
+    else if (birthdate == null) {
+        message = ({ error: "Birthdate", message: "Birthdate paramter is missing" });
+        validChecks = false;
+    } else if (!((typeof(birthdate) === 'string') || ((birthdate) instanceof String))) {
+        message = ({ error: "Birthdate", message: "Birthdate must be a string" });
+        validChecks = false;
+    } else if ((birthdate).trim().length === 0) {
+        message = ({ error: "Birthdate", message: "Birthdate can't be empty" });
+        validChecks = false;
+    } else if (!(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(birthdate))) {
+        message = ({ error: "Birthdate", message: "Birthdate is unvalid" });
+        validChecks = false;
+    }
+    //Ride with validation
+    else if (ridewith == null) {
+        message = ({ error: "Ride with", message: "Ride with paramter is missing" });
+        validChecks = false;
+    } else if (!((typeof(ridewith) === 'string') || ((ridewith) instanceof String))) {
+        message = ({ error: "Ride with", message: "Ride with must be a string" });
+        validChecks = false;
+    } else if ((ridewith).trim().length === 0) {
+        message = ({ error: "Ride with", message: "Ride with can't be empty" });
+        validChecks = false;
+    }
+    //Smoking validation
+    else if (smoking == null) {
+        message = ({ error: "Smoking", message: "Smoking paramter is missing" });
+        validChecks = false;
+    } else if (!((typeof(smoking) === 'string') || ((smoking) instanceof String))) {
+        message = ({ error: "Smoking", message: "Smoking must be a string" });
+        validChecks = false;
+    } else if ((smoking).trim().length === 0) {
+        message = ({ error: "Smoking", message: "Smoking can't be empty" });
+        validChecks = false;
+    }
+    //Latitude validation
+    else if (latitude == null) {
+        message = ({ error: "Latitude", message: "Latitude paramter is missing" });
+        validChecks = false;
+    } else if (((latitude).toString()).trim().length === 0) {
+        message = ({ error: "Latitude", message: "Latitude can't be empty" });
+        validChecks = false;
+    }
+    //Longitude validation
+    else if (longitude == null) {
+        message = ({ error: "Longitude", message: "Longitude paramter is missing" });
+        validChecks = false;
+    } else if (((longitude).toString()).trim().length === 0) {
+        message = ({ error: "Longitude", message: "Longitude can't be empty" });
+        validChecks = false;
+    }
+
+    return { validChecks: validChecks, message: message }
+
+}
+
 //SignUp (na2es verification by email)
 router.post('/', async(req, res) => {
     //Object added to database
@@ -70,212 +250,99 @@ router.post('/', async(req, res) => {
             }
         }).catch(errHandler);
     }
-    // First name validation 
-    if (req.body.firstname == null) {
-        res.status(400).send({ error: "First name", message: "First name paramter is missing" });
-    } else if (!((typeof(req.body.firstname) === 'string') || ((req.body.firstname) instanceof String))) {
-        res.status(400).send({ error: "First name", message: "First name must be a string" });
-    } else if ((req.body.firstname).trim().length === 0) {
-        res.status(400).send({ error: "First name", message: "First name can't be empty" });
-    } else if (!(/^[a-zA-Z ]*$/.test(req.body.firstname))) {
-        res.status(400).send({ error: "First name", message: "First name can only contain letters" });
-    } else if ((req.body.firstname).trim().length > 15) {
-        res.status(400).send({ error: "First name", message: "First name has maximum length of 15 letters" });
-    }
-    //Last name validation 
-    else if (req.body.lastname == null) {
-        res.status(400).send({ error: "Last name", message: "Last name paramter is missing" });
-    } else if (!((typeof(req.body.lastname) === 'string') || ((req.body.lastname) instanceof String))) {
-        res.status(400).send({ error: "Last name", message: "Last name must be a string" });
-    } else if ((req.body.lastname).trim().length === 0) {
-        res.status(400).send({ error: "Last name", message: "Last name can't be empty" });
-    } else if (!(/^[a-zA-Z ]*$/.test(req.body.lastname))) {
-        res.status(400).send({ error: "Last name", message: "Last name can only contain letters" });
-    } else if ((req.body.lastname).trim().length > 15) {
-        res.status(400).send({ error: "Last name", message: "Last name has maximum length of 15 letters" });
-    }
-    //Username validation
-    else if (req.body.username == null) {
-        res.status(400).send({ error: "Username", message: "Username paramter is missing" });
-    } else if (!((typeof(req.body.username) === 'string') || ((req.body.username) instanceof String))) {
-        res.status(400).send({ error: "Username", message: "Username must be a string" });
-    } else if ((req.body.username).trim().length === 0) {
-        res.status(400).send({ error: "Username", message: "Username can't be empty" });
-    } else if (!(/^\S+$/.test(req.body.username))) {
-        res.status(400).send({ error: "Username", message: "Username can't contain spaces" });
-    } else if ((req.body.username).trim().length > 20) {
-        res.status(400).send({ error: "Username", message: "Username has maximum length of 20 characters" });
-    }
-    //Email validation
-    else if (req.body.email == null) {
-        res.status(400).send({ error: "Email", message: "Email paramter is missing" });
-    } else if (!((typeof(req.body.email) === 'string') || ((req.body.email) instanceof String))) {
-        res.status(400).send({ error: "Email", message: "Email must be a string" });
-    } else if ((req.body.email).trim().length === 0) {
-        res.status(400).send({ error: "Email", message: "Email can't be empty" });
-    } else if (!(/^\S+@\S+\.\S+$/.test(req.body.email))) {
-        res.status(400).send({ error: "Email", message: "Email address is unvalid" });
-    }
-    //Phone number validation
-    else if (req.body.phonenumber == null) {
-        res.status(400).send({ error: "Phone number", message: "Phone number paramter is missing" });
-    } else if (!((typeof(req.body.phonenumber) === 'string') || ((req.body.phonenumber) instanceof String))) {
-        res.status(400).send({ error: "Phone number", message: "Phone number must be a string" });
-    } else if ((req.body.phonenumber).trim().length === 0) {
-        res.status(400).send({ error: "Phone number", message: "Phone number can't be empty" });
-    } else if (!(/^[0-9]{11}$/.test(req.body.phonenumber))) {
-        res.status(400).send({ error: "Phone number", message: "Phone number is unvalid" });
-    }
-    //Password validation
-    else if (req.body.password == null) {
-        res.status(400).send({ error: "Password", message: "Password paramter is missing" });
-    } else if (!((typeof(req.body.password) === 'string') || ((req.body.password) instanceof String))) {
-        res.status(400).send({ error: "Password", message: "Password must be a string" });
-    } else if ((req.body.password).trim().length === 0) {
-        res.status(400).send({ error: "Password", message: "Password can't be empty" });
-    } else if (!(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&.-])[A-Za-z\d@$!%*#?&.-]{8,15}$/.test(req.body.password))) {
-        res.status(400).send({ error: "Password", message: "Password must be minimum eight characters,maximum 15 characters and should include at least one letter, one number and one special character" });
-    }
-    //Confirm password validation
-    else if (req.body.confirmpassword == null) {
-        res.status(400).send({ error: "Confirm password", message: "Confirm password paramter is missing" });
-    } else if (!((typeof(req.body.confirmpassword) === 'string') || ((req.body.confirmpassword) instanceof String))) {
-        res.status(400).send({ error: "Confirm password", message: "Confirm password must be a string" });
-    } else if ((req.body.confirmpassword).trim().length === 0) {
-        res.status(400).send({ error: "Confirm password", message: "Password can't be empty" });
-    } else if (!(req.body.password === req.body.confirmpassword)) {
-        res.status(400).send({ error: "Confirm password ", message: "Passwords don't match" });
-    }
-    //Gender validation
-    else if (req.body.gender == null) {
-        res.status(400).send({ error: "Gender", message: "Gender paramter is missing" });
-    } else if (!((typeof(req.body.gender) === 'string') || ((req.body.gender) instanceof String))) {
-        res.status(400).send({ error: "Gender", message: "Gender must be a string" });
-    } else if ((req.body.gender).trim().length === 0) {
-        res.status(400).send({ error: "Gender", message: "Gender can't be empty" });
-    }
-    //Birthdate validation
-    else if (req.body.birthdate == null) {
-        res.status(400).send({ error: "Birthdate", message: "Birthdate paramter is missing" });
-    } else if (!((typeof(req.body.birthdate) === 'string') || ((req.body.birthdate) instanceof String))) {
-        res.status(400).send({ error: "Birthdate", message: "Birthdate must be a string" });
-    } else if ((req.body.birthdate).trim().length === 0) {
-        res.status(400).send({ error: "Birthdate", message: "Birthdate can't be empty" });
-    } else if (!(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(req.body.birthdate))) {
-        res.status(400).send({ error: "Birthdate", message: "Birthdate is unvalid" });
-    }
-    //Ride with validation
-    else if (req.body.ridewith == null) {
-        res.status(400).send({ error: "Ride with", message: "Ride with paramter is missing" });
-    } else if (!((typeof(req.body.ridewith) === 'string') || ((req.body.ridewith) instanceof String))) {
-        res.status(400).send({ error: "Ride with", message: "Ride with must be a string" });
-    } else if ((req.body.ridewith).trim().length === 0) {
-        res.status(400).send({ error: "Ride with", message: "Ride with can't be empty" });
-    }
-    //Smoking validation
-    else if (req.body.smoking == null) {
-        res.status(400).send({ error: "Smoking", message: "Smoking paramter is missing" });
-    } else if (!((typeof(req.body.smoking) === 'string') || ((req.body.smoking) instanceof String))) {
-        res.status(400).send({ error: "Smoking", message: "Smoking must be a string" });
-    } else if ((req.body.smoking).trim().length === 0) {
-        res.status(400).send({ error: "Smoking", message: "Smoking can't be empty" });
-    }
-    //Latitude validation
-    else if (req.body.latitude == null) {
-        res.status(400).send({ error: "Latitude", message: "Latitude paramter is missing" });
-    } else if (((req.body.latitude).toString()).trim().length === 0) {
-        res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
-    }
-    //Longitude validation
-    else if (req.body.longitude == null) {
-        res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
-    } else if (((req.body.longitude).toString()).trim().length === 0) {
-        res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
-    } else if (usernameExists === 1) {
+    if (usernameExists === 1) {
         res.status(400).send({ error: "Username", message: "This username already exists" });
     } else if (emailExists === 1) {
         res.status(400).send({ error: "Email", message: "This email already exists" });
     } else if (phonenumberExists === 1) {
         res.status(400).send({ error: "Phone number", message: "This phone number already exists" });
+
     } else {
-        var createdUserID = 0;
-        var distance12 = 0;
-        var distance21 = 0;
-        var time12 = 0;
-        var time21 = 0;
+        var result = validation(req.body.firstname, req.body.lastname, req.body.username, req.body.email,
+            req.body.phonenumber, req.body.password, req.body.confirmpassword, req.body.gender, req.body.birthdate,
+            req.body.ridewith, req.body.smoking, req.body.longitude, req.body.latitude)
+        if (result.validChecks) {
+            var createdUserID = 0;
+            var distance12 = 0;
+            var distance21 = 0;
+            var time12 = 0;
+            var time21 = 0;
 
-        //Insert user 
-        const userCreate = await User.create(userData).catch(errHandler)
-        if (userCreate) {
-            createdUserID = userCreate.id;
-            res.status(200).send({ message: "User is created" });
+            //Insert user 
+            const userCreate = await User.create(userData).catch(errHandler)
+            if (userCreate) {
+                createdUserID = userCreate.id;
+                res.status(200).send({ message: "User is created" });
+            }
+
+            //Insert users in betweenusers
+            const allUsers = await User.findAll({
+                where: {
+                    [Op.and]: [{
+                            id: {
+                                [Op.ne]: createdUserID
+                            }
+                        },
+                        { status: 'existing' }
+                    ]
+                }
+            }).catch(errHandler);
+
+            var BetweenUsersArray = []
+
+            for (user of allUsers) {
+                var x = req.body.latitude;
+                var y = req.body.longitude;
+                var z = user.latitude;
+                var w = user.longitude;
+                var body12 = {}
+                var body21 = {}
+                var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z, ',', w, '&destinations=', x, ',', y, '&key=', API_KEY);
+                var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x, ',', y, '&destinations=', z, ',', w, '&key=', API_KEY);
+                const url122 = await request.post(url12).catch(errHandler)
+                body12 = url122;
+
+                const url211 = await request.post(url21).catch(errHandler)
+                body21 = url211;
+
+                body12 = JSON.parse(body12)
+                body21 = JSON.parse(body21)
+                var results12 = body12.rows[0].elements;
+                var element12 = results12[0]
+                distance12 = element12.distance.value / 1000;
+                time12 = element12.duration.value / 60;
+                ///////////////////////////////////
+                var results21 = body21.rows[0].elements;
+                var element21 = results21[0]
+                distance21 = element21.distance.value / 1000;
+                time21 = element21.duration.value / 60;
+                const betweenUsersData1 = {
+                    user1id: user.id,
+                    user2id: createdUserID,
+                    distance: distance12,
+                    time: time12,
+                    trust: 0
+                }
+                const betweenUsersData2 = {
+                    user1id: createdUserID,
+                    user2id: user.id,
+                    distance: distance21,
+                    time: time21,
+                    trust: 0
+                }
+                BetweenUsersArray.push(betweenUsersData1)
+
+                BetweenUsersArray.push(betweenUsersData2)
+
+            }
+            await BetweenUsers.bulkCreate(BetweenUsersArray).catch(errHandler);
+
+        } else {
+            res.status(400).send(result.message)
+            res.end()
         }
-
-        //Insert users in betweenusers
-        const allUsers = await User.findAll({
-            where: {
-                [Op.and]: [{
-                        id: {
-                            [Op.ne]: createdUserID
-                        }
-                    },
-                    { status: 'existing' }
-                ]
-            }
-        }).catch(errHandler);
-
-        var BetweenUsersArray = []
-
-        for (user of allUsers) {
-            var x = req.body.latitude;
-            var y = req.body.longitude;
-            var z = user.latitude;
-            var w = user.longitude;
-            var body12 = {}
-            var body21 = {}
-            var url12 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(z, ',', w, '&destinations=', x, ',', y, '&key=', API_KEY);
-            var url21 = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='.concat(x, ',', y, '&destinations=', z, ',', w, '&key=', API_KEY);
-            const url122 = await request.post(url12).catch(errHandler)
-            body12 = url122;
-
-            const url211 = await request.post(url21).catch(errHandler)
-            body21 = url211;
-
-            body12 = JSON.parse(body12)
-            body21 = JSON.parse(body21)
-            var results12 = body12.rows[0].elements;
-            var element12 = results12[0]
-            distance12 = element12.distance.value / 1000;
-            time12 = element12.duration.value / 60;
-            ///////////////////////////////////
-            var results21 = body21.rows[0].elements;
-            var element21 = results21[0]
-            distance21 = element21.distance.value / 1000;
-            time21 = element21.duration.value / 60;
-            const betweenUsersData1 = {
-                user1id: user.id,
-                user2id: createdUserID,
-                distance: distance12,
-                time: time12,
-                trust: 0
-            }
-            const betweenUsersData2 = {
-                user1id: createdUserID,
-                user2id: user.id,
-                distance: distance21,
-                time: time21,
-                trust: 0
-            }
-            BetweenUsersArray.push(betweenUsersData1)
-
-            BetweenUsersArray.push(betweenUsersData2)
-
-        }
-        await BetweenUsers.bulkCreate(BetweenUsersArray).catch(errHandler);
-
     }
-
 
 });
 
-module.exports = router;
+module.exports = { router, validation };

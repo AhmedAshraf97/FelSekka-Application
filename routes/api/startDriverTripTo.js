@@ -22,60 +22,56 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
-function validation(tripid, actualpickuptime, latitude, longitude, res, Test = false) {
-    var ValidChecks = true;
-
+function validation(tripid, actualpickuptime, latitude, longitude) {
+    var validChecks = true;
+    var message;
     if (tripid == null) {
-        res.status(400).send({ error: "tripid", message: "tripid paramter is missing" });
-        ValidChecks = false;
-        res.end()
-    } else if (actualpickuptime == null) {
-        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime paramter is missing" });
-        ValidChecks = false;
-        res.end()
-    } else if (!((typeof(actualpickuptime) === 'string') || ((actualpickuptime) instanceof String))) {
-        ValidChecks = false;
+        message = { error: "tripid", message: "tripid paramter is missing" };
+        validChecks = false;
 
-        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime must be a string" });
-        res.end()
+    } else if (actualpickuptime == null) {
+        message = { error: "actualpickuptime", message: "actualpickuptime paramter is missing" }
+        validChecks = false;
+
+    } else if (!((typeof(actualpickuptime) === 'string') || ((actualpickuptime) instanceof String))) {
+        validChecks = false;
+        message = { error: "actualpickuptime", message: "actualpickuptime must be a string" }
+
     } else if ((actualpickuptime).trim().length === 0) {
-        ValidChecks = false;
-        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime can't be empty" });
-        res.end()
+        validChecks = false;
+        message = { error: "actualpickuptime", message: "actualpickuptime can't be empty" }
+
     } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(actualpickuptime))) {
-        res.status(400).send({ error: "actualpickuptime", message: "actualpickuptime is unvalid" });
-        ValidChecks = false;
-        res.end();
+        message = { error: "actualpickuptime", message: "actualpickuptime is unvalid" }
+        validChecks = false;
+
     } else if (latitude == null) {
-        res.status(400).send({ error: "Latitude", message: "Latitude paramter is missing" });
-        ValidChecks = false;
-        res.end();
+        message = { error: "Latitude", message: "Latitude paramter is missing" }
+        validChecks = false;
+
     } else if (((latitude).toString()).trim().length === 0) {
-        res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
-        ValidChecks = false;
-        res.end();
+        message = { error: "Latitude", message: "Latitude can't be empty" }
+        validChecks = false;
     } else if (!(/^(?=.)([+-]?([0-9]*)(\.([0-9]+))?)$/.test(parseFloat(latitude)))) {
-        res.status(400).send({ error: "latitude", message: "latitude must be a number" });
-        ValidChecks = false;
-        res.end();
+        message = { error: "latitude", message: "latitude must be a number" }
+        validChecks = false;
+
     } else if (longitude == null) {
-        res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
-        ValidChecks = false;
-        res.end();
+        message = { error: "Longitude", message: "Longitude paramter is missing" }
+        validChecks = false;
+
     } else if (((longitude).toString()).trim().length === 0) {
-        res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
-        ValidChecks = false;
-        res.end();
+        message = { error: "Longitude", message: "Longitude can't be empty" }
+        validChecks = false;
+
     } else if (!(/^(?=.)([+-]?([0-9]*)(\.([0-9]+))?)$/.test(parseFloat(longitude)))) {
-        res.status(400).send({ error: "longitude", message: "longitude must be a number" });
-        ValidChecks = false;
-        res.end();
+        message = { error: "longitude", message: "longitude must be a number" }
+        validChecks = false;
+
     }
 
-    if (ValidChecks && Test)
-        res.send(validationbool)
+    return { validChecks: validChecks, message: message }
 
-    return ValidChecks;
 
 }
 
@@ -104,29 +100,18 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler)
 
+    if (ValidChecks) {
+        var result = validation(req.body.tripid, req.body.actualpickuptime, req.body.latitude, req.body.longitude)
 
-
-    if (ValidChecks && validation(req.body.tripid, req.body.actualpickuptime, req.body.latitude, req.body.longitude, res)) {
-        const user = await User.findOne({
-            where: {
-                id: decoded.id,
-                "status": "existing"
-            }
-        }).catch(errHandler)
-        if (user) {
-            const DriverTrip = await DriverDB.findOne({
+        if (result.validChecks) {
+            const user = await User.findOne({
                 where: {
-                    driverid: decoded.id,
-                    tripid: parseInt(req.body.tripid),
-                    status: "scheduled"
+                    id: decoded.id,
+                    "status": "existing"
                 }
             }).catch(errHandler)
-
-            if (DriverTrip) {
-                await DriverDB.update({
-                    actualpickuptime: req.body.actualpickuptime,
-                    status: "ongoing"
-                }, {
+            if (user) {
+                const DriverTrip = await DriverDB.findOne({
                     where: {
                         driverid: decoded.id,
                         tripid: parseInt(req.body.tripid),
@@ -134,39 +119,54 @@ router.post('/', async(req, res) => {
                     }
                 }).catch(errHandler)
 
-                await Offer.update({
-                    status: "ongoing"
-                }, {
-                    where: {
-                        id: DriverTrip.offerid,
-                        status: "scheduled"
-                    }
-                }).catch(errHandler)
+                if (DriverTrip) {
+                    await DriverDB.update({
+                        actualpickuptime: req.body.actualpickuptime,
+                        status: "ongoing"
+                    }, {
+                        where: {
+                            driverid: decoded.id,
+                            tripid: parseInt(req.body.tripid),
+                            status: "scheduled"
+                        }
+                    }).catch(errHandler)
 
-                await Trips.update({
-                    startloclatitude: parseFloat(req.body.latitude),
-                    startloclongitude: parseFloat(req.body.longitude),
-                    starttime: req.body.actualpickuptime,
-                    status: "ongoing"
-                }, {
-                    where: {
-                        id: parseInt(req.body.tripid),
-                        status: "scheduled"
-                    }
-                })
-                res.status(200).send({ message: "Driver trip is updated" })
+                    await Offer.update({
+                        status: "ongoing"
+                    }, {
+                        where: {
+                            id: DriverTrip.offerid,
+                            status: "scheduled"
+                        }
+                    }).catch(errHandler)
+
+                    await Trips.update({
+                        startloclatitude: parseFloat(req.body.latitude),
+                        startloclongitude: parseFloat(req.body.longitude),
+                        starttime: req.body.actualpickuptime,
+                        status: "ongoing"
+                    }, {
+                        where: {
+                            id: parseInt(req.body.tripid),
+                            status: "scheduled"
+                        }
+                    })
+                    res.status(200).send({ message: "Driver trip is updated" })
+
+                } else {
+                    res.status(409).send({ error: "No driver assigned", message: "No driver assigned" })
+                    res.end();
+                }
 
             } else {
-                res.status(409).send({ error: "No driver assigned", message: "No driver assigned" })
+                res.status(404).send({ message: "User doesn't exist" })
                 res.end();
             }
-
         } else {
-            res.status(404).send({ message: "User doesn't exist" })
-            res.end();
+            res.status(400).send(result.message)
+            res.end()
         }
     }
-
 
 })
 

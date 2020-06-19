@@ -17,20 +17,17 @@ const errHandler = err => {
 };
 
 
-function validation(userid, trust, res, Test = false) {
-    var validationbool = true;
+function validation(userid, trust) {
+    var validChecks = true;
+    var message;
     if (userid == null) {
-        res.status(400).send({ error: "User ID", message: "User ID paramter is missing" });
-        validationbool = false;
+        message = { error: "User ID", message: "User ID paramter is missing" };
+        validChecks = false;
+    } else if (trust == null) {
+        message = { error: "Trust", message: "Trust paramter is missing" };
+        validChecks = false;
     }
-    //OrganTrustID check
-    else if (trust == null) {
-        res.status(400).send({ error: "Trust", message: "Trust paramter is missing" });
-        validationbool = false;
-    }
-    if (validationbool && Test)
-        res.send(validationbool)
-    return validationbool
+    return { validChecks: validChecks, message: message }
 }
 
 router.post('/', async(req, res) => {
@@ -65,7 +62,8 @@ router.post('/', async(req, res) => {
     }).catch(errHandler);
 
     if (userExists) {
-        if (validation(req.body.userid, req.body.trust, res)) {
+        var result = validation(req.body.userid, req.body.trust)
+        if (result.validChecks) {
             await betweenUsers.update({ trust: req.body.trust }, {
                 where: {
                     user1id: decoded.id,
@@ -75,6 +73,9 @@ router.post('/', async(req, res) => {
                 res.status(200).send({ message: "Trust updated" });
             }).catch(errHandler);
 
+        } else {
+            res.status(400).send(result.message)
+            res.end()
         }
     }
 });
