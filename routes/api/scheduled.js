@@ -228,6 +228,7 @@ router.post('/', async(req, res) => {
                                     "Driver": ({
                                         "Driverusername": DriverOftrip.username,
                                         "Driverfirstname": DriverOftrip.firstname,
+                                        "Driverid": DriverOftrip.id,
                                         "Driverlastname": DriverOftrip.lastname,
                                         "Driverphonenumber": DriverOftrip.phonenumber,
                                         "Driverphoto": DriverOftrip.photo,
@@ -373,6 +374,7 @@ router.post('/', async(req, res) => {
                                     "Driver": ({
                                         "Driverusername": DriverOftrip.username,
                                         "Driverfirstname": DriverOftrip.firstname,
+                                        "Driverid": DriverOftrip.id,
                                         "Driverlastname": DriverOftrip.lastname,
                                         "Driverphonenumber": DriverOftrip.phonenumber,
                                         "Driverphoto": DriverOftrip.photo,
