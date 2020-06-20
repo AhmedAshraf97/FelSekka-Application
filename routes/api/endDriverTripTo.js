@@ -22,6 +22,79 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
+function validation(tripid, actualarrivaltime, distance, time, latitude, longitude) {
+    var validChecks = true;
+    var message;
+
+    if (tripid == null) {
+        message = ({ error: "tripid", message: "tripid paramter is missing" });
+        validChecks = false;
+
+    } else if (actualarrivaltime == null) {
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime paramter is missing" });
+        validChecks = false;
+
+    } else if (!((typeof(actualarrivaltime) === 'string') || ((actualarrivaltime) instanceof String))) {
+        validChecks = false;
+
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime must be a string" });
+
+    } else if ((actualarrivaltime).trim().length === 0) {
+        validChecks = false;
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime can't be empty" });
+
+    } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(actualarrivaltime))) {
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime is unvalid" });
+        validChecks = false;
+
+    } else if (distance == null) {
+        message = ({ error: "distance ", message: "distance paramter is missing" });
+        validChecks = false;
+
+
+    } else if (!((typeof(parseFloat(distance)) === 'number'))) {
+        message = ({ error: "distance", message: "distance must be a number" });
+        validChecks = false;
+
+
+    } else if (time == null) {
+        message = ({ error: "Time ", message: "Time paramter is missing" });
+        validChecks = false;
+
+
+    } else if (!((typeof(parseFloat(time)) === 'number'))) {
+        message = ({ error: "Time", message: "Time must be a number" });
+        validChecks = false;
+
+    } else if (latitude == null) {
+        message = ({ error: "Latitude", message: "Latitude paramter is missing" });
+        validChecks = false;
+
+    } else if (((latitude).toString()).trim().length === 0) {
+        message = ({ error: "Latitude", message: "Latitude can't be empty" });
+        validChecks = false;
+
+    } else if (!((typeof(parseFloat(latitude)) === 'number'))) {
+        message = ({ error: "Latitude", message: "Latitude must be a number" });
+        validChecks = false;
+
+    } else if (longitude == null) {
+        message = ({ error: "Longitude", message: "Longitude paramter is missing" });
+        validChecks = false;
+
+    } else if (((longitude).toString()).trim().length === 0) {
+        message = ({ error: "Longitude", message: "Longitude can't be empty" });
+        validChecks = false;
+
+    } else if (!((typeof(parseFloat(longitude)) === 'number'))) {
+        message = ({ error: "Longitude", message: "Longitude must be a number" });
+        validChecks = false;
+
+    }
+
+    return { validChecks: validChecks, message: message }
+}
+
 router.post('/', async(req, res) => {
 
     let ValidChecks = true
@@ -56,76 +129,10 @@ router.post('/', async(req, res) => {
     }).catch(errHandler);
 
     if (ValidChecks) {
+        var result = validation(req.body.tripid, req.body.actualarrivaltime,
+            req.body.distance, req.body.time, req.body.latitude, req.body.longitude);
 
-        if (req.body.tripid == null) {
-            res.status(400).send({ error: "tripid", message: "tripid paramter is missing" });
-            ValidChecks = false;
-            res.end()
-        } else if (req.body.actualarrivaltime == null) {
-            res.status(400).send({ error: "actualarrivaltime", message: "actualarrivaltime paramter is missing" });
-            ValidChecks = false;
-            res.end()
-        } else if (!((typeof(req.body.actualarrivaltime) === 'string') || ((req.body.actualarrivaltime) instanceof String))) {
-            ValidChecks = false;
-
-            res.status(400).send({ error: "actualarrivaltime", message: "actualarrivaltime must be a string" });
-            res.end()
-        } else if ((req.body.actualarrivaltime).trim().length === 0) {
-            ValidChecks = false;
-            res.status(400).send({ error: "actualarrivaltime", message: "actualarrivaltime can't be empty" });
-            res.end()
-        } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(req.body.actualarrivaltime))) {
-            res.status(400).send({ error: "actualarrivaltime", message: "actualarrivaltime is unvalid" });
-            ValidChecks = false;
-            res.end();
-        } else if (req.body.distance == null) {
-            res.status(400).send({ error: "distance ", message: "distance paramter is missing" });
-            ValidChecks = false;
-            res.end();
-
-        } else if (!((typeof(parseFloat(req.body.distance)) === 'number'))) {
-            res.status(400).send({ error: "distance", message: "distance must be a number" });
-            ValidChecks = false;
-            res.end();
-
-        } else if (req.body.time == null) {
-            res.status(400).send({ error: "Time ", message: "Time paramter is missing" });
-            ValidChecks = false;
-            res.end();
-
-        } else if (!((typeof(parseFloat(req.body.time)) === 'number'))) {
-            res.status(400).send({ error: "Time", message: "Time must be a number" });
-            ValidChecks = false;
-            res.end();
-        } else if (req.body.latitude == null) {
-            res.status(400).send({ error: "Latitude", message: "Latitude paramter is missing" });
-            ValidChecks = false;
-            res.end();
-        } else if (((req.body.latitude).toString()).trim().length === 0) {
-            res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
-            ValidChecks = false;
-            res.end();
-        } else if (!((typeof(parseFloat(req.body.latitude)) === 'number'))) {
-            res.status(400).send({ error: "Latitude", message: "Latitude must be a number" });
-            ValidChecks = false;
-            res.end();
-        } else if (req.body.longitude == null) {
-            res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
-            ValidChecks = false;
-            res.end();
-        } else if (((req.body.longitude).toString()).trim().length === 0) {
-            res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
-            ValidChecks = false;
-            res.end();
-        } else if (!((typeof(parseFloat(req.body.longitude)) === 'number'))) {
-            res.status(400).send({ error: "Longitude", message: "Longitude must be a number" });
-            ValidChecks = false;
-            res.end();
-        }
-
-
-
-        if (ValidChecks) {
+        if (result.validChecks) {
             const DriverTrip = await DriverDB.findOne({
                 where: {
                     driverid: decoded.id,
@@ -179,12 +186,11 @@ router.post('/', async(req, res) => {
                 res.end();
             }
 
+        } else {
+            res.status(400).send(result.message)
+            res.end()
         }
     }
-
-
-
-
 })
 
-module.exports = router
+module.exports = { router, validation }

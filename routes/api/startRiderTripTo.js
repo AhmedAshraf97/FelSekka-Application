@@ -54,7 +54,7 @@ function validation(driverid, tripid, actualpickuptime) {
 
 router.post('/', async(req, res) => {
 
-    var result = validation(req.body.driverid, req.body.trpid, req.body.actualpickuptime)
+    var result = validation(req.body.driverid, req.body.tripid, req.body.actualpickuptime)
     if (result.validChecks) {
 
         const DriverTrip = await DriverDB.findOne({

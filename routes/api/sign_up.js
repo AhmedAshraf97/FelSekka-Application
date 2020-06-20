@@ -66,10 +66,15 @@ function validation(firstname, lastname, username, email,
     else if (username == null) {
         message = ({ error: "Username", message: "Username paramter is missing" });
         validChecks = false;
-    } else if (!((typeof(username) === 'string') || ((username) instanceof String))) {
+    } else if (!(/^[A-Za-z][A-Za-z0-9]*([_A-Za-z0-9]+)*$/.test(username))) {
         message = ({ error: "Username", message: "Username must be a string" });
         validChecks = false;
-    } else if ((username).trim().length === 0) {
+    }
+    //  else if (!((typeof(username) === 'string') || ((username) instanceof String))) {
+    //     message = ({ error: "Username", message: "Username must be a string" });
+    //     validChecks = false;
+    // }
+    else if ((username).trim().length === 0) {
         message = ({ error: "Username", message: "Username can't be empty" });
         validChecks = false;
     } else if (!(/^\S+$/.test(username))) {

@@ -107,7 +107,7 @@ router.post('/', async(req, res) => {
 
     if (ValidChecks) {
         var result = validation(req.body.tripid, req.body.actualpickuptime, req.body.latitude, req.body.longitude)
-        if (result.ValidChecks) {
+        if (result.validChecks) {
             const user = await User.findOne({
                 where: {
                     id: decoded.id,
