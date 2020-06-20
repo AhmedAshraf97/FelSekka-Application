@@ -172,6 +172,25 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
+function validation(latesttime) {
+    var validChecks = true;
+    var message = ""
+    if (latesttime == "") {
+        message = { error: "LatestTime", message: "LatestTime paramter is missing" }
+        validChecks = false;
+    } else if (!((typeof(latesttime) === 'string') || ((latesttime) instanceof String))) {
+        validChecks = false;
+        message = { error: "LatestTime", message: "LatestTime must be a string" }
+    } else if ((latesttime).trim().length === 0) {
+        validChecks = false;
+        message = { error: "LatestTime", message: "LatestTime can't be empty" }
+    } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(latesttime))) {
+        message = { error: "LatestTime", message: "LatestTime is unvalid" }
+        validChecks = false;
+
+    }
+    return { validChecks: validChecks, message: message }
+}
 router.post('/', async(req, res) => {
 
 
@@ -219,29 +238,8 @@ router.post('/', async(req, res) => {
 
 
     if (ValidChecks) {
-        if (req.body.latesttime == "") {
-            res.status(400).send({ error: "LatestTime", message: "LatestTime paramter is missing" });
-            ValidChecks = false;
-            res.end()
-        } else if (!((typeof(req.body.latesttime) === 'string') || ((req.body.latesttime) instanceof String))) {
-            ValidChecks = false;
-
-            res.status(400).send({ error: "LatestTime", message: "LatestTime must be a string" });
-            res.end()
-        } else if ((req.body.latesttime).trim().length === 0) {
-            ValidChecks = false;
-            res.status(400).send({ error: "LatestTime", message: "LatestTime can't be empty" });
-            res.end()
-        } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(req.body.latesttime))) {
-            res.status(400).send({ error: "LatestTime", message: "LatestTime is unvalid" });
-            ValidChecks = false;
-            res.end();
-        }
-
-
-
-
-        if (ValidChecks) {
+        var result = validation(req.body.latesttime)
+        if (result.validChecks) {
             const Trip = await Trips.findOne({
                 where: {
                     id: parseInt(req.body.tripid)
@@ -326,7 +324,7 @@ router.post('/', async(req, res) => {
                     where: {
                         userid: decoded.id,
                         status: {
-                            [Op.or]: ["pending", "scheduled", "ongoing"]
+                            [Op.or]: ["pending", "ongoing"]
                         }
                     }
                 }).catch(errHandler)
@@ -355,7 +353,7 @@ router.post('/', async(req, res) => {
                     where: {
                         userid: decoded.id,
                         status: {
-                            [Op.or]: ["pending", "scheduled", "ongoing"]
+                            [Op.or]: ["pending", "ongoing"]
                         }
                     }
                 }).catch(errHandler)
@@ -682,6 +680,9 @@ router.post('/', async(req, res) => {
 
 
 
+        } else {
+            res.status(400).send(result.message)
+            res.end()
         }
 
 
@@ -701,4 +702,4 @@ function getters() {
 }
 
 
-module.exports = { router, getters: getters };
+module.exports = { router, getters: getters, validation };

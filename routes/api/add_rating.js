@@ -28,7 +28,7 @@ function validation(rating, datetime) {
     if (!((typeof(parseInt(rating)) === 'number') || parseInt(rating).trim().length === 0) || parseInt(rating) > 5 || parseInt(rating) < 0) {
         validChecks = false
         message = { error: "rating", message: "Rating should be a number of value (1-5)" }
-    }
+    } else
     if (datetime == null) {
         validChecks = false;
         message = { error: "datetime", message: "datetime paramter is missing" }
@@ -46,7 +46,6 @@ function validation(rating, datetime) {
         validChecks = false;
 
     }
-    console.log(message)
     return { validChecks: validChecks, message: message }
 }
 router.post('/', async(req, res) => {

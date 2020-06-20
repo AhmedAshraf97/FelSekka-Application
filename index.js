@@ -20,9 +20,9 @@ app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 require("./database/connection");
 //Uers API route
 app.use('/api/signup', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/sign_up').router);
-app.use('/api/chooseorg', require('./routes/api/chooseorg'));
+app.use('/api/chooseorg', require('./routes/api/chooseorg').router);
 app.use('/api/userexists', require('./routes/api/userexists'));
-app.use('/api/addorg', require('./routes/api/addorg'));
+app.use('/api/addorg', require('./routes/api/addorg').router);
 app.use('/api/acceptorg', require('./routes/api/acceptorg').router);
 app.use('/api/showpendingorg', require('./routes/api/showpendingorg'));
 app.use('/api/showexistingorg', require('./routes/api/showexistingorg'));
@@ -51,7 +51,7 @@ app.use('/api/getreviews', require('./routes/api/get_user_reviews'));
 app.use('/api/showprofile', require('./routes/api/show_profile'));
 app.use('/api/showprofileextra', require('./routes/api/show_profile_extra'));
 app.use('/api/signin', require('./routes/api/sign_in'));
-app.use('/api/addreview', require('./routes/api/add_review'));
+app.use('/api/addreview', require('./routes/api/add_review').router);
 app.use('/api/addcar', require('./routes/api/add_car').router);
 app.use('/api/deletecar', require('./routes/api/delete_car'));
 app.use('/api/showmycars', require('./routes/api/show_my_cars'));
@@ -94,15 +94,6 @@ app.use('/api/cancelOffer', require('./routes/api/cancelOffer'))
 app.use('/api/showrequests', require('./routes/api/show_requests'))
 app.use('/api/showoffers', require('./routes/api/show_offers'))
 
-
-const validation = require('./routes/api/updatetrust').validation;
-
-
-
-
-app.post('/api/test1', (req, res) => {
-    const output = validation(req.body.userid, req.body.trust, res, true)
-})
 
 var schedule = require('node-schedule');
 var request = require('request');

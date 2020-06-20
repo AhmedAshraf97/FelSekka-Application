@@ -59,10 +59,6 @@ router.post('/', async(req, res) => {
         res.end()
     }
 
-
-
-
-
     if (ValidChecks) {
 
         const trip = await Trips.findOne({

@@ -250,6 +250,7 @@ test('Choose from available to-organization trips', async() => {
 
 }, 100000)
 
+//////////////////////////RETURN/////////////////////
 
 test('Choose from available Return-organization trips with assigned trip', async() => {
     var decoded = jwt.verify(CurrentToken, process.env.SECRET_KEY)
@@ -274,7 +275,7 @@ test('Choose from available Return-organization trips with assigned trip', async
 
     .post('/api/chooseFromReturnTripsApi')
         .send({
-            "tripid": tripidTo,
+            "tripid": tripidFrom,
             "latesttime": "05:30:00"
         }).set('Authorization', CurrentToken).expect(400)
     console.log(response.body.message)
@@ -346,7 +347,7 @@ test('cancel rider From-Organization trip', async() => {
 
 }, 100000)
 
-
+/////////////////////////
 // test('cancel rider From-Organization trip in unassigned trips', async() => {
 
 //     const response = await request(app)

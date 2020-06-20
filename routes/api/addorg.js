@@ -16,6 +16,53 @@ const errHandler = err => {
     //Catch and log any error.
     console.error("Error: ", err);
 };
+
+function validation(name, domain, latitude, longitude) {
+    var validChecks = true
+    var message = ""
+    if (name == null) {
+        validChecks = false;
+        message = { error: "Name", message: "Name paramter is missing" }
+    } else if (!((typeof(name) === 'string') || ((name) instanceof String))) {
+        validChecks = false;
+        message = { error: "Name", message: "Name must be a string" }
+    } else if ((name).trim().length === 0) {
+        validChecks = false;
+        message = { error: "Name", message: "Name can't be empty" }
+    } else if (!(/^[a-zA-Z ]*$/.test(name))) {
+        validChecks = false;
+        message = { error: "Name", message: "Name can only contain letters" }
+    } else if ((name).trim().length > 30) {
+        validChecks = false;
+        message = { error: "Name", message: "Name has maximum length of 30 letters" }
+    }
+    //Domain validation
+    else if (domain == null) {
+        validChecks = false;
+        message = { error: "Domain", message: "Domain paramter is missing" }
+    } else if (!((typeof(domain) === 'string') || ((domain) instanceof String))) {
+        validChecks = false;
+        message = { error: "Domain", message: "Domain must be a string" }
+    } else if ((domain).trim().length === 0) {
+        validChecks = false;
+        message = { error: "Domain", message: "Domain can't be empty" }
+    }
+    //Latitude validation
+    else if (latitude == null) {
+        validChecks = false;
+        message = { error: "Latitude", message: "Latitude paramter is missing" }
+    } else if (((latitude).toString()).trim().length === 0) {
+        validChecks = false;
+        message = { error: "Latitude", message: "Latitude can't be empty" }
+    } else if (longitude == null) {
+        validChecks = false;
+        message = { error: "Longitude", message: "Longitude paramter is missing" }
+    } else if (((longitude).toString()).trim().length === 0) {
+        validChecks = false;
+        message = { error: "Longitude", message: "Longitude can't be empty" }
+    }
+    return { validChecks: validChecks, message: message }
+}
 router.post('/', async(req, res) => {
     var decoded;
     var userExists = true;
@@ -48,39 +95,9 @@ router.post('/', async(req, res) => {
     }).catch(errHandler);
 
     if (userExists) {
-        //Name validation
-        if (req.body.name == null) {
-            res.status(400).send({ error: "Name", message: "Name paramter is missing" });
-        } else if (!((typeof(req.body.name) === 'string') || ((req.body.name) instanceof String))) {
-            res.status(400).send({ error: "Name", message: "Name must be a string" });
-        } else if ((req.body.name).trim().length === 0) {
-            res.status(400).send({ error: "Name", message: "Name can't be empty" });
-        } else if (!(/^[a-zA-Z ]*$/.test(req.body.name))) {
-            res.status(400).send({ error: "Name", message: "Name can only contain letters" });
-        } else if ((req.body.name).trim().length > 30) {
-            res.status(400).send({ error: "Name", message: "Name has maximum length of 30 letters" });
-        }
-        //Domain validation
-        else if (req.body.domain == null) {
-            res.status(400).send({ error: "Domain", message: "Domain paramter is missing" });
-        } else if (!((typeof(req.body.domain) === 'string') || ((req.body.domain) instanceof String))) {
-            res.status(400).send({ error: "Domain", message: "Domain must be a string" });
-        } else if ((req.body.domain).trim().length === 0) {
-            res.status(400).send({ error: "Domain", message: "Domain can't be empty" });
-        }
-        //Latitude validation
-        else if (req.body.latitude == null) {
-            res.status(400).send({ error: "Latitude", message: "Latitude paramter is missing" });
-        } else if (((req.body.latitude).toString()).trim().length === 0) {
-            res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
-        }
-        //Longitude validation
-        else if (req.body.longitude == null) {
-            res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
-        } else if (((req.body.longitude).toString()).trim().length === 0) {
-            res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
-        } else {
-            //Insert org user 
+
+        var result = validation(req.body.name, req.body.domain, req.body.latitude, req.body.longitude)
+        if (result.validChecks) {
             const orgData = {
                 name: req.body.name,
                 longitude: parseFloat(req.body.longitude),
@@ -91,7 +108,9 @@ router.post('/', async(req, res) => {
             await Organization.create(orgData).then(user => {
                 res.status(200).send({ message: "Organization is created" });
             }).catch(errHandler);
-
+        } else {
+            res.status(400).send(result.message)
+            res.end()
         }
     }
 });
@@ -99,4 +118,4 @@ router.post('/', async(req, res) => {
 
 
 
-module.exports = router;
+module.exports = { router, validation };

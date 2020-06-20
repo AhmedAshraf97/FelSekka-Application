@@ -85,7 +85,7 @@ router.post('/', async(req, res) => {
             where: {
                 tripid: parseInt(req.body.tripid),
                 driverid: parseInt(req.body.driverid),
-                status: "done" //////////////
+                status: "ongoing"
             }
         }).catch(errHandler)
         if (DriverTrip) {

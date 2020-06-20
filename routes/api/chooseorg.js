@@ -18,6 +18,29 @@ const errHandler = err => {
     //Catch and log any error.
     console.error("Error: ", err);
 };
+
+function validation(orgid, email) {
+    var validChecks = true;
+    var message = ""
+    if (orgid == null) {
+        validChecks = false;
+        message = { error: "Organization ID", message: "Organization ID paramter is missing" }
+    } else if (((orgid).toString()).trim().length === 0) {
+        validChecks = false;
+        message = { error: "Organization ID", message: "Organization ID can't be empty" }
+    }
+    if (email == null) {
+        validChecks = false;
+        message = { error: "Email", message: "Email paramter is missing" }
+    } else if (((email).toString()).trim().length === 0) {
+        validChecks = false;
+        message = { error: "Email", message: "Email can't be empty" }
+    } else if (!(/^\S+@\S+\.\S+$/.test(email))) {
+        validChecks = false;
+        message = { error: "Email", message: "Email address is unvalid" }
+    }
+    return { validChecks: validChecks, message: message }
+}
 router.post('/', async(req, res) => {
     var userExists = true;
 
@@ -60,20 +83,8 @@ router.post('/', async(req, res) => {
     }
 
     if (userExists) {
-        //Organization ID check
-        if (req.body.orgid == null) {
-            res.status(400).send({ error: "Organization ID", message: "Organization ID paramter is missing" });
-        } else if (((req.body.orgid).toString()).trim().length === 0) {
-            res.status(400).send({ error: "Organization ID", message: "Organization ID can't be empty" });
-        }
-        //Email validation 
-        if (req.body.email == null) {
-            res.status(400).send({ error: "Email", message: "Email paramter is missing" });
-        } else if (((req.body.email).toString()).trim().length === 0) {
-            res.status(400).send({ error: "Email", message: "Email can't be empty" });
-        } else if (!(/^\S+@\S+\.\S+$/.test(req.body.email))) {
-            res.status(400).send({ error: "Email", message: "Email address is unvalid" });
-        } else {
+        result = validation(req.body.orgid, req.body.email)
+        if (result.validChecks) {
             var domain = true;
             var orglatitude = 0;
             var orglongitude = 0;
@@ -135,8 +146,13 @@ router.post('/', async(req, res) => {
 
 
 
+        } else {
+            res.status(400).send(result.message);
+            res.end()
+
+
         }
     }
 });
 
-module.exports = router;
+module.exports = { router, validation };
