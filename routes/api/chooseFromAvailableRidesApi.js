@@ -166,6 +166,29 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
+function validation(earliesttime) {
+    var validChecks = true
+    var message = ""
+    if (earliesttime == "") {
+        message = { error: "EarliestTime", message: "EarliestTime paramter is missing" }
+        validChecks = false;
+
+    } else if (!((typeof(earliesttime) === 'string') || ((earliesttime) instanceof String))) {
+        validChecks = false;
+        message = { error: "EarliestTime", message: "EarliestTime must be a string" }
+
+    } else if ((earliesttime).trim().length === 0) {
+        validChecks = false;
+        message = { error: "EarliestTime", message: "EarliestTime can't be empty" }
+
+    } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(earliesttime))) {
+        validChecks = false;
+        message = { error: "EarliestTime", message: "EarliestTime is unvalid" }
+
+    }
+    return { validChecks: validChecks, message: message }
+
+}
 router.post('/', async(req, res) => {
     var DRDistanceDurationValue = []
     var RRDistanceDurationValue = []
@@ -205,33 +228,12 @@ router.post('/', async(req, res) => {
     }
     if (ValidChecks) {
 
-        if (req.body.earliesttime == "") {
-            res.status(400).send({ error: "EarliestTime", message: "EarliestTime paramter is missing" });
-            ValidChecks = false;
-            res.end()
-        } else if (!((typeof(req.body.earliesttime) === 'string') || ((req.body.earliesttime) instanceof String))) {
-            ValidChecks = false;
 
-            res.status(400).send({ error: "EarliestTime", message: "EarliestTime must be a string" });
-            res.end()
-        } else if ((req.body.earliesttime).trim().length === 0) {
-            ValidChecks = false;
-            res.status(400).send({ error: "EarliestTime", message: "EarliestTime can't be empty" });
-            res.end()
-        } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(req.body.earliesttime))) {
-            res.status(400).send({ error: "EarliestTime", message: "EarliestTime is unvalid" });
-            ValidChecks = false;
-            res.end();
-        }
-
-
-
-
-
+        var result = validation(req.body.earliesttime)
         var invalidrider = 0;
 
 
-        if (ValidChecks) {
+        if (result.validChecks) {
             const Trip = await Trips.findOne({
                 where: {
                     id: parseInt(req.body.tripid)
@@ -315,7 +317,7 @@ router.post('/', async(req, res) => {
                     where: {
                         userid: decoded.id,
                         status: {
-                            [Op.or]: ["pending", "scheduled", "ongoing"]
+                            [Op.or]: ["pending", "ongoing"]
                         }
                     }
                 }).catch(errHandler)
@@ -345,7 +347,7 @@ router.post('/', async(req, res) => {
                     where: {
                         userid: decoded.id,
                         status: {
-                            [Op.or]: ["pending", "scheduled", "ongoing"]
+                            [Op.or]: ["pending", "ongoing"]
                         }
                     }
                 }).catch(errHandler)
@@ -664,6 +666,9 @@ router.post('/', async(req, res) => {
             }
 
 
+        } else {
+            res.status(400).send(result.message)
+            res.end()
         }
 
     }
@@ -682,4 +687,4 @@ function getters() {
 }
 
 
-module.exports = { router, getters: getters };
+module.exports = { router, getters: getters, validation };

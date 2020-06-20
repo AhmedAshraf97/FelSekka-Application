@@ -26,11 +26,14 @@ const errHandler = err => {
 function validation(datetime, review) {
     var validChecks = true;
     var message;
-    if (review === undefined || (review).trim().length > 300 || (review).trim().length === 0) {
+    if (!((typeof(review) === 'string') || ((review) instanceof String))) {
+        validChecks = false;
+        message = { error: "review", message: "review must be a string" }
+
+    } else if (review === undefined || (review).trim().length > 300 || (review).trim().length === 0) {
         validChecks = false;
         message = { error: "review", message: "Review size must be between (1-300) characters" }
-    }
-    if (datetime == null) {
+    } else if (datetime == null) {
         message = { error: "datetime", message: "datetime paramter is missing" }
         validChecks = false;
     } else if (!((typeof(datetime) === 'string') || ((datetime) instanceof String))) {

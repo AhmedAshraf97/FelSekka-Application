@@ -20,9 +20,9 @@ app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 require("./database/connection");
 //Uers API route
 app.use('/api/signup', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/sign_up').router);
-app.use('/api/chooseorg', require('./routes/api/chooseorg'));
+app.use('/api/chooseorg', require('./routes/api/chooseorg').router);
 app.use('/api/userexists', require('./routes/api/userexists'));
-app.use('/api/addorg', require('./routes/api/addorg'));
+app.use('/api/addorg', require('./routes/api/addorg').router);
 app.use('/api/acceptorg', require('./routes/api/acceptorg').router);
 app.use('/api/showpendingorg', require('./routes/api/showpendingorg'));
 app.use('/api/showexistingorg', require('./routes/api/showexistingorg'));
