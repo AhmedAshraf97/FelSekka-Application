@@ -25,57 +25,61 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 
-router.post('/', async(req, res) => {
+function validation(driverid, tripid, actualarrivaltime, distance, time) {
 
-    var ValidChecks = true;
+    var validChecks = true;
+    var message;
 
-    if (req.body.driverid == null) {
-        res.status(400).send({ error: "driverid", message: "driverid paramter is missing" });
-        ValidChecks = false;
-        res.end()
-    } else if (req.body.tripid == null) {
-        res.status(400).send({ error: "tripid", message: "tripid paramter is missing" });
-        ValidChecks = false;
-        res.end()
-    } else if (req.body.actualarrivaltime == null) {
-        res.status(400).send({ error: "actualarrivaltime", message: "actualarrivaltime paramter is missing" });
-        ValidChecks = false;
-        res.end()
-    } else if (!((typeof(req.body.actualarrivaltime) === 'string') || ((req.body.actualarrivaltime) instanceof String))) {
-        ValidChecks = false;
+    if (driverid == null) {
+        message = ({ error: "driverid", message: "driverid paramter is missing" });
+        validChecks = false;
 
-        res.status(400).send({ error: "actualarrivaltime", message: "actualarrivaltime must be a string" });
-        res.end()
-    } else if ((req.body.actualarrivaltime).trim().length === 0) {
-        ValidChecks = false;
-        res.status(400).send({ error: "actualarrivaltime", message: "actualarrivaltime can't be empty" });
-        res.end()
-    } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(req.body.actualarrivaltime))) {
-        res.status(400).send({ error: "actualarrivaltime", message: "actualarrivaltime is unvalid" });
-        ValidChecks = false;
-        res.end();
-    } else if (req.body.distance == null) {
-        ValidChecks = false;
-        res.status(400).send({ error: "Distance ", message: "Distance paramter is missing" });
-        res.end();
-    } else if (!((typeof(parseFloat(req.body.distance)) === 'number'))) {
-        ValidChecks = false;
-        res.status(400).send({ error: "Distance", message: "Distance must be a number" });
-        res.end();
-    } else if (req.body.time == null) {
-        ValidChecks = false;
-        res.status(400).send({ error: "Time ", message: "Time paramter is missing" });
-        res.end();
-    } else if (!((typeof(parseFloat(req.body.time)) === 'number'))) {
-        ValidChecks = false;
+    } else if (tripid == null) {
+        message = ({ error: "tripid", message: "tripid paramter is missing" });
+        validChecks = false;
 
-        res.status(400).send({ error: "Time", message: "Time must be a number" });
-        res.end();
+    } else if (actualarrivaltime == null) {
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime paramter is missing" });
+        validChecks = false;
+
+    } else if (!((typeof(actualarrivaltime) === 'string') || ((actualarrivaltime) instanceof String))) {
+        validChecks = false;
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime must be a string" });
+
+    } else if ((actualarrivaltime).trim().length === 0) {
+        validChecks = false;
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime can't be empty" });
+
+    } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(actualarrivaltime))) {
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime is unvalid" });
+        validChecks = false;
+
+    } else if (distance == null) {
+        validChecks = false;
+        message = ({ error: "Distance ", message: "Distance paramter is missing" });
+
+    } else if (!((typeof(parseFloat(distance)) === 'number'))) {
+        validChecks = false;
+        message = ({ error: "Distance", message: "Distance must be a number" });
+
+    } else if (time == null) {
+        validChecks = false;
+        message = ({ error: "Time ", message: "Time paramter is missing" });
+    } else if (!((typeof(parseFloat(time)) === 'number'))) {
+        validChecks = false;
+        message = ({ error: "Time", message: "Time must be a number" });
     }
 
 
+    return { validChecks: validChecks, message: message }
 
-    if (ValidChecks) {
+}
+
+router.post('/', async(req, res) => {
+
+    var result = validation(req.body.driverid, req.body.tripid, req.body.actualarrivaltime, req.body.distance, req.body.time)
+
+    if (result.validChecks) {
 
         const DriverTrip = await DriverDB.findOne({
             where: {
@@ -129,7 +133,10 @@ router.post('/', async(req, res) => {
             res.status(404).send({ error: "Trip doesn't exist", message: "Trip doesn't exist" })
             res.end();
         }
+    } else {
+        res.status(400).send(result.message)
+        res.end()
     }
 
 })
-module.exports = router;
+module.exports = { router, validation };

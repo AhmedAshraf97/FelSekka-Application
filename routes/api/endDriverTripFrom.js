@@ -17,10 +17,84 @@ const Trips = require('../../models/trips');
 const DriverDB = require('../../models/drivers');
 const RiderDB = require('../../models/riders');
 const ExpiredToken = require('../../models/expiredtokens');
+const TripActualFare = require('../../ActualFareCalc');
 const errHandler = err => {
     //Catch and log any error.
     console.error("Error: ", err);
 };
+
+var driver = {};
+var RidersinTrip = {};
+
+function validation(tripid, actualarrivaltime, distance, time, latitude, longitude) {
+
+    var validChecks = true;
+    var message;
+
+    if (tripid == null) {
+        message = ({ error: "tripid", message: "tripid paramter is missing" });
+        validChecks = false;
+
+    } else if (actualarrivaltime == null) {
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime paramter is missing" });
+        validChecks = false;
+
+    } else if (!((typeof(actualarrivaltime) === 'string') || ((actualarrivaltime) instanceof String))) {
+        validChecks = false;
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime must be a string" });
+
+    } else if ((actualarrivaltime).trim().length === 0) {
+        validChecks = false;
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime can't be empty" });
+
+    } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(actualarrivaltime))) {
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime is unvalid" });
+        validChecks = false;
+
+    } else if (distance == null) {
+        message = ({ error: "distance ", message: "distance paramter is missing" });
+        validChecks = false;
+
+
+    } else if (!((typeof(parseFloat(distance)) === 'number'))) {
+        message = ({ error: "distance", message: "distance must be a number" });
+        validChecks = false;
+
+    } else if (time == null) {
+        message = ({ error: "Time", message: "Time paramter is missing" });
+        validChecks = false;
+
+    } else if (!((typeof(parseFloat(time)) === 'number'))) {
+        message = ({ error: "Time", message: "Time must be a number" });
+        validChecks = false;
+
+    } else if (latitude == null) {
+        message = ({ error: "Latitude", message: "Latitude paramter is missing" });
+        validChecks = false;
+
+    } else if (((latitude).toString()).trim().length === 0) {
+        message = ({ error: "Latitude", message: "Latitude can't be empty" });
+        validChecks = false;
+
+    } else if (!((typeof(parseFloat(latitude)) === 'number'))) {
+        message = ({ error: "Latitude", message: "Latitude must be a number" });
+        validChecks = false;
+
+    } else if (longitude == null) {
+        message = ({ error: "Longitude", message: "Longitude paramter is missing" });
+        validChecks = false;
+
+    } else if (((longitude).toString()).trim().length === 0) {
+        message = ({ error: "Longitude", message: "Longitude can't be empty" });
+        validChecks = false;
+
+    } else if (!((typeof(parseFloat((longitude))) === 'number'))) {
+        message = ({ error: "Longitude", message: "Longitude must be a number" });
+        validChecks = false;
+    }
+    return { validChecks: validChecks, message: message }
+
+}
 
 router.post('/', async(req, res) => {
 
@@ -55,94 +129,15 @@ router.post('/', async(req, res) => {
             res.end()
         }
     }).catch(errHandler);
-    if (ValidChecks) {
 
-        if (req.body.tripid == null) {
-            res.status(400).send({ error: "tripid", message: "tripid paramter is missing" });
-            ValidChecks = false;
-            res.end()
-        } else if (req.body.actualarrivaltime == null) {
-            res.status(400).send({ error: "actualarrivaltime", message: "actualarrivaltime paramter is missing" });
-            ValidChecks = false;
-            res.end()
-        } else if (!((typeof(req.body.actualarrivaltime) === 'string') || ((req.body.actualarrivaltime) instanceof String))) {
-            ValidChecks = false;
 
-            res.status(400).send({ error: "actualarrivaltime", message: "actualarrivaltime must be a string" });
-            res.end()
-        } else if ((req.body.actualarrivaltime).trim().length === 0) {
-            ValidChecks = false;
-            res.status(400).send({ error: "actualarrivaltime", message: "actualarrivaltime can't be empty" });
-            res.end()
-        } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(req.body.actualarrivaltime))) {
-            res.status(400).send({ error: "actualarrivaltime", message: "actualarrivaltime is unvalid" });
-            ValidChecks = false;
-            res.end();
-        } else if (req.body.distance == null) {
-            res.status(400).send({ error: "distance ", message: "distance paramter is missing" });
-            ValidChecks = false;
-            res.end();
-
-        } else if (!((typeof(parseFloat(req.body.distance)) === 'number'))) {
-            res.status(400).send({ error: "distance", message: "distance must be a number" });
-            ValidChecks = false;
-            res.end();
-
-        } else if (req.body.time == null) {
-            res.status(400).send({ error: "Time", message: "Time paramter is missing" });
-            ValidChecks = false;
-            res.end();
-
-        } else if (!((typeof(parseFloat(req.body.time)) === 'number'))) {
-            res.status(400).send({ error: "Time", message: "Time must be a number" });
-            ValidChecks = false;
-            res.end();
-        } else if (req.body.latitude == null) {
-            res.status(400).send({ error: "Latitude", message: "Latitude paramter is missing" });
-            ValidChecks = false;
-            res.end();
-        } else if (((req.body.latitude).toString()).trim().length === 0) {
-            res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
-            ValidChecks = false;
-            res.end();
-        } else if (!((typeof(parseFloat(req.body.latitude)) === 'number'))) {
-            res.status(400).send({ error: "Latitude", message: "Latitude must be a number" });
-            ValidChecks = false;
-            res.end();
-        } else if (req.body.longitude == null) {
-            res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
-            ValidChecks = false;
-            res.end();
-        } else if (((req.body.longitude).toString()).trim().length === 0) {
-            res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
-            ValidChecks = false;
-            res.end();
-        } else if (!((typeof(parseFloat((req.body.longitude))) === 'number'))) {
-            res.status(400).send({ error: "Longitude", message: "Longitude must be a number" });
-            ValidChecks = false;
-            res.end();
-        }
-    }
 
     if (ValidChecks) {
 
+        var result = validation(req.body.tripid, req.body.actualarrivaltime, req.body.distance, req.body.time, req.body.latitude, req.body.longitude)
+        if (result.validChecks) {
 
-        const DriverTrip = await DriverDB.findOne({
-            where: {
-                driverid: decoded.id,
-                tripid: parseInt(req.body.tripid),
-                status: "ongoing"
-            }
-        }).catch(errHandler)
-
-        if (DriverTrip) {
-            await DriverDB.update({
-                actualarrivaltime: req.body.actualarrivaltime,
-                distance: parseFloat(req.body.distance),
-                time: parseFloat(req.body.time),
-                fare: 0,
-                status: "done"
-            }, {
+            const DriverTrip = await DriverDB.findOne({
                 where: {
                     driverid: decoded.id,
                     tripid: parseInt(req.body.tripid),
@@ -150,42 +145,97 @@ router.post('/', async(req, res) => {
                 }
             }).catch(errHandler)
 
-            await Offer.update({
-                status: "done"
-            }, {
-                where: {
-                    id: DriverTrip.offerid,
-                    status: "ongoing"
-                }
-            }).catch(errHandler)
+            if (DriverTrip) {
 
-            await Trips.update({
-                endloclatitude: parseFloat(req.body.latitude),
-                endloclongitude: parseFloat(req.body.longitude),
-                endtime: req.body.actualarrivaltime,
-                totaldistance: parseFloat(req.body.distance),
-                totaltime: parseFloat(req.body.time),
-                totalfare: 0,
-                status: "done"
-            }, {
-                where: {
-                    id: parseInt(req.body.tripid),
-                    status: "ongoing"
-                }
-            })
-            res.status(200).send({ message: "Driver trip is updated" })
+                RidersinTrip = await RiderDB.findAll({
+                    where: {
+                        tripid: parseInt(req.body.tripid),
+                        status: "done"
+                    }
+                })
 
+                driver = { fare: 0, distance: parseFloat(req.body.distance), time: parseFloat(req.body.time) }
+
+                var p = await TripActualFare('./routes/api/endDriverTripFrom');
+
+                await DriverDB.update({
+                    actualarrivaltime: req.body.actualarrivaltime,
+                    distance: parseFloat(req.body.distance),
+                    time: parseFloat(req.body.time),
+                    fare: driver.fare,
+                    status: "done"
+                }, {
+                    where: {
+                        driverid: decoded.id,
+                        tripid: parseInt(req.body.tripid),
+                        status: "ongoing"
+                    }
+                }).catch(errHandler)
+
+                var totalFare = 0;
+
+                for (rider of RidersinTrip) {
+                    totalFare += rider.fare;
+                    await RiderDB.update({
+                        fare: rider.fare
+                    }, {
+                        where: {
+                            riderid: rider.riderid,
+                            tridid: parseInt(req.body.tripid)
+                        }
+                    }).catch(errHandler)
+                }
+
+                await Offer.update({
+                    status: "done"
+                }, {
+                    where: {
+                        id: DriverTrip.offerid,
+                        status: "ongoing"
+                    }
+                }).catch(errHandler)
+
+
+
+                await Trips.update({
+                    endloclatitude: parseFloat(req.body.latitude),
+                    endloclongitude: parseFloat(req.body.longitude),
+                    endtime: req.body.actualarrivaltime,
+                    totaldistance: parseFloat(req.body.distance),
+                    totaltime: parseFloat(req.body.time),
+                    totalfare: totalFare,
+                    status: "done"
+                }, {
+                    where: {
+                        id: parseInt(req.body.tripid),
+                        status: "ongoing"
+                    }
+                })
+                res.status(200).send({ message: "Driver trip is updated" })
+
+            } else {
+                res.status(404).send({ error: "No driver assigned", message: "No driver assigned" })
+                res.end();
+            }
         } else {
-            res.status(404).send({ error: "No driver assigned", message: "No driver assigned" })
-            res.end();
+            res.status(400).send(result.message)
+            res.end()
         }
-
 
     }
 
-
-
-
+    driver = {}
+    RidersinTrip = {}
 })
 
-module.exports = router
+
+function getters() {
+    return {
+        driver,
+        RidersinTrip
+    };
+}
+
+
+
+module.exports = { router, validation, getters }

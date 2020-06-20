@@ -32,11 +32,11 @@ app.use('/api/verifythree', require('./routes/api/verifythree'));
 app.use('/api/peopletrustme', require('./routes/api/peopletrustme'));
 app.use('/api/peopleItrust', require('./routes/api/peopleItrust'));
 app.use('/api/updatetrust', require('./routes/api/updatetrust').router);
-app.use('/api/requestridefrom', require('./routes/api/requestridefrom'));
-app.use('/api/requestrideto', require('./routes/api/requestrideto'));
+app.use('/api/requestridefrom', require('./routes/api/requestridefrom').router);
+app.use('/api/requestrideto', require('./routes/api/requestrideto').router);
 app.use('/api/retrieveuserdata', require('./routes/api/retrieveuserdata'));
-app.use('/api/offerrideto', require('./routes/api/offerrideto'));
-app.use('/api/offerridefrom', require('./routes/api/offerridefrom'));
+app.use('/api/offerrideto', require('./routes/api/offerrideto').router);
+app.use('/api/offerridefrom', require('./routes/api/offerridefrom').router);
 app.use('/api/showmyorg', require('./routes/api/showmyorg'));
 app.use('/api/deleteorg', require('./routes/api/deleteorg'));
 app.use('/api/editcar', require('./routes/api/edit_car').router);
@@ -78,15 +78,15 @@ app.use('/api/canceldriverTo', require('./routes/api/canceldriverToApi').router)
 
 app.use('/api/canceldriverFrom', require('./routes/api/canceldriverFromApi').router)
 
-app.use('/api/endRiderTripTo', require('./routes/api/endRiderTriptTo'))
+app.use('/api/endRiderTripTo', require('./routes/api/endRiderTriptTo').router)
 app.use('/api/startRiderTripTo', require('./routes/api/startRiderTripTo').router)
 
-app.use('/api/endRiderTripFrom', require('./routes/api/endRiderTripFrom'))
+app.use('/api/endRiderTripFrom', require('./routes/api/endRiderTripFrom').router)
 app.use('/api/startRiderTripFrom', require('./routes/api/startRiderTripFrom').router)
 app.use('/api/startDriverTripFrom', require('./routes/api/startDriverTripFrom').router)
 app.use('/api/startDriverTripTo', require('./routes/api/startDriverTripTo').router)
-app.use('/api/endDriverTripFrom', require('./routes/api/endDriverTripFrom'))
-app.use('/api/endDriverTripTo', require('./routes/api/endDriverTripTo'))
+app.use('/api/endDriverTripFrom', require('./routes/api/endDriverTripFrom').router)
+app.use('/api/endDriverTripTo', require('./routes/api/endDriverTripTo').router)
 
 app.use('/api/cancelRequest', require('./routes/api/cancelRequest'))
 

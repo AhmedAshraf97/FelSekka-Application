@@ -16,7 +16,6 @@ var validationEditCar = require('../routes/api/edit_car').validation;
 var validationEditProfile = require('../routes/api/editprofile').validation;
 
 
-
 var validationAccOrg = require('../routes/api/acceptorg').validation
 var validationUpdateTrust = require('../routes/api/updatetrust').validation;
 
@@ -26,15 +25,77 @@ var validationStartRiderTripFrom = require('../routes/api/startRiderTripFrom').v
 var validationStartDriverTripFrom = require('../routes/api/startDriverTripFrom').validation
 var validationSignUp = require('../routes/api/sign_up').validation
 
+var validationRequstrideTo = require('../routes/api/requestrideto').validation
+var validationRequstrideFrom = require('../routes/api/requestridefrom').validation
+var validationOfferrideTo = require('../routes/api/offerrideto').validation
+var validationOfferrideFrom = require('../routes/api/offerridefrom').validation
+
+var validationEndRiderTripTo = require('../routes/api/endRiderTriptTo').validation
+var validationEndRiderTripFrom = require('../routes/api/endRiderTripFrom').validation
+var validationEndDriverTripTo = require('../routes/api/endDriverTripTo').validation
+var validationEndDriverTripFrom = require('../routes/api/endDriverTripFrom').validation
 
 
+
+test('End rider trip to', async() => {
+    var result = validationEndRiderTripTo("9", "20", "04:00:00", "35.2", "29")
+        // console.log(result.message)
+    expect(result.validChecks).toBe(true)
+})
+
+
+test('End rider trip from', async() => {
+    var result = validationEndRiderTripFrom(9, "20", "04:00:00", "35.2", "29")
+        // console.log(result.message)
+    expect(result.validChecks).toBe(true)
+})
+
+
+test('End driver trip to', async() => {
+    var result = validationEndDriverTripTo(9, "01:00:00", "35.66", "255", "30.333", "31.255")
+        // console.log(result.message)
+    expect(result.validChecks).toBe(true)
+})
+
+
+
+test('End driver trip from', async() => {
+    var result = validationEndDriverTripFrom(9, "01:00:00", "35.66", "255", "30.333", "31.255")
+        // console.log(result.message)
+    expect(result.validChecks).toBe(true)
+})
+
+///////////////////////////////
+
+
+
+test('valid request ride to', async() => {
+    var result = validationRequstrideTo(9, "2021-05-16", "01:00:00", "04:00:00", "female", "no")
+        // console.log(result.message)
+    expect(result.validChecks).toBe(true)
+})
+test('valid request ride from', async() => {
+    var result = validationRequstrideFrom(9, "2021-05-16", "01:00:00", "04:00:00", "female", "no")
+        // console.log(result.message)
+    expect(result.validChecks).toBe(true)
+})
+test('valid offer ride to', async() => {
+    var result = validationOfferrideTo(40, 4, 9, "2021-05-27", "01:00:00", "04:00:00", "female", "no")
+        // console.log(result.message)
+    expect(result.validChecks).toBe(true)
+})
+test('valid offer ride from', async() => {
+    var result = validationOfferrideFrom(40, 4, 9, "2021-05-27", "01:00:00", "04:00:00", "female", "no")
+        // console.log(result.message)
+    expect(result.validChecks).toBe(true)
+})
 
 
 test('valid sign up', async() => {
     var result = validationSignUp(
-        "Menna",
+        "menna",
         "Fawzy",
-        "ahmed",
+        "a",
         "mennafawzy@live.com",
         "01112223333",
         "12345n67-",
@@ -49,6 +110,11 @@ test('valid sign up', async() => {
 
     expect(result.validChecks).toBe(true)
 
+})
+
+test('valid start rider trip to', async() => {
+    var result = validationStartRiderTripTo("1", "1", "09:25:25")
+    expect(result.validChecks).toBe(true)
 })
 
 
