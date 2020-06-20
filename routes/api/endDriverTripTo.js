@@ -17,10 +17,16 @@ const Trips = require('../../models/trips');
 const DriverDB = require('../../models/drivers');
 const RiderDB = require('../../models/riders');
 const ExpiredToken = require('../../models/expiredtokens');
+const TripActualFare = require('../../ActualFareCalc')
+
 const errHandler = err => {
     //Catch and log any error.
     console.error("Error: ", err);
 };
+
+var driver = {};
+var RidersinTrip = {};
+
 
 function validation(tripid, actualarrivaltime, distance, time, latitude, longitude) {
     var validChecks = true;
@@ -142,11 +148,24 @@ router.post('/', async(req, res) => {
             }).catch(errHandler)
 
             if (DriverTrip) {
+
+
+                RidersinTrip = await RiderDB.findAll({
+                    where: {
+                        tripid: parseInt(req.body.tripid),
+                        status: "done"
+                    }
+                })
+
+                driver = { fare: 0, distance: parseFloat(req.body.distance), time: parseFloat(req.body.time) }
+
+                var p = await TripActualFare('./routes/api/endDriverTripTo');
+
                 await DriverDB.update({
                     actualarrivaltime: req.body.actualarrivaltime,
                     distance: parseFloat(req.body.distance),
                     time: parseFloat(req.body.time),
-                    fare: 0,
+                    fare: driver.fare,
                     status: "done"
                 }, {
                     where: {
@@ -165,13 +184,29 @@ router.post('/', async(req, res) => {
                     }
                 }).catch(errHandler)
 
+
+
+                var totalFare = 0;
+
+                for (rider of RidersinTrip) {
+                    totalFare += rider.fare;
+                    await RiderDB.update({
+                        fare: rider.fare
+                    }, {
+                        where: {
+                            riderid: rider.riderid,
+                            tripid: parseInt(req.body.tripid)
+                        }
+                    }).catch(errHandler)
+                }
+
                 await Trips.update({
                     endloclatitude: parseFloat(req.body.latitude),
                     endloclongitude: parseFloat(req.body.longitude),
                     endtime: req.body.actualarrivaltime,
                     totaldistance: parseFloat(req.body.distance),
                     totaltime: parseFloat(req.body.time),
-                    totalfare: 0,
+                    totalfare: totalFare,
                     status: "done"
                 }, {
                     where: {
@@ -191,6 +226,17 @@ router.post('/', async(req, res) => {
             res.end()
         }
     }
+
+
+    driver = {};
+    RidersinTrip = {};
 })
 
-module.exports = { router, validation }
+function getters() {
+    return {
+        driver,
+        RidersinTrip
+    };
+}
+
+module.exports = { router, validation, getters }
