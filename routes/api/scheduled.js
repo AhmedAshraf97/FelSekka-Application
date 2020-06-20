@@ -226,6 +226,7 @@ router.post('/', async(req, res) => {
                                     "ridewith": RequestRideToDetails.ridewith,
                                     "smoking": RequestRideToDetails.smoking,
                                     "Driver": ({
+                                        "driverid": DriverOftrip.id,
                                         "Driverusername": DriverOftrip.username,
                                         "Driverfirstname": DriverOftrip.firstname,
                                         "Driverlastname": DriverOftrip.lastname,
@@ -371,6 +372,7 @@ router.post('/', async(req, res) => {
                                     "ridewith": RequestRideFromDetails.ridewith,
                                     "smoking": RequestRideFromDetails.smoking,
                                     "Driver": ({
+                                        "driverid": DriverOftrip.id,
                                         "Driverusername": DriverOftrip.username,
                                         "Driverfirstname": DriverOftrip.firstname,
                                         "Driverlastname": DriverOftrip.lastname,
