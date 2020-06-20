@@ -1,7 +1,7 @@
 const request = require("supertest")
 const express = require('express');
 const app = require('../index');
-
+const bcrypt = require('bcrypt')
 
 
 var validationcar = require('../routes/api/add_car').validation;
@@ -12,6 +12,9 @@ var validationOrganization = require('../routes/api/addorg').validation;
 var validationChooseRides = require('../routes/api/chooseFromAvailableRidesApi').validation;
 var validationReturn = require('../routes/api/chooseFromReturnTripsApi').validation;
 var validationChooseOrg = require('../routes/api/chooseorg').validation;
+var validationEditCar = require('../routes/api/edit_car').validation;
+var validationEditProfile = require('../routes/api/editprofile').validation;
+
 
 
 var validationAccOrg = require('../routes/api/acceptorg').validation
@@ -131,4 +134,30 @@ test('invalid  email in choose org', async() => {
     var result = validationChooseOrg("12", "nouran.magdy")
     expect(result.validChecks).toBe(false)
     expect(result.message.message).toBe("Email address is unvalid")
+}, 100000)
+
+
+test('invalid  paramter in edit car', async() => {
+
+
+    var result = validationEditCar("Mercedes", 1, "", "",
+        "", "", "", "",
+        "", "", "", "", "")
+    expect(result.validChecks).toBe(false)
+    expect(result.message.message).toBe("Model must be a string of (1-300) characters")
+}, 100000)
+
+
+test('invalid  old password in edit profile', async() => {
+    var result = validationEditProfile("", "", "123", bcrypt.hashSync("1234", 10), "12",
+        "12", "", "", "", "", "", "")
+    expect(result.validChecks).toBe(false)
+    expect(result.message.message).toBe("Old password is incorrect")
+}, 100000)
+
+test('invalid  old password in edit profile', async() => {
+    var result = validationEditProfile("", "", "", "", "",
+        "", "", "12", "", "", "", "")
+    expect(result.validChecks).toBe(false)
+    expect(result.message.message).toBe("Birthdate is unvalid")
 }, 100000)

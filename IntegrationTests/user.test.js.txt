@@ -138,6 +138,7 @@ test('Show my org', async() => {
 })
 
 
+
 test('Edit profile', async() => {
 
     const user = await User.findOne({
@@ -149,7 +150,21 @@ test('Edit profile', async() => {
 
     const response = await request(app)
         .post('/api/editprofile').send({
-            firstname: "nourann"
+            "firstname": "nourann",
+            "lastname": "",
+            "username": "",
+            "email": "",
+            "oldpassword": "",
+            "phonenumber": "",
+            "latitude": "",
+            "longitude": "",
+            "password": "",
+            "confirmpassword": "",
+            "newpassword": "",
+            "gender": "",
+            "birthdate": "",
+            "ridewith": "",
+            "smoking": ""
         })
         .set('Authorization', jwt.sign(user.dataValues, process.env.SECRET_KEY))
         .expect(200)

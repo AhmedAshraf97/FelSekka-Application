@@ -39,11 +39,11 @@ app.use('/api/offerrideto', require('./routes/api/offerrideto'));
 app.use('/api/offerridefrom', require('./routes/api/offerridefrom'));
 app.use('/api/showmyorg', require('./routes/api/showmyorg'));
 app.use('/api/deleteorg', require('./routes/api/deleteorg'));
-app.use('/api/editcar', require('./routes/api/edit_car'));
+app.use('/api/editcar', require('./routes/api/edit_car').router);
 app.use('/api/inserttrackinglocation', require('./routes/api/inserttrackinglocation'));
 app.use('/api/gettrackinglocation', require('./routes/api/gettrackinglocation'));
 
-app.use('/api/editprofile', require('./routes/api/editprofile'));
+app.use('/api/editprofile', require('./routes/api/editprofile').router);
 app.use('/api/changepassword', require('./routes/api/changepassword'));
 app.use('/api/forgetpassword', require('./routes/api/forgetpassword'));
 app.use('/api/showpasttrips', require('./routes/api/ShowPastTrips'));

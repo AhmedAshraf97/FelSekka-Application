@@ -76,7 +76,19 @@ test('Edit Car', async() => {
         .post('/api/editcar')
         .send({
             "carid": Car1.id,
-            "numberofseats": 5
+               "brand": "",
+            "model": "",
+            "year": "",
+            "type": "",
+            "plateletters": "",
+            "platenumbers": "",
+            "nationalid": "",
+            "carlicensefront": "",
+            "carlicenseback": "",
+            "driverlicensefront": "",
+            "driverlicenseback": "",
+            "color": "",
+            "numberofseats": "5"
         })
         .set('Authorization', jwt.sign(user.dataValues, process.env.SECRET_KEY))
         .expect(200)
@@ -119,7 +131,20 @@ test('Edit Car without giving parameters ', async() => {
     const response = await request(app)
         .post('/api/editcar')
         .send({
-            "carid": Car1.id
+            "carid": Car1.id,
+            "brand": "",
+            "model": "",
+            "year": "",
+            "type": "",
+            "plateletters": "",
+            "platenumbers": "",
+            "nationalid": "",
+            "carlicensefront": "",
+            "carlicenseback": "",
+            "driverlicensefront": "",
+            "driverlicenseback": "",
+            "color": "",
+            "numberofseats": ""
         })
         .set('Authorization', jwt.sign(user.dataValues, process.env.SECRET_KEY))
         .expect(404)
