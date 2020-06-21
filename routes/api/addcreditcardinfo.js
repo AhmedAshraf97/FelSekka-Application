@@ -87,9 +87,14 @@ router.post('/', async(req, res) => {
             }).catch(errHandler);
         }
         else{
+            await creditcard.update({ cardnumber: req.body.cardnumber , cvv: req.body.cvv,
+                expirationdate: req.body.expirationdate }, {
+                where: {
+                    userid: decoded.id
+                }
+            }).catch(errHandler);
             
-            res.status(400).send({ message: "This user has already inserted his credit card information" });
-        }
+            res.status(200).send({ message: "Credit card information is updated" }); }
 
         }
     }
