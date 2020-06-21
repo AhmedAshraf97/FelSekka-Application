@@ -44,6 +44,7 @@ app.use('/api/inserttrackinglocation', require('./routes/api/inserttrackinglocat
 app.use('/api/gettrackinglocation', require('./routes/api/gettrackinglocation'));
 app.use('/api/getcreditcardinfo', require('./routes/api/getcreditcardinfo'));
 app.use('/api/addcreditcardinfo', require('./routes/api/addcreditcardinfo'));
+app.use('/api/editcreditcardinfo', require('./routes/api/editcreditcardinfo'));
 
 app.use('/api/editprofile', require('./routes/api/editprofile').router);
 app.use('/api/changepassword', require('./routes/api/changepassword'));
