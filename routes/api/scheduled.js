@@ -66,15 +66,7 @@ router.post('/', async(req, res) => {
         }).catch(err => {
             console.log('error :' + err)
         })
-        var RiderRidesTripIDTo = []
-        var RiderRidesRequestIDTo = []
-        var RiderRidesOfferIDTo = []
 
-        var RiderRidesTripIDFrom = []
-        var RiderRidesRequestIDFrom = []
-        var RiderRidesOfferIDFrom = []
-        var TripsTo = []
-        var TripsFrom = []
         var countobj = 0;
         if (user) {
             const RiderRides = await Rider.findAll({
@@ -135,7 +127,11 @@ router.post('/', async(req, res) => {
                                     tripid: trip.id,
                                     status: {
                                         [Op.or]: ["scheduled", "ongoing"]
-                                    }
+                                    },
+
+                                    order: [
+                                        ['pickuptime', 'ASC']
+                                    ]
                                 }
 
                             }).catch(errHandler)
@@ -226,6 +222,7 @@ router.post('/', async(req, res) => {
                                     "ridewith": RequestRideToDetails.ridewith,
                                     "smoking": RequestRideToDetails.smoking,
                                     "Driver": ({
+                                        "driverid": DriverOftrip.id,
                                         "Driverusername": DriverOftrip.username,
                                         "Driverfirstname": DriverOftrip.firstname,
                                         "Driverlastname": DriverOftrip.lastname,
@@ -280,7 +277,12 @@ router.post('/', async(req, res) => {
                                     status: {
                                         [Op.or]: ["scheduled", "ongoing"]
                                     }
-                                }
+                                },
+
+                                order: [
+
+                                    ['arrivaltime', 'ASC']
+                                ]
 
                             }).catch(errHandler)
 
@@ -371,6 +373,7 @@ router.post('/', async(req, res) => {
                                     "ridewith": RequestRideFromDetails.ridewith,
                                     "smoking": RequestRideFromDetails.smoking,
                                     "Driver": ({
+                                        "driverid": DriverOftrip.id,
                                         "Driverusername": DriverOftrip.username,
                                         "Driverfirstname": DriverOftrip.firstname,
                                         "Driverlastname": DriverOftrip.lastname,
@@ -446,7 +449,10 @@ router.post('/', async(req, res) => {
                                             [Op.or]: ["scheduled", "ongoing"]
                                         },
                                         tofrom: "to"
-                                    }
+                                    },
+                                    order: [
+                                        ['pickuptime', 'ASC']
+                                    ]
 
                                 }).catch(errHandler)
                                 if (AllRidersTrip.length > 0) {
@@ -556,7 +562,10 @@ router.post('/', async(req, res) => {
                                         status: {
                                             [Op.or]: ["scheduled", "ongoing"]
                                         }
-                                    }
+                                    },
+                                    order: [
+                                        ['arrivaltime', 'ASC']
+                                    ]
 
                                 }).catch(errHandler)
 
