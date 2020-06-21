@@ -154,7 +154,10 @@ router.post('/', async(req, res) => {
                     where: {
                         tripid: parseInt(req.body.tripid),
                         status: "done"
-                    }
+                    },
+                    order: [
+                        ['pickuptime', 'ASC']
+                    ]
                 })
 
                 driver = { fare: 0, distance: parseFloat(req.body.distance), time: parseFloat(req.body.time) }

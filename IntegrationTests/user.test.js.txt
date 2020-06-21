@@ -83,6 +83,97 @@ test('Signing up', async() => {
 })
 
 
+test('Signing up with empty paramters', async() => {
+    const response = await request(app)
+        .post('/api/signup')
+        .send({
+            "firstname": "",
+            "lastname": "Signup",
+            "username": "testsignup2",
+            "email": "testsignup2@live.com",
+            "phonenumber": "01005584641",
+            "latitude": 30.303030,
+            "longitude": 31.313131,
+            "password": "12345n67-",
+            "confirmpassword": "12345n67-",
+            "gender": "male",
+            "birthdate": "1970-01-01",
+            "ridewith": "male",
+            "smoking": "no"
+        }).expect(400)
+
+
+})
+
+
+test('Signing up with invalid data type', async() => {
+    const response = await request(app)
+        .post('/api/signup')
+        .send({
+            "firstname": "test",
+            "lastname": 12,
+            "username": "testsignup2",
+            "email": "testsignup2@live.com",
+            "phonenumber": "01005584641",
+            "latitude": 30.303030,
+            "longitude": 31.313131,
+            "password": "12345n67-",
+            "confirmpassword": "12345n67-",
+            "gender": "male",
+            "birthdate": "1970-01-01",
+            "ridewith": "male",
+            "smoking": "no"
+        }).expect(400)
+
+
+})
+
+test('Signing up with invalid email format', async() => {
+    const response = await request(app)
+        .post('/api/signup')
+        .send({
+            "firstname": "test",
+            "lastname": "Signup",
+            "username": "testsignup2",
+            "email": "testsignup2",
+            "phonenumber": "01005584641",
+            "latitude": 30.303030,
+            "longitude": 31.313131,
+            "password": "12345n67-",
+            "confirmpassword": "12345n67-",
+            "gender": "male",
+            "birthdate": "1970-01-01",
+            "ridewith": "male",
+            "smoking": "no"
+        }).expect(400)
+
+
+})
+
+test('Signing up with unmatched password', async() => {
+    const response = await request(app)
+        .post('/api/signup')
+        .send({
+            "firstname": "test",
+            "lastname": "Signup",
+            "username": "testsignup2",
+            "email": "testsignup2@live.com",
+            "phonenumber": "01005584641",
+            "latitude": 30.303030,
+            "longitude": 31.313131,
+            "password": "12345n67-",
+            "confirmpassword": "1234",
+            "gender": "male",
+            "birthdate": "1970-01-01",
+            "ridewith": "male",
+            "smoking": "no"
+        }).expect(400)
+
+
+})
+
+
+
 test('show profile', async() => {
     const user = await User.findOne({
         where: {

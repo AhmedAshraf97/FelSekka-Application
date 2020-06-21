@@ -30,7 +30,7 @@ function validation(firstname, lastname, username, email,
     var message;
 
     if (firstname == null) {
-        message = ({ error: "First name", message: "First name paramter is missing" });
+        message = ({ error: "First name", message: "First name parameter is missing" });
         validChecks = false;
     } else if (!((typeof(firstname) === 'string') || ((firstname) instanceof String))) {
         message = ({ error: "First name", message: "First name must be a string" });
@@ -47,7 +47,7 @@ function validation(firstname, lastname, username, email,
     }
     //Last name validation 
     else if (lastname == null) {
-        message = ({ error: "Last name", message: "Last name paramter is missing" });
+        message = ({ error: "Last name", message: "Last name parameter is missing" });
         validChecks = false;
     } else if (!((typeof(lastname) === 'string') || ((lastname) instanceof String))) {
         message = ({ error: "Last name", message: "Last name must be a string" });
@@ -64,7 +64,7 @@ function validation(firstname, lastname, username, email,
     }
     //Username validation
     else if (username == null) {
-        message = ({ error: "Username", message: "Username paramter is missing" });
+        message = ({ error: "Username", message: "Username parameter is missing" });
         validChecks = false;
     } else if (!(/^[A-Za-z][A-Za-z0-9]*([_A-Za-z0-9]+)*$/.test(username))) {
         message = ({ error: "Username", message: "Username must be a string" });
@@ -86,7 +86,7 @@ function validation(firstname, lastname, username, email,
     }
     //Email validation
     else if (email == null) {
-        message = ({ error: "Email", message: "Email paramter is missing" });
+        message = ({ error: "Email", message: "Email parameter is missing" });
         validChecks = false;
     } else if (!((typeof(email) === 'string') || ((email) instanceof String))) {
         message = ({ error: "Email", message: "Email must be a string" });
@@ -100,7 +100,7 @@ function validation(firstname, lastname, username, email,
     }
     //Phone number validation
     else if (phonenumber == null) {
-        message = ({ error: "Phone number", message: "Phone number paramter is missing" });
+        message = ({ error: "Phone number", message: "Phone number parameter is missing" });
         validChecks = false;
     } else if (!((typeof(phonenumber) === 'string') || ((phonenumber) instanceof String))) {
         message = ({ error: "Phone number", message: "Phone number must be a string" });
@@ -114,7 +114,7 @@ function validation(firstname, lastname, username, email,
     }
     //Password validation
     else if (password == null) {
-        message = ({ error: "Password", message: "Password paramter is missing" });
+        message = ({ error: "Password", message: "Password parameter is missing" });
         validChecks = false;
     } else if (!((typeof(password) === 'string') || ((password) instanceof String))) {
         message = ({ error: "Password", message: "Password must be a string" });
@@ -128,7 +128,7 @@ function validation(firstname, lastname, username, email,
     }
     //Confirm password validation
     else if (confirmpassword == null) {
-        message = ({ error: "Confirm password", message: "Confirm password paramter is missing" });
+        message = ({ error: "Confirm password", message: "Confirm password parameter is missing" });
         validChecks = false;
     } else if (!((typeof(confirmpassword) === 'string') || ((confirmpassword) instanceof String))) {
         message = ({ error: "Confirm password", message: "Confirm password must be a string" });
@@ -142,7 +142,7 @@ function validation(firstname, lastname, username, email,
     }
     //Gender validation
     else if (gender == null) {
-        message = ({ error: "Gender", message: "Gender paramter is missing" });
+        message = ({ error: "Gender", message: "Gender parameter is missing" });
         validChecks = false;
     } else if (!((typeof(gender) === 'string') || ((gender) instanceof String))) {
         message = ({ error: "Gender", message: "Gender must be a string" });
@@ -153,7 +153,7 @@ function validation(firstname, lastname, username, email,
     }
     //Birthdate validation
     else if (birthdate == null) {
-        message = ({ error: "Birthdate", message: "Birthdate paramter is missing" });
+        message = ({ error: "Birthdate", message: "Birthdate parameter is missing" });
         validChecks = false;
     } else if (!((typeof(birthdate) === 'string') || ((birthdate) instanceof String))) {
         message = ({ error: "Birthdate", message: "Birthdate must be a string" });
@@ -167,7 +167,7 @@ function validation(firstname, lastname, username, email,
     }
     //Ride with validation
     else if (ridewith == null) {
-        message = ({ error: "Ride with", message: "Ride with paramter is missing" });
+        message = ({ error: "Ride with", message: "Ride with parameter is missing" });
         validChecks = false;
     } else if (!((typeof(ridewith) === 'string') || ((ridewith) instanceof String))) {
         message = ({ error: "Ride with", message: "Ride with must be a string" });
@@ -178,7 +178,7 @@ function validation(firstname, lastname, username, email,
     }
     //Smoking validation
     else if (smoking == null) {
-        message = ({ error: "Smoking", message: "Smoking paramter is missing" });
+        message = ({ error: "Smoking", message: "Smoking parameter is missing" });
         validChecks = false;
     } else if (!((typeof(smoking) === 'string') || ((smoking) instanceof String))) {
         message = ({ error: "Smoking", message: "Smoking must be a string" });
@@ -189,7 +189,7 @@ function validation(firstname, lastname, username, email,
     }
     //Latitude validation
     else if (latitude == null) {
-        message = ({ error: "Latitude", message: "Latitude paramter is missing" });
+        message = ({ error: "Latitude", message: "Latitude parameter is missing" });
         validChecks = false;
     } else if (((latitude).toString()).trim().length === 0) {
         message = ({ error: "Latitude", message: "Latitude can't be empty" });
@@ -197,7 +197,7 @@ function validation(firstname, lastname, username, email,
     }
     //Longitude validation
     else if (longitude == null) {
-        message = ({ error: "Longitude", message: "Longitude paramter is missing" });
+        message = ({ error: "Longitude", message: "Longitude parameter is missing" });
         validChecks = false;
     } else if (((longitude).toString()).trim().length === 0) {
         message = ({ error: "Longitude", message: "Longitude can't be empty" });

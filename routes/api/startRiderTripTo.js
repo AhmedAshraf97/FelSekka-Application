@@ -45,7 +45,7 @@ function validation(driverid, tripid, actualpickuptime) {
         validChecks = false;
         message = { error: "actualpickuptime", message: "actualpickuptime can't be empty" }
     } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(actualpickuptime))) {
-        message = { error: "actualpickuptime", message: "actualpickuptime is unvalid" };
+        message = { error: "actualpickuptime", message: "actualpickuptime is invalid" };
         validChecks = false;
     }
 
