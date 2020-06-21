@@ -46,8 +46,8 @@ module.exports = async function main(s) {
 
 
     for (var k = RidersinTrip.length - 2; k >= 0; k--) {
-        lastDistance += RidersinTrip[k].distance;
-        lastDuration += RidersinTrip[k].time;
+        lastDistance = RidersinTrip[k].distance;
+        lastDuration = RidersinTrip[k].time;
         RidersDistCoveredinTrip.push(lastDistance)
         RidersDurationsinTrip.push(lastDuration)
         RidersDistCoveredIds.push(RidersinTrip[k].riderid)
