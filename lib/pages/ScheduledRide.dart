@@ -5,6 +5,7 @@ import 'package:felsekka/pages/navigationfrom.dart';
 import 'package:felsekka/pages/navigationto.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
 import 'package:felsekka/pages/signin.dart';
+import 'package:felsekka/pages/trackingto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -95,10 +96,11 @@ class ScheduledRides extends StatefulWidget with NavigationStates{
   String driverTime="";
   String driverLongitude="";
   String driverLatitude="";
+  int driverId=0;
   List riders=[];
   String ridewith="";
   String smoking="";
-  ScheduledRides(this.toFrom,this.type,this.tripId,this.carModel,this.carBrand,this.carYear,this.carType,this.carPlateLetters,this.carPlateNumbers,this.homeLongitude,this.homeLatitude,this.orgName,this.orgLatitude,this.orgLongitude,this.pickupTime,this.arrivalTime,this.date,this.fare,this.numberRiders,this.driverUsername,this.driverFirstName,this.driverLastName,this.driverPhoneNumber,this.driverGender,this.driverRating,this.driverTime,this.driverLongitude,this.driverLatitude,this.riders,this.carColor,this.ridewith,this.smoking);
+  ScheduledRides(this.driverId,this.toFrom,this.type,this.tripId,this.carModel,this.carBrand,this.carYear,this.carType,this.carPlateLetters,this.carPlateNumbers,this.homeLongitude,this.homeLatitude,this.orgName,this.orgLatitude,this.orgLongitude,this.pickupTime,this.arrivalTime,this.date,this.fare,this.numberRiders,this.driverUsername,this.driverFirstName,this.driverLastName,this.driverPhoneNumber,this.driverGender,this.driverRating,this.driverTime,this.driverLongitude,this.driverLatitude,this.riders,this.carColor,this.ridewith,this.smoking);
   @override
   _ScheduledRidesState createState() => _ScheduledRidesState();
 }
@@ -123,7 +125,7 @@ class _ScheduledRidesState extends State<ScheduledRides> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenFont= MediaQuery.of(context).textScaleFactor;
     final dateNow = DateTime.now();
-    final datetemp= DateTime.parse("2020-05-27 02:09:01");
+    final datetemp= DateTime.parse("2020-05-27 01:09:01");
     final differenceDates = datetemp.difference(DateTime.parse(widget.date+" "+widget.pickupTime)).inSeconds; // negative old date
     String beforeOrAfter="before";
     String after15="no";
@@ -514,6 +516,114 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                               )
                                               :
                                                   after15=="yes"?
+                                                      widget.type=="Rider"?
+                                                      OutlineButton(
+                                                        shape: StadiumBorder(),
+                                                        textColor: Colors.indigo,
+                                                        child: Row(
+                                                          children: <Widget>[
+                                                            Text('Track driver', style: TextStyle(color: Colors.indigo[400],fontSize: 12),),
+                                                            Icon(
+                                                              Icons.arrow_forward,
+                                                              color: Colors.indigo[400],
+                                                              size: 19,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        borderSide: BorderSide(
+                                                            color: Colors.indigo[400], style: BorderStyle.solid,
+                                                            width: 1),
+                                                        onPressed: () {
+                                                          //edit here
+                                                          getTracking() async{
+                                                            Map<String,String> body={
+                                                              "driverid" : widget.driverId.toString(),
+                                                              "tripid" : widget.tripId.toString()
+                                                            };
+                                                            String url="http://3.81.22.120:3000/api/gettrackinglocation";
+                                                            Response response =await post(url, body: body, headers:{'authorization': token});
+                                                            if(response.statusCode == 400)
+                                                            {
+                                                              showDialog(
+                                                                  context: context,
+                                                                  builder: (BuildContext context) {
+                                                                    return RichAlertDialog(
+                                                                      alertTitle: richTitle("Can't track driver."),
+                                                                      alertSubtitle: Text("Ride didn't start yet", maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                                      alertType: RichAlertType.WARNING,
+                                                                      dialogIcon: Icon(
+                                                                        Icons.warning,
+                                                                        color: Colors.red,
+                                                                        size: 80,
+                                                                      ),
+                                                                      actions: <Widget>[
+                                                                        new OutlineButton(
+                                                                          shape: StadiumBorder(),
+                                                                          textColor: Colors.blue,
+                                                                          child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                          borderSide: BorderSide(
+                                                                              color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                              width: 1),
+                                                                          onPressed: () {
+                                                                            Navigator.pop(context);
+                                                                          },
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  });
+                                                            }
+                                                            else if(response.statusCode != 200)
+                                                            {
+                                                              Map data= jsonDecode(response.body);
+                                                              showDialog(
+                                                                  context: context,
+                                                                  builder: (BuildContext context) {
+                                                                    return RichAlertDialog(
+                                                                      alertTitle: richTitle('User error'),
+                                                                      alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                                      alertType: RichAlertType.WARNING,
+                                                                      dialogIcon: Icon(
+                                                                        Icons.warning,
+                                                                        color: Colors.red,
+                                                                        size: 80,
+                                                                      ),
+                                                                      actions: <Widget>[
+                                                                        new OutlineButton(
+                                                                          shape: StadiumBorder(),
+                                                                          textColor: Colors.blue,
+                                                                          child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                          borderSide: BorderSide(
+                                                                              color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                              width: 1),
+                                                                          onPressed: () {
+                                                                            Navigator.pop(context);
+                                                                          },
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  });
+                                                            }
+                                                            else {
+                                                              Map data= jsonDecode(response.body);
+                                                              var trackingJson = data['data'] as List;
+                                                              String initiallat=trackingJson[0]['latitude'];
+                                                              String initiallng=trackingJson[0]['longitude'];
+                                                              print(initiallat);
+                                                              print(initiallng);
+                                                              if(widget.toFrom=="to")
+                                                                {
+                                                                  Navigator.push(context, AnimatedPageRoute(widget:TrackingTo(widget.driverId,widget.driverFirstName,widget.driverLastName,widget.driverGender,widget.driverPhoneNumber,widget.driverRating,screenWidth,screenHeight,screenFont,token,widget.toFrom,widget.type,widget.tripId,widget.homeLongitude,widget.homeLatitude,widget.orgName,widget.orgLatitude,widget.orgLongitude,widget.numberRiders,widget.driverLongitude,widget.driverLatitude,widget.riders,double.parse(initiallat),double.parse(initiallng))));
+                                                                }
+                                                              else
+                                                                {
+                                                                  Navigator.push(context, AnimatedPageRoute(widget:TrackingTo(widget.driverId,widget.driverFirstName,widget.driverLastName,widget.driverGender,widget.driverPhoneNumber,widget.driverRating,screenWidth,screenHeight,screenFont,token,widget.toFrom,widget.type,widget.tripId,widget.homeLongitude,widget.homeLatitude,widget.orgName,widget.orgLatitude,widget.orgLongitude,widget.numberRiders,widget.driverLongitude,widget.driverLatitude,widget.riders,double.parse(initiallat),double.parse(initiallng))));
+                                                                }
+                                                            }
+                                                          }
+                                                          getTracking();
+                                                        },
+                                                      )
+                                                          :
                                               OutlineButton(
                                                 shape: StadiumBorder(),
                                                 textColor: Colors.indigo,
@@ -615,13 +725,16 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                                             position.latitude) *
                                                             ky;
                                                         if (sqrt(
-                                                            dx * dx + dy * dy) <=
-                                                            1) {
+                                                            dx * dx + dy * dy) <= 1) {
                                                           arrived = true;
                                                         }
                                                         else {
+                                                          print("no");
                                                           arrived = false;
+                                                          print(sqrt(
+                                                              dx * dx + dy * dy));
                                                           print(position.latitude.toString()+" "+ position.longitude.toString());
+                                                          print(widget.homeLatitude+" "+widget.homeLongitude);
                                                         }
                                                       }
                                                     else{
@@ -649,7 +762,6 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                                         print(position.latitude.toString()+" "+ position.longitude.toString());
                                                       }
                                                     }
-
                                                     if (arrived == true) {
                                                       Response response =await post(url, body: body, headers:{'authorization': token});
                                                       print(response.body);

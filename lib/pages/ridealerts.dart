@@ -44,6 +44,7 @@ class RideRider{
   String date="";
   String fare="";
   int numberRiders=0;
+  int driverId=0;
   String driverUsername="";
   String driverFirstName="";
   String driverLastName="";
@@ -56,9 +57,10 @@ class RideRider{
   List riders=[];
   String ridewith="";
   String smoking="";
-  RideRider(this.toFrom,this.type,this.tripId,this.carModel,this.carBrand,this.carYear,this.carType,this.carPlateLetters,this.carPlateNumbers,this.homeLongitude,this.homeLatitude,this.orgName,this.orgLatitude,this.orgLongitude,this.pickupTime,this.arrivalTime,this.date,this.fare,this.numberRiders,this.driverUsername,this.driverFirstName,this.driverLastName,this.driverPhoneNumber,this.driverGender,this.driverRating,this.driverTime,this.driverLongitude,this.driverLatitude,this.riders,this.carColor,this.ridewith,this.smoking);
+  RideRider(this.driverId,this.toFrom,this.type,this.tripId,this.carModel,this.carBrand,this.carYear,this.carType,this.carPlateLetters,this.carPlateNumbers,this.homeLongitude,this.homeLatitude,this.orgName,this.orgLatitude,this.orgLongitude,this.pickupTime,this.arrivalTime,this.date,this.fare,this.numberRiders,this.driverUsername,this.driverFirstName,this.driverLastName,this.driverPhoneNumber,this.driverGender,this.driverRating,this.driverTime,this.driverLongitude,this.driverLatitude,this.riders,this.carColor,this.ridewith,this.smoking);
   factory RideRider.fromJson(dynamic json) {
     return RideRider(
+      json['Driver']['driverid'] as int,
       json['tofrom'] as String,
       json['type'] as String,
       json['tripid'] as int,
@@ -97,6 +99,7 @@ class RideRider{
 
 
 class RideDriver{
+  int driverId=0;
   String toFrom="";
   String type="";
   int tripId=0;
@@ -168,6 +171,7 @@ class _RideAlertsState extends State<RideAlerts> {
     Future<String> getData() async{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       token = await (prefs.getString('token')??'');
+      print(token);
       String url="http://3.81.22.120:3000/api/scheduledtrips";
       Response response =await post(url, headers:{'authorization': token});
       if(response.statusCode==409)
@@ -239,7 +243,7 @@ class _RideAlertsState extends State<RideAlerts> {
               listRides.add(
                 GestureDetector(
                   onTap: (){
-                    Navigator.push(context, AnimatedPageRoute(widget: ScheduledRides(rideObjects[i].toFrom,rideObjects[i].type,rideObjects[i].tripId,rideObjects[i].carModel,rideObjects[i].carBrand,rideObjects[i].carYear,rideObjects[i].carType,rideObjects[i].carPlateLetters,rideObjects[i].carPlateNumbers,rideObjects[i].homeLongitude,rideObjects[i].homeLatitude,rideObjects[i].orgName,rideObjects[i].orgLatitude,rideObjects[i].orgLongitude,rideObjects[i].pickupTime,rideObjects[i].arrivalTime,rideObjects[i].date,rideObjects[i].fare,rideObjects[i].numberRiders,rideObjects[i].driverUsername,rideObjects[i].driverFirstName,rideObjects[i].driverLastName,rideObjects[i].driverPhoneNumber,rideObjects[i].driverGender,rideObjects[i].driverRating,rideObjects[i].driverTime,rideObjects[i].driverLongitude,rideObjects[i].driverLatitude,rideObjects[i].riders,rideObjects[i].carColor,rideObjects[i].ridewith,rideObjects[i].smoking)));
+                    Navigator.push(context, AnimatedPageRoute(widget: ScheduledRides(rideObjects[i].driverId,rideObjects[i].toFrom,rideObjects[i].type,rideObjects[i].tripId,rideObjects[i].carModel,rideObjects[i].carBrand,rideObjects[i].carYear,rideObjects[i].carType,rideObjects[i].carPlateLetters,rideObjects[i].carPlateNumbers,rideObjects[i].homeLongitude,rideObjects[i].homeLatitude,rideObjects[i].orgName,rideObjects[i].orgLatitude,rideObjects[i].orgLongitude,rideObjects[i].pickupTime,rideObjects[i].arrivalTime,rideObjects[i].date,rideObjects[i].fare,rideObjects[i].numberRiders,rideObjects[i].driverUsername,rideObjects[i].driverFirstName,rideObjects[i].driverLastName,rideObjects[i].driverPhoneNumber,rideObjects[i].driverGender,rideObjects[i].driverRating,rideObjects[i].driverTime,rideObjects[i].driverLongitude,rideObjects[i].driverLatitude,rideObjects[i].riders,rideObjects[i].carColor,rideObjects[i].ridewith,rideObjects[i].smoking)));
                   },
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(0,8,0,8),
@@ -579,7 +583,7 @@ class _RideAlertsState extends State<RideAlerts> {
               listRides.add(
                 GestureDetector(
                   onTap: (){
-                    Navigator.push(context, AnimatedPageRoute(widget: ScheduledRides(rideDriverObjects[i].toFrom,rideDriverObjects[i].type,rideDriverObjects[i].tripId,rideDriverObjects[i].carModel,rideDriverObjects[i].carBrand,rideDriverObjects[i].carYear,rideDriverObjects[i].carType,rideDriverObjects[i].carPlateLetters,rideDriverObjects[i].carPlateNumbers,rideDriverObjects[i].homeLongitude,rideDriverObjects[i].homeLatitude,rideDriverObjects[i].orgName,rideDriverObjects[i].orgLatitude,rideDriverObjects[i].orgLongitude,rideDriverObjects[i].pickupTime,rideDriverObjects[i].arrivalTime,rideDriverObjects[i].date,rideDriverObjects[i].fare,rideDriverObjects[i].numberRiders,"","","","","","","","","",rideDriverObjects[i].riders,rideDriverObjects[i].carColor,rideDriverObjects[i].ridewith,rideDriverObjects[i].smoking)));
+                    Navigator.push(context, AnimatedPageRoute(widget: ScheduledRides(rideDriverObjects[i].driverId,rideDriverObjects[i].toFrom,rideDriverObjects[i].type,rideDriverObjects[i].tripId,rideDriverObjects[i].carModel,rideDriverObjects[i].carBrand,rideDriverObjects[i].carYear,rideDriverObjects[i].carType,rideDriverObjects[i].carPlateLetters,rideDriverObjects[i].carPlateNumbers,rideDriverObjects[i].homeLongitude,rideDriverObjects[i].homeLatitude,rideDriverObjects[i].orgName,rideDriverObjects[i].orgLatitude,rideDriverObjects[i].orgLongitude,rideDriverObjects[i].pickupTime,rideDriverObjects[i].arrivalTime,rideDriverObjects[i].date,rideDriverObjects[i].fare,rideDriverObjects[i].numberRiders,"","","","","","","","","",rideDriverObjects[i].riders,rideDriverObjects[i].carColor,rideDriverObjects[i].ridewith,rideDriverObjects[i].smoking)));
                   },
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(0,8,0,8),

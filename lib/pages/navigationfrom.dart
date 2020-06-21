@@ -159,7 +159,7 @@ class _NavDriverFromState extends State<NavDriverFrom> {
                     CircleAvatar(
                       backgroundColor: Colors.white,
                       child: Image.asset(
-                        riderObjs[i].gender=="male"? "images/avatarfemale.png" : "images/avatarmale.png",
+                        riderObjs[i].gender=="female"? "images/avatarfemale.png" : "images/avatarmale.png",
                         height:widget.screenHeight/20,
                         width: widget.screenWidth/8,),
                     ),
@@ -356,6 +356,81 @@ class _NavDriverFromState extends State<NavDriverFrom> {
           position: destination,
         )
     );
+    //Insert tracking location:
+    Map<String,String> body={
+      "driverid" : widget.driverid.toString(),
+      "tripid" : widget.tripId.toString(),
+      "latitude" : markerLatitude.toString(),
+      "longitude" : markerLongitude.toString(),
+    };
+    String url="http://3.81.22.120:3000/api/inserttrackinglocation";
+    Response response =await post(url, body: body, headers:{'authorization': widget.token});
+    if(response.statusCode == 400)
+    {
+      Map data= jsonDecode(response.body);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return RichAlertDialog(
+              alertTitle: richTitle(data['error']),
+              alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+              alertType: RichAlertType.WARNING,
+              dialogIcon: Icon(
+                Icons.warning,
+                color: Colors.red,
+                size: 80,
+              ),
+              actions: <Widget>[
+                new OutlineButton(
+                  shape: StadiumBorder(),
+                  textColor: Colors.blue,
+                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                  borderSide: BorderSide(
+                      color: Colors.indigo[400], style: BorderStyle.solid,
+                      width: 1),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          });
+    }
+    else if(response.statusCode != 200)
+    {
+      Map data= jsonDecode(response.body);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return RichAlertDialog(
+              alertTitle: richTitle('User error'),
+              alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+              alertType: RichAlertType.WARNING,
+              dialogIcon: Icon(
+                Icons.warning,
+                color: Colors.red,
+                size: 80,
+              ),
+              actions: <Widget>[
+                new OutlineButton(
+                  shape: StadiumBorder(),
+                  textColor: Colors.blue,
+                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                  borderSide: BorderSide(
+                      color: Colors.indigo[400], style: BorderStyle.solid,
+                      width: 1),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          });
+    }
+    else {
+      Map data = jsonDecode(response.body);
+      print(data);
+    }
     return null;
   }
 
@@ -381,6 +456,80 @@ class _NavDriverFromState extends State<NavDriverFrom> {
         arrived = false;
       }
       print("Arrived: "+ arrived.toString());
+      Map<String,String> body={
+        "driverid" : widget.driverid.toString(),
+        "tripid" : widget.tripId.toString(),
+        "latitude" : location.latitude.toString(),
+        "longitude" : location.longitude.toString(),
+      };
+      String url="http://3.81.22.120:3000/api/inserttrackinglocation";
+      Response response =await post(url, body: body, headers:{'authorization': widget.token});
+      if(response.statusCode == 400)
+      {
+        Map data= jsonDecode(response.body);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return RichAlertDialog(
+                alertTitle: richTitle(data['error']),
+                alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                alertType: RichAlertType.WARNING,
+                dialogIcon: Icon(
+                  Icons.warning,
+                  color: Colors.red,
+                  size: 80,
+                ),
+                actions: <Widget>[
+                  new OutlineButton(
+                    shape: StadiumBorder(),
+                    textColor: Colors.blue,
+                    child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                    borderSide: BorderSide(
+                        color: Colors.indigo[400], style: BorderStyle.solid,
+                        width: 1),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            });
+      }
+      else if(response.statusCode != 200)
+      {
+        Map data= jsonDecode(response.body);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return RichAlertDialog(
+                alertTitle: richTitle('User error'),
+                alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                alertType: RichAlertType.WARNING,
+                dialogIcon: Icon(
+                  Icons.warning,
+                  color: Colors.red,
+                  size: 80,
+                ),
+                actions: <Widget>[
+                  new OutlineButton(
+                    shape: StadiumBorder(),
+                    textColor: Colors.blue,
+                    child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                    borderSide: BorderSide(
+                        color: Colors.indigo[400], style: BorderStyle.solid,
+                        width: 1),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            });
+      }
+      else {
+        Map data = jsonDecode(response.body);
+        print(data);
+      }
       List<LatLng> _coordinates = await googleMapPolyline.getCoordinatesWithLocation(
           origin: origin,
           destination: destination,
