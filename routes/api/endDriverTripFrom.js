@@ -184,7 +184,7 @@ router.post('/', async(req, res) => {
                     }, {
                         where: {
                             riderid: rider.riderid,
-                            tridid: parseInt(req.body.tripid)
+                            tripid: parseInt(req.body.tripid)
                         }
                     }).catch(errHandler)
                 }
