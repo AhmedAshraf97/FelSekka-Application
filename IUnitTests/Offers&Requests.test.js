@@ -1,3 +1,4 @@
+const app = require('../index');
 var validationRequstrideTo = require('../routes/api/requestrideto').validation
 var validationRequstrideFrom = require('../routes/api/requestridefrom').validation
 var validationOfferrideTo = require('../routes/api/offerrideto').validation

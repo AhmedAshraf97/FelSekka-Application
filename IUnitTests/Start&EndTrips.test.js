@@ -1,3 +1,4 @@
+const app = require('../index');
 var validationStartRiderTripTo = require('../routes/api/startRiderTripTo').validation
 var validationStartDriverTripTo = require('../routes/api/startDriverTripTo').validation
 var validationStartRiderTripFrom = require('../routes/api/startRiderTripFrom').validation

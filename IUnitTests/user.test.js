@@ -1,5 +1,5 @@
+const app = require('../index');
 const bcrypt = require('bcrypt')
-
 var validationcar = require('../routes/api/add_car').validation;
 var validationAccOrg = require('../routes/api/acceptorg').validation;
 var validationRating = require('../routes/api/add_rating').validation;
