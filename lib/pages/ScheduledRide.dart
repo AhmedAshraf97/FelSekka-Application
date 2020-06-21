@@ -5,6 +5,7 @@ import 'package:felsekka/pages/navigationfrom.dart';
 import 'package:felsekka/pages/navigationto.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
 import 'package:felsekka/pages/signin.dart';
+import 'package:felsekka/pages/trackingfrom.dart';
 import 'package:felsekka/pages/trackingto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +126,7 @@ class _ScheduledRidesState extends State<ScheduledRides> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenFont= MediaQuery.of(context).textScaleFactor;
     final dateNow = DateTime.now();
-    final datetemp= DateTime.parse("2020-05-27 01:09:01");
+    final datetemp= DateTime.parse("2020-05-27 02:09:01");
     final differenceDates = datetemp.difference(DateTime.parse(widget.date+" "+widget.pickupTime)).inSeconds; // negative old date
     String beforeOrAfter="before";
     String after15="no";
@@ -616,7 +617,7 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                                                 }
                                                               else
                                                                 {
-                                                                  Navigator.push(context, AnimatedPageRoute(widget:TrackingTo(widget.driverId,widget.driverFirstName,widget.driverLastName,widget.driverGender,widget.driverPhoneNumber,widget.driverRating,screenWidth,screenHeight,screenFont,token,widget.toFrom,widget.type,widget.tripId,widget.homeLongitude,widget.homeLatitude,widget.orgName,widget.orgLatitude,widget.orgLongitude,widget.numberRiders,widget.driverLongitude,widget.driverLatitude,widget.riders,double.parse(initiallat),double.parse(initiallng))));
+                                                                  Navigator.push(context, AnimatedPageRoute(widget:TrackingFrom(widget.driverId,widget.driverFirstName,widget.driverLastName,widget.driverGender,widget.driverPhoneNumber,widget.driverRating,screenWidth,screenHeight,screenFont,token,widget.toFrom,widget.type,widget.tripId,widget.homeLongitude,widget.homeLatitude,widget.orgName,widget.orgLatitude,widget.orgLongitude,widget.numberRiders,widget.driverLongitude,widget.driverLatitude,widget.riders,double.parse(initiallat),double.parse(initiallng))));
                                                                 }
                                                             }
                                                           }
