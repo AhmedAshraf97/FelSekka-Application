@@ -1,4 +1,4 @@
-const creditcard = require('../../models/creditcards');
+const creditcard = require('../../models/creditcard');
 const User = require('../../models/users');
 const express = require('express');
 const router = express.Router();
