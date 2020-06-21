@@ -73,29 +73,29 @@ router.post('/', async(req, res) => {
                         creditcardexists=true
                     }
             }).catch(errHandler);
-
-            if(!creditcardexists){
-            const creditcarddata = {
-                userid: decoded.id,
-                cardnumber: req.body.cardnumber,
-                cvv: req.body.cvv,
-                expirationdate: req.body.expirationdate
-            }
-        
-            await creditcard.create(creditcarddata).then(user => {
-                res.status(200).send({ message: "Credit card information is inserted" });
-            }).catch(errHandler);
-        }
-        else{
-            await creditcard.update({ cardnumber: req.body.cardnumber , cvv: req.body.cvv,
-                expirationdate: req.body.expirationdate }, {
-                where: {
-                    userid: decoded.id
-                }
-            }).catch(errHandler);
             
-            res.status(200).send({ message: "Credit card information is updated" }); }
-
+            if(!creditcardexists){
+                const creditcarddata = {
+                    userid: decoded.id,
+                    cardnumber: req.body.cardnumber,
+                    cvv: req.body.cvv,
+                    expirationdate: req.body.expirationdate
+                }
+                await creditcard.create(creditcarddata).then(user => {
+                    res.status(200).send({ message: "Credit card information is inserted" });
+                }).catch(errHandler);
+            }
+            else{
+                await creditcard.update({cardnumber: req.body.cardnumber,
+                    cvv: req.body.cvv,
+                    expirationdate: req.body.expirationdate},{
+                        where:{userid:decoded.id}
+                    }).then(user => {
+                    res.status(200).send({ message: "Credit card information is updated" });
+                }).catch(errHandler);
+            }
+               
+                
         }
     }
 });
