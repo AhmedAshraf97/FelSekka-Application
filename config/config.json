@@ -1,9 +1,9 @@
 {
     "development": {
-        "username": "uLJohokxE6",
-        "password": "XHw5dnoRy5",
+        "username": "admin",
+        "password": "admin123",
         "database": "uLJohokxE6",
-        "host": "remotemysql.com",
+        "host": "mygpdb.c4tgc4sarnec.us-east-1.rds.amazonaws.com",
         "dialect": "mysql",
         "operatorsAliases": false
     },

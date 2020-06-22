@@ -170,7 +170,7 @@ function validation(earliesttime) {
     var validChecks = true
     var message = ""
     if (earliesttime == "") {
-        message = { error: "EarliestTime", message: "EarliestTime paramter is missing" }
+        message = { error: "EarliestTime", message: "EarliestTime parameter is missing" }
         validChecks = false;
 
     } else if (!((typeof(earliesttime) === 'string') || ((earliesttime) instanceof String))) {
@@ -183,7 +183,7 @@ function validation(earliesttime) {
 
     } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(earliesttime))) {
         validChecks = false;
-        message = { error: "EarliestTime", message: "EarliestTime is unvalid" }
+        message = { error: "EarliestTime", message: "EarliestTime is invalid" }
 
     }
     return { validChecks: validChecks, message: message }
