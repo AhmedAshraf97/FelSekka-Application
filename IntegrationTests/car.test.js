@@ -76,7 +76,7 @@ test('Edit Car', async() => {
         .post('/api/editcar')
         .send({
             "carid": Car1.id,
-               "brand": "",
+            "brand": "",
             "model": "",
             "year": "",
             "type": "",

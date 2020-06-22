@@ -151,7 +151,10 @@ router.post('/', async(req, res) => {
                     where: {
                         tripid: parseInt(req.body.tripid),
                         status: "done"
-                    }
+                    },
+                    order: [
+                        ['arrivaltime', 'DESC']
+                    ]
                 })
 
                 driver = { fare: 0, distance: parseFloat(req.body.distance), time: parseFloat(req.body.time) }
@@ -181,7 +184,7 @@ router.post('/', async(req, res) => {
                     }, {
                         where: {
                             riderid: rider.riderid,
-                            tridid: parseInt(req.body.tripid)
+                            tripid: parseInt(req.body.tripid)
                         }
                     }).catch(errHandler)
                 }

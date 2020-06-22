@@ -82,19 +82,6 @@ test('Rider3 starts trip to', async() => {
 
 }, 100000)
 
-test('Driver ends trip to', async() => {
-    const response = await request(app)
-        .post('/api/endDriverTripTo')
-        .send({
-            "tripid": 5839,
-            "actualarrivaltime": "03:00:00",
-            "distance": "18",
-            "time": "30",
-            "latitude": "30.08291800",
-            "longitude": "31.32745330"
-        }).set('Authorization', CurrentToken).expect(200)
-
-}, 100000)
 
 test('Rider1 ends trip to', async() => {
     const response = await request(app)
@@ -137,5 +124,20 @@ test('Rider3 ends trip to', async() => {
             "distance": "9.5",
             "time": "29"
         }).expect(200)
+
+}, 100000)
+
+
+test('Driver ends trip to', async() => {
+    const response = await request(app)
+        .post('/api/endDriverTripTo')
+        .send({
+            "tripid": 5839,
+            "actualarrivaltime": "03:00:00",
+            "distance": "18",
+            "time": "30",
+            "latitude": "30.08291800",
+            "longitude": "31.32745330"
+        }).set('Authorization', CurrentToken).expect(200)
 
 }, 100000)

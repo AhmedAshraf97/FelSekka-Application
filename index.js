@@ -42,6 +42,8 @@ app.use('/api/deleteorg', require('./routes/api/deleteorg'));
 app.use('/api/editcar', require('./routes/api/edit_car').router);
 app.use('/api/inserttrackinglocation', require('./routes/api/inserttrackinglocation'));
 app.use('/api/gettrackinglocation', require('./routes/api/gettrackinglocation'));
+app.use('/api/getcreditcardinfo', require('./routes/api/getcreditcardinfo'));
+app.use('/api/addcreditcardinfo', require('./routes/api/addcreditcardinfo'));
 
 app.use('/api/editprofile', require('./routes/api/editprofile').router);
 app.use('/api/changepassword', require('./routes/api/changepassword'));

@@ -183,7 +183,7 @@ function validation(earliesttime) {
 
     } else if (!(/^([01]?\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(earliesttime))) {
         validChecks = false;
-        message = { error: "EarliestTime", message: "EarliestTime is unvalid" }
+        message = { error: "EarliestTime", message: "EarliestTime is invalid" }
 
     }
     return { validChecks: validChecks, message: message }
