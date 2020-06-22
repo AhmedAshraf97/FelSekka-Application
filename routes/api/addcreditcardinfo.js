@@ -64,6 +64,7 @@ router.post('/', async(req, res) => {
         }else if (!(/^(0[1-9]|1[0-2])\/\d{2}$/.test(req.body.expirationdate))) {
             res.status(400).send({ error: "expirationdate", message: "expirationdate is unvalid" });
         }else { 
+            
             creditcardexists=false
             await creditcard.findOne({  
                 where: {
@@ -71,10 +72,10 @@ router.post('/', async(req, res) => {
                 }}).then(data => {
                     if(data){
                         creditcardexists=true
+                        
                     }
             }).catch(errHandler);
-            
-            if(!creditcardexists){
+            if(creditcardexists=== false){
                 const creditcarddata = {
                     userid: decoded.id,
                     cardnumber: req.body.cardnumber,
@@ -85,7 +86,7 @@ router.post('/', async(req, res) => {
                     res.status(200).send({ message: "Credit card information is inserted" });
                 }).catch(errHandler);
             }
-            else{
+            else if(creditcardexists===true){
                 await creditcard.update({cardnumber: req.body.cardnumber,
                     cvv: req.body.cvv,
                     expirationdate: req.body.expirationdate},{
@@ -93,8 +94,7 @@ router.post('/', async(req, res) => {
                     }).then(user => {
                     res.status(200).send({ message: "Credit card information is updated" });
                 }).catch(errHandler);
-            }
-               
+            }     
                 
         }
     }
