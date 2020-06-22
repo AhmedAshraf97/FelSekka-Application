@@ -185,7 +185,7 @@ router.post('/', async(req, res) => {
                                                 "gender": AllRidersTripDetails.gender,
                                                 "latitude": RiderRequestRideToDetails.fromlatitude,
                                                 "longitude": RiderRequestRideToDetails.fromlongitude,
-                                                "time": AllRidersTripEach.pickuptime
+                                                "time": AllRidersTripEach.actualpickuptime
                                             })
 
                                         }
@@ -210,8 +210,8 @@ router.post('/', async(req, res) => {
                                     "orgname": orgDetails.name,
                                     "orglatitude": orgDetails.latitude,
                                     "orglongitude": orgDetails.longitude,
-                                    "pickuptime": RiderRide.pickuptime,
-                                    "arrivaltime": RiderRide.arrivaltime,
+                                    "pickuptime": RiderRide.actualpickuptime,
+                                    "arrivaltime": RiderRide.actualarrivaltime,
                                     "date": trip.date,
                                     "fare": RiderRide.fare,
                                     "numberRiders": trip.numberofseats,
@@ -324,7 +324,7 @@ router.post('/', async(req, res) => {
                                                 "gender": AllRidersTripDetails.gender,
                                                 "latitude": RiderRequestRideFromDetails.tolatitude,
                                                 "longitude": RiderRequestRideFromDetails.tolongitude,
-                                                "time": AllRidersTripEach.arrivaltime
+                                                "time": AllRidersTripEach.actualarrivaltime
 
                                             })
 
@@ -351,8 +351,8 @@ router.post('/', async(req, res) => {
                                     "orgname": orgDetails.name,
                                     "orglatitude": orgDetails.latitude,
                                     "orglongitude": orgDetails.longitude,
-                                    "pickuptime": RiderRide.pickuptime,
-                                    "arrivaltime": RiderRide.arrivaltime,
+                                    "pickuptime": RiderRide.actualpickuptime,
+                                    "arrivaltime": RiderRide.actualarrivaltime,
                                     "date": trip.date,
                                     "fare": RiderRide.fare,
                                     "numberRiders": trip.numberofseats,
@@ -474,7 +474,7 @@ router.post('/', async(req, res) => {
                                                 "latitude": RiderRequestRideToDetails.fromlatitude,
                                                 "longitude": RiderRequestRideToDetails.fromlongitude,
                                                 "fare": AllRidersTripEach.fare,
-                                                "time": AllRidersTripEach.pickuptime
+                                                "time": AllRidersTripEach.actualpickuptime
 
                                             })
 
@@ -501,8 +501,8 @@ router.post('/', async(req, res) => {
                                         "orgname": orgDetails.name,
                                         "orglatitude": orgDetails.latitude,
                                         "orglongitude": orgDetails.longitude,
-                                        "pickuptime": DriverRide.pickuptime,
-                                        "arrivaltime": DriverRide.arrivaltime,
+                                        "pickuptime": DriverRide.actualpickuptime,
+                                        "arrivaltime": DriverRide.actualarrivaltime,
                                         "date": trip.date,
                                         "fare": DriverRide.fare,
                                         "numberRiders": trip.numberofseats,
@@ -581,7 +581,7 @@ router.post('/', async(req, res) => {
                                                 "latitude": RiderRequestRideFromDetails.tolatitude,
                                                 "longitude": RiderRequestRideFromDetails.tolongitude,
                                                 "fare": AllRidersTripEach.fare,
-                                                "time": AllRidersTripEach.arrivaltime
+                                                "time": AllRidersTripEach.actualarrivaltime
 
                                             })
 
@@ -609,8 +609,8 @@ router.post('/', async(req, res) => {
                                         "orgname": orgDetails.name,
                                         "orglatitude": orgDetails.latitude,
                                         "orglongitude": orgDetails.longitude,
-                                        "pickuptime": DriverRide.pickuptime,
-                                        "arrivaltime": DriverRide.arrivaltime,
+                                        "pickuptime": DriverRide.actualpickuptime,
+                                        "arrivaltime": DriverRide.actualarrivaltime,
                                         "date": trip.date,
                                         "fare": DriverRide.fare,
                                         "numberRiders": trip.numberofseats,
