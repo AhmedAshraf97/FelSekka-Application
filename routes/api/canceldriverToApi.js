@@ -63,7 +63,7 @@ router.post('/', async(req, res) => {
 
         const trip = await Trips.findOne({
             where: {
-                id: req.body.tripid,
+                id: parseInt(req.body.tripid),
                 status: "scheduled"
             }
         }).catch(errHandler)
