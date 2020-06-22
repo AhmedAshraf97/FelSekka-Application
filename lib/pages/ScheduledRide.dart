@@ -126,8 +126,17 @@ class _ScheduledRidesState extends State<ScheduledRides> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenFont= MediaQuery.of(context).textScaleFactor;
     final dateNow = DateTime.now();
-    final datetemp= DateTime.parse("2020-05-27 02:09:01");
-    final differenceDates = datetemp.difference(DateTime.parse(widget.date+" "+widget.pickupTime)).inSeconds; // negative old date
+    final datetemp= DateTime.parse("2020-05-27 01:08:01");
+    var differenceDates;
+    print(widget.driverTime);
+    if(widget.type=="Rider")
+      {
+        differenceDates = datetemp.difference(DateTime.parse(widget.date+" "+widget.driverTime)).inSeconds; // negative old date
+      }
+    else{
+      differenceDates = datetemp.difference(DateTime.parse(widget.date+" "+widget.pickupTime)).inSeconds; // negative old date
+    }
+    print(differenceDates);
     String beforeOrAfter="before";
     String after15="no";
     String cancel="no";
@@ -141,7 +150,7 @@ class _ScheduledRidesState extends State<ScheduledRides> {
       }
     if(differenceDates<=900)
       {
-        after15="yes";
+        after15="yes"; //within 15 mins
       }
     else
       {
@@ -504,7 +513,6 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                                       color: Colors.redAccent[400],
                                                       size: 19,
                                                     ),
-
                                                     Text('Cancel ride', style: TextStyle(color: Colors.redAccent[400],fontSize: 12),),
                                                   ],
                                                 ),
@@ -512,7 +520,333 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                                     color: Colors.redAccent[400], style: BorderStyle.solid,
                                                     width: 1),
                                                 onPressed: () {
-                                                  Navigator.pop(context);
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return RichAlertDialog(
+                                                          alertTitle: richTitle("Cancel ride"),
+                                                          alertSubtitle: richSubtitle("Are you sure you want to cancel ride?"),
+                                                          alertType: RichAlertType.WARNING,
+                                                          dialogIcon: Icon(
+                                                            Icons.warning,
+                                                            color: Colors.red,
+                                                            size: 80,
+                                                          ),
+                                                          actions: <Widget>[
+                                                            new OutlineButton(
+                                                              shape: StadiumBorder(),
+                                                              textColor: Colors.blue,
+                                                              child: Text('Yes', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                              borderSide: BorderSide(
+                                                                  color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                  width: 1),
+                                                              onPressed: () async{
+                                                                if(widget.type=="Rider")
+                                                                  {
+                                                                    if(widget.toFrom=="to")
+                                                                      {
+                                                                        String url="http://3.81.22.120:3000/api/cancelRiderTo";
+                                                                        Map<String,String> body={
+                                                                          "tripid": widget.tripId.toString(),
+                                                                        };
+                                                                        Response response =await post(url, headers:{'authorization': token},body:body);
+                                                                        if(response.statusCode != 200)
+                                                                        {
+                                                                          Map data= jsonDecode(response.body);
+                                                                          showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
+                                                                                return RichAlertDialog(
+                                                                                  alertTitle: richTitle("User error"),
+                                                                                  alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                                                  alertType: RichAlertType.WARNING,
+                                                                                  dialogIcon: Icon(
+                                                                                    Icons.warning,
+                                                                                    color: Colors.red,
+                                                                                    size: 80,
+                                                                                  ),
+                                                                                  actions: <Widget>[
+                                                                                    new OutlineButton(
+                                                                                      shape: StadiumBorder(),
+                                                                                      textColor: Colors.blue,
+                                                                                      child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                                      borderSide: BorderSide(
+                                                                                          color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                                          width: 1),
+                                                                                      onPressed: () {
+                                                                                        Navigator.pop(context);
+                                                                                      },
+                                                                                    ),
+                                                                                  ],
+                                                                                );
+                                                                              });
+                                                                          Navigator.pop(context);
+                                                                        }
+                                                                        else{
+                                                                          Navigator.pop(context);
+                                                                          showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
+                                                                                return RichAlertDialog(
+                                                                                  alertTitle: richTitle("Done"),
+                                                                                  alertSubtitle: richSubtitle("Ride is cancelled successfully"),
+                                                                                  alertType: RichAlertType.SUCCESS,
+                                                                                  dialogIcon: Icon(
+                                                                                    Icons.check,
+                                                                                    color: Colors.green,
+                                                                                    size: 80,
+                                                                                  ),
+                                                                                  actions: <Widget>[
+                                                                                    new OutlineButton(
+                                                                                      shape: StadiumBorder(),
+                                                                                      textColor: Colors.blue,
+                                                                                      child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                                      borderSide: BorderSide(
+                                                                                          color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                                          width: 1),
+                                                                                      onPressed: () {
+                                                                                        Navigator.pop(context);
+                                                                                        Navigator.pop(context);
+                                                                                      },
+                                                                                    ),
+                                                                                  ],
+                                                                                );
+                                                                              });
+                                                                        }
+                                                                      }
+                                                                    else
+                                                                      {
+                                                                        String url="http://3.81.22.120:3000/api/cancelRiderFrom";
+                                                                        Map<String,String> body={
+                                                                          "tripid": widget.tripId.toString(),
+                                                                        };
+                                                                        Response response =await post(url, headers:{'authorization': token},body:body);
+                                                                        if(response.statusCode != 200)
+                                                                        {
+                                                                          Map data= jsonDecode(response.body);
+                                                                          showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
+                                                                                return RichAlertDialog(
+                                                                                  alertTitle: richTitle("User error"),
+                                                                                  alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                                                  alertType: RichAlertType.WARNING,
+                                                                                  dialogIcon: Icon(
+                                                                                    Icons.warning,
+                                                                                    color: Colors.red,
+                                                                                    size: 80,
+                                                                                  ),
+                                                                                  actions: <Widget>[
+                                                                                    new OutlineButton(
+                                                                                      shape: StadiumBorder(),
+                                                                                      textColor: Colors.blue,
+                                                                                      child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                                      borderSide: BorderSide(
+                                                                                          color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                                          width: 1),
+                                                                                      onPressed: () {
+                                                                                        Navigator.pop(context);
+                                                                                      },
+                                                                                    ),
+                                                                                  ],
+                                                                                );
+                                                                              });
+                                                                          Navigator.pop(context);
+                                                                        }
+                                                                        else{
+                                                                          Navigator.pop(context);
+                                                                          showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
+                                                                                return RichAlertDialog(
+                                                                                  alertTitle: richTitle("Done"),
+                                                                                  alertSubtitle: richSubtitle("Ride is cancelled successfully"),
+                                                                                  alertType: RichAlertType.SUCCESS,
+                                                                                  dialogIcon: Icon(
+                                                                                    Icons.check,
+                                                                                    color: Colors.green,
+                                                                                    size: 80,
+                                                                                  ),
+                                                                                  actions: <Widget>[
+                                                                                    new OutlineButton(
+                                                                                      shape: StadiumBorder(),
+                                                                                      textColor: Colors.blue,
+                                                                                      child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                                      borderSide: BorderSide(
+                                                                                          color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                                          width: 1),
+                                                                                      onPressed: () {
+                                                                                        Navigator.pop(context);
+                                                                                        Navigator.pop(context);
+                                                                                      },
+                                                                                    ),
+                                                                                  ],
+                                                                                );
+                                                                              });
+                                                                        }
+                                                                      }
+                                                                  }
+                                                                else{
+                                                                  if(widget.toFrom=="to")
+                                                                  {
+                                                                    String url="http://3.81.22.120:3000/api/canceldriverto";
+                                                                    Map<String,String> body={
+                                                                      "tripid": widget.tripId.toString(),
+                                                                    };
+                                                                    Response response =await post(url, headers:{'authorization': token},body:body);
+                                                                    if(response.statusCode != 200)
+                                                                    {
+                                                                      Map data= jsonDecode(response.body);
+                                                                      showDialog(
+                                                                          context: context,
+                                                                          builder: (BuildContext context) {
+                                                                            return RichAlertDialog(
+                                                                              alertTitle: richTitle("User error"),
+                                                                              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                                              alertType: RichAlertType.WARNING,
+                                                                              dialogIcon: Icon(
+                                                                                Icons.warning,
+                                                                                color: Colors.red,
+                                                                                size: 80,
+                                                                              ),
+                                                                              actions: <Widget>[
+                                                                                new OutlineButton(
+                                                                                  shape: StadiumBorder(),
+                                                                                  textColor: Colors.blue,
+                                                                                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                                  borderSide: BorderSide(
+                                                                                      color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                                      width: 1),
+                                                                                  onPressed: () {
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                ),
+                                                                              ],
+                                                                            );
+                                                                          });
+                                                                      Navigator.pop(context);
+                                                                    }
+                                                                    else{
+                                                                      Navigator.pop(context);
+                                                                      showDialog(
+                                                                          context: context,
+                                                                          builder: (BuildContext context) {
+                                                                            return RichAlertDialog(
+                                                                              alertTitle: richTitle("Done"),
+                                                                              alertSubtitle: richSubtitle("Ride is cancelled successfully"),
+                                                                              alertType: RichAlertType.SUCCESS,
+                                                                              dialogIcon: Icon(
+                                                                                Icons.check,
+                                                                                color: Colors.green,
+                                                                                size: 80,
+                                                                              ),
+                                                                              actions: <Widget>[
+                                                                                new OutlineButton(
+                                                                                  shape: StadiumBorder(),
+                                                                                  textColor: Colors.blue,
+                                                                                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                                  borderSide: BorderSide(
+                                                                                      color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                                      width: 1),
+                                                                                  onPressed: () {
+                                                                                    Navigator.pop(context);
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                ),
+                                                                              ],
+                                                                            );
+                                                                          });
+                                                                    }
+                                                                  }
+                                                                  else
+                                                                  {
+                                                                    String url="http://3.81.22.120:3000/api/canceldriverfrom";
+                                                                    Map<String,String> body={
+                                                                      "tripid": widget.tripId.toString(),
+                                                                    };
+                                                                    Response response =await post(url, headers:{'authorization': token},body:body);
+                                                                    if(response.statusCode != 200)
+                                                                    {
+                                                                      Map data= jsonDecode(response.body);
+                                                                      showDialog(
+                                                                          context: context,
+                                                                          builder: (BuildContext context) {
+                                                                            return RichAlertDialog(
+                                                                              alertTitle: richTitle("User error"),
+                                                                              alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                                              alertType: RichAlertType.WARNING,
+                                                                              dialogIcon: Icon(
+                                                                                Icons.warning,
+                                                                                color: Colors.red,
+                                                                                size: 80,
+                                                                              ),
+                                                                              actions: <Widget>[
+                                                                                new OutlineButton(
+                                                                                  shape: StadiumBorder(),
+                                                                                  textColor: Colors.blue,
+                                                                                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                                  borderSide: BorderSide(
+                                                                                      color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                                      width: 1),
+                                                                                  onPressed: () {
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                ),
+                                                                              ],
+                                                                            );
+                                                                          });
+                                                                      Navigator.pop(context);
+                                                                    }
+                                                                    else{
+                                                                      Navigator.pop(context);
+                                                                      showDialog(
+                                                                          context: context,
+                                                                          builder: (BuildContext context) {
+                                                                            return RichAlertDialog(
+                                                                              alertTitle: richTitle("Done"),
+                                                                              alertSubtitle: richSubtitle("Ride is cancelled successfully"),
+                                                                              alertType: RichAlertType.SUCCESS,
+                                                                              dialogIcon: Icon(
+                                                                                Icons.check,
+                                                                                color: Colors.green,
+                                                                                size: 80,
+                                                                              ),
+                                                                              actions: <Widget>[
+                                                                                new OutlineButton(
+                                                                                  shape: StadiumBorder(),
+                                                                                  textColor: Colors.blue,
+                                                                                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                                  borderSide: BorderSide(
+                                                                                      color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                                      width: 1),
+                                                                                  onPressed: () {
+                                                                                    Navigator.pop(context);
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                ),
+                                                                              ],
+                                                                            );
+                                                                          });
+                                                                    }
+                                                                  }
+                                                                }
+                                                              },
+                                                            ),
+                                                            SizedBox(width: 20,),
+                                                            new OutlineButton(
+                                                              shape: StadiumBorder(),
+                                                              textColor: Colors.blue,
+                                                              child: Text('No', style: TextStyle(color: Colors.red[400],fontSize: 30),),
+                                                              borderSide: BorderSide(
+                                                                  color: Colors.red[400], style: BorderStyle.solid,
+                                                                  width: 1),
+                                                              onPressed: () {
+                                                                Navigator.pop(context);
+                                                              },
+                                                            ),
+                                                          ],
+                                                        );
+                                                      });
                                                 },
                                               )
                                               :

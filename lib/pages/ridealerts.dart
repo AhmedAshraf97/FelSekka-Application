@@ -171,7 +171,6 @@ class _RideAlertsState extends State<RideAlerts> {
     Future<String> getData() async{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       token = await (prefs.getString('token')??'');
-      print(token);
       String url="http://3.81.22.120:3000/api/scheduledtrips";
       Response response =await post(url, headers:{'authorization': token});
       if(response.statusCode==409)
