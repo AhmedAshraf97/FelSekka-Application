@@ -57,7 +57,7 @@ test('Signing in with rider', async() => {
 
 }, 100000)
 
-test('show past trips for driver', async() => {
+test('show past trips for rider', async() => {
 
     const response = await request(app)
         .post('/api/showpasttrips')
@@ -77,7 +77,7 @@ test('Signing in with rider', async() => {
 
 }, 100000)
 
-test('show past trips for driver', async() => {
+test('show past trips for driver with no trips found', async() => {
 
     const response = await request(app)
         .post('/api/showpasttrips')

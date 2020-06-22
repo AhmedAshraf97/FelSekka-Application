@@ -47,7 +47,7 @@ router.post('/', async(req, res) => {
     if (userExists) {
         //Organization ID check
         if (req.body.orgid == null) {
-            res.status(400).send({ error: "Organization ID", message: "Organization ID paramter is missing" });
+            res.status(400).send({ error: "Organization ID", message: "Organization ID parameter is missing" });
         } else if (((req.body.orgid).toString()).trim().length === 0) {
             res.status(400).send({ error: "Organization ID", message: "Organization ID can't be empty" });
         } else {

@@ -176,7 +176,7 @@ function validation(latesttime) {
     var validChecks = true;
     var message = ""
     if (latesttime == "") {
-        message = { error: "LatestTime", message: "LatestTime paramter is missing" }
+        message = { error: "LatestTime", message: "LatestTime parameter is missing" }
         validChecks = false;
     } else if (!((typeof(latesttime) === 'string') || ((latesttime) instanceof String))) {
         validChecks = false;

@@ -25,13 +25,15 @@ const errHandler = err => {
 function validation(rating, datetime) {
     var validChecks = true;
     var message = ""
-    if (!((typeof(parseInt(rating)) === 'number') || parseInt(rating).trim().length === 0) || parseInt(rating) > 5 || parseInt(rating) < 0) {
+    if (!((typeof(parseInt(rating)) === 'number') || parseInt(rating).trim().length === 0) || parseInt(rating) > 5 || parseInt(rating) < 0 ||
+        !(/^([0-9]+)$/.test(rating))
+    ) {
         validChecks = false
         message = { error: "rating", message: "Rating should be a number of value (1-5)" }
     } else
     if (datetime == null) {
         validChecks = false;
-        message = { error: "datetime", message: "datetime paramter is missing" }
+        message = { error: "datetime", message: "datetime parameter is missing" }
 
     } else if (!((typeof(datetime) === 'string') || ((datetime) instanceof String))) {
         validChecks = false;

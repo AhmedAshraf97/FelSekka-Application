@@ -28,14 +28,14 @@ function validation(driverid, tripid, actualpickuptime) {
     var message = "";
 
     if (driverid == null) {
-        message = { error: "driverid", message: "driverid paramter is missing" }
+        message = { error: "driverid", message: "driverid parameter is missing" }
         validChecks = false;
     } else if (tripid == null) {
-        message = { error: "tripid", message: "tripid paramter is missing" };
+        message = { error: "tripid", message: "tripid parameter is missing" };
         validChecks = false;
 
     } else if (actualpickuptime == null) {
-        message = { error: "actualpickuptime", message: "actualpickuptime paramter is missing" };
+        message = { error: "actualpickuptime", message: "actualpickuptime parameter is missing" };
         validChecks = false;
 
     } else if (!((typeof(actualpickuptime) === 'string') || ((actualpickuptime) instanceof String))) {

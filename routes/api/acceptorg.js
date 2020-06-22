@@ -21,13 +21,13 @@ function validation(orgid) {
     var validChecks = true;
     var message = ""
     if (orgid == null) {
-        message = { error: "Organization ID", message: "Organization ID paramter is missing" }
+        message = { error: "Organization ID", message: "Organization ID parameter is missing" }
         validChecks = false;
     } else if (((orgid).toString()).trim().length === 0) {
         message = { error: "Organization ID", message: "Organization ID can't be empty" }
         validChecks = false;
 
-    } else if (!(/^([0-9]+)$/.test(parseInt(orgid)))) {
+    } else if (!(/^([0-9]+)$/.test(orgid))) {
         message = { error: "Organization ID", message: "Organization ID must be a number" }
         validChecks = false;
     }

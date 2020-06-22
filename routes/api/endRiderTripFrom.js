@@ -31,15 +31,15 @@ function validation(driverid, tripid, actualarrivaltime, distance, time) {
     var message;
 
     if (driverid == null) {
-        message = ({ error: "driverid", message: "driverid paramter is missing" });
+        message = ({ error: "driverid", message: "driverid parameter is missing" });
         validChecks = false;
 
     } else if (tripid == null) {
-        message = ({ error: "tripid", message: "tripid paramter is missing" });
+        message = ({ error: "tripid", message: "tripid parameter is missing" });
         validChecks = false;
 
     } else if (actualarrivaltime == null) {
-        message = ({ error: "actualarrivaltime", message: "actualarrivaltime paramter is missing" });
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime parameter is missing" });
         validChecks = false;
 
     } else if (!((typeof(actualarrivaltime) === 'string') || ((actualarrivaltime) instanceof String))) {
@@ -56,7 +56,7 @@ function validation(driverid, tripid, actualarrivaltime, distance, time) {
 
     } else if (distance == null) {
         validChecks = false;
-        message = ({ error: "Distance ", message: "Distance paramter is missing" });
+        message = ({ error: "Distance ", message: "Distance parameter is missing" });
 
     } else if (!((typeof(parseFloat(distance)) === 'number'))) {
         validChecks = false;
@@ -64,7 +64,7 @@ function validation(driverid, tripid, actualarrivaltime, distance, time) {
 
     } else if (time == null) {
         validChecks = false;
-        message = ({ error: "Time ", message: "Time paramter is missing" });
+        message = ({ error: "Time ", message: "Time parameter is missing" });
     } else if (!((typeof(parseFloat(time)) === 'number'))) {
         validChecks = false;
         message = ({ error: "Time", message: "Time must be a number" });

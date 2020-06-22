@@ -24,14 +24,14 @@ function validation(orgid, email) {
     var message = ""
     if (orgid == null) {
         validChecks = false;
-        message = { error: "Organization ID", message: "Organization ID paramter is missing" }
+        message = { error: "Organization ID", message: "Organization ID parameter is missing" }
     } else if (((orgid).toString()).trim().length === 0) {
         validChecks = false;
         message = { error: "Organization ID", message: "Organization ID can't be empty" }
     }
     if (email == null) {
         validChecks = false;
-        message = { error: "Email", message: "Email paramter is missing" }
+        message = { error: "Email", message: "Email parameter is missing" }
     } else if (((email).toString()).trim().length === 0) {
         validChecks = false;
         message = { error: "Email", message: "Email can't be empty" }

@@ -71,7 +71,7 @@ function validation(firstname, lastname, oldpassword, useroldpassword, newpasswo
 
         } else if (newpassword == "") {
             validChecks = false
-            message = { error: "New password", message: "New password paramter is missing" }
+            message = { error: "New password", message: "New password parameter is missing" }
         } else if (!((typeof(newpassword) === 'string') || ((newpassword) instanceof String))) {
             validChecks = false
             message = { error: "Password", message: "Password must be a string" }
@@ -83,7 +83,7 @@ function validation(firstname, lastname, oldpassword, useroldpassword, newpasswo
             message = { error: "Password", message: "Password must be minimum eight characters,maximum 15 characters and should include at least one letter, one number and one special character" }
         } else if (confirmpassword == "") {
             validChecks = false
-            message = { error: "Confirm password", message: "Confirm password paramter is missing" }
+            message = { error: "Confirm password", message: "Confirm password parameter is missing" }
         } else if ((confirmpassword).trim().length === 0) {
             validChecks = false
             message = { error: "Confirm password", message: "Password can't be empty" }

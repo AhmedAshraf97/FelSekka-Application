@@ -129,10 +129,11 @@ router.post('/', async(req, res) => {
                                         [Op.or]: ["scheduled", "ongoing"]
                                     },
 
-                                    order: [
-                                        ['pickuptime', 'ASC']
-                                    ]
-                                }
+
+                                },
+                                order: [
+                                    ['pickuptime', 'ASC']
+                                ]
 
                             }).catch(errHandler)
 

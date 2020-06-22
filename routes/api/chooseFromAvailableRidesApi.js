@@ -170,7 +170,7 @@ function validation(earliesttime) {
     var validChecks = true
     var message = ""
     if (earliesttime == "") {
-        message = { error: "EarliestTime", message: "EarliestTime paramter is missing" }
+        message = { error: "EarliestTime", message: "EarliestTime parameter is missing" }
         validChecks = false;
 
     } else if (!((typeof(earliesttime) === 'string') || ((earliesttime) instanceof String))) {

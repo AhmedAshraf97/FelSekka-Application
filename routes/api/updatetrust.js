@@ -21,12 +21,16 @@ function validation(userid, trust) {
     var validChecks = true;
     var message;
     if (userid == null) {
-        message = { error: "User ID", message: "User ID paramter is missing" };
+        message = { error: "User ID", message: "User ID parameter is missing" };
         validChecks = false;
     } else if (trust == null) {
-        message = { error: "Trust", message: "Trust paramter is missing" };
+        message = { error: "Trust", message: "Trust parameter is missing" };
+        validChecks = false;
+    } else if (!(parseInt(trust) == 0 || parseInt(trust) == 1 || parseInt(trust) == -1)) {
+        message = { error: "Trust", message: "Trust parameter must be -1 or 0 or 1" };
         validChecks = false;
     }
+
     return { validChecks: validChecks, message: message }
 }
 

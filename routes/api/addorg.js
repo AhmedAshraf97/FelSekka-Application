@@ -22,7 +22,7 @@ function validation(name, domain, latitude, longitude) {
     var message = ""
     if (name == null) {
         validChecks = false;
-        message = { error: "Name", message: "Name paramter is missing" }
+        message = { error: "Name", message: "Name parameter is missing" }
     } else if (!((typeof(name) === 'string') || ((name) instanceof String))) {
         validChecks = false;
         message = { error: "Name", message: "Name must be a string" }
@@ -39,7 +39,7 @@ function validation(name, domain, latitude, longitude) {
     //Domain validation
     else if (domain == null) {
         validChecks = false;
-        message = { error: "Domain", message: "Domain paramter is missing" }
+        message = { error: "Domain", message: "Domain parameter is missing" }
     } else if (!((typeof(domain) === 'string') || ((domain) instanceof String))) {
         validChecks = false;
         message = { error: "Domain", message: "Domain must be a string" }
@@ -50,13 +50,13 @@ function validation(name, domain, latitude, longitude) {
     //Latitude validation
     else if (latitude == null) {
         validChecks = false;
-        message = { error: "Latitude", message: "Latitude paramter is missing" }
+        message = { error: "Latitude", message: "Latitude parameter is missing" }
     } else if (((latitude).toString()).trim().length === 0) {
         validChecks = false;
         message = { error: "Latitude", message: "Latitude can't be empty" }
     } else if (longitude == null) {
         validChecks = false;
-        message = { error: "Longitude", message: "Longitude paramter is missing" }
+        message = { error: "Longitude", message: "Longitude parameter is missing" }
     } else if (((longitude).toString()).trim().length === 0) {
         validChecks = false;
         message = { error: "Longitude", message: "Longitude can't be empty" }

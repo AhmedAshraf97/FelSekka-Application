@@ -1,3 +1,4 @@
+const app = require('../index');
 var validationChooseRides = require('../routes/api/chooseFromAvailableRidesApi').validation;
 var validationReturn = require('../routes/api/chooseFromReturnTripsApi').validation;
 

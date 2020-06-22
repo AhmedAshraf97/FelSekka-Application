@@ -37,7 +37,7 @@ function validation(carid, numberofseats, fromorgid, date, departuretime, latest
 
     //Car id validation
     if (carid == null) {
-        message = ({ error: "Car ID", message: "Car ID paramter is missing" });
+        message = ({ error: "Car ID", message: "Car ID parameter is missing" });
         validChecks = false
     } else if (((carid).toString()).trim().length === 0) {
         message = ({ error: "Car ID", message: "Car ID can't be empty" });
@@ -45,7 +45,7 @@ function validation(carid, numberofseats, fromorgid, date, departuretime, latest
     }
     //Number of seats validation 
     if (numberofseats == null) {
-        message = ({ error: "Number of seats", message: "Number of seats paramter is missing" });
+        message = ({ error: "Number of seats", message: "Number of seats parameter is missing" });
         validChecks = false
     } else if (((numberofseats).toString()).trim().length === 0) {
         message = ({ error: "Number of seats", message: "Number of seats can't be empty" });
@@ -53,7 +53,7 @@ function validation(carid, numberofseats, fromorgid, date, departuretime, latest
     }
     //Organization id validation 
     else if (fromorgid == null) {
-        message = ({ error: "From org id", message: "From org id paramter is missing" });
+        message = ({ error: "From org id", message: "From org id parameter is missing" });
         validChecks = false
     } else if (((fromorgid).toString()).trim().length === 0) {
         message = ({ error: "From org ID", message: "From org ID can't be empty" });
@@ -61,7 +61,7 @@ function validation(carid, numberofseats, fromorgid, date, departuretime, latest
     }
     //Date validation 
     else if (date == null) {
-        message = ({ error: "Date", message: "Date paramter is missing" });
+        message = ({ error: "Date", message: "Date parameter is missing" });
         validChecks = false
     } else if (!((typeof(date) === 'string') || ((date) instanceof String))) {
         message = ({ error: "Date", message: "Date must be a string" });
@@ -75,7 +75,7 @@ function validation(carid, numberofseats, fromorgid, date, departuretime, latest
     }
     //Departure time validation 
     else if (departuretime == null) {
-        message = ({ error: "Departute time", message: "Departute time paramter is missing" });
+        message = ({ error: "Departute time", message: "Departute time parameter is missing" });
         validChecks = false
     } else if (!((typeof(departuretime) === 'string') || ((departuretime) instanceof String))) {
         message = ({ error: "Departute time", message: "Departute time must be a string" });
@@ -92,7 +92,7 @@ function validation(carid, numberofseats, fromorgid, date, departuretime, latest
     }
     //Latest time validation 
     else if (latesttime == null) {
-        message = ({ error: "Latest time", message: "Latest time paramter is missing" });
+        message = ({ error: "Latest time", message: "Latest time parameter is missing" });
         validChecks = false
     } else if (!((typeof(latesttime) === 'string') || ((latesttime) instanceof String))) {
         message = ({ error: "Latest time", message: "Latest time must be a string" });
@@ -109,7 +109,7 @@ function validation(carid, numberofseats, fromorgid, date, departuretime, latest
     }
     //Ride with validation
     else if (ridewith == null) {
-        message = ({ error: "Ride with", message: "Ride with paramter is missing" });
+        message = ({ error: "Ride with", message: "Ride with parameter is missing" });
         validChecks = false
     } else if (!((typeof(ridewith) === 'string') || ((ridewith) instanceof String))) {
         message = ({ error: "Ride with", message: "Ride with must be a string" });
@@ -120,7 +120,7 @@ function validation(carid, numberofseats, fromorgid, date, departuretime, latest
     }
     //Smoking validation 
     else if (smoking == null) {
-        message = ({ error: "Smoking", message: "Smoking paramter is missing" });
+        message = ({ error: "Smoking", message: "Smoking parameter is missing" });
         validChecks = false
     } else if (!((typeof(smoking) === 'string') || ((smoking) instanceof String))) {
         message = ({ error: "Smoking", message: "Smoking must be a string" });

@@ -40,7 +40,7 @@ router.post('/', async(req, res) => {
                         res.end()
                     } else if (req.body.newpassword == undefined) {
                         isvalid = true
-                        res.status(400).send({ error: "New password", message: "New password paramter is missing" });
+                        res.status(400).send({ error: "New password", message: "New password parameter is missing" });
                         res.end()
                     } else if (!((typeof(req.body.newpassword) === 'string') || ((req.body.newpassword) instanceof String))) {
                         isvalid = true
@@ -56,7 +56,7 @@ router.post('/', async(req, res) => {
                         res.end()
                     } else if (req.body.confirmpassword == undefined) {
                         isvalid = true
-                        res.status(400).send({ error: "Confirm password", message: "Confirm password paramter is missing" });
+                        res.status(400).send({ error: "Confirm password", message: "Confirm password parameter is missing" });
                         res.end()
                     }
 

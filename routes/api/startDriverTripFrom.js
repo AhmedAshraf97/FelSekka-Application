@@ -31,11 +31,11 @@ function validation(tripid, actualpickuptime, latitude, longitude) {
 
     if (tripid == null) {
 
-        message = { error: "tripid", message: "tripid paramter is missing" }
+        message = { error: "tripid", message: "tripid parameter is missing" }
         validChecks = false;
 
     } else if (actualpickuptime == null) {
-        message = { error: "actualpickuptime", message: "actualpickuptime paramter is missing" }
+        message = { error: "actualpickuptime", message: "actualpickuptime parameter is missing" }
         validChecks = false;
 
     } else if (!((typeof(actualpickuptime) === 'string') || ((actualpickuptime) instanceof String))) {
@@ -51,7 +51,7 @@ function validation(tripid, actualpickuptime, latitude, longitude) {
         validChecks = false;
 
     } else if (latitude == null) {
-        message = { error: "Latitude", message: "Latitude paramter is missing" }
+        message = { error: "Latitude", message: "Latitude parameter is missing" }
         validChecks = false;
 
     } else if (((latitude).toString()).trim().length === 0) {
@@ -63,7 +63,7 @@ function validation(tripid, actualpickuptime, latitude, longitude) {
         validChecks = false;
 
     } else if (longitude == null) {
-        message = { error: "Longitude", message: "Longitude paramter is missing" }
+        message = { error: "Longitude", message: "Longitude parameter is missing" }
         validChecks = false;
 
     } else if (((longitude).toString()).trim().length === 0) {

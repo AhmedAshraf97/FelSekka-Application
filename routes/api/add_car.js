@@ -41,6 +41,10 @@ function validation(brand, model, year, type, plateletters, platenumbers, nation
 
 
     }
+    if (!(/^([0-9]+)$/.test(year))) {
+        message = { error: "year", message: "year ID must be a number" }
+        validChecks = false;
+    }
     if (!((typeof(type) === 'string') || ((type) instanceof String)) || (type).trim().length === 0) {
         validChecks = false
         message = {
@@ -58,11 +62,19 @@ function validation(brand, model, year, type, plateletters, platenumbers, nation
         message = { error: "Platenumbers", message: "Plate numbers must be a number of (1-300) digits" }
 
     }
+    if (!(/^([0-9]+)$/.test(platenumbers))) {
+        message = { error: "platenumbers", message: "platenumbers ID must be a number" }
+        validChecks = false;
+    }
 
     if (((nationalid).trim().length === 0)) {
         validChecks = false
         message = { error: "Nationalid", message: "National ID must be a number of (1-300) digits" }
 
+    }
+    if (!(/^([0-9]+)$/.test(nationalid))) {
+        message = { error: "Nationalid", message: "Nationalid ID must be a number" }
+        validChecks = false;
     }
 
     if (!((typeof(carlicensefront) === 'string') || ((carlicensefront) instanceof String)) || (carlicensefront).trim().length === 0) {
@@ -99,6 +111,9 @@ function validation(brand, model, year, type, plateletters, platenumbers, nation
         validChecks = false
         message = { error: "Numberofseats", message: "Number of seats be a number of (1-300) digits" }
 
+    } else if (!(/^([0-9]+)$/.test(numberofseats))) {
+        message = { error: "Numberofseats", message: "Numberofseats must be a number" }
+        validChecks = false;
     }
 
     return { validChecks: validChecks, message: message };

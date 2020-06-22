@@ -32,11 +32,11 @@ function validation(tripid, actualarrivaltime, distance, time, latitude, longitu
     var message;
 
     if (tripid == null) {
-        message = ({ error: "tripid", message: "tripid paramter is missing" });
+        message = ({ error: "tripid", message: "tripid parameter is missing" });
         validChecks = false;
 
     } else if (actualarrivaltime == null) {
-        message = ({ error: "actualarrivaltime", message: "actualarrivaltime paramter is missing" });
+        message = ({ error: "actualarrivaltime", message: "actualarrivaltime parameter is missing" });
         validChecks = false;
 
     } else if (!((typeof(actualarrivaltime) === 'string') || ((actualarrivaltime) instanceof String))) {
@@ -52,7 +52,7 @@ function validation(tripid, actualarrivaltime, distance, time, latitude, longitu
         validChecks = false;
 
     } else if (distance == null) {
-        message = ({ error: "distance ", message: "distance paramter is missing" });
+        message = ({ error: "distance ", message: "distance parameter is missing" });
         validChecks = false;
 
 
@@ -61,7 +61,7 @@ function validation(tripid, actualarrivaltime, distance, time, latitude, longitu
         validChecks = false;
 
     } else if (time == null) {
-        message = ({ error: "Time", message: "Time paramter is missing" });
+        message = ({ error: "Time", message: "Time parameter is missing" });
         validChecks = false;
 
     } else if (!((typeof(parseFloat(time)) === 'number'))) {
@@ -69,7 +69,7 @@ function validation(tripid, actualarrivaltime, distance, time, latitude, longitu
         validChecks = false;
 
     } else if (latitude == null) {
-        message = ({ error: "Latitude", message: "Latitude paramter is missing" });
+        message = ({ error: "Latitude", message: "Latitude parameter is missing" });
         validChecks = false;
 
     } else if (((latitude).toString()).trim().length === 0) {
@@ -81,7 +81,7 @@ function validation(tripid, actualarrivaltime, distance, time, latitude, longitu
         validChecks = false;
 
     } else if (longitude == null) {
-        message = ({ error: "Longitude", message: "Longitude paramter is missing" });
+        message = ({ error: "Longitude", message: "Longitude parameter is missing" });
         validChecks = false;
 
     } else if (((longitude).toString()).trim().length === 0) {

@@ -44,14 +44,14 @@ router.post('/', async(req, res) => {
 
     if (userExists) {
         //Latitude validation
-         if (req.body.latitude == null) {
-            res.status(400).send({ error: "Latitude", message: "Latitude paramter is missing" });
+        if (req.body.latitude == null) {
+            res.status(400).send({ error: "Latitude", message: "Latitude parameter is missing" });
         } else if (((req.body.latitude).toString()).trim().length === 0) {
             res.status(400).send({ error: "Latitude", message: "Latitude can't be empty" });
         }
         //Longitude validation
         else if (req.body.longitude == null) {
-            res.status(400).send({ error: "Longitude", message: "Longitude paramter is missing" });
+            res.status(400).send({ error: "Longitude", message: "Longitude parameter is missing" });
         } else if (((req.body.longitude).toString()).trim().length === 0) {
             res.status(400).send({ error: "Longitude", message: "Longitude can't be empty" });
         } else {

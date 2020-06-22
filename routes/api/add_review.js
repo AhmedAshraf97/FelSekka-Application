@@ -34,7 +34,7 @@ function validation(datetime, review) {
         validChecks = false;
         message = { error: "review", message: "Review size must be between (1-300) characters" }
     } else if (datetime == null) {
-        message = { error: "datetime", message: "datetime paramter is missing" }
+        message = { error: "datetime", message: "datetime parameter is missing" }
         validChecks = false;
     } else if (!((typeof(datetime) === 'string') || ((datetime) instanceof String))) {
         validChecks = false;

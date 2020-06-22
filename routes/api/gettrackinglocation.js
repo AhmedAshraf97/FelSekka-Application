@@ -43,20 +43,22 @@ router.post('/', async(req, res) => {
     }).catch(errHandler);
 
     if (userExists) {
-        await tracking.findAll({  
+        await tracking.findAll({
             limit: 1,
             where: {
-              driverid: parseInt(req.body.driverid),
-              tripid: parseInt(req.body.tripid)
+                driverid: parseInt(req.body.driverid),
+                tripid: parseInt(req.body.tripid)
             },
-            order: [ [ 'id', 'DESC' ]] }).then(data => {
-                if(data.length != 0 ){
-                    res.status(200).send({ data });
-                }
-                else{
-                    res.status(400).send({ error: "Not found", message: "Location is not found" });
-                }
-                
+            order: [
+                ['id', 'DESC']
+            ]
+        }).then(data => {
+            if (data.length != 0) {
+                res.status(200).send({ data });
+            } else {
+                res.status(400).send({ error: "Not found", message: "Location is not found" });
+            }
+
         }).catch(errHandler);
     }
 });
