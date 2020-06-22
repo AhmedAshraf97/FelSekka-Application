@@ -232,7 +232,7 @@ router.post('/', async(req, res) => {
                                         "Driverphoto": DriverOftrip.photo,
                                         "DriverGender": DriverOftrip.gender,
                                         "DriverRating": DriverOftrip.rating,
-                                        "time": DriverDB.actualpickuptime,
+                                        "time": DriverDB.pickuptime,
                                         "longitude": OfferRideToDetails.fromlongitude,
                                         "latitude": OfferRideToDetails.fromlatitude
                                     }),
@@ -384,7 +384,7 @@ router.post('/', async(req, res) => {
                                         "Driverphoto": DriverOftrip.photo,
                                         "DriverGender": DriverOftrip.gender,
                                         "DriverRating": DriverOftrip.rating,
-                                        "time": DriverDB.actualarrivaltime,
+                                        "time": DriverDB.arrivaltime,
                                         "longitude": OfferRideFromDetails.tolongitude,
                                         "latitude": OfferRideFromDetails.tolatitude
                                     }),
