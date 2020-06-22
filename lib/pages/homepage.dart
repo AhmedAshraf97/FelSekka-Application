@@ -20,10 +20,51 @@ class _HomePageState extends State<HomePage> {
   String token="";
   int noOrgs=0;
   int noCars=0;
+  int noCard=0;
   Future<String> getData() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = await (prefs.getString('token')??'');
-
+    //User card
+    String urlCard="http://3.81.22.120:3000/api/getcreditcardinfo";
+    Response responseCard =await post(urlCard, headers:{'authorization': token});
+    if(responseCard.statusCode == 400)
+    {
+      noCard=1;
+    }
+    else if(responseCard.statusCode != 200)
+    {
+      Map data= jsonDecode(responseCard.body);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return RichAlertDialog(
+              alertTitle: richTitle('User error'),
+              alertSubtitle: Text(data['message'], maxLines: 2, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+              alertType: RichAlertType.WARNING,
+              dialogIcon: Icon(
+                Icons.warning,
+                color: Colors.red,
+                size: 80,
+              ),
+              actions: <Widget>[
+                new OutlineButton(
+                  shape: StadiumBorder(),
+                  textColor: Colors.blue,
+                  child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                  borderSide: BorderSide(
+                      color: Colors.indigo[400], style: BorderStyle.solid,
+                      width: 1),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          });
+    }
+    else {
+      noCard=0;
+    }
     //User orgs
     String urlMyOrgs="http://3.81.22.120:3000/api/showmyorg";
     Response responseMyOrgs =await post(urlMyOrgs, headers:{'authorization': token});
@@ -158,14 +199,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                         GestureDetector(
                           onTap: (){
-                            if(noOrgs==1 && noCars==1)
+                            if(noOrgs==1 && noCars==1 && noCard==1)
                             {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return RichAlertDialog(
                                       alertTitle: richTitle("Can't offer ride."),
-                                      alertSubtitle: Text("You have to join an organization and add a car.",maxLines: 1,style: TextStyle(color: Colors.grey[500]),),
+                                      alertSubtitle: Text("You have to join an organization ,add car and add card.",maxLines: 2,style: TextStyle(color: Colors.grey[500]),),
                                       alertType: RichAlertType.WARNING,
                                       dialogIcon: Icon(
                                         Icons.warning,
@@ -226,6 +267,36 @@ class _HomePageState extends State<HomePage> {
                                     return RichAlertDialog(
                                       alertTitle: richTitle("Can't offer ride."),
                                       alertSubtitle: Text("You have to add a car to offer ride.",maxLines: 1,style: TextStyle(color: Colors.grey[500]),),
+                                      alertType: RichAlertType.WARNING,
+                                      dialogIcon: Icon(
+                                        Icons.warning,
+                                        color: Colors.red,
+                                        size: 80,
+                                      ),
+                                      actions: <Widget>[
+                                        new OutlineButton(
+                                          shape: StadiumBorder(),
+                                          textColor: Colors.blue,
+                                          child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                          borderSide: BorderSide(
+                                              color: Colors.indigo[400], style: BorderStyle.solid,
+                                              width: 1),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            }
+                            else if(noCard==1)
+                            {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return RichAlertDialog(
+                                      alertTitle: richTitle("Can't offer ride."),
+                                      alertSubtitle: Text("You have to add card to offer ride.",maxLines: 1,style: TextStyle(color: Colors.grey[500]),),
                                       alertType: RichAlertType.WARNING,
                                       dialogIcon: Icon(
                                         Icons.warning,
@@ -318,14 +389,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                         GestureDetector(
                           onTap: (){
-                            if(noOrgs==1)
+                            if(noOrgs==1 && noCard==1)
                               {
                                 showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return RichAlertDialog(
                                         alertTitle: richTitle("Can't request ride."),
-                                        alertSubtitle: Text("You have to join an organization to request ride.",maxLines: 1,style: TextStyle(color: Colors.grey[500]),),
+                                        alertSubtitle: Text("You have to join an organization and add card to request ride.",maxLines: 2,style: TextStyle(color: Colors.grey[500]),),
                                         alertType: RichAlertType.WARNING,
                                         dialogIcon: Icon(
                                           Icons.warning,
@@ -348,6 +419,66 @@ class _HomePageState extends State<HomePage> {
                                       );
                                     });
                               }
+                            else if(noOrgs==1)
+                            {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return RichAlertDialog(
+                                      alertTitle: richTitle("Can't request ride."),
+                                      alertSubtitle: Text("You have to join organization to request ride.",maxLines: 2,style: TextStyle(color: Colors.grey[500]),),
+                                      alertType: RichAlertType.WARNING,
+                                      dialogIcon: Icon(
+                                        Icons.warning,
+                                        color: Colors.red,
+                                        size: 80,
+                                      ),
+                                      actions: <Widget>[
+                                        new OutlineButton(
+                                          shape: StadiumBorder(),
+                                          textColor: Colors.blue,
+                                          child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                          borderSide: BorderSide(
+                                              color: Colors.indigo[400], style: BorderStyle.solid,
+                                              width: 1),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            }
+                            else if(noCard==1)
+                            {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return RichAlertDialog(
+                                      alertTitle: richTitle("Can't offer ride."),
+                                      alertSubtitle: Text("You have to add a card to request ride.",maxLines: 2,style: TextStyle(color: Colors.grey[500]),),
+                                      alertType: RichAlertType.WARNING,
+                                      dialogIcon: Icon(
+                                        Icons.warning,
+                                        color: Colors.red,
+                                        size: 80,
+                                      ),
+                                      actions: <Widget>[
+                                        new OutlineButton(
+                                          shape: StadiumBorder(),
+                                          textColor: Colors.blue,
+                                          child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                          borderSide: BorderSide(
+                                              color: Colors.indigo[400], style: BorderStyle.solid,
+                                              width: 1),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            }
                             else
                               {
                                 Navigator.push(context, AnimatedPageRoute(widget: RequestRide()));
@@ -418,14 +549,74 @@ class _HomePageState extends State<HomePage> {
                         ),
                         GestureDetector(
                           onTap: (){
-                            if(noOrgs==1)
+                            if(noOrgs==1&& noCard==1)
                             {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return RichAlertDialog(
                                       alertTitle: richTitle("Can't join ride."),
-                                      alertSubtitle: Text("You have to join an organization to join ride.",maxLines: 1,style: TextStyle(color: Colors.grey[500]),),
+                                      alertSubtitle: Text("You have to join an organization and add card to join ride.",maxLines: 2,style: TextStyle(color: Colors.grey[500]),),
+                                      alertType: RichAlertType.WARNING,
+                                      dialogIcon: Icon(
+                                        Icons.warning,
+                                        color: Colors.red,
+                                        size: 80,
+                                      ),
+                                      actions: <Widget>[
+                                        new OutlineButton(
+                                          shape: StadiumBorder(),
+                                          textColor: Colors.blue,
+                                          child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                          borderSide: BorderSide(
+                                              color: Colors.indigo[400], style: BorderStyle.solid,
+                                              width: 1),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            }
+                            else if(noOrgs==1)
+                            {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return RichAlertDialog(
+                                      alertTitle: richTitle("Can't join ride."),
+                                      alertSubtitle: Text("You have to join organization to join ride.",maxLines: 2,style: TextStyle(color: Colors.grey[500]),),
+                                      alertType: RichAlertType.WARNING,
+                                      dialogIcon: Icon(
+                                        Icons.warning,
+                                        color: Colors.red,
+                                        size: 80,
+                                      ),
+                                      actions: <Widget>[
+                                        new OutlineButton(
+                                          shape: StadiumBorder(),
+                                          textColor: Colors.blue,
+                                          child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                          borderSide: BorderSide(
+                                              color: Colors.indigo[400], style: BorderStyle.solid,
+                                              width: 1),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            }
+                            else if(noCard==1)
+                            {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return RichAlertDialog(
+                                      alertTitle: richTitle("Can't join ride."),
+                                      alertSubtitle: Text("You have to add card to join ride.",maxLines: 2,style: TextStyle(color: Colors.grey[500]),),
                                       alertType: RichAlertType.WARNING,
                                       dialogIcon: Icon(
                                         Icons.warning,

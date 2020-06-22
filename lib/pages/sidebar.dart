@@ -401,7 +401,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   title: "Payment",
                                   onTap: () {
                                     onIconPressed();
-                                    //BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.MyOrdersClickedEvent);
+                                    BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.PaymentClickedEvent);
                                   },
                                 ),
                                 Divider(
@@ -500,7 +500,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                                     final pref = await SharedPreferences.getInstance();
                                                     await pref.clear();
                                                     Navigator.push(context,AnimatedPageRoute(widget: SignIn()));
-                                                     }
+                                                  }
                                                 },
                                               ),
                                               SizedBox(width: 20,),
