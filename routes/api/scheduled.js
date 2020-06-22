@@ -384,7 +384,7 @@ router.post('/', async(req, res) => {
                                         "Driverphoto": DriverOftrip.photo,
                                         "DriverGender": DriverOftrip.gender,
                                         "DriverRating": DriverOftrip.rating,
-                                        "time": DriverDB.arrivaltime,
+                                        "time": DriverDB.pickuptime,
                                         "longitude": OfferRideFromDetails.tolongitude,
                                         "latitude": OfferRideFromDetails.tolatitude
                                     }),
