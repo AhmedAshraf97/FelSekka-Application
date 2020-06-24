@@ -96,7 +96,9 @@ app.use('/api/cancelOffer', require('./routes/api/cancelOffer'))
 app.use('/api/showrequests', require('./routes/api/show_requests'))
 app.use('/api/showoffers', require('./routes/api/show_offers'))
 
-
+app.use('/api/showreview', require('./routes/api/showReview'));
+app.use('/api/showrating', require('./routes/api/showRating'));
+app.use('/api/showtrust', require('./routes/api/showTrust'));
 var schedule = require('node-schedule');
 var request = require('request');
 
