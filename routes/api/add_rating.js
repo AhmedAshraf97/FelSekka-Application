@@ -25,7 +25,7 @@ const errHandler = err => {
 function validation(rating, datetime) {
     var validChecks = true;
     var message = ""
-    if (!((typeof(parseDouble(rating)) === 'number') || parseDouble(rating).trim().length === 0) || parseDouble(rating) > 5 || parseDouble(rating) < 0 ||
+    if (!((typeof(parseFloat(rating)) === 'number') || parseFloat(rating).trim().length === 0) || parseFloat(rating) > 5 || parseFloat(rating) < 0 ||
         !(/^([0-9]+)$/.test(rating))
     ) {
         validChecks = false
@@ -112,7 +112,7 @@ router.post('/', async(req, res) => {
         }).then(user => {
             if (user) {
                 if (ValidChecks) {
-                    Rating.create({ userid: user.id, rateduserid: parseInt(rateduser.id), rating: parseDouble(req.body.rating), datetime: parseInt(req.body.datetime), tripid: parseInt(req.body.tripid) }).
+                    Rating.create({ userid: user.id, rateduserid: parseInt(rateduser.id), rating: parseFloat(req.body.rating), datetime: parseInt(req.body.datetime), tripid: parseInt(req.body.tripid) }).
                     then(rate => {
                         Rating.sum('rating', { where: { rateduserid: parseInt(rateduser.id) } }).then(sum => {
                             Rating.count({ where: { rateduserid: parseInt(rateduser.id) } }).then(count => {
