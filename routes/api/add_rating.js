@@ -116,10 +116,10 @@ router.post('/', async(req, res) => {
                     then(rate => {
                         Rating.sum('rating', { where: { rateduserid: parseInt(rateduser.id) } }).then(sum => {
                             Rating.count({ where: { rateduserid: parseInt(rateduser.id) } }).then(count => {
-                                User.update({ rating: (sum / count) }, { where: { id: parseInt(rateduser.id) } }).
+                                User.update({ rating: ((5 + sum) / (count + 1)) }, { where: { id: parseInt(rateduser.id) } }).
                                 then(result => {
                                     res.status(200).send({ message: "Rating updated" })
-                                    console.log(" New Rating : ", (sum / count))
+                                    console.log(" New Rating : ", ((sum + 5) / (count + 1)))
                                 }).catch(errHandler)
                             })
                         }).catch(errHandler)
