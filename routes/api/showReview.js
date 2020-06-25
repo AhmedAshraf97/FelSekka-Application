@@ -33,12 +33,16 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler)
 
-
+    const revieweduser = await User.findOne({
+        where: {
+            username: req.body.username
+        }
+    })
 
     const review = await Review.findOne({
         where: {
             userid: decoded.id,
-            revieweduserid: parseInt(req.body.userid2),
+            revieweduserid: parseInt(revieweduser.id),
             tripid: parseInt(req.body.tripid)
         }
     }).catch(errHandler)

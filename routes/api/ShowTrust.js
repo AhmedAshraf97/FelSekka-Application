@@ -35,12 +35,16 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler)
 
-
+    const trustuser = await User.findOne({
+        where: {
+            username: req.body.username
+        }
+    })
 
     const trust = await Trust.findOne({
         where: {
             user1id: decoded.id,
-            user2id: parseInt(req.body.userid2)
+            user2id: trustuser.id
         }
     }).catch(errHandler)
     obj['trustArr'].push(trust)
@@ -48,7 +52,7 @@ router.post('/', async(req, res) => {
     const trust2 = await Trust.findOne({
         where: {
 
-            user1id: parseInt(req.body.userid2),
+            user1id: trustuser.id,
             user2id: decoded.id
         }
     }).catch(errHandler)

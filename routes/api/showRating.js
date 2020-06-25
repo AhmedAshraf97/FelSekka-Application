@@ -34,11 +34,15 @@ router.post('/', async(req, res) => {
     }).catch(errHandler)
 
 
-
+    const rateduser = await User.findOne({
+        where: {
+            username: req.body.username
+        }
+    })
     const rating = await Rating.findOne({
         where: {
             userid: decoded.id,
-            rateduserid: parseInt(req.body.userid2),
+            rateduserid: rateduser.id,
             tripid: parseInt(req.body.tripid)
         }
     }).catch(errHandler)
