@@ -75,7 +75,7 @@ router.post('/', async(req, res) => {
     if (userExists) {
         var result = validation(trusteduser.id, req.body.trust)
         if (result.validChecks) {
-            await betweenUsers.update({ trust: req.body.trust }, {
+            await betweenUsers.update({ trust: parseInt(req.body.trust) }, {
                 where: {
                     user1id: decoded.id,
                     user2id: trusteduser.id
