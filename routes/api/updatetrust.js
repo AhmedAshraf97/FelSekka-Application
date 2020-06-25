@@ -65,13 +65,20 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler);
 
+    var trusteduser = await User.findOne({
+        where: {
+            username: req.body.trustedusername,
+            status: 'existing'
+        }
+    }).catch(errHandler)
+
     if (userExists) {
-        var result = validation(req.body.userid, req.body.trust)
+        var result = validation(trusteduser.id, req.body.trust)
         if (result.validChecks) {
             await betweenUsers.update({ trust: req.body.trust }, {
                 where: {
                     user1id: decoded.id,
-                    user2id: req.body.userid
+                    user2id: trusteduser.id
                 }
             }).then(betweenuser => {
                 res.status(200).send({ message: "Trust updated" });
