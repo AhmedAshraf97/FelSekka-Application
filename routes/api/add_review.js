@@ -88,18 +88,19 @@ router.post('/', async(req, res) => {
         })
 
 
-        await User.findOne({
+        const revieweduser = await User.findOne({
             where: {
-                id: parseInt(req.body.reviewedid),
+                username: req.body.reviewedusername,
                 status: 'existing'
             }
-        }).then(user => {
-            if (!user) {
-                ValidChecks = false;
-                res.status(400).send({ error: "Reviewed user id", message: "Reviewed user doesn't exist" });
-                res.end();
-            }
         }).catch(errHandler)
+
+        if (!revieweduser) {
+            ValidChecks = false;
+            res.status(400).send({ error: "Reviewed user id", message: "Reviewed user doesn't exist" });
+            res.end();
+
+        }
 
         //2008-09-01 12:35:45
 
@@ -116,7 +117,7 @@ router.post('/', async(req, res) => {
                 if (ValidChecks) {
                     Review.create({
                             userid: user.id,
-                            revieweduserid: parseInt(req.body.reviewedid),
+                            revieweduserid: revieweduser.id,
                             review: req.body.review,
                             tripid: parseInt(req.body.tripid),
                             datetime: req.body.datetime

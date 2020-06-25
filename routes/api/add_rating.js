@@ -75,21 +75,19 @@ router.post('/', async(req, res) => {
 
 
 
-    await User.findOne({
+    const rateduser = await User.findOne({
         where: {
-            id: parseInt(req.body.rateduserid),
+            username: req.body.ratedusername,
             status: 'existing'
         }
-    }).then(user => {
-        if (!user) {
-            ValidChecks = false;
-            res.status(400).send({ message: "Rated user doesn't exist" })
-            res.end();
+    }).catch(errHandler)
 
-        }
-    })
+    if (!rateduser) {
+        ValidChecks = false;
+        res.status(400).send({ message: "Rated user doesn't exist" })
+        res.end();
 
-
+    }
 
 
     await Trip.findOne({
@@ -114,11 +112,11 @@ router.post('/', async(req, res) => {
         }).then(user => {
             if (user) {
                 if (ValidChecks) {
-                    Rating.create({ userid: user.id, rateduserid: parseInt(req.body.rateduserid), rating: parseInt(req.body.rating), datetime: parseInt(req.body.datetime), tripid: parseInt(req.body.tripid) }).
+                    Rating.create({ userid: user.id, rateduserid: parseInt(rateduser.id), rating: parseInt(req.body.rating), datetime: parseInt(req.body.datetime), tripid: parseInt(req.body.tripid) }).
                     then(rate => {
-                        Rating.sum('rating', { where: { rateduserid: parseInt(req.body.rateduserid) } }).then(sum => {
-                            Rating.count({ where: { rateduserid: parseInt(req.body.rateduserid) } }).then(count => {
-                                User.update({ rating: (sum / count) }, { where: { id: parseInt(req.body.rateduserid) } }).
+                        Rating.sum('rating', { where: { rateduserid: parseInt(rateduser.id) } }).then(sum => {
+                            Rating.count({ where: { rateduserid: parseInt(rateduser.id) } }).then(count => {
+                                User.update({ rating: (sum / count) }, { where: { id: parseInt(rateduser.id) } }).
                                 then(result => {
                                     res.status(200).send({ message: "Rating updated" })
                                     console.log(" New Rating : ", (sum / count))
