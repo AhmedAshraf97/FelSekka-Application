@@ -50,7 +50,7 @@ router.post('/', async(req, res) => {
         res.status(200).send(review)
         res.end();
     } else {
-        res.status(409).send("message:No Reviews")
+        res.status(409).send({ "message": "No Reviews" })
         res.end();
 
     }
