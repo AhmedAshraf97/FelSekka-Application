@@ -322,11 +322,11 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   endIndent: 32,
                                 ),
                                 MenuItem(
-                                  icon: Icons.place,
-                                  title: "My Rides",
+                                  icon: Icons.alarm,
+                                  title: "Rides Alerts",
                                   onTap: () {
                                     onIconPressed();
-                                    BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.MyRidesClickedEvent);
+                                    BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.RideAlertsClickedEvent);
                                   },
                                 ),
                                 Divider(
@@ -337,11 +337,26 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   endIndent: 32,
                                 ),
                                 MenuItem(
-                                  icon: Icons.alarm,
-                                  title: "Rides Alerts",
+                                  icon: Icons.hourglass_empty,
+                                  title: "Pending Rides",
                                   onTap: () {
                                     onIconPressed();
                                     BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.RideAlertsClickedEvent);
+                                  },
+                                ),
+                                Divider(
+                                  height: 3,
+                                  thickness: 0.4,
+                                  color: Colors.indigo.withOpacity(0.3),
+                                  indent: 32,
+                                  endIndent: 32,
+                                ),
+                                MenuItem(
+                                  icon: Icons.history,
+                                  title: "Past Rides",
+                                  onTap: () {
+                                    onIconPressed();
+                                    BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.MyRidesClickedEvent);
                                   },
                                 ),
                                 Divider(

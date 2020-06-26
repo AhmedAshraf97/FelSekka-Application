@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:felsekka/pages/AnimatedPage%20Route.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
+import 'package:felsekka/pages/otherprofile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:rich_alert/rich_alert.dart';
@@ -139,10 +144,147 @@ class _PastRidesState extends State<PastRides> {
         for(int i=0; i<riderObjs.length; i++)
         {
           String riderAddress="";
+          String review="";
+          double rating=0;
+          int trust12=0;
+          int trust21=0;
+          // Review:
+          String urlReview="http://3.81.22.120:3000/api/showReview";
+          Map<String,String> body={
+            "username" : riderObjs[i].username,
+            "tripid" : widget.tripId.toString()
+          };
+          Response responseReview =await post(urlReview, headers:{'authorization': token}, body: body);
+          if(responseReview.statusCode==409)
+          {
+            review="";
+          }
+          else if(responseReview.statusCode != 200)
+          {
+            Map data= jsonDecode(responseReview.body);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return RichAlertDialog(
+                    alertTitle: richTitle('User error'),
+                    alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                    alertType: RichAlertType.WARNING,
+                    dialogIcon: Icon(
+                      Icons.warning,
+                      color: Colors.red,
+                      size: 80,
+                    ),
+                    actions: <Widget>[
+                      new OutlineButton(
+                        shape: StadiumBorder(),
+                        textColor: Colors.blue,
+                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                        borderSide: BorderSide(
+                            color: Colors.indigo[400], style: BorderStyle.solid,
+                            width: 1),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                });
+          }
+          else{
+            Map data= jsonDecode(responseReview.body);
+            review= data['review'];
+          }
+
+
+          // Rating:
+          String urlRating="http://3.81.22.120:3000/api/showRating";
+          Response responseRating =await post(urlRating, headers:{'authorization': token}, body: body);
+          if(responseRating.statusCode==409)
+          {
+            rating=0;
+          }
+          else if(responseRating.statusCode != 200)
+          {
+            Map data= jsonDecode(responseRating.body);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return RichAlertDialog(
+                    alertTitle: richTitle('User error'),
+                    alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                    alertType: RichAlertType.WARNING,
+                    dialogIcon: Icon(
+                      Icons.warning,
+                      color: Colors.red,
+                      size: 80,
+                    ),
+                    actions: <Widget>[
+                      new OutlineButton(
+                        shape: StadiumBorder(),
+                        textColor: Colors.blue,
+                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                        borderSide: BorderSide(
+                            color: Colors.indigo[400], style: BorderStyle.solid,
+                            width: 1),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                });
+          }
+          else{
+            Map data= jsonDecode(responseRating.body);
+            rating=double.parse(data['rating']);
+          }
+
+
+          // Trust:
+          String urlTrust="http://3.81.22.120:3000/api/showTrust";
+          Response responseTrust =await post(urlTrust, headers:{'authorization': token}, body: body);
+          if(responseTrust.statusCode != 200)
+          {
+            Map data= jsonDecode(responseTrust.body);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return RichAlertDialog(
+                    alertTitle: richTitle('User error'),
+                    alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                    alertType: RichAlertType.WARNING,
+                    dialogIcon: Icon(
+                      Icons.warning,
+                      color: Colors.red,
+                      size: 80,
+                    ),
+                    actions: <Widget>[
+                      new OutlineButton(
+                        shape: StadiumBorder(),
+                        textColor: Colors.blue,
+                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                        borderSide: BorderSide(
+                            color: Colors.indigo[400], style: BorderStyle.solid,
+                            width: 1),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                });
+          }
+          else{
+            Map data= jsonDecode(responseTrust.body);
+            var trustJson = data['trustArr'] as List;
+            trust12= trustJson[0]['trust'];
+            trust21= trustJson[1]['trust'];
+          }
           listRiders.add(
             GestureDetector(
               onTap: (){
                 //edit here to view profile
+                Navigator.push(context, AnimatedPageRoute(widget: OtherProfile(widget.tripId,riderObjs[i].rating,riderObjs[i].username,riderObjs[i].firstname,riderObjs[i].lastname,riderObjs[i].gender,rating,review,trust12,trust21)));
               },
               child: Card(
                 elevation: 4,
@@ -204,43 +346,148 @@ class _PastRidesState extends State<PastRides> {
         for(int i=0; i<riderObjs.length; i++)
         {
           String riderAddress="";
+          String review="";
+          double rating=0;
+          int trust12=0;
+          int trust21=0;
+          // Review:
+          String urlReview="http://3.81.22.120:3000/api/showReview";
+          Map<String,String> body={
+            "username" : riderObjs[i].username,
+            "tripid" : widget.tripId.toString()
+          };
+          Response responseReview =await post(urlReview, headers:{'authorization': token}, body: body);
+          if(responseReview.statusCode==409)
+          {
+            review="";
+          }
+          else if(responseReview.statusCode != 200)
+          {
+            Map data= jsonDecode(responseReview.body);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return RichAlertDialog(
+                    alertTitle: richTitle('User error'),
+                    alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                    alertType: RichAlertType.WARNING,
+                    dialogIcon: Icon(
+                      Icons.warning,
+                      color: Colors.red,
+                      size: 80,
+                    ),
+                    actions: <Widget>[
+                      new OutlineButton(
+                        shape: StadiumBorder(),
+                        textColor: Colors.blue,
+                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                        borderSide: BorderSide(
+                            color: Colors.indigo[400], style: BorderStyle.solid,
+                            width: 1),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                });
+          }
+          else{
+            Map data= jsonDecode(responseReview.body);
+            review= data['review'];
+          }
+
+
+          // Rating:
+          String urlRating="http://3.81.22.120:3000/api/showRating";
+          Response responseRating =await post(urlRating, headers:{'authorization': token}, body: body);
+          if(responseRating.statusCode==409)
+          {
+            rating=0;
+          }
+          else if(responseRating.statusCode != 200)
+          {
+            Map data= jsonDecode(responseRating.body);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return RichAlertDialog(
+                    alertTitle: richTitle('User error'),
+                    alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                    alertType: RichAlertType.WARNING,
+                    dialogIcon: Icon(
+                      Icons.warning,
+                      color: Colors.red,
+                      size: 80,
+                    ),
+                    actions: <Widget>[
+                      new OutlineButton(
+                        shape: StadiumBorder(),
+                        textColor: Colors.blue,
+                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                        borderSide: BorderSide(
+                            color: Colors.indigo[400], style: BorderStyle.solid,
+                            width: 1),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                });
+          }
+          else{
+            Map data= jsonDecode(responseRating.body);
+            rating=double.parse(data['rating']);
+          }
+
+
+          // Trust:
+          String urlTrust="http://3.81.22.120:3000/api/showTrust";
+          Response responseTrust =await post(urlTrust, headers:{'authorization': token}, body: body);
+          if(responseTrust.statusCode != 200)
+          {
+            Map data= jsonDecode(responseTrust.body);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return RichAlertDialog(
+                    alertTitle: richTitle('User error'),
+                    alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                    alertType: RichAlertType.WARNING,
+                    dialogIcon: Icon(
+                      Icons.warning,
+                      color: Colors.red,
+                      size: 80,
+                    ),
+                    actions: <Widget>[
+                      new OutlineButton(
+                        shape: StadiumBorder(),
+                        textColor: Colors.blue,
+                        child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                        borderSide: BorderSide(
+                            color: Colors.indigo[400], style: BorderStyle.solid,
+                            width: 1),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                });
+          }
+          else{
+            Map data= jsonDecode(responseTrust.body);
+            var trustJson = data['trustArr'] as List;
+            trust12= trustJson[0]['trust'];
+            trust21= trustJson[1]['trust'];
+          }
+
           listRiders.add(
             GestureDetector(
               onTap: (){
                 //edit here to view profile
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      List<Marker> allMarkers = [];
-                      allMarkers.add(Marker(
-                          markerId: MarkerId('myMarker'),
-                          draggable: true,
-                          onTap: () {
-                            print('Marker Tapped');
-                          },
-                          position: LatLng(double.parse(riderObjs[i].latitude), double.parse(riderObjs[i].longitude))));
-                      return Scaffold(
-                          body: GoogleMap(
-                            initialCameraPosition: CameraPosition(
-                              target: LatLng(double.parse(riderObjs[i].latitude), double.parse(riderObjs[i].longitude)),
-                              zoom: 16,
-                            ),
-                            markers: Set.from(allMarkers),
-                          ),
-                          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-                          floatingActionButton: new FloatingActionButton(
-                              elevation: 0.0,
-                              child: new Icon(Icons.close),
-                              backgroundColor: Colors.indigo[400],
-                              onPressed: (){
-                                Navigator.pop(context);
-                              }
-                          )
-                      );
-                    },
-                  ),
-                );
+                Navigator.push(context, AnimatedPageRoute(widget: OtherProfile(widget.tripId,riderObjs[i].rating,riderObjs[i].username,riderObjs[i].firstname,riderObjs[i].lastname,riderObjs[i].gender,rating,review,trust12,trust21)));
               },
               child: Card(
                 elevation: 4,
@@ -638,85 +885,227 @@ class _PastRidesState extends State<PastRides> {
                                                   ),
                                                 ],
                                               ),
-                                              Card(
-                                                elevation: 4,
-                                                color: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(15.0),
-                                                ),
-                                                child: ListTile(
-                                                  contentPadding: EdgeInsets.all(5),
-                                                  leading: CircleAvatar(
-                                                    backgroundColor: Colors.white,
-                                                    child: Image.asset(
-                                                      widget.driverGender=="female"? "images/avatarfemale.png" : "images/avatarmale.png",
-                                                      height:screenHeight/20,
-                                                      width: screenWidth/8,),
-                                                  ),
-                                                  title: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: <Widget>[
-                                                      Row(
-                                                        children: <Widget>[
-                                                          AutoSizeText(widget.driverFirstName+" "+widget.driverLastName+"  ", maxLines: 1,minFontSize: 2, style: TextStyle(color: Colors.indigo[400]),textScaleFactor: screenFont*1.1,),
-                                                          AutoSizeText(getDisplayRating(double.parse(widget.driverRating)), maxLines: 1,minFontSize: 2, style: TextStyle(color: Colors.grey[500]),textScaleFactor: screenFont,),
-                                                          Icon(
-                                                            Icons.star,
-                                                            color: Colors.grey[500],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      AutoSizeText(driverAddress, maxLines: 2,minFontSize: 2, style: TextStyle(color: Colors.grey[500]),textScaleFactor: screenFont*0.9,),
-                                                    ],
-                                                  ),
-                                                  trailing: IconButton(
-                                                    icon: Icon(
-                                                      Icons.phone_in_talk,
-                                                      color:Colors.redAccent,
-                                                    ),
-                                                    onPressed: (){
-                                                      showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext context) {
-                                                            return RichAlertDialog(
-                                                              alertTitle: richTitle("Call driver"),
-                                                              alertSubtitle: richSubtitle("Call "+widget.driverPhoneNumber+"?"),
-                                                              alertType: RichAlertType.WARNING,
-                                                              dialogIcon: Icon(
-                                                                Icons.help,
-                                                                color: Colors.yellowAccent,
-                                                                size: 55,
+                                              GestureDetector(
+                                                onTap: () async{
+                                                  String review="";
+                                                  double rating=0;
+                                                  int trust12=0;
+                                                  int trust21=0;
+                                                  // Review:
+                                                  String urlReview="http://3.81.22.120:3000/api/showReview";
+                                                  Map<String,String> body={
+                                                    "username" : widget.driverUsername,
+                                                    "tripid" : widget.tripId.toString()
+                                                  };
+                                                  Response responseReview =await post(urlReview, headers:{'authorization': token}, body: body);
+                                                  if(responseReview.statusCode==409)
+                                                  {
+                                                    review="";
+                                                  }
+                                                  else if(responseReview.statusCode != 200)
+                                                  {
+                                                    Map data= jsonDecode(responseReview.body);
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext context) {
+                                                          return RichAlertDialog(
+                                                            alertTitle: richTitle('User error'),
+                                                            alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                            alertType: RichAlertType.WARNING,
+                                                            dialogIcon: Icon(
+                                                              Icons.warning,
+                                                              color: Colors.red,
+                                                              size: 80,
+                                                            ),
+                                                            actions: <Widget>[
+                                                              new OutlineButton(
+                                                                shape: StadiumBorder(),
+                                                                textColor: Colors.blue,
+                                                                child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                borderSide: BorderSide(
+                                                                    color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                    width: 1),
+                                                                onPressed: () {
+                                                                  Navigator.pop(context);
+                                                                },
                                                               ),
-                                                              actions: <Widget>[
-                                                                new OutlineButton(
-                                                                  shape: StadiumBorder(),
-                                                                  textColor: Colors.blue,
-                                                                  child: Text('Yes', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
-                                                                  borderSide: BorderSide(
-                                                                      color: Colors.indigo[400], style: BorderStyle.solid,
-                                                                      width: 1),
-                                                                  onPressed: () async{
-                                                                    Navigator.pop(context);
-                                                                    _launchCaller(widget.driverPhoneNumber);
-                                                                  },
+                                                            ],
+                                                          );
+                                                        });
+                                                  }
+                                                  else{
+                                                    Map data= jsonDecode(responseReview.body);
+                                                    review= data['review'];
+                                                  }
+
+
+                                                  // Rating:
+                                                  String urlRating="http://3.81.22.120:3000/api/showRating";
+                                                  Response responseRating =await post(urlRating, headers:{'authorization': token}, body: body);
+                                                  if(responseRating.statusCode==409)
+                                                  {
+                                                    rating=0;
+                                                  }
+                                                  else if(responseRating.statusCode != 200)
+                                                  {
+                                                    Map data= jsonDecode(responseRating.body);
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext context) {
+                                                          return RichAlertDialog(
+                                                            alertTitle: richTitle('User error'),
+                                                            alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                            alertType: RichAlertType.WARNING,
+                                                            dialogIcon: Icon(
+                                                              Icons.warning,
+                                                              color: Colors.red,
+                                                              size: 80,
+                                                            ),
+                                                            actions: <Widget>[
+                                                              new OutlineButton(
+                                                                shape: StadiumBorder(),
+                                                                textColor: Colors.blue,
+                                                                child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                borderSide: BorderSide(
+                                                                    color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                    width: 1),
+                                                                onPressed: () {
+                                                                  Navigator.pop(context);
+                                                                },
+                                                              ),
+                                                            ],
+                                                          );
+                                                        });
+                                                  }
+                                                  else{
+                                                    Map data= jsonDecode(responseRating.body);
+                                                    rating=double.parse(data['rating']);
+                                                  }
+
+
+                                                  // Trust:
+                                                  String urlTrust="http://3.81.22.120:3000/api/showTrust";
+                                                  Response responseTrust =await post(urlTrust, headers:{'authorization': token}, body: body);
+                                                  if(responseTrust.statusCode != 200)
+                                                  {
+                                                    Map data= jsonDecode(responseTrust.body);
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext context) {
+                                                          return RichAlertDialog(
+                                                            alertTitle: richTitle('User error'),
+                                                            alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                                            alertType: RichAlertType.WARNING,
+                                                            dialogIcon: Icon(
+                                                              Icons.warning,
+                                                              color: Colors.red,
+                                                              size: 80,
+                                                            ),
+                                                            actions: <Widget>[
+                                                              new OutlineButton(
+                                                                shape: StadiumBorder(),
+                                                                textColor: Colors.blue,
+                                                                child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                borderSide: BorderSide(
+                                                                    color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                    width: 1),
+                                                                onPressed: () {
+                                                                  Navigator.pop(context);
+                                                                },
+                                                              ),
+                                                            ],
+                                                          );
+                                                        });
+                                                  }
+                                                  else{
+                                                    Map data= jsonDecode(responseTrust.body);
+                                                    var trustJson = data['trustArr'] as List;
+                                                    trust12= trustJson[0]['trust'];
+                                                    trust21= trustJson[1]['trust'];
+                                                  }
+
+                                                  Navigator.push(context, AnimatedPageRoute(widget: OtherProfile(widget.tripId,widget.driverRating,widget.driverUsername,widget.driverFirstName,widget.driverLastName,widget.driverGender,rating,review,trust12,trust21)));
+                                                },
+                                                child: Card(
+                                                  elevation: 4,
+                                                  color: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(15.0),
+                                                  ),
+                                                  child: ListTile(
+                                                    contentPadding: EdgeInsets.all(5),
+                                                    leading: CircleAvatar(
+                                                      backgroundColor: Colors.white,
+                                                      child: Image.asset(
+                                                        widget.driverGender=="female"? "images/avatarfemale.png" : "images/avatarmale.png",
+                                                        height:screenHeight/20,
+                                                        width: screenWidth/8,),
+                                                    ),
+                                                    title: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: <Widget>[
+                                                        Row(
+                                                          children: <Widget>[
+                                                            AutoSizeText(widget.driverFirstName+" "+widget.driverLastName+"  ", maxLines: 1,minFontSize: 2, style: TextStyle(color: Colors.indigo[400]),textScaleFactor: screenFont*1.1,),
+                                                            AutoSizeText(getDisplayRating(double.parse(widget.driverRating)), maxLines: 1,minFontSize: 2, style: TextStyle(color: Colors.grey[500]),textScaleFactor: screenFont,),
+                                                            Icon(
+                                                              Icons.star,
+                                                              color: Colors.grey[500],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        AutoSizeText(driverAddress, maxLines: 2,minFontSize: 2, style: TextStyle(color: Colors.grey[500]),textScaleFactor: screenFont*0.9,),
+                                                      ],
+                                                    ),
+                                                    trailing: IconButton(
+                                                      icon: Icon(
+                                                        Icons.phone_in_talk,
+                                                        color:Colors.redAccent,
+                                                      ),
+                                                      onPressed: (){
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext context) {
+                                                              return RichAlertDialog(
+                                                                alertTitle: richTitle("Call driver"),
+                                                                alertSubtitle: richSubtitle("Call "+widget.driverPhoneNumber+"?"),
+                                                                alertType: RichAlertType.WARNING,
+                                                                dialogIcon: Icon(
+                                                                  Icons.help,
+                                                                  color: Colors.yellowAccent,
+                                                                  size: 55,
                                                                 ),
-                                                                SizedBox(width: 20,),
-                                                                new OutlineButton(
-                                                                  shape: StadiumBorder(),
-                                                                  textColor: Colors.blue,
-                                                                  child: Text('No', style: TextStyle(color: Colors.red[400],fontSize: 30),),
-                                                                  borderSide: BorderSide(
-                                                                      color: Colors.red[400], style: BorderStyle.solid,
-                                                                      width: 1),
-                                                                  onPressed: () {
-                                                                    Navigator.pop(context);
-                                                                  },
-                                                                ),
-                                                              ],
-                                                            );
-                                                          });
-                                                    },
+                                                                actions: <Widget>[
+                                                                  new OutlineButton(
+                                                                    shape: StadiumBorder(),
+                                                                    textColor: Colors.blue,
+                                                                    child: Text('Yes', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                                    borderSide: BorderSide(
+                                                                        color: Colors.indigo[400], style: BorderStyle.solid,
+                                                                        width: 1),
+                                                                    onPressed: () async{
+                                                                      Navigator.pop(context);
+                                                                      _launchCaller(widget.driverPhoneNumber);
+                                                                    },
+                                                                  ),
+                                                                  SizedBox(width: 20,),
+                                                                  new OutlineButton(
+                                                                    shape: StadiumBorder(),
+                                                                    textColor: Colors.blue,
+                                                                    child: Text('No', style: TextStyle(color: Colors.red[400],fontSize: 30),),
+                                                                    borderSide: BorderSide(
+                                                                        color: Colors.red[400], style: BorderStyle.solid,
+                                                                        width: 1),
+                                                                    onPressed: () {
+                                                                      Navigator.pop(context);
+                                                                    },
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            });
+                                                      },
+                                                    ),
                                                   ),
                                                 ),
                                               ),

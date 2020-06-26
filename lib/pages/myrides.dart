@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:felsekka/pages/ScheduledRide.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
 import 'package:felsekka/pages/pastride.dart';
 import 'package:flutter/cupertino.dart';
@@ -243,7 +242,7 @@ class _MyRidesState extends State<MyRides> {
             listRides.add(
               GestureDetector(
                 onTap: (){
-                  Navigator.push(context, AnimatedPageRoute(widget: ScheduledRides(rideObjects[i].driverId,rideObjects[i].toFrom,rideObjects[i].type,rideObjects[i].tripId,rideObjects[i].carModel,rideObjects[i].carBrand,rideObjects[i].carYear,rideObjects[i].carType,rideObjects[i].carPlateLetters,rideObjects[i].carPlateNumbers,rideObjects[i].homeLongitude,rideObjects[i].homeLatitude,rideObjects[i].orgName,rideObjects[i].orgLatitude,rideObjects[i].orgLongitude,rideObjects[i].pickupTime,rideObjects[i].arrivalTime,rideObjects[i].date,rideObjects[i].fare,rideObjects[i].numberRiders,rideObjects[i].driverUsername,rideObjects[i].driverFirstName,rideObjects[i].driverLastName,rideObjects[i].driverPhoneNumber,rideObjects[i].driverGender,rideObjects[i].driverRating,rideObjects[i].driverTime,rideObjects[i].driverLongitude,rideObjects[i].driverLatitude,rideObjects[i].riders,rideObjects[i].carColor,rideObjects[i].ridewith,rideObjects[i].smoking)));
+                  Navigator.push(context, AnimatedPageRoute(widget: PastRides(rideObjects[i].driverId,rideObjects[i].toFrom,rideObjects[i].type,rideObjects[i].tripId,rideObjects[i].carModel,rideObjects[i].carBrand,rideObjects[i].carYear,rideObjects[i].carType,rideObjects[i].carPlateLetters,rideObjects[i].carPlateNumbers,rideObjects[i].homeLongitude,rideObjects[i].homeLatitude,rideObjects[i].orgName,rideObjects[i].orgLatitude,rideObjects[i].orgLongitude,rideObjects[i].pickupTime,rideObjects[i].arrivalTime,rideObjects[i].date,rideObjects[i].fare,rideObjects[i].numberRiders,rideObjects[i].driverUsername,rideObjects[i].driverFirstName,rideObjects[i].driverLastName,rideObjects[i].driverPhoneNumber,rideObjects[i].driverGender,rideObjects[i].driverRating,rideObjects[i].driverTime,rideObjects[i].driverLongitude,rideObjects[i].driverLatitude,rideObjects[i].riders,rideObjects[i].carColor,rideObjects[i].ridewith,rideObjects[i].smoking)));
                 },
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(0,8,0,8),
