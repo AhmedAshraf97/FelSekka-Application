@@ -466,7 +466,7 @@ class _RideAlertsState extends State<RideAlerts> {
                                 ),
                                 Container(
                                   height: 1,
-                                  width: screenWidth/2,
+                                  width: screenWidth/1.5,
                                   color: Colors.grey[300],
                                 ),
                                 SizedBox(

@@ -4,7 +4,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:felsekka/pages/navigationfrom.dart';
 import 'package:felsekka/pages/navigationto.dart';
 import 'package:felsekka/pages/navigation_bloc.dart';
-import 'package:felsekka/pages/signin.dart';
 import 'package:felsekka/pages/trackingfrom.dart';
 import 'package:felsekka/pages/trackingto.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,7 +17,6 @@ import 'package:progress_indicators/progress_indicators.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'AnimatedPage Route.dart';
 
 
@@ -125,10 +123,10 @@ class _ScheduledRidesState extends State<ScheduledRides> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double screenFont= MediaQuery.of(context).textScaleFactor;
-    final dateNow = DateTime.now();
-    final datetemp= DateTime.parse("2020-05-27 01:08:01");
+    final datetemp = DateTime.now();
+    //final datetemp= DateTime.parse("2020-05-27 01:08:01");
     var differenceDates;
-    print(widget.driverTime);
+    //print(widget.driverTime);
     if(widget.type=="Rider")
       {
         differenceDates = datetemp.difference(DateTime.parse(widget.date+" "+widget.driverTime)).inSeconds; // negative old date
@@ -183,28 +181,28 @@ class _ScheduledRidesState extends State<ScheduledRides> {
       if(widget.type=="Rider")
       {
         //Driver address
-        /*List<Placemark> newPlace = await Geolocator().placemarkFromCoordinates(double.parse(widget.driverLatitude), double.parse(widget.driverLongitude));
+        List<Placemark> newPlace = await Geolocator().placemarkFromCoordinates(double.parse(widget.driverLatitude), double.parse(widget.driverLongitude));
         Placemark placeMark  = newPlace[0];
         String name = placeMark.name;
         String locality = placeMark.locality;
         String administrativeArea = placeMark.administrativeArea;
         String country = placeMark.country;
-        driverAddress= name +" - "+locality+" - "+administrativeArea+" - " +country;*/
+        driverAddress= name +" - "+locality+" - "+administrativeArea+" - " +country;
         //List riders
         listRiders=[];
         var riderObjsJson = widget.riders as List;
         List<RiderForRider> riderObjs = riderObjsJson.map((riderJson) => RiderForRider.fromJson(riderJson)).toList();
         for(int i=0; i<riderObjs.length; i++)
         {
-          /*List<Placemark> newPlace = await Geolocator().placemarkFromCoordinates(double.parse(riderObjs[i].latitude), double.parse(riderObjs[i].longitude));
+          List<Placemark> newPlace = await Geolocator().placemarkFromCoordinates(double.parse(riderObjs[i].latitude), double.parse(riderObjs[i].longitude));
           Placemark placeMark  = newPlace[0];
           String name = placeMark.name;
           String locality = placeMark.locality;
           String administrativeArea = placeMark.administrativeArea;
           String country = placeMark.country;
-          String riderAddress= name +" - "+locality+" - "+administrativeArea+" - " +country;*/
+          String riderAddress= name +" - "+locality+" - "+administrativeArea+" - " +country;
           //print(riderAddress);
-          String riderAddress="";
+          //String riderAddress="";
           listRiders.add(
             GestureDetector(
               onTap: (){},
@@ -267,14 +265,14 @@ class _ScheduledRidesState extends State<ScheduledRides> {
         List<RiderForDriver> riderObjs = riderObjsJson.map((riderJson) => RiderForDriver.fromJson(riderJson)).toList();
         for(int i=0; i<riderObjs.length; i++)
         {
-          /*List<Placemark> newPlace = await Geolocator().placemarkFromCoordinates(double.parse(riderObjs[i].latitude), double.parse(riderObjs[i].longitude));
+          List<Placemark> newPlace = await Geolocator().placemarkFromCoordinates(double.parse(riderObjs[i].latitude), double.parse(riderObjs[i].longitude));
           Placemark placeMark  = newPlace[0];
           String name = placeMark.name;
           String locality = placeMark.locality;
           String administrativeArea = placeMark.administrativeArea;
           String country = placeMark.country;
-          String riderAddress= name +" - "+locality+" - "+administrativeArea+" - " +country;*/
-          String riderAddress="";
+          String riderAddress= name +" - "+locality+" - "+administrativeArea+" - " +country;
+          //String riderAddress="";
           listRiders.add(
             GestureDetector(
               onTap: (){
@@ -1098,6 +1096,7 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                                       }
                                                     }
                                                     if (arrived == true) {
+                                                      print("go");
                                                       Response response =await post(url, body: body, headers:{'authorization': token});
                                                       print(response.body);
                                                       if(response.statusCode == 400 || response.statusCode == 409)
@@ -1871,7 +1870,7 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                                   maxLines: 1,
                                                 ),
                                                 AutoSizeText(
-                                                  widget.ridewith,
+                                                  widget.ridewith=="female"? "Female" : "Male",
                                                   textScaleFactor: screenFont*1.2,
                                                   style: TextStyle(
                                                     color: Colors.grey[600],
@@ -1916,7 +1915,7 @@ class _ScheduledRidesState extends State<ScheduledRides> {
                                                   maxLines: 1,
                                                 ),
                                                 AutoSizeText(
-                                                  widget.smoking,
+                                                  widget.smoking=="no"? "No" : "Yes",
                                                   textScaleFactor: screenFont*1.2,
                                                   style: TextStyle(
                                                     color: Colors.grey[600],
