@@ -61,7 +61,7 @@ router.post('/', async(req, res) => {
                 if (ValidChecks) {
                     User.findOne({
                             where: {
-                                username: req.body.username
+                                id: parseInt(req.body.id)
                             }
                         }).then(founduser => {
                             if (founduser) {

@@ -25,7 +25,7 @@ const errHandler = err => {
 function validation(rating, datetime) {
     var validChecks = true;
     var message = ""
-    if (!((typeof(parseInt(rating)) === 'number') || parseInt(rating).trim().length === 0) || parseInt(rating) > 5 || parseInt(rating) < 0 ||
+    if (!((typeof(parseFloat(rating)) === 'number') || parseFloat(rating).trim().length === 0) || parseFloat(rating) > 5 || parseFloat(rating) < 0 ||
         !(/^([0-9]+)$/.test(rating))
     ) {
         validChecks = false
@@ -112,14 +112,14 @@ router.post('/', async(req, res) => {
         }).then(user => {
             if (user) {
                 if (ValidChecks) {
-                    Rating.create({ userid: user.id, rateduserid: parseInt(rateduser.id), rating: parseInt(req.body.rating), datetime: parseInt(req.body.datetime), tripid: parseInt(req.body.tripid) }).
+                    Rating.create({ userid: user.id, rateduserid: parseInt(rateduser.id), rating: parseFloat(req.body.rating), datetime: parseInt(req.body.datetime), tripid: parseInt(req.body.tripid) }).
                     then(rate => {
                         Rating.sum('rating', { where: { rateduserid: parseInt(rateduser.id) } }).then(sum => {
                             Rating.count({ where: { rateduserid: parseInt(rateduser.id) } }).then(count => {
-                                User.update({ rating: (sum / count) }, { where: { id: parseInt(rateduser.id) } }).
+                                User.update({ rating: ((5 + sum) / (count + 1)) }, { where: { id: parseInt(rateduser.id) } }).
                                 then(result => {
                                     res.status(200).send({ message: "Rating updated" })
-                                    console.log(" New Rating : ", (sum / count))
+                                    console.log(" New Rating : ", ((sum + 5) / (count + 1)))
                                 }).catch(errHandler)
                             })
                         }).catch(errHandler)
