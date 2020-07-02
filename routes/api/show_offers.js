@@ -99,7 +99,8 @@ router.post('/', async(req, res) => {
 
                     offerFrom = offerFrom.toJSON();
                     offerFrom.carModel = car.model
-                    offerFrom.carBrand = car.brad
+                    offerFrom.carBrand = car.brand
+                    offerFrom.carYear = car.year
                     offerFrom.carType = car.type
                     offerFrom.carColor = car.color
                     offerFrom.carPlateletters = car.plateletters
@@ -134,7 +135,8 @@ router.post('/', async(req, res) => {
 
                     offerTo = offerTo.toJSON();
                     offerTo.carModel = car.model
-                    offerTo.carBrand = car.brad
+                    offerTo.carBrand = car.brand
+                    offerTo.carYear = car.year
                     offerTo.carType = car.type
                     offerTo.carColor = car.color
                     offerTo.carPlateletters = car.plateletters
