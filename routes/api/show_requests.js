@@ -4,6 +4,8 @@ const Driver = require('../../models/drivers');
 const Rider = require('../../models/riders');
 const RequestTo = require('../../models/requestrideto')
 const RequestFrom = require('../../models/requestridefrom')
+const Car = require('../../models/cars')
+const Organization = require('../../models/organizations')
 
 const express = require('express');
 const router = express.Router();
@@ -79,7 +81,20 @@ router.post('/', async(req, res) => {
                 res.end();
             } else {
                 for (requestFrom of requestsFrom) {
+
+                    const org = await Organization.findOne({
+                        where: {
+                            id: requestFrom.fromorgid,
+                            status: "existing"
+                        }
+                    })
+
                     requestFrom = requestFrom.toJSON();
+
+                    requestFrom.orgname = org.name
+                    requestFrom.orglatitude = org.latitude
+                    requestFrom.orglongitude = org.longitude
+
                     requestFrom.tofrom = "from"
                     requestFrom.fromlatitude = ""
                     requestFrom.fromlongitude = ""
@@ -91,7 +106,20 @@ router.post('/', async(req, res) => {
                 }
 
                 for (requestTo of requestsTo) {
+
+                    const org = await Organization.findOne({
+                        where: {
+                            id: requestTo.toorgid,
+                            status: "existing"
+                        }
+                    })
+
                     requestTo = requestTo.toJSON();
+
+                    requestTo.orgname = org.name
+                    requestTo.orglatitude = org.latitude
+                    requestTo.orglongitude = org.longitude
+
                     requestTo.tofrom = "to"
                     requestTo.tolatitude = ""
                     requestTo.tolongitude = ""
