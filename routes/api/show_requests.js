@@ -17,8 +17,7 @@ const Op = Sequelize.Op;
 const ExpiredToken = require('../../models/expiredtokens');
 
 
-var jsonStr = '{"Requests":[]}';
-var obj = JSON.parse(jsonStr);
+
 
 
 //Error handler
@@ -50,7 +49,8 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler)
 
-
+    var jsonStr = '{"Requests":[]}';
+    var obj = JSON.parse(jsonStr);
     const user = await User.findOne({
         where: {
             id: decoded.id,
