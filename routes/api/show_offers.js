@@ -4,6 +4,8 @@ const Driver = require('../../models/drivers');
 const Rider = require('../../models/riders');
 const OfferTo = require('../../models/offerrideto')
 const OfferFrom = require('../../models/offerridefrom')
+const Car = require('../../models/cars')
+const Organization = require('../../models/organizations')
 
 const express = require('express');
 const router = express.Router();
@@ -82,7 +84,30 @@ router.post('/', async(req, res) => {
             } else {
                 for (offerFrom of offersFrom) {
 
+                    const car = await Car.findOne({
+                        where: {
+                            id: offerFrom.carid,
+                            status: "existing"
+                        }
+                    })
+                    const org = await Organization.findOne({
+                        where: {
+                            id: offerFrom.fromorgid,
+                            status: "existing"
+                        }
+                    })
+
                     offerFrom = offerFrom.toJSON();
+                    offerFrom.carModel = car.model
+                    offerFrom.carBrand = car.brand
+                    offerFrom.carYear = car.year
+                    offerFrom.carType = car.type
+                    offerFrom.carColor = car.color
+                    offerFrom.carPlateletters = car.plateletters
+                    offerFrom.carPlatenumbers = car.platenumbers
+                    offerFrom.orgname = org.name
+                    offerFrom.orglatitude = org.latitude
+                    offerFrom.orglongitude = org.longitude
                     offerFrom.tofrom = "from"
                     offerFrom.fromlatitude = ""
                     offerFrom.fromlongitude = ""
@@ -94,7 +119,31 @@ router.post('/', async(req, res) => {
                 }
 
                 for (offerTo of offersTo) {
+
+                    const car = await Car.findOne({
+                        where: {
+                            id: offerTo.carid,
+                            status: "existing"
+                        }
+                    })
+                    const org = await Organization.findOne({
+                        where: {
+                            id: offerTo.toorgid,
+                            status: "existing"
+                        }
+                    })
+
                     offerTo = offerTo.toJSON();
+                    offerTo.carModel = car.model
+                    offerTo.carBrand = car.brand
+                    offerTo.carYear = car.year
+                    offerTo.carType = car.type
+                    offerTo.carColor = car.color
+                    offerTo.carPlateletters = car.plateletters
+                    offerTo.carPlatenumbers = car.platenumbers
+                    offerTo.orgname = org.name
+                    offerTo.orglatitude = org.latitude
+                    offerTo.orglongitude = org.longitude
                     offerTo.tofrom = "to"
                     offerTo.tolatitude = ""
                     offerTo.tolongitude = ""
