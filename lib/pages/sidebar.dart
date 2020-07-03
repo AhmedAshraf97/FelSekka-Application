@@ -341,7 +341,7 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   title: "Pending Rides",
                                   onTap: () {
                                     onIconPressed();
-                                    BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.RideAlertsClickedEvent);
+                                    BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.PendingRidesClickedEvent);
                                   },
                                 ),
                                 Divider(
@@ -444,6 +444,10 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                 MenuItem(
                                   icon: Icons.settings,
                                   title: "Settings",
+                                  onTap: () {
+                                  onIconPressed();
+                                  BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.SettingsClickedEvent);
+                                },
                                 ),
                                 Divider(
                                   height: 3,
