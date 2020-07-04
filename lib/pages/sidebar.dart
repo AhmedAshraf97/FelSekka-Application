@@ -443,10 +443,10 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                 ),
                                 MenuItem(
                                   icon: Icons.settings,
-                                  title: "Settings",
+                                  title: "Edit profile",
                                   onTap: () {
                                   onIconPressed();
-                                  BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.SettingsClickedEvent);
+                                  BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.EditProfileClickedEvent);
                                 },
                                 ),
                                 Divider(

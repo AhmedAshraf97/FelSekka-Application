@@ -127,6 +127,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0+2"
+  dbcrypt:
+    dependency: "direct main"
+    description:
+      name: dbcrypt
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   dio:
     dependency: transitive
     description:
