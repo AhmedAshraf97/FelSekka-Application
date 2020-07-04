@@ -6,6 +6,7 @@ import 'package:flashy_tab_bar/flashy_tab_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
@@ -198,8 +199,115 @@ class _PendingRidesState extends State<PendingRides> {
             }
             listRequests.add(
               GestureDetector(
-                onTap: (){
-
+                onTap: () async{
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return RichAlertDialog(
+                          alertTitle: richTitle("Cancel request"),
+                          alertSubtitle: richSubtitle("Are you sure you want to cancel request?"),
+                          alertType: RichAlertType.WARNING,
+                          dialogIcon: Icon(
+                            Icons.warning,
+                            color: Colors.red,
+                            size: 80,
+                          ),
+                          actions: <Widget>[
+                            new OutlineButton(
+                              shape: StadiumBorder(),
+                              textColor: Colors.blue,
+                              child: Text('Yes', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                              borderSide: BorderSide(
+                                  color: Colors.indigo[400], style: BorderStyle.solid,
+                                  width: 1),
+                              onPressed: () async{
+                                String url="http://3.81.22.120:3000/api/cancelrequest";
+                                Map<String,String> body={
+                                  "tofrom": requestObjects[i].toFrom,
+                                  "requestid": requestObjects[i].tripId.toString(),
+                                };
+                                Response response =await post(url, headers:{'authorization': token},body:body);
+                                if(response.statusCode != 200)
+                                {
+                                  Map data= jsonDecode(response.body);
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return RichAlertDialog(
+                                          alertTitle: richTitle("User error"),
+                                          alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                          alertType: RichAlertType.WARNING,
+                                          dialogIcon: Icon(
+                                            Icons.warning,
+                                            color: Colors.red,
+                                            size: 80,
+                                          ),
+                                          actions: <Widget>[
+                                            new OutlineButton(
+                                              shape: StadiumBorder(),
+                                              textColor: Colors.blue,
+                                              child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                              borderSide: BorderSide(
+                                                  color: Colors.indigo[400], style: BorderStyle.solid,
+                                                  width: 1),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      });
+                                  Navigator.pop(context);
+                                }
+                                else{
+                                  Navigator.pop(context);
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return RichAlertDialog(
+                                          alertTitle: richTitle("Done"),
+                                          alertSubtitle: richSubtitle("Request is cancelled successfully"),
+                                          alertType: RichAlertType.SUCCESS,
+                                          dialogIcon: Icon(
+                                            Icons.check,
+                                            color: Colors.green,
+                                            size: 80,
+                                          ),
+                                          actions: <Widget>[
+                                            new OutlineButton(
+                                              shape: StadiumBorder(),
+                                              textColor: Colors.blue,
+                                              child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                              borderSide: BorderSide(
+                                                  color: Colors.indigo[400], style: BorderStyle.solid,
+                                                  width: 1),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                setState(() {
+                                                });
+                                                },
+                                            ),
+                                          ],
+                                        );
+                                      });
+                                }
+                              },
+                            ),
+                            SizedBox(width: 20,),
+                            new OutlineButton(
+                              shape: StadiumBorder(),
+                              textColor: Colors.blue,
+                              child: Text('No', style: TextStyle(color: Colors.red[400],fontSize: 30),),
+                              borderSide: BorderSide(
+                                  color: Colors.red[400], style: BorderStyle.solid,
+                                  width: 1),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        );
+                      });
                 },
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(0,8,0,8),
@@ -519,7 +627,115 @@ class _PendingRidesState extends State<PendingRides> {
           }
           listOffers.add(
             GestureDetector(
-              onTap: (){
+              onTap: () async{
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return RichAlertDialog(
+                        alertTitle: richTitle("Cancel offer"),
+                        alertSubtitle: richSubtitle("Are you sure you want to cancel offer?"),
+                        alertType: RichAlertType.WARNING,
+                        dialogIcon: Icon(
+                          Icons.warning,
+                          color: Colors.red,
+                          size: 80,
+                        ),
+                        actions: <Widget>[
+                          new OutlineButton(
+                            shape: StadiumBorder(),
+                            textColor: Colors.blue,
+                            child: Text('Yes', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                            borderSide: BorderSide(
+                                color: Colors.indigo[400], style: BorderStyle.solid,
+                                width: 1),
+                            onPressed: () async{
+                              String url="http://3.81.22.120:3000/api/canceloffer";
+                              Map<String,String> body={
+                                "tofrom": offerObjects[i].toFrom,
+                                "offerid": offerObjects[i].tripId.toString(),
+                              };
+                              Response response =await post(url, headers:{'authorization': token},body:body);
+                              if(response.statusCode != 200)
+                              {
+                                Map data= jsonDecode(response.body);
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return RichAlertDialog(
+                                        alertTitle: richTitle("User error"),
+                                        alertSubtitle: Text(data['message'], maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                        alertType: RichAlertType.WARNING,
+                                        dialogIcon: Icon(
+                                          Icons.warning,
+                                          color: Colors.red,
+                                          size: 80,
+                                        ),
+                                        actions: <Widget>[
+                                          new OutlineButton(
+                                            shape: StadiumBorder(),
+                                            textColor: Colors.blue,
+                                            child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                            borderSide: BorderSide(
+                                                color: Colors.indigo[400], style: BorderStyle.solid,
+                                                width: 1),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                                Navigator.pop(context);
+                              }
+                              else{
+                                Navigator.pop(context);
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return RichAlertDialog(
+                                        alertTitle: richTitle("Done"),
+                                        alertSubtitle: richSubtitle("Offer is cancelled successfully"),
+                                        alertType: RichAlertType.SUCCESS,
+                                        dialogIcon: Icon(
+                                          Icons.check,
+                                          color: Colors.green,
+                                          size: 80,
+                                        ),
+                                        actions: <Widget>[
+                                          new OutlineButton(
+                                            shape: StadiumBorder(),
+                                            textColor: Colors.blue,
+                                            child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                            borderSide: BorderSide(
+                                                color: Colors.indigo[400], style: BorderStyle.solid,
+                                                width: 1),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              setState(() {
+                                              });
+                                              },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              }
+                            },
+                          ),
+                          SizedBox(width: 20,),
+                          new OutlineButton(
+                            shape: StadiumBorder(),
+                            textColor: Colors.blue,
+                            child: Text('No', style: TextStyle(color: Colors.red[400],fontSize: 30),),
+                            borderSide: BorderSide(
+                                color: Colors.red[400], style: BorderStyle.solid,
+                                width: 1),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      );
+                    });
               },
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(0,8,0,8),
