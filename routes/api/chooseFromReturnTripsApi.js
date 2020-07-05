@@ -18,9 +18,9 @@ var Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 process.env.SECRET_KEY = 'secret';
 
-const chooseFromAvailableRides = require('../../chooseFromReturnTrips');
+const chooseFromAvailableRides = require('../../modules/chooseFromReturnTrips');
 
-const ReturnTripMatchingFare = require('../../ReturnMatchingFareCalculator');
+const ReturnTripMatchingFare = require('../../modules/ReturnMatchingFareCalculator');
 
 
 const Trips = require('../../models/trips')

@@ -1,6 +1,6 @@
 module.exports = async function main() {
 
-    var f = require('./routes/api/cancelRiderFromApi').getters
+    var f = require('../routes/api/cancelRiderFromApi').getters
     obj = f();
 
     Riders = obj.Riders;
