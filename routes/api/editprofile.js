@@ -136,7 +136,7 @@ function validation(firstname, lastname, oldpassword, useroldpassword, newpasswo
         //Latitude validation
     }
     if (latitude !== "" && validChecks === true) {
-        loc = false
+        loc = true
         if (((latitude).toString()).trim().length === 0) {
             validChecks = false
             message = { error: "Latitude", message: "Latitude can't be empty" }
@@ -144,7 +144,7 @@ function validation(firstname, lastname, oldpassword, useroldpassword, newpasswo
     }
 
     if (longitude !== "" && validChecks === true) {
-        loc = false
+        loc = true
         if (((longitude).toString()).trim().length === 0) {
             validChecks = false
             message = { error: "Longitude", message: "Longitude can't be empty" }
@@ -209,12 +209,14 @@ router.post('/', async(req, res) => {
                         birthdate: req.body.birthdate || user.birthdate,
                         ridewith: req.body.ridewith || user.ridewith,
                         smoking: req.body.smoking || user.smoking,
-                        latitude: req.body.latitude || user.latitude,
-                        longitude: req.body.longitude || user.longitude
+                        latitude: parseFloat(req.body.latitude) || user.latitude,
+                        longitude: parseFloat(req.body.longitude) || user.longitude
                     }, {
                         where: { id: decoded.id }
-                    }).then(
-                        res.status(200).send({ message: "OK" })).catch(errHandler);
+                    }).then(user=>{
+                        let token = jwt.sign(user.dataValues, process.env.SECRET_KEY)
+                        res.status(200).send({ token:token, message: "OK" }) 
+                    }).catch(errHandler);
                 } else {
                     res.status(400).send(result.message)
                     res.end();
