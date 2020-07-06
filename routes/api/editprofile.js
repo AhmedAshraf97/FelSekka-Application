@@ -213,10 +213,9 @@ router.post('/', async(req, res) => {
                         longitude: parseFloat(req.body.longitude) || user.longitude
                     }, {
                         where: { id: decoded.id }
-                    }).then(user=>{
-                        let token = jwt.sign(user.dataValues, process.env.SECRET_KEY)
+                    }).then(
                         res.status(200).send({ token:token, message: "OK" }) 
-                    }).catch(errHandler);
+                    ).catch(errHandler);
                 } else {
                     res.status(400).send(result.message)
                     res.end();
