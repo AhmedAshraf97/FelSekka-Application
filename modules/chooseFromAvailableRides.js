@@ -149,7 +149,7 @@ async function MatchingReorder() {
 }
 
 module.exports = async function main() {
-    var f = require('./routes/api/chooseFromAvailableRidesApi').getters
+    var f = require('../routes/api/chooseFromAvailableRidesApi').getters
     obj = f();
 
     Riders = obj.Riders;

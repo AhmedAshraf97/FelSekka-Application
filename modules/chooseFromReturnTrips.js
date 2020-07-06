@@ -151,7 +151,7 @@ async function Reorder() {
 }
 
 module.exports = async function main() {
-    var f = require('./routes/api/chooseFromReturnTripsApi').getters
+    var f = require('../routes/api/chooseFromReturnTripsApi').getters
     obj = f();
 
     Riders = obj.Riders;
