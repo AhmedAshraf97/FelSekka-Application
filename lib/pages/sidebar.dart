@@ -427,11 +427,36 @@ class _SideBarState extends State<SideBar> with SingleTickerProviderStateMixin<S
                                   endIndent: 32,
                                 ),
                                 MenuItem(
-                                  icon: Icons.phone_in_talk,
+                                  icon: Icons.mail,
                                   title: "Contact us",
                                   onTap: () {
-                                    onIconPressed();
-                                    //BlocProvider.of<NavigationBloc>(context).add(NavigationEvents.MyOrdersClickedEvent);
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return RichAlertDialog(
+                                            alertTitle: richTitle("Contact us"),
+                                            alertSubtitle: Text("Please send an e-mail to felsekkacarpooling@gmail.com", maxLines: 1, style: TextStyle(color: Colors.grey[500], fontSize: 12),textAlign: TextAlign.center,),
+                                            alertType: RichAlertType.WARNING,
+                                            dialogIcon: Icon(
+                                              Icons.email,
+                                              color: Colors.grey[300],
+                                              size: 100,
+                                            ),
+                                            actions: <Widget>[
+                                              new OutlineButton(
+                                                shape: StadiumBorder(),
+                                                textColor: Colors.blue,
+                                                child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                                borderSide: BorderSide(
+                                                    color: Colors.indigo[400], style: BorderStyle.solid,
+                                                    width: 1),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        });
                                   },
                                 ),
                                 Divider(

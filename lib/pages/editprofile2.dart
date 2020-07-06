@@ -29,6 +29,7 @@ class EditProfile2 extends StatefulWidget with NavigationStates{
 }
 
 class _EditProfile2State extends State<EditProfile2> with SingleTickerProviderStateMixin{
+  DateTime dateTimeInitial;
   String selectedGender="female";
   String date = null; //To show date
   String dateSelected=""; //To sign up
@@ -117,6 +118,9 @@ class _EditProfile2State extends State<EditProfile2> with SingleTickerProviderSt
       longitude = userInfo['longitude'];
       username = userInfo['username'];
       datetoshow = DateFormat('dd-MM-yyyy').format(DateTime.parse(birthdate));
+      setState(() {
+        dateTimeInitial = DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.parse(birthdate)));
+      });
       setState(() {
         if(ridewithget=="female")
         {
@@ -244,7 +248,7 @@ class _EditProfile2State extends State<EditProfile2> with SingleTickerProviderSt
                         height: 80,
                         child: CupertinoDatePicker(
                           mode: CupertinoDatePickerMode.date,
-                          initialDateTime: DateTime.parse(birthdate),
+                          initialDateTime: dateTimeInitial,
                           onDateTimeChanged: (DateTime newDateTime) {
                             date = DateFormat('dd-MM-yyyy').format(newDateTime);
                             setState(() {
