@@ -161,7 +161,7 @@ router.post('/', async(req, res) => {
 
                 driver = { fare: 0, distance: parseFloat(req.body.distance), time: parseFloat(req.body.time) }
 
-                var p = await TripActualFare('./routes/api/endDriverTripTo');
+                var p = await TripActualFare('../routes/api/endDriverTripTo');
 
                 await DriverDB.update({
                     actualarrivaltime: req.body.actualarrivaltime,

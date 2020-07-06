@@ -41,14 +41,14 @@ class Rider {
         this.TimeToOrganizationMinutes = TimeToOrganizationMinutes;
         this.TrustedDrivers = []
         this.UnTrustedDrivers = [] //todo:block
-        this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
-        this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
+        this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY;
+        this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY;
 
-        this.MaxDistanceToNormalizeDrivers = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
-        this.MaxDurationToNormalizeDrivers = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
+        this.MaxDistanceToNormalizeDrivers = Number.NEGATIVE_INFINITY;
+        this.MaxDurationToNormalizeDrivers = Number.NEGATIVE_INFINITY;
 
-        this.MaxDistanceToNormalizeRiders = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
-        this.MaxDurationToNormalizeRiders = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
+        this.MaxDistanceToNormalizeRiders = Number.NEGATIVE_INFINITY;
+        this.MaxDurationToNormalizeRiders = Number.NEGATIVE_INFINITY;
 
 
         this.ExpectedFare = 0
@@ -79,8 +79,8 @@ class Driver {
         this.capacity = capacity
         this.MaxDistance = 1.5 * DistanceToOrganization //removeee
 
-        this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
-        this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
+        this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY;
+        this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY;
         this.MaxEarliestDiffToNormalize = Number.NEGATIVE_INFINITY;
 
         //Timing
@@ -182,8 +182,6 @@ const errHandler = err => {
     console.error("Error: ", err);
 };
 router.post('/', async(req, res) => {
-
-    //    console.log(" Fil awal ", JSON.parse(JSON.stringify(Riders)))
 
     var DRDistanceDurationValue = []
     var RRDistanceDurationValue = []
@@ -454,7 +452,7 @@ router.post('/', async(req, res) => {
                 var date1 = new Date();
 
                 var z = await matching();
-                var c = await matchingfare('./routes/api/matchingApi');
+                var c = await matchingfare('../routes/api/matchingApi');
 
                 var date2 = new Date();
                 var diff = date2 - date1;

@@ -275,19 +275,18 @@ router.post('/', async(req, res) => {
                     }
                 });
             }).catch(errHandler);
-            await orgUser.findOne({
+            const orguser = await orgUser.findOne({
                 where: {
                     userid: decoded.id,
                     orgid: req.body.fromorgid,
                     status: "existing"
                 }
-            }).then(orguser => {
-                if (!orguser) {
-                    existinorg = false;
-                } else {
-                    existinorg = true;
-                }
             }).catch(errHandler)
+            if (!orguser) {
+                existinorg = false;
+            } else {
+                existinorg = true;
+            }
             const rideData = {
                 userid: decoded.id,
                 tolatitude: decoded.latitude,
@@ -307,9 +306,25 @@ router.post('/', async(req, res) => {
             } else if (error) {
                 res.status(400).send({ error: "error", message: "You can't offer two rides at the same time" });
             } else {
-                await offerRideFrom.create(rideData).then(ride => {
-                    res.status(200).send({ message: "Offer is made successfully" });
-                }).catch(errHandler);
+                var datee1 = new Date(req.body.date.toString() + " " + req.body.departuretime.toString());
+                datee1.setMinutes(datee1.getMinutes() + Math.max(2 * parseFloat(orguser.timefromorg), 30))
+                var latestDate = new Date(req.body.date + " " + req.body.latesttime)
+                var d3 = new Date(req.body.date + " " + req.body.departuretime);
+                d3.setMinutes(d3.getMinutes() + Math.max(parseFloat(orguser.timefromorg), 15))
+
+                if (latestDate < d3 || latestDate > datee1) {
+                    res.status(400).send({
+                        error: "error",
+                        message: "Valid latest drop-off is between:" + d3.getHours() +
+                            ":" + d3.getMinutes() + ":" + d3.getSeconds() +
+                            " and " + datee1.getHours() +
+                            ":" + datee1.getMinutes() + ":" + datee1.getSeconds()
+                    });
+                } else {
+                    await offerRideFrom.create(rideData).then(ride => {
+                        res.status(200).send({ message: "Offer is made successfully" });
+                    }).catch(errHandler);
+                }
             }
         } else {
             res.status(400).send(result.message)

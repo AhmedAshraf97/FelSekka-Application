@@ -42,8 +42,8 @@ class Rider {
         this.TimeFromOrganizationMinutes = TimeFromOrganizationMinutes;
         this.TrustedDrivers = []
         this.UnTrustedDrivers = [] //todo:block
-        this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
-        this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
+        this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY;
+        this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY;
 
         this.MaxDistanceToNormalizeRiders = Number.NEGATIVE_INFINITY;
         this.MaxDurationToNormalizeRiders = Number.NEGATIVE_INFINITY;
@@ -80,8 +80,8 @@ class Driver {
         this.capacity = capacity
         this.MaxDistance = 1.5 * DistanceFromOrganization //removeee
 
-        this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max distance from rider to all other riders
-        this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY; //get from database ,, max duration from rider to all other riders
+        this.MaxDistanceToNormalize = Number.NEGATIVE_INFINITY;
+        this.MaxDurationToNormalize = Number.NEGATIVE_INFINITY;
         this.MaxDropoffDiffToNormalize = Number.NEGATIVE_INFINITY;
         this.status = 0
         this.countDrivers = 0
@@ -446,8 +446,8 @@ router.post('/', async(req, res) => {
 
 
 
-                var z = await ReturnTripMatching('./routes/api/ReturnTripMatchingApi');
-                var p = await ReturnTripMatchingFare('./routes/api/ReturnTripMatchingApi');
+                var z = await ReturnTripMatching('../routes/api/ReturnTripMatchingApi');
+                var p = await ReturnTripMatchingFare('../routes/api/ReturnTripMatchingApi');
 
                 var OffersToupdate = []
                 var RequestsToupdate = []
