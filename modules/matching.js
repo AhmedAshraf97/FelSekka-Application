@@ -1,6 +1,6 @@
 const graphlib = require('graphlib');
-const ksp = require('k-shortest-path');
-//const ksp = require('../FelSekka-Application/modules/yenKSP')
+//const ksp = require('k-shortest-path');
+const ksp = require('../modules/yenKSP')
 var Combinatorics = require('js-combinatorics');
 var Riders;
 var Drivers
@@ -120,25 +120,24 @@ async function StepByStepReorder(AvailableDriver) {
     }
 
 
-    var oldDuration = AvailableDriver.TotalDurationTaken;
 
     var delta = Math.max(0.25 * AvailableDriver.MaxDuration, 15)
 
-    //  var response = ksp.yenKSP(g, DriverIDstr, OrganizationID, kValue, AvailableDriver.TotalDurationTaken + delta, AvailableDriver.MaxDuration);
+    var response = ksp.yenKSP(g, DriverIDstr, OrganizationID, kValue, AvailableDriver.TotalDurationTaken + delta, AvailableDriver.MaxDuration);
 
-    //  filteredresponse = response.filter(p => (p.edges.length === n + 1))
-    var response = ksp.ksp(g, DriverIDstr, OrganizationID, kValue);
-    filteredresponse = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.MaxDuration)
+    filteredresponse = response.filter(p => (p.edges.length === n + 1))
+        //    var oldDuration = AvailableDriver.TotalDurationTaken;
 
+    //     var response = ksp.ksp(g, DriverIDstr, OrganizationID, kValue);
+    //     filteredresponse = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.MaxDuration)
 
-    var filterghaby = filteredresponse.filter(p => p.totalCost > AvailableDriver.TotalDurationTaken + delta)
+    //     var filterghaby = filteredresponse.filter(p => p.totalCost > AvailableDriver.TotalDurationTaken + delta)
 
-    for (var f = 0; f < filterghaby.length; f++) {
-        var Ratio = oldDuration / filterghaby[f].totalCost
-        var x = 5;
-    }
-
-    filteredresponse = filteredresponse.filter(p => p.totalCost <= AvailableDriver.TotalDurationTaken + delta)
+    //     for (var f = 0; f < filterghaby.length; f++) {
+    //         var Ratio = oldDuration / filterghaby[f].totalCost
+    //         var x = 5;
+    //     }
+    //     filteredresponse = filteredresponse.filter(p => p.totalCost <= AvailableDriver.TotalDurationTaken + delta)
 
     var ValidDuration = -1;
 
@@ -152,13 +151,10 @@ async function StepByStepReorder(AvailableDriver) {
         ValidDuration = await SetPickUpTime(AvailableDriver)
 
         if (ValidDuration != -1) {
-            var Ratio = oldDuration / ValidDuration;
-            var x = 5;
             break;
         }
 
     }
-
 
     return Promise.resolve(ValidDuration).catch(err => {
         console.log(err)
@@ -245,7 +241,7 @@ module.exports = async function main() {
                     if (RiderObj.isAssigned === false) {
 
                         var WeightFunction = -0.45 * Duration / Drivers[j].MaxDurationToNormalize - 0.25 * Distance / Drivers[j].MaxDistanceToNormalize +
-                            0.3 * Trust -
+                            0.1 * Trust -
                             0.04 * diff_minutes(RiderObj.ArrivalTime, Drivers[j].ArrivalTime) / 30;
 
                         if (diff_minutes(RiderObj.EarliestPickup, Drivers[j].EarliestStartTime) > 0) {
@@ -295,7 +291,7 @@ module.exports = async function main() {
 
                             var WeightFunctionDriver = -0.45 * DurationFromRider / CurrentRider.MaxDurationToNormalizeDrivers -
                                 0.25 * DistanceFromRider / CurrentRider.MaxDistanceToNormalizeDrivers +
-                                0.3 * Trust -
+                                0.1 * Trust -
                                 0.04 * diff_minutes(CurrentRider.ArrivalTime, CurrentDriver.ArrivalTime) / 30 +
                                 0.1 * NumberofEmptyPlaces / CurrentDriver.capacity
 
@@ -303,7 +299,7 @@ module.exports = async function main() {
                         } else {
                             var WeightFunctionDriver = -0.45 * DurationFromDriver / CurrentRider.MaxDurationToNormalizeDrivers -
                                 0.25 * DistanceFromDriver / CurrentRider.MaxDistanceToNormalizeDrivers +
-                                0.3 * Trust -
+                                0.1 * Trust -
                                 0.04 * diff_minutes(CurrentRider.ArrivalTime, CurrentDriver.ArrivalTime) / 30 +
                                 0.1 * NumberofEmptyPlaces / CurrentDriver.capacity
 
@@ -409,7 +405,7 @@ module.exports = async function main() {
 
 
                     if (RiderObj.isAssigned === false) {
-                        var WeightFunction = -0.45 * Duration / Riders[indexLastRider].MaxDurationToNormalize - 0.25 * Distance / Riders[indexLastRider].MaxDistanceToNormalize + 0.3 * Trust -
+                        var WeightFunction = -0.45 * Duration / Riders[indexLastRider].MaxDurationToNormalize - 0.25 * Distance / Riders[indexLastRider].MaxDistanceToNormalize + 0.1 * Trust -
                             0.04 * diff_minutes(RiderObj.ArrivalTime, Drivers[j].ArrivalTime) / 30
                         WeightArray.push(WeightFunction)
                         WeightIndex.push(RiderID)
@@ -465,7 +461,7 @@ module.exports = async function main() {
 
                         var WeightFunctionRider = -0.45 * DurationFromRider / CurrentRider.MaxDurationToNormalizeRiders -
                             0.25 * DistanceFromRider / CurrentRider.MaxDistanceToNormalizeRiders +
-                            0.3 * Trust -
+                            0.1 * Trust -
                             0.04 * diff_minutes(CurrentRider.ArrivalTime, DriverOfRiderToCheck.ArrivalTime) / 30 +
                             0.1 * NumberofEmptyPlaces / DriverOfRiderToCheck.capacity
 

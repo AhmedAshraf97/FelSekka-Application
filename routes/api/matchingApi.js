@@ -30,7 +30,7 @@ class values {
 
 class Rider {
     constructor(ID, DistanceToOrganization, ArrivalTime, TimeToOrganizationMinutes,
-        EarliestPickup, ridewith, smoking, toorgid, date, requestid) {
+        EarliestPickup, ridewith, smoking, toorgid, date, requestid, gender) {
 
         this.userID = ID
         this.ID = requestid;
@@ -50,7 +50,7 @@ class Rider {
         this.MaxDistanceToNormalizeRiders = Number.NEGATIVE_INFINITY;
         this.MaxDurationToNormalizeRiders = Number.NEGATIVE_INFINITY;
 
-
+        this.gender = gender
         this.ExpectedFare = 0
         this.EarliestPickup = EarliestPickup
             //Timing
@@ -203,17 +203,6 @@ router.post('/', async(req, res) => {
         }
 
 
-        const offerusers = await User.findAll({
-            where: {
-                status: "existing",
-                id: {
-                    [Op.in]: OffersArray
-                }
-            }
-
-        }).catch(errHandler)
-
-
         const OrgUsersObject = await OrgUser.findAll({
             where: {
                 status: "existing",
@@ -224,7 +213,6 @@ router.post('/', async(req, res) => {
 
         }).catch(errHandler)
 
-        var offerscount = 0
         for (offer of offers) {
 
             const orguser = OrgUsersObject.find(n => n.orgid === offer.toorgid && n.userid === offer.userid)
@@ -237,10 +225,9 @@ router.post('/', async(req, res) => {
                 offer.smoking,
                 offer.toorgid,
                 new Date(offer.date),
-                offer.id, parseFloat(offer.fromlatitude), parseFloat(offer.fromlongitude), offerusers[offerscount].gender)
+                offer.id, parseFloat(offer.fromlatitude), parseFloat(offer.fromlongitude))
 
             Drivers.push(driver)
-            offerscount++;
         }
         const requests = await Request.findAll({
             where: {
@@ -265,18 +252,6 @@ router.post('/', async(req, res) => {
                 }
 
             }).catch(errHandler)
-
-            const requestusers = await User.findAll({
-                where: {
-                    status: "existing",
-                    id: {
-                        [Op.in]: RequestsArray
-                    }
-                }
-
-            }).catch(errHandler)
-
-            var requestscount = 0;
             for (request of requests) {
 
                 const orguser = OrgUsersObjectReq.find(n => n.orgid === request.toorgid && n.userid === request.userid)
@@ -290,8 +265,7 @@ router.post('/', async(req, res) => {
                     request.smoking,
                     request.toorgid,
                     new Date(request.date),
-                    request.id, requestusers[requestscount].gender)
-                requestscount++;
+                    request.id)
 
                 Riders.push(rider);
             }
@@ -310,14 +284,15 @@ router.post('/', async(req, res) => {
 
             }).catch(errHandler)
 
-
             if (Drivers.length > 0) {
                 for (driver in Drivers) {
                     for (rider in Riders) {
-                        if (Riders[rider].toorgid === Drivers[driver].toorgid && Riders[rider].gender === Drivers[driver].ridewith &&
+
+                        if (Riders[rider].toorgid === Drivers[driver].toorgid &&
                             Riders[rider].smoking === Drivers[driver].smoking &&
                             diff_minutes((Riders[rider].ArrivalTime), (Drivers[driver].ArrivalTime)) >= 0 &&
-                            diff_minutes((Riders[rider].ArrivalTime), (Drivers[driver].ArrivalTime)) <= 30
+                            diff_minutes((Riders[rider].ArrivalTime), (Drivers[driver].ArrivalTime)) <= 30 &&
+                            (Riders[rider].ridewith === Drivers[driver].ridewith)
 
                         ) {
                             const FromDriverToRider = betweenUsersObject.find(n => n.user1id === Drivers[driver].userID && n.user2id === Riders[rider].userID)
@@ -347,8 +322,10 @@ router.post('/', async(req, res) => {
                 if (Riders.length > 0) {
                     for (riderFrom in Riders) {
                         for (riderTo in Riders) {
+
+
                             if (Riders[riderFrom].userID !== Riders[riderTo].userID && Riders[riderFrom].toorgid === Riders[riderTo].toorgid && Riders[riderFrom].ridewith === Riders[riderTo].ridewith &&
-                                Riders[riderFrom].smoking === Riders[riderTo].smoking &&
+                                Riders[riderFrom].smoking === Riders[riderTo].smoking && (Riders[riderFrom].ridewith === Riders[riderTo].ridewith) &&
                                 diff_minutes((Riders[riderFrom].ArrivalTime), (Riders[riderTo].ArrivalTime)) >= -30 &&
                                 diff_minutes((Riders[riderFrom].ArrivalTime), (Riders[riderTo].ArrivalTime)) <= 30
 
@@ -362,6 +339,7 @@ router.post('/', async(req, res) => {
                                 }
 
                             }
+
 
                         }
 
