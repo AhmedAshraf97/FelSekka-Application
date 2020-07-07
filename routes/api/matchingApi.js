@@ -66,11 +66,10 @@ class Rider {
 };
 class Driver {
     constructor(ID, DistanceToOrganization, ArrivalTime, TimeToOrganizationMinutes, capacity,
-        EarliestStartTime, ridewith, smoking, toorgid, date, offerid, latitude, longitude, gender) {
+        EarliestStartTime, ridewith, smoking, toorgid, date, offerid, latitude, longitude) {
 
         this.userID = ID
         this.ID = offerid;
-        this.gender = gender
         this.AssignedRiders = [];
         this.TotalDistanceCoveredToDestination = 0;
         this.TotalDurationTaken = 0;
@@ -202,7 +201,6 @@ router.post('/', async(req, res) => {
             OffersArray.push(offer.userid)
         }
 
-
         const OrgUsersObject = await OrgUser.findAll({
             where: {
                 status: "existing",
@@ -287,8 +285,7 @@ router.post('/', async(req, res) => {
             if (Drivers.length > 0) {
                 for (driver in Drivers) {
                     for (rider in Riders) {
-
-                        if (Riders[rider].toorgid === Drivers[driver].toorgid &&
+                        if (Riders[rider].toorgid === Drivers[driver].toorgid && Riders[rider].ridewith === Drivers[driver].ridewith &&
                             Riders[rider].smoking === Drivers[driver].smoking &&
                             diff_minutes((Riders[rider].ArrivalTime), (Drivers[driver].ArrivalTime)) >= 0 &&
                             diff_minutes((Riders[rider].ArrivalTime), (Drivers[driver].ArrivalTime)) <= 30 &&
