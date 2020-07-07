@@ -1,6 +1,6 @@
 const graphlib = require('graphlib');
-const ksp = require('k-shortest-path');
-//const ksp = require('../FelSekka-Application/modules/yenKSP')
+//const ksp = require('k-shortest-path');
+const ksp = require('../modules/yenKSP')
 var Combinatorics = require('js-combinatorics');
 
 var Riders;
@@ -133,12 +133,12 @@ async function StepByStepReorder(AvailableDriver) {
 
 
     var delta = Math.max(0.25 * AvailableDriver.MaxDuration, 15)
-    var response = ksp.ksp(g, OrganizationID, DriverIDstr, kValue);
+        //    var response = ksp.ksp(g, OrganizationID, DriverIDstr, kValue);
+        //response = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.TotalDurationTaken + delta && p.totalCost <= AvailableDriver.MaxDuration)
 
-    // var response = ksp.yenKSP(g, OrganizationID, DriverIDstr, kValue, AvailableDriver.TotalDurationTaken + delta, AvailableDriver.MaxDuration);
+    var response = ksp.yenKSP(g, OrganizationID, DriverIDstr, kValue, AvailableDriver.TotalDurationTaken + delta, AvailableDriver.MaxDuration);
+    response = response.filter(p => (p.edges.length === n + 1))
 
-    response = response.filter(p => (p.edges.length === n + 1) && p.totalCost <= AvailableDriver.TotalDurationTaken + delta && p.totalCost <= AvailableDriver.MaxDuration)
-        //  response = response.filter(p => (p.edges.length === n + 1))
     var ValidDuration = -1
 
     for (var d = 0; d < response.length; d++) {
@@ -232,7 +232,7 @@ module.exports = async function main(s) {
 
                     if (RiderObj.isAssigned === false) {
 
-                        var WeightFunction = -0.45 * Duration / Drivers[j].MaxDurationToNormalize - 0.25 * Distance / Drivers[j].MaxDistanceToNormalize + 0.3 * Trust -
+                        var WeightFunction = -0.45 * Duration / Drivers[j].MaxDurationToNormalize - 0.25 * Distance / Drivers[j].MaxDistanceToNormalize + 0.1 * Trust -
                             0.04 * diff_minutes(Drivers[j].PoolStartTime, RiderObj.DepartureTime) / 30;
 
                         if (diff_minutes(Drivers[j].LatestDropOff, RiderObj.LatestDropOff) > 0) {
@@ -282,7 +282,7 @@ module.exports = async function main(s) {
 
                             var WeightFunctionDriver = -0.45 * DurationToRider / CurrentRider.MaxDurationToNormalizeDrivers -
                                 0.25 * DistanceToRider / CurrentRider.MaxDistanceToNormalizeDrivers +
-                                0.3 * Trust -
+                                0.1 * Trust -
                                 0.04 * diff_minutes(CurrentDriver.PoolStartTime, CurrentRider.DepartureTime) / 30 +
                                 0.1 * NumberofEmptyPlaces / CurrentDriver.capacity
 
@@ -292,7 +292,7 @@ module.exports = async function main(s) {
 
                             var WeightFunctionDriver = -0.45 * DurationToDriver / CurrentRider.MaxDurationToNormalizeDrivers -
                                 0.25 * DistanceToDriver / CurrentRider.MaxDistanceToNormalizeDrivers +
-                                0.3 * Trust -
+                                0.1 * Trust -
                                 0.04 * diff_minutes(CurrentDriver.PoolStartTime, CurrentRider.DepartureTime) / 30 +
                                 0.1 * NumberofEmptyPlaces / CurrentDriver.capacity
                         }
@@ -397,7 +397,7 @@ module.exports = async function main(s) {
 
                     if (RiderObj.isAssigned === false) {
 
-                        var WeightFunction = -0.45 * Duration / Riders[indexLastRider].MaxDurationToNormalize - 0.25 * Distance / Riders[indexLastRider].MaxDistanceToNormalize + 0.3 * Trust -
+                        var WeightFunction = -0.45 * Duration / Riders[indexLastRider].MaxDurationToNormalize - 0.25 * Distance / Riders[indexLastRider].MaxDistanceToNormalize + 0.1 * Trust -
                             0.04 * diff_minutes(Drivers[j].PoolStartTime, RiderObj.DepartureTime) / 30
                         WeightArray.push(WeightFunction)
                         WeightIndex.push(RiderID)
@@ -450,7 +450,7 @@ module.exports = async function main(s) {
 
                         var WeightFunctionRider = -0.45 * DurationToRider / CurrentRider.MaxDurationToNormalizeRiders -
                             0.25 * DistanceToRider / CurrentRider.MaxDistanceToNormalizeRiders +
-                            0.3 * Trust -
+                            0.1 * Trust -
                             0.04 * diff_minutes(DriverOfRiderToCheck.PoolStartTime, RiderToCheckobj.DepartureTime) / 30 +
                             0.1 * NumberofEmptyPlaces / DriverOfRiderToCheck.capacity
 

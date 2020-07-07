@@ -100,72 +100,64 @@ app.use('/api/showoffers', require('./routes/api/show_offers'))
 app.use('/api/showreview', require('./routes/api/showReview'));
 app.use('/api/showrating', require('./routes/api/showRating'));
 app.use('/api/showtrust', require('./routes/api/ShowTrust'));
+
+app.use('/api/scheduler', require('./routes/api/scheduler'));
+
 var schedule = require('node-schedule');
 var request = require('request');
 
-/*
-var jsontosend = {
-    "latesttime": "05:00:00",
-    "smoking": "no",
-    "ridewith": "female",
-    "tripid": 121
-}
- */
-/* //ID = 45
-var choose1 = schedule.scheduleJob('50 * * * * *', function() {
+var cleanrequestsoffers = schedule.scheduleJob('* * 20 * * *', function() {
     request.post({
-        url: 'http://localhost:3000/api/chooseFromReturnTripsApi',
-        json: true,
-        body: jsontosend,
-        headers: {
-            'authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDUsImZpcnN0bmFtZSI6ImRpbmEiLCJsYXN0bmFtZSI6IndhbGlkIiwicGhvbmVudW1iZXIiOiIwMTExMjIxMzA1NyIsInBhc3N3b3JkIjoiJDJiJDEwJDFvSXVCeUU5YnVDeGdBSlM4NzFoNHVqeFJOT0p3eElsajhCWmVDTTJNdHFZZ1dTS3lmUDN1IiwiZ2VuZGVyIjoiZmVtYWxlIiwiYmlydGhkYXRlIjoiMTk5Ny0xMC0wNSIsInBob3RvIjpudWxsLCJyaWRld2l0aCI6ImZlbWFsZSIsInNtb2tpbmciOiJubyIsInJhdGluZyI6IjUuMDAwIiwic3RhdHVzIjoiZXhpc3RpbmciLCJlbWFpbCI6ImRpbmEud2FsaWQ5N0Bob3RtYWlsLmNvbSIsImxhdGl0dWRlIjoiMzEuMzA2MTg3MDAiLCJsb25naXR1ZGUiOiIyOS45ODQxNjkwMCIsInVzZXJuYW1lIjoiZGluYXdhbGlkIiwiY3JlYXRlZEF0IjoiMjAyMC0wNC0yMlQwMzoxMTo1Ni4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMC0wNC0yMlQwMzoxMTo1Ni4wMDBaIiwiaWF0IjoxNTg5Mjk5NTk5fQ.HzSCTpGqjzaCh64iKMKFepngL_7Li-i0f-dZIF8dgAs'
-        }
+        url: 'http://localhost:3000/api/cleanrequestsoffers'
+    }, function(err, httpResponse, body) {
+        console.log(body);
+    })
+
+});
+
+var matchingschedules1 = schedule.scheduleJob('* * 21 * * *', function() {
+    request.post({
+        url: 'http://localhost:3000/api/scheduler'
+    }, function(err, httpResponse, body) {
+        console.log(body);
+    })
+
+});
+
+
+var matchingschedules2 = schedule.scheduleJob('* * 6 * * *', function() {
+    request.post({
+        url: 'http://localhost:3000/api/scheduler'
+    }, function(err, httpResponse, body) {
+        console.log(body);
+    })
+
+});
+
+var matchingschedules3 = schedule.scheduleJob('* * 12 * * *', function() {
+    request.post({
+        url: 'http://localhost:3000/api/scheduler'
+    }, function(err, httpResponse, body) {
+        console.log(body);
+    })
+
+});
+
+var matchingschedules4 = schedule.scheduleJob('* * 15 * * *', function() {
+    request.post({
+        url: 'http://localhost:3000/api/scheduler'
     }, function(err, httpResponse, body) {
         console.log(body);
     })
 });
 
-//ID = 52
-var choose2 = schedule.scheduleJob('50 * * * * *', function() {
+var matchingschedules5 = schedule.scheduleJob('* * 18 * * *', function() {
     request.post({
-        url: 'http://localhost:3000/api/chooseFromReturnTripsApi',
-        json: true,
-        body: jsontosend,
-        headers: {
-            'authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTIsImZpcnN0bmFtZSI6Im5hcmltYW4iLCJsYXN0bmFtZSI6InJlZGEiLCJwaG9uZW51bWJlciI6IjAxMTQ1Nzg1NjIyIiwicGFzc3dvcmQiOiIkMmIkMTAkVEg4N2NzLmVUNzdrcURaQ2JiVFlOT3VuUTl6QlFLd3lSSjhudGFXeEV3TlBQLkJqQUd1bGEiLCJnZW5kZXIiOiJmZW1hbGUiLCJiaXJ0aGRhdGUiOiIxOTk3LTAyLTE0IiwicGhvdG8iOm51bGwsInJpZGV3aXRoIjoiZmVtYWxlIiwic21va2luZyI6Im5vIiwicmF0aW5nIjoiNS4wMDAiLCJzdGF0dXMiOiJleGlzdGluZyIsImVtYWlsIjoibmFyaW1hbkBob3RtYWlsLmNvbSIsImxhdGl0dWRlIjoiMzEuNTU1NjI1MDAiLCJsb25naXR1ZGUiOiIyOS41NTY1NjAwMCIsInVzZXJuYW1lIjoibmFyaW1hbiIsImNyZWF0ZWRBdCI6IjIwMjAtMDQtMjJUMjI6Mjk6NDcuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjAtMDQtMjJUMjI6Mjk6NDcuMDAwWiIsImlhdCI6MTU4OTI5ODQ1NH0.lDVPUrJ8DHwLjBAB7QqOYzjLwwSzBuJU2-2rax_orvY'
-        }
+        url: 'http://localhost:3000/api/scheduler'
     }, function(err, httpResponse, body) {
         console.log(body);
     })
 });
- */
-
-
-
-//////////////////////////////////////////////
-
-// var matchingSchedule = schedule.scheduleJob('50 * * * * *', function() {
-//     request.post({
-//         url: 'http://localhost:3000/api/matching'
-//     }, function(err, httpResponse, body) {
-//         console.log(body);
-//     })
-
-// });
-
-// var ReturnmatchingSchedule = schedule.scheduleJob('50 * * * * *', function() {
-//     request.post({
-//         url: 'http://localhost:3000/api/ReturnTripMatch'
-//     }, function(err, httpResponse, body) {
-//         console.log(body);
-//     })
-
-// });
-
-
-
-
-
 
 
 module.exports = app

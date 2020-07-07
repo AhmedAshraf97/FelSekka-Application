@@ -16,6 +16,7 @@ const Op = Sequelize.Op;
 var request = require('request-promise');
 const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
 
+let loc = false
 function validation(firstname, lastname, oldpassword, useroldpassword, newpassword,
     confirmpassword, gender, birthdate, ridewith, smoking, latitude, longitude) {
     var validChecks = true;
@@ -153,6 +154,7 @@ function validation(firstname, lastname, oldpassword, useroldpassword, newpasswo
 
     return { validChecks: validChecks, message: message }
 }
+
 const errHandler = err => {
     //Catch and log any error.
     console.error("Error: ", err);
@@ -168,7 +170,7 @@ router.post('/', async(req, res) => {
         res.end();
     }
 
-    let loc = false
+   
 
     await ExpiredToken.findOne({
         where: {
