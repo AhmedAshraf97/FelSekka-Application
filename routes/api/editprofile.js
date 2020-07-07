@@ -216,7 +216,7 @@ router.post('/', async(req, res) => {
                     }, {
                         where: { id: decoded.id }
                     }).then(
-                        res.status(200).send({ token:token, message: "OK" }) 
+                        res.status(200).send({  message: "OK" }) 
                     ).catch(errHandler);
                 } else {
                     res.status(400).send(result.message)
@@ -239,7 +239,7 @@ router.post('/', async(req, res) => {
                 }
             }).catch(errHandler);
 
-            allUsers.forEach(async(user) => {
+            for(user of allUsers) {
                 var x = req.body.latitude.toString();
                 var y = req.body.longitude.toString();
                 var z = user.latitude;
@@ -279,7 +279,7 @@ router.post('/', async(req, res) => {
                 }, {
                     where: { user1id: decoded.id, user2id: user.id }
                 }).catch(errHandler);
-            });
+            }
 
 
             const orgUsers = await orgUser.findAll({
@@ -289,7 +289,7 @@ router.post('/', async(req, res) => {
             }).catch(errHandler);
 
 
-            orgUsers.forEach(async(user) => {
+           for (user of orgUsers) {
 
                 await Organization.findOne({ where: { id: user.orgid, status: 'existing' } }).then(org => {
                     orglatitude = org.latitude;
@@ -331,7 +331,7 @@ router.post('/', async(req, res) => {
                 }, {
                     where: { userid: decoded.id, orgid: orgid, status: 'existing' }
                 }).catch(errHandler);
-            })
+            }
         }
     }
 })
