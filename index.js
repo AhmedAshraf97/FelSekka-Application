@@ -106,58 +106,58 @@ app.use('/api/scheduler', require('./routes/api/scheduler'));
 var schedule = require('node-schedule');
 var request = require('request');
 
-var cleanrequestsoffers = schedule.scheduleJob('* * 20 * * *', function() {
-    request.post({
-        url: 'http://localhost:3000/api/cleanrequestsoffers'
-    }, function(err, httpResponse, body) {
-        console.log(body);
-    })
+// var cleanrequestsoffers = schedule.scheduleJob('* * 20 * * *', function() {
+//     request.post({
+//         url: 'http://localhost:3000/api/cleanrequestsoffers'
+//     }, function(err, httpResponse, body) {
+//         console.log(body);
+//     })
 
-});
+// });
 
-var matchingschedules1 = schedule.scheduleJob('* * 21 * * *', function() {
-    request.post({
-        url: 'http://localhost:3000/api/scheduler'
-    }, function(err, httpResponse, body) {
-        console.log(body);
-    })
+// var matchingschedules1 = schedule.scheduleJob('* * 21 * * *', function() {
+//     request.post({
+//         url: 'http://localhost:3000/api/scheduler'
+//     }, function(err, httpResponse, body) {
+//         console.log(body);
+//     })
 
-});
+// });
 
 
-var matchingschedules2 = schedule.scheduleJob('* * 6 * * *', function() {
-    request.post({
-        url: 'http://localhost:3000/api/scheduler'
-    }, function(err, httpResponse, body) {
-        console.log(body);
-    })
+// var matchingschedules2 = schedule.scheduleJob('* * 6 * * *', function() {
+//     request.post({
+//         url: 'http://localhost:3000/api/scheduler'
+//     }, function(err, httpResponse, body) {
+//         console.log(body);
+//     })
 
-});
+// });
 
-var matchingschedules3 = schedule.scheduleJob('* * 12 * * *', function() {
-    request.post({
-        url: 'http://localhost:3000/api/scheduler'
-    }, function(err, httpResponse, body) {
-        console.log(body);
-    })
+// var matchingschedules3 = schedule.scheduleJob('* * 12 * * *', function() {
+//     request.post({
+//         url: 'http://localhost:3000/api/scheduler'
+//     }, function(err, httpResponse, body) {
+//         console.log(body);
+//     })
 
-});
+// });
 
-var matchingschedules4 = schedule.scheduleJob('* * 15 * * *', function() {
-    request.post({
-        url: 'http://localhost:3000/api/scheduler'
-    }, function(err, httpResponse, body) {
-        console.log(body);
-    })
-});
+// var matchingschedules4 = schedule.scheduleJob('* * 15 * * *', function() {
+//     request.post({
+//         url: 'http://localhost:3000/api/scheduler'
+//     }, function(err, httpResponse, body) {
+//         console.log(body);
+//     })
+// });
 
-var matchingschedules5 = schedule.scheduleJob('* * 18 * * *', function() {
-    request.post({
-        url: 'http://localhost:3000/api/scheduler'
-    }, function(err, httpResponse, body) {
-        console.log(body);
-    })
-});
+// var matchingschedules5 = schedule.scheduleJob('* * 18 * * *', function() {
+//     request.post({
+//         url: 'http://localhost:3000/api/scheduler'
+//     }, function(err, httpResponse, body) {
+//         console.log(body);
+//     })
+// });
 
 
 module.exports = app

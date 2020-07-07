@@ -512,8 +512,6 @@ module.exports = async function main() {
                             var ChosenMaxRider = WeightIndexForRiders[WeightArrayForRiders.indexOf(Math.max.apply(Math, WeightArrayForRiders))]
                             var isExist = Drivers[j].AssignedRiders.find(n => n === ChosenMaxRider)
 
-
-
                             if (isExist === undefined) {
                                 Drivers[j].lastChosenRider = ChosenRiderID;
                                 ChosenRiderID = -1;
