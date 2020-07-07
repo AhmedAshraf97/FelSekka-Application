@@ -321,7 +321,7 @@ router.post('/', async(req, res) => {
                         for (riderTo in Riders) {
 
 
-                            if (Riders[riderFrom].userID !== Riders[riderTo].userID && Riders[riderFrom].toorgid === Riders[riderTo].toorgid && Riders[riderFrom].ridewith === Riders[riderTo].ridewith &&
+                            if (Riders[riderFrom].userID !== Riders[riderTo].userID && Riders[riderFrom].toorgid === Riders[riderTo].toorgid &&
                                 Riders[riderFrom].smoking === Riders[riderTo].smoking && (Riders[riderFrom].ridewith === Riders[riderTo].ridewith) &&
                                 diff_minutes((Riders[riderFrom].ArrivalTime), (Riders[riderTo].ArrivalTime)) >= -30 &&
                                 diff_minutes((Riders[riderFrom].ArrivalTime), (Riders[riderTo].ArrivalTime)) <= 30
