@@ -188,7 +188,7 @@ module.exports = async function main() {
 
             if (NumberOfUnAssignedRiders === 0)
                 break;
-            if (Drivers[j].userID === 89) {
+            if (Drivers[j].ID === 46) {
                 var x = 5;
             }
 
@@ -419,7 +419,6 @@ module.exports = async function main() {
 
                 }
                 if (WeightArray.length > 0) {
-
                     ChosenRiderID = WeightIndex[WeightArray.indexOf(Math.max.apply(null, WeightArray))]
                     var chosenRiderRR = RidersRiders[indexinRiderRider].data.find(n => n.to === ChosenRiderID)
                     chosenDistance = chosenRiderRR.distance
@@ -438,13 +437,8 @@ module.exports = async function main() {
                         if (RiderToCheckobj.DriverAssigned === -1) {
                             continue;
                         }
-
-
                         var DriverOfRiderToCheck = Drivers.find(n => n.ID === RiderToCheckobj.DriverAssigned)
-
                         var Trust, NumberofEmptyPlaces;
-
-
                         NumberofEmptyPlaces = DriverOfRiderToCheck.capacity - (DriverOfRiderToCheck.AssignedRiders.length)
                         if (DriverOfRiderToCheck.status === 1) {
                             var WeightFunctionRider = Number.NEGATIVE_INFINITY;
@@ -466,13 +460,39 @@ module.exports = async function main() {
                             0.1 * NumberofEmptyPlaces / DriverOfRiderToCheck.capacity
 
 
-
                         WeightArrayForRiders.push(WeightFunctionRider)
                         WeightIndexForRiders.push(RiderToCheckID)
 
-
                     }
+                    var indexinAllDriversToRider = AllDriversToRider.findIndex(n => n.ID === ChosenRiderID);
 
+                    var WeightArrayForDrivers = []
+                    var WeightIndexForDrivers = []
+                    for (var g = 0; g < AllDriversToRider[indexinAllDriversToRider].length; g++) {
+                        var DriverToCheckID = AllDriversToRider[indexinAllDriversToRider].data[g].from
+                        var DistanceFromDriver = AllDriversToRider[indexinAllDriversToRider].data[g].distance
+                        var DurationFromDriver = AllDriversToRider[indexinAllDriversToRider].data[g].duration
+                        var CurrentDriver = Drivers.find(n => n.ID === DriverToCheckID)
+                        var Trust
+
+                        if (CurrentDriver.AssignedRiders.length > 0)
+                            continue;
+                        else if (CurrentRider.TrustedDrivers.find(n => n === DriverToCheckID))
+                            Trust = 1
+                        else if (CurrentRider.UnTrustedDrivers.find(n => n === DriverToCheckID))
+                            Trust = -1;
+                        else if (CurrentDriver.status === 1)
+                            continue;
+
+                        var WeightFunctionDriver = -0.45 * DurationFromDriver / CurrentRider.MaxDurationToNormalizeDrivers -
+                            0.25 * DistanceFromDriver / CurrentRider.MaxDistanceToNormalizeDrivers +
+                            0.1 * Trust -
+                            0.04 * diff_minutes(CurrentRider.ArrivalTime, CurrentDriver.ArrivalTime) / 30 +
+                            0.1
+
+                        WeightArrayForDrivers.push(WeightFunctionDriver)
+                        WeightIndexForDrivers.push(DriverToCheckID)
+                    }
 
                     if (Drivers[j].countRiders == WeightArrayForRiders.length) {
 
@@ -508,8 +528,42 @@ module.exports = async function main() {
                     } else {
                         Drivers[j].countRiders = WeightArrayForRiders.length
 
-                        if (WeightArrayForRiders.length > 0) {
+                        if (WeightArrayForRiders.length > 0 && WeightArrayForDrivers.length > 0) {
                             var ChosenMaxRider = WeightIndexForRiders[WeightArrayForRiders.indexOf(Math.max.apply(Math, WeightArrayForRiders))]
+                            var ChosenMaxDriver = WeightIndexForDrivers[WeightArrayForDrivers.indexOf(Math.max.apply(Math, WeightArrayForDrivers))]
+                            var DriverofMaxRider = Drivers.find(n => n.ID === Riders.find(n => n.ID === ChosenMaxRider).DriverAssigned)
+                            var MaxRiderToChosenRiderObj = AllRidersToRider[indexinAllRidersToRider].data.find(n => n.from === ChosenMaxRider)
+                            var MaxDriverToChosenRiderObj = AllDriversToRider[indexinAllDriversToRider].data.find(n => n.from === ChosenMaxDriver)
+
+                            var RiderDist = MaxRiderToChosenRiderObj.distance
+                            var RiderDur = MaxRiderToChosenRiderObj.duration
+                            var DriverDist = MaxDriverToChosenRiderObj.distance
+                            var DriverDur = MaxDriverToChosenRiderObj.duration
+                            var EmptySeatsR = DriverofMaxRider.capacity - (DriverofMaxRider.AssignedRiders.length)
+
+                            RiderWeight = -0.45 * RiderDur / (RiderDur + DriverDur) -
+                                0.25 * RiderDist / (RiderDist + DriverDist) + (0.1 * EmptySeatsR / DriverofMaxRider.capacity)
+
+                            DriverWeight = -0.45 * DriverDur / (RiderDur + DriverDur) -
+                                0.25 * DriverDist / (RiderDist + DriverDist) + 0.1
+
+                            if (DriverWeight > RiderWeight) {
+                                continue;
+                            } else {
+                                var isExist = Drivers[j].AssignedRiders.find(n => n === ChosenMaxRider)
+
+                                if (isExist === undefined) {
+                                    Drivers[j].lastChosenRider = ChosenRiderID;
+                                    ChosenRiderID = -1;
+                                } else {
+                                    RidersRiders[indexinRiderRider].data.find(n => n.to === ChosenRiderID).checked = 1;
+                                    RidersRiders[indexinRiderRider].checked++;
+                                }
+                            }
+
+
+                        } else if (WeightArrayForRiders.length > 0) {
+
                             var isExist = Drivers[j].AssignedRiders.find(n => n === ChosenMaxRider)
 
                             if (isExist === undefined) {
