@@ -222,15 +222,15 @@ module.exports = async function main() {
                     var RiderObj = Riders.find(n => n.ID === RiderID);
                     var Trust = 0;
 
+                    if (DriversRiders[indexinDriverRider].data.find(n => n.to === RiderID).checked === 1) {
+                        continue;
+                    }
                     if (diff_minutes(RiderObj.ArrivalTime, Drivers[j].ArrivalTime) > 30 || diff_minutes(RiderObj.ArrivalTime, Drivers[j].ArrivalTime) < 0) {
                         DriversRiders[indexinDriverRider].data.find(n => n.to === RiderID).checked = 1;
                         DriversRiders[indexinDriverRider].checked++;
                         continue;
                     }
 
-                    if (DriversRiders[indexinDriverRider].data.find(n => n.to === RiderID).checked === 1) {
-                        continue;
-                    }
 
                     if (RiderObj.TrustedDrivers.find(n => n === DriverID))
                         Trust = 1
@@ -382,15 +382,16 @@ module.exports = async function main() {
                 for (var k = 0; k < RidersRiders[indexinRiderRider].length; k++) {
                     var RiderID = RidersRiders[indexinRiderRider].data[k].to
                     var RiderObj = Riders.find(n => n.ID === RiderID)
+                    if (RidersRiders[indexinRiderRider].data.find(n => n.to === RiderID).checked === 1) {
+                        continue;
+                    }
                     if (diff_minutes(RiderObj.ArrivalTime, Drivers[j].ArrivalTime) > 30 || diff_minutes(RiderObj.ArrivalTime, Drivers[j].ArrivalTime) < 0) {
                         RidersRiders[indexinRiderRider].data.find(n => n.to === RiderID).checked = 1;
                         RidersRiders[indexinRiderRider].checked++;
                         continue;
 
                     }
-                    if (RidersRiders[indexinRiderRider].data.find(n => n.to === RiderID).checked === 1) {
-                        continue;
-                    }
+
 
                     var Distance = RidersRiders[indexinRiderRider].data[k].distance
                     var Duration = RidersRiders[indexinRiderRider].data[k].duration;
