@@ -10,6 +10,9 @@ import 'package:progress_indicators/progress_indicators.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:path/path.dart' as Path;
 
 class Car{
   int id=0;
@@ -46,8 +49,121 @@ class Cars extends StatefulWidget with NavigationStates{
 
 
 class _CarsState extends State<Cars> {
-  String token;
+  //License image
+  File _image;
+  File _imageDriving;
+  Future<File> imageFile;
+  Future<File> imageFileDriving;
+  var bytes;
+  var bytesDriving;
+  Widget showImage() {
+    return FutureBuilder<File>(
+      future: imageFile,
+      builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.data != null) {
+          _image=snapshot.data;
+          bytes=_image.readAsBytesSync();
+          return CircleAvatar(
+            maxRadius: 40,
+            backgroundColor: Colors.white,
+            child:ClipOval(
+              child: Image.file(
+                snapshot.data,
+                width:  800,
+                height: 200,
+              ),
+            ),
+          );
+        } else if (snapshot.error != null) {
+          return Column(
+            children: <Widget>[
+              Text(
+                'Error Picking Image',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          );
+        } else {
+          return CircleAvatar(
+            maxRadius: 40,
+            backgroundColor: Colors.white,
+            child: ClipOval(
+              child:Image.asset(
+                "images/upload.png",
+                width: 80,
+                height: 200,
+              ),
+            ),
+          );
+        }
+      },
+    );
+  }
+  Widget showImageDriving() {
+    return FutureBuilder<File>(
+      future: imageFileDriving,
+      builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.data != null) {
+          _imageDriving=snapshot.data;
+          bytesDriving=_imageDriving.readAsBytesSync();
+          return CircleAvatar(
+            maxRadius: 40,
+            backgroundColor: Colors.white,
+            child:ClipOval(
+              child: Image.file(
+                snapshot.data,
+                width: 80,
+                height: 200,
+              ),
+            ),
+          );
+        } else if (snapshot.error != null) {
+          return Column(
+            children: <Widget>[
+              Text(
+                'Error Picking Image',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          );
+        } else {
+          return CircleAvatar(
+            maxRadius: 40,
+            backgroundColor: Colors.white,
+            child: ClipOval(
+              child:Image.asset(
+                "images/upload.png",
+                width: 80,
+                height: 200,
+              ),
+            ),
+          );
+        }
+      },
+    );
+  }
 
+  Future pickDrivingLicenseFromGallery(ImageSource source) async{
+    setState(() {
+      imageFileDriving = ImagePicker.pickImage(source: source);
+    });
+  }
+
+  Future pickCarLicenseFromGallery(ImageSource source) async{
+    setState(() {
+      imageFile = ImagePicker.pickImage(source: source);
+    });
+  }
+  //Token
+  String token;
   //Add car initializations:
   String selectedBrand="";
   String selectedType="";
@@ -943,12 +1059,143 @@ class _CarsState extends State<Cars> {
                 ),
               ],
             ),
+            SizedBox(
+              height: 15,
+            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(
-                  height: 5,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Text(
+                              "Car license.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.indigo[400],
+                                fontFamily: "Kodchasan",
+                                fontSize: 15.0,
+                              ),
+                            ),
+                            showImage(),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            MaterialButton(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.photo_camera,
+                                    color: Colors.redAccent,
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  Text("Upload",
+                                    style: TextStyle(
+                                      color: Colors.indigo,
+                                      fontSize: 16.0,
+                                      fontFamily: "Kodchasan",
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              height:30,
+                              minWidth:100,
+                              color: Colors.white,
+                              elevation: 15,
+                              highlightColor: Colors.grey,
+                              splashColor: Colors.blueGrey,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              onPressed: (){
+                                pickCarLicenseFromGallery(ImageSource.gallery);
+                              },
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Text(
+                              "Driving license.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.indigo[400],
+                                fontFamily: "Kodchasan",
+                                fontSize: 15.0,
+                              ),
+                            ),
+                            showImageDriving(),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            MaterialButton(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.photo_camera,
+                                    color: Colors.redAccent,
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  Text("Upload",
+                                    style: TextStyle(
+                                      color: Colors.indigo,
+                                      fontSize: 16.0,
+                                      fontFamily: "Kodchasan",
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              height:30,
+                              minWidth:100,
+                              color: Colors.white,
+                              elevation: 15,
+                              highlightColor: Colors.grey,
+                              splashColor: Colors.blueGrey,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              onPressed: (){
+                                pickDrivingLicenseFromGallery(ImageSource.gallery);
+                              },
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Text(
+                      "-Upload car license side with car plate letters and numbers.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.grey[500],
+                        fontFamily: "Kodchasan",
+                        fontSize: 11.0,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(33,0,22,0),
@@ -1307,8 +1554,72 @@ class _CarsState extends State<Cars> {
                   String numberofseatsAdd=numberofseatsController.text;
                   String nationalidAdd= nationalidController.text;
                   bool Valid= true;
+                  //Car license
+                  if(bytes==null)
+                  {
+                    Valid = false;
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return RichAlertDialog(
+                            alertTitle: richTitle("Car license"),
+                            alertSubtitle: richSubtitle("Car license is required"),
+                            alertType: RichAlertType.WARNING,
+                            dialogIcon: Icon(
+                              Icons.warning,
+                              color: Colors.red,
+                              size: 80,
+                            ),
+                            actions: <Widget>[
+                              new OutlineButton(
+                                shape: StadiumBorder(),
+                                textColor: Colors.blue,
+                                child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                borderSide: BorderSide(
+                                    color: Colors.indigo[400], style: BorderStyle.solid,
+                                    width: 1),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                  }
+                  //Driving license
+                  else if(bytesDriving==null)
+                  {
+                    Valid = false;
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return RichAlertDialog(
+                            alertTitle: richTitle("Driving license"),
+                            alertSubtitle: richSubtitle("Driving license is required"),
+                            alertType: RichAlertType.WARNING,
+                            dialogIcon: Icon(
+                              Icons.warning,
+                              color: Colors.red,
+                              size: 80,
+                            ),
+                            actions: <Widget>[
+                              new OutlineButton(
+                                shape: StadiumBorder(),
+                                textColor: Colors.blue,
+                                child: Text('Ok', style: TextStyle(color: Colors.indigo[400],fontSize: 30),),
+                                borderSide: BorderSide(
+                                    color: Colors.indigo[400], style: BorderStyle.solid,
+                                    width: 1),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                  }
                   //brand validations:
-                  if(selectedBrand.isEmpty)
+                  else if(selectedBrand.isEmpty)
                   {
                     Valid = false;
                     showDialog(

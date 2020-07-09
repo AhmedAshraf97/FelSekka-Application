@@ -165,7 +165,7 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                             },
                           ),
                           Text(
-                            "Male",
+                            selectedGender=="female"? "Female" : "Male",
                             style: TextStyle(
                               color: Colors.blueGrey,
                               fontFamily: "Kodchasan",
@@ -175,24 +175,6 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                           Radio(
                             activeColor: Colors.indigo,
                             value: 2,
-                            groupValue: ridewith,
-                            onChanged: (T){
-                              setState(() {
-                                ridewith=T;
-                              });
-                            },
-                          ),
-                          Text(
-                            "Female",
-                            style: TextStyle(
-                              color: Colors.blueGrey,
-                              fontFamily: "Kodchasan",
-                              fontSize: 15.0,
-                            ),
-                          ),
-                          Radio(
-                            activeColor: Colors.indigo,
-                            value: 3,
                             groupValue: ridewith,
                             onChanged: (T){
                               setState(() {
@@ -301,13 +283,9 @@ class _SignUp2State extends State<SignUp2> with SingleTickerProviderStateMixin{
                           //ridewith as string
                           if(ridewith==1)
                             {
-                              ridewithSelected="male";
+                              ridewithSelected=selectedGender;
                             }
                           else if(ridewith==2)
-                            {
-                              ridewithSelected="female";
-                            }
-                          else if(ridewith==3)
                             {
                               ridewithSelected="any";
                             }

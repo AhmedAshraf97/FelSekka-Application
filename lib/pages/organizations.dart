@@ -625,7 +625,7 @@ class _OrganizationsState extends State<Organizations> {
                                                            builder: (BuildContext context) {
                                                              return RichAlertDialog(
                                                                alertTitle: richTitle("Done"),
-                                                               alertSubtitle: richSubtitle("You joined this organization."),
+                                                               alertSubtitle: richSubtitle("Verify organization email to join this organization."),
                                                                alertType: RichAlertType.SUCCESS,
                                                                dialogIcon: Icon(
                                                                  Icons.check,
@@ -1203,15 +1203,15 @@ class _OrganizationsState extends State<Organizations> {
                         items: [
                           FlashyTabBarItem(
                             icon: Icon(Icons.location_city),
-                            title: Text('My Organizations', style: TextStyle(fontSize: 8,color: Colors.indigo[400]),),
+                            title: Text('My Organizations', style: TextStyle(fontSize: 12,color: Colors.indigo[400]),),
                           ),
                           FlashyTabBarItem(
                             icon: Icon(Icons.search),
-                            title: Text('Join Organization', style: TextStyle(fontSize: 8,color: Colors.indigo[400]),),
+                            title: Text('Join Organization', style: TextStyle(fontSize: 12,color: Colors.indigo[400]),),
                           ),
                           FlashyTabBarItem(
                             icon: Icon(Icons.add),
-                            title: Text('Add Organization', style: TextStyle(fontSize: 8,color: Colors.indigo[400]),),
+                            title: Text('Add Organization', style: TextStyle(fontSize: 12,color: Colors.indigo[400]),),
                           ),
                         ],
                       ),

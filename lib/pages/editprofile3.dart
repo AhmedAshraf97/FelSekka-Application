@@ -341,6 +341,8 @@ class _EditProfile3State extends State<EditProfile3> with SingleTickerProviderSt
                                     'latitude': latitudeafter==null? "" : latitudeafter,
                                     'longitude': longitudeafter==null? "" : longitudeafter,
                                   };
+                                  print(body);
+                                  print(token);
                                   String url="http://3.81.22.120:3000/api/editprofile";
                                   Response response =await post(url, body: body, headers: {"authorization": token});
                                   if(response.statusCode != 200)
@@ -375,7 +377,6 @@ class _EditProfile3State extends State<EditProfile3> with SingleTickerProviderSt
                                         });
                                   }
                                   else{
-                                    print(response.body);
                                     showDialog(
                                         context: context,
                                         builder: (BuildContext context) {

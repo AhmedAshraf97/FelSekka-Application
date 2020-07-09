@@ -282,7 +282,7 @@ class _SignUp3State extends State<SignUp3> with SingleTickerProviderStateMixin{
                                     builder: (BuildContext context) {
                                       return RichAlertDialog(
                                         alertTitle: richTitle("Done"),
-                                        alertSubtitle: richSubtitle("Let's carppol!"),
+                                        alertSubtitle: richSubtitle("Verify your e-mail and let's carppol!"),
                                         alertType: RichAlertType.SUCCESS,
                                         dialogIcon: Icon(
                                           Icons.check,
