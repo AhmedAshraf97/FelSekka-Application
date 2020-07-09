@@ -225,7 +225,7 @@ router.post('/', async(req, res) => {
         longitude: parseFloat(req.body.longitude),
         latitude: parseFloat(req.body.latitude),
         rating: 5.0,
-        status: "existing",
+        status: "pending",
         photo: req.body.photo,
     }
     let usernameExists = 0;
@@ -275,8 +275,35 @@ router.post('/', async(req, res) => {
 
             //Insert user 
             const userCreate = await User.create(userData).catch(errHandler)
-            if (userCreate) {
+            if (1) {
                 createdUserID = userCreate.id;
+
+                let transporter = nodeMailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 465,
+
+                    auth: {
+                        // should be replaced with real sender's account
+                        user: 'felsekkacarpooling@gmail.com',
+                        pass: 'felsekka1234.'
+                    }
+                });
+                let mailOptions = {
+                    // should be replaced with real recipient's account
+                    to: req.body.email,
+                    subject: "Verification",
+                    text: "Hello " + req.body.firstname +
+                        ",\n Please verify your email address to complete your Felsekka Account.\n http://3.81.22.120:3000/api/verify_email/" + createdUserID
+                };
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        return console.log(error);
+                    }
+
+                });
+
+
+
                 res.status(200).send({ message: "User is created" });
             }
 

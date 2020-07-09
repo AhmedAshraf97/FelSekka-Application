@@ -28,16 +28,21 @@ router.post('/', (req, res) => {
                 [Op.or]: [
                     { email: req.body.EmailOrPhone },
                     { phonenumber: req.body.EmailOrPhone }
-                ],
-                status: 'existing'
+                ]
+
             }
         }).then(user => {
             if (user) {
-                if (bcrypt.compareSync(req.body.password, user.password)) {
-                    let token = jwt.sign(user.dataValues, process.env.SECRET_KEY)
-                    res.json({ token: token, userInfo: user.dataValues })
-                } else
-                    res.status(401).send({ error: "Password", message: "Invalid Password" })
+                if (user.status === "pending") {
+                    res.status(401).send({ error: "verification", message: "Please verify your account" })
+                } else if (user.status === "existing") {
+                    if (bcrypt.compareSync(req.body.password, user.password)) {
+                        let token = jwt.sign(user.dataValues, process.env.SECRET_KEY)
+                        res.json({ token: token, userInfo: user.dataValues })
+                    } else
+                        res.status(401).send({ error: "Password", message: "Invalid Password" })
+                }
+
             } else
                 res.status(400).send({ error: "User doesn't exist", message: "Invalid Email or Phone number" })
         })

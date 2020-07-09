@@ -60,14 +60,15 @@ router.post('/', async(req, res) => {
         }
     }).catch(errHandler)
 
-    await User.findOne({ where: { id: decoded.id, status: 'existing' } }).then(user => {
-        if (!user) {
+    const user = await User.findOne({ where: { id: decoded.id, status: 'existing' } }).catch(errHandler);
 
-            userExists = false;
-            res.status(404).send({ message: "User not found" })
-            res.end()
-        }
-    }).catch(errHandler);
+    if (!user) {
+
+        userExists = false;
+        res.status(404).send({ message: "User not found" })
+        res.end()
+    }
+
 
     const org = await OrgUser.findOne({
         where: {
@@ -88,15 +89,16 @@ router.post('/', async(req, res) => {
             var domain = true;
             var orglatitude = 0;
             var orglongitude = 0;
-            await Organization.findOne({ where: { id: req.body.orgid } }).then(org => {
-                orglatitude = org.latitude;
-                orglongitude = org.longitude;
-                if (!((req.body.email).includes(org.domain))) {
-                    domain = false;
-                }
-            }).catch(errHandler);
-
+            const organizationDetails = await Organization.findOne({ where: { id: req.body.orgid } }).catch(errHandler);
+            orglatitude = organizationDetails.latitude;
+            orglongitude = organizationDetails.longitude;
+            if (!((req.body.email).includes(organizationDetails.domain))) {
+                domain = false;
+            }
             if (domain) {
+
+
+
                 var x = orglatitude;
                 var y = orglongitude;
                 var z = decoded.latitude;
@@ -133,9 +135,34 @@ router.post('/', async(req, res) => {
                     timefromorg: time21,
                     status: 'existing'
                 }
-                await OrgUser.create(orgUserData).then(user => {
+                const orguser = await OrgUser.create(orgUserData).catch(errHandler);
+                if (orguser) {
                     res.status(200).send({ message: "Organization is chosen" });
-                }).catch(errHandler);
+                }
+                let transporter = nodeMailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 465,
+
+                    auth: {
+                        // should be replaced with real sender's account
+                        user: 'felsekkacarpooling@gmail.com',
+                        pass: 'felsekka1234.'
+                    }
+                });
+                let mailOptions = {
+                    // should be replaced with real recipient's account
+                    to: req.body.email,
+                    subject: "Verification",
+                    text: "Hello " + user.firstname +
+                        ",\n Please verify your email address to enroll in " + organizationDetails.name + " organization.\n http://3.81.22.120:3000/api/verify_org/" + decoded.id + "/" + orguser.id
+                };
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        return console.log(error);
+                    }
+                    console.log('Message %s sent: %s', info.messageId, info.response);
+                });
+
 
             } else {
 

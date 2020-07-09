@@ -102,6 +102,8 @@ app.use('/api/showrating', require('./routes/api/showRating'));
 app.use('/api/showtrust', require('./routes/api/ShowTrust'));
 
 app.use('/api/scheduler', require('./routes/api/scheduler'));
+app.use('/api/verify_email', require('./routes/api/verify_email'));
+app.use('/api/verify_org', require('./routes/api/verify_org'));
 
 var schedule = require('node-schedule');
 var request = require('request');
