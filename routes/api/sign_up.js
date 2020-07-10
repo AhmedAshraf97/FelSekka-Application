@@ -275,7 +275,7 @@ router.post('/', async(req, res) => {
 
             //Insert user 
             const userCreate = await User.create(userData).catch(errHandler)
-            if (1) {
+            if (userCreate) {
                 createdUserID = userCreate.id;
 
                 let transporter = nodeMailer.createTransport({
@@ -295,6 +295,7 @@ router.post('/', async(req, res) => {
                     text: "Hello " + req.body.firstname +
                         ",\n Please verify your email address to complete your Felsekka Account.\n http://3.81.22.120:3000/api/verify_email/" + createdUserID
                 };
+
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
                         return console.log(error);

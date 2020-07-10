@@ -12,6 +12,7 @@ const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static('public'));
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
