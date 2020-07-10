@@ -133,7 +133,7 @@ router.post('/', async(req, res) => {
                     timetoorg: time12,
                     distancefromorg: distance21,
                     timefromorg: time21,
-                    status: 'existing'
+                    status: 'pending'
                 }
                 const orguser = await OrgUser.create(orgUserData).catch(errHandler);
                 if (orguser) {
