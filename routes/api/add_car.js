@@ -29,85 +29,67 @@ function validation(brand, model, year, type, plateletters, platenumbers, nation
         validChecks = false
         message = { error: "Brand", message: "Brand must be a string of (1-300) characters" }
 
-    }
-    if (!((typeof(model) === 'string') || ((model) instanceof String)) || (model).trim().length === 0) {
+    } else if (!((typeof(model) === 'string') || ((model) instanceof String)) || (model).trim().length === 0) {
         validChecks = false
         message = { error: "Model", message: "Model must be a string of (1-300) characters" }
 
-    }
-    if (((year).trim().length !== 4)) {
+    } else if (((year).trim().length !== 4)) {
         validChecks = false
         message = { error: "Year", message: "year must be a number of 4 digits" }
 
 
-    }
-    if (!(/^([0-9]+)$/.test(year))) {
+    } else if (!(/^([0-9]+)$/.test(year))) {
         message = { error: "year", message: "year ID must be a number" }
         validChecks = false;
-    }
-    if (!((typeof(type) === 'string') || ((type) instanceof String)) || (type).trim().length === 0) {
+    } else if (!((typeof(type) === 'string') || ((type) instanceof String)) || (type).trim().length === 0) {
         validChecks = false
         message = {
             error: "Type",
             message: "Type must be a string of (1-300) characters"
         }
-    }
-    if (!((typeof(plateletters) === 'string') || ((plateletters) instanceof String)) || (plateletters).trim().length === 0) {
+    } else if (((plateletters).trim().length === 0)) {
         validChecks = false
-        message = { error: "Plateletters", message: "Plateletters must be a string of (1-300) characters" }
+        message = { error: "Plateletters", message: "plateletters cannot be empty" }
 
-    }
-    if (((platenumbers).trim().length === 0)) {
-        validChecks = false
-        message = { error: "Platenumbers", message: "Plate numbers must be a number of (1-300) digits" }
-
-    }
-    if (!(/^([0-9]+)$/.test(platenumbers))) {
-        message = { error: "platenumbers", message: "platenumbers ID must be a number" }
+    } else if (!(/^[\u0621-\u064A]+$/.test(plateletters))) {
+        message = { error: "Plateletters", message: "plateletters must be letters" }
         validChecks = false;
-    }
+    } else if (((platenumbers).trim().length === 0)) {
+        validChecks = false
+        message = { error: "Platenumbers", message: "plateletters cannot be empty" }
 
-    if (((nationalid).trim().length === 0)) {
+    } else if (!(/^[\u0660-\u0669]+$/.test(platenumbers))) {
+        console.log("OPAAA", platenumbers)
+        message = { error: "Platenumbers", message: "platenumbers must be arabic numbers" }
+        validChecks = false;
+    } else if (((nationalid).trim().length === 0)) {
         validChecks = false
         message = { error: "Nationalid", message: "National ID must be a number of (1-300) digits" }
 
-    }
-    if (!(/^([0-9]+)$/.test(nationalid))) {
+    } else if (!(/^([0-9]+)$/.test(nationalid))) {
         message = { error: "Nationalid", message: "Nationalid ID must be a number" }
         validChecks = false;
-    }
-
-    if (!((typeof(carlicensefront) === 'string') || ((carlicensefront) instanceof String)) || (carlicensefront).trim().length === 0) {
+    } else if (!((typeof(carlicensefront) === 'string') || ((carlicensefront) instanceof String)) || (carlicensefront).trim().length === 0) {
         validChecks = false
         message = { error: "Carlicensefront", message: "Car License front must be a string of (1-300) characters" }
 
-    }
-    if (!((typeof(carlicenseback) === 'string') || ((carlicenseback) instanceof String)) || (carlicenseback).trim().length === 0) {
+    } else if (!((typeof(carlicenseback) === 'string') || ((carlicenseback) instanceof String)) || (carlicenseback).trim().length === 0) {
         validChecks = false
 
         message = { error: "Carlicenseback", message: "Car License back must be a string of (1-300) characters" }
-    }
-
-    if (!((typeof(driverlicensefront) === 'string') || ((driverlicensefront) instanceof String)) || (driverlicensefront).trim().length === 0) {
+    } else if (!((typeof(driverlicensefront) === 'string') || ((driverlicensefront) instanceof String)) || (driverlicensefront).trim().length === 0) {
         validChecks = false
         message = { error: "Driverlicensefront", message: "Driver License front must be a string of (1-300) characters" }
 
-    }
-
-    if (!((typeof(driverlicenseback) === 'string') || ((driverlicenseback) instanceof String)) || (driverlicenseback).trim().length === 0) {
+    } else if (!((typeof(driverlicenseback) === 'string') || ((driverlicenseback) instanceof String)) || (driverlicenseback).trim().length === 0) {
         validChecks = false
         message = { error: "Driverlicenseback", message: "Driver License back must be a string of (1-300) characters" }
 
-    }
-
-
-    if (!((typeof(color) === 'string') || ((color) instanceof String)) || (color).trim().length === 0) {
+    } else if (!((typeof(color) === 'string') || ((color) instanceof String)) || (color).trim().length === 0) {
         validChecks = false
         message = { error: "Color", message: "Color must be a string of (1-300) characters" }
 
-    }
-
-    if (((numberofseats).trim().length === 0)) {
+    } else if (((numberofseats).trim().length === 0)) {
         validChecks = false
         message = { error: "Numberofseats", message: "Number of seats be a number of (1-300) digits" }
 
