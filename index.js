@@ -9,7 +9,7 @@ const graphlib = require('graphlib');
 //const ksp = require('../FelSekka-Application/yenKSP')
 //var process = spawn('python', ["./authentication.py"]);
 //process.stdout.on('data', data => {
-  //  console.log(data.toString())
+//  console.log(data.toString())
 //});
 const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
 app.use(express.json());
@@ -70,7 +70,8 @@ app.use('/api/scheduledtrips', require('./routes/api/scheduled'));
 app.use('/api/searchTrip', require('./routes/api/searchTrip'));
 app.use('/api/matching', require('./routes/api/matchingApi').router);
 app.use('/api/ReturnTripMatch', require('./routes/api/ReturnTripMatchingApi').router);
-app.use('/api/chooseFromAvailableRides', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/chooseFromAvailableRidesApi').router)
+//, queue({ activeLimit: 1, queuedLimit: -1 })
+app.use('/api/chooseFromAvailableRides', require('./routes/api/chooseFromAvailableRidesApi').router)
 app.use('/api/chooseFromReturnTripsApi', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/chooseFromReturnTripsApi').router)
 
 
