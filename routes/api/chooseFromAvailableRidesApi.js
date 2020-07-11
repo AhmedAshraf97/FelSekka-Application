@@ -317,7 +317,7 @@ router.post('/', async(req, res) => {
                     where: {
                         userid: decoded.id,
                         status: {
-                            [Op.or]: ["pending", "ongoing"]
+                            [Op.or]: ["pending", "scheduled", "ongoing"]
                         }
                     }
                 }).catch(errHandler)
@@ -347,7 +347,7 @@ router.post('/', async(req, res) => {
                     where: {
                         userid: decoded.id,
                         status: {
-                            [Op.or]: ["pending", "ongoing"]
+                            [Op.or]: ["pending", "scheduled", "ongoing"]
                         }
                     }
                 }).catch(errHandler)
