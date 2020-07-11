@@ -12,12 +12,12 @@ const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op
 const ExpiredToken = require('../../models/expiredtokens');
-const spawn = require('child_process').spawn
 
-var process = spawn('python', ["../../authentication.py"])
-process.stdout.on('data', data => {
-    console.log(data.toString())
-  });
+//const spawn = require('child_process').spawn
+//var process = spawn('python', ["../../authentication.py"])
+//process.stdout.on('data', data => {
+  //  console.log(data.toString())
+  //});
 
 //Error handler
 const errHandler = err => {

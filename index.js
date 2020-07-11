@@ -4,17 +4,19 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 var queue = require('express-queue');
 const graphlib = require('graphlib');
+//const spawn = require("child_process").spawn;
 //const ksp = require('k-shortest-path');
 //const ksp = require('../FelSekka-Application/yenKSP')
-
-
+//var process = spawn('python', ["./authentication.py"]);
+//process.stdout.on('data', data => {
+  //  console.log(data.toString())
+//});
 const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
-
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
 
 
 //DB connection
