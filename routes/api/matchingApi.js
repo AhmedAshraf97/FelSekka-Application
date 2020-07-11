@@ -30,7 +30,7 @@ class values {
 
 class Rider {
     constructor(ID, DistanceToOrganization, ArrivalTime, TimeToOrganizationMinutes,
-        EarliestPickup, ridewith, smoking, toorgid, date, requestid, gender) {
+        EarliestPickup, ridewith, smoking, toorgid, date, requestid, rating) {
 
         this.userID = ID
         this.ID = requestid;
@@ -50,7 +50,7 @@ class Rider {
         this.MaxDistanceToNormalizeRiders = Number.NEGATIVE_INFINITY;
         this.MaxDurationToNormalizeRiders = Number.NEGATIVE_INFINITY;
 
-        this.gender = gender
+        this.rating = rating
         this.ExpectedFare = 0
         this.EarliestPickup = EarliestPickup
             //Timing
@@ -66,7 +66,7 @@ class Rider {
 };
 class Driver {
     constructor(ID, DistanceToOrganization, ArrivalTime, TimeToOrganizationMinutes, capacity,
-        EarliestStartTime, ridewith, smoking, toorgid, date, offerid, latitude, longitude) {
+        EarliestStartTime, ridewith, smoking, toorgid, date, offerid, latitude, longitude, rating) {
 
         this.userID = ID
         this.ID = offerid;
@@ -89,6 +89,7 @@ class Driver {
         this.MaxDuration = diff_minutes(this.ArrivalTime, this.EarliestStartTime)
         this.lastChosenRider = -1
 
+        this.rating = rating
         this.ridewith = ridewith;
         this.smoking = smoking
         this.toorgid = toorgid
@@ -200,6 +201,14 @@ router.post('/', async(req, res) => {
         for (offer of offers) {
             OffersArray.push(offer.userid)
         }
+        const offersusers = await User.findAll({
+            where: {
+                status: "existing",
+                id: {
+                    [Op.in]: OffersArray
+                }
+            }
+        })
 
         const OrgUsersObject = await OrgUser.findAll({
             where: {
@@ -214,7 +223,7 @@ router.post('/', async(req, res) => {
         for (offer of offers) {
 
             const orguser = OrgUsersObject.find(n => n.orgid === offer.toorgid && n.userid === offer.userid)
-
+            const rating = offersusers.find(n => n.id === offer.userid).rating;
             var driver = new Driver(offer.userid, parseFloat(orguser.distancetoorg), new Date(offer.date + " " + offer.arrivaltime),
                 Math.round(orguser.timetoorg),
                 offer.numberofseats,
@@ -223,7 +232,7 @@ router.post('/', async(req, res) => {
                 offer.smoking,
                 offer.toorgid,
                 new Date(offer.date),
-                offer.id, parseFloat(offer.fromlatitude), parseFloat(offer.fromlongitude))
+                offer.id, parseFloat(offer.fromlatitude), parseFloat(offer.fromlongitude), rating)
 
             Drivers.push(driver)
         }
@@ -241,6 +250,16 @@ router.post('/', async(req, res) => {
                 RequestsArray.push(request.userid)
             }
 
+
+            const requestsusers = await User.findAll({
+                where: {
+                    status: "existing",
+                    id: {
+                        [Op.in]: RequestsArray
+                    }
+                }
+            })
+
             const OrgUsersObjectReq = await OrgUser.findAll({
                 where: {
                     status: "existing",
@@ -253,6 +272,7 @@ router.post('/', async(req, res) => {
             for (request of requests) {
 
                 const orguser = OrgUsersObjectReq.find(n => n.orgid === request.toorgid && n.userid === request.userid)
+                const rating = requestsusers.find(n => n.id === request.userid).rating;
 
                 var rider = new Rider(request.userid,
                     parseFloat(orguser.distancetoorg),
@@ -263,7 +283,7 @@ router.post('/', async(req, res) => {
                     request.smoking,
                     request.toorgid,
                     new Date(request.date),
-                    request.id)
+                    request.id, rating)
 
                 Riders.push(rider);
             }

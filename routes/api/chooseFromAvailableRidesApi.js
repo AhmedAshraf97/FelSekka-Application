@@ -542,7 +542,7 @@ router.post('/', async(req, res) => {
                                                 Drivers.push(driver)
 
                                                 var z = await chooseFromAvailableRides();
-                                                var p = await matchingfare('./routes/api/chooseFromAvailableRidesApi');
+                                                var p = await matchingfare('../routes/api/chooseFromAvailableRidesApi');
                                                 if (Riders[Riders.length - 1].isAssigned === true) {
                                                     await Trips.update({
                                                         numberofseats: driver.AssignedRiders.length,

@@ -242,7 +242,8 @@ module.exports = async function main() {
 
                         var WeightFunction = -0.45 * Duration / Drivers[j].MaxDurationToNormalize - 0.25 * Distance / Drivers[j].MaxDistanceToNormalize +
                             0.1 * Trust -
-                            0.04 * diff_minutes(RiderObj.ArrivalTime, Drivers[j].ArrivalTime) / 30;
+                            0.04 * diff_minutes(RiderObj.ArrivalTime, Drivers[j].ArrivalTime) / 30 -
+                            0.1 * Math.abs(RiderObj.rating - Drivers[j].rating) / 5;
 
                         if (diff_minutes(RiderObj.EarliestPickup, Drivers[j].EarliestStartTime) > 0) {
                             WeightFunction -= 0.05 * (diff_minutes(RiderObj.EarliestPickup, Drivers[j].EarliestStartTime) / Drivers[j].MaxEarliestDiffToNormalize)
@@ -293,7 +294,8 @@ module.exports = async function main() {
                                 0.25 * DistanceFromRider / CurrentRider.MaxDistanceToNormalizeDrivers +
                                 0.1 * Trust -
                                 0.04 * diff_minutes(CurrentRider.ArrivalTime, CurrentDriver.ArrivalTime) / 30 +
-                                0.1 * NumberofEmptyPlaces / CurrentDriver.capacity
+                                0.1 * NumberofEmptyPlaces / CurrentDriver.capacity -
+                                0.1 * Math.abs(CurrentRider.rating - CurrentDriver.rating) / 5
 
 
                         } else {
@@ -301,9 +303,8 @@ module.exports = async function main() {
                                 0.25 * DistanceFromDriver / CurrentRider.MaxDistanceToNormalizeDrivers +
                                 0.1 * Trust -
                                 0.04 * diff_minutes(CurrentRider.ArrivalTime, CurrentDriver.ArrivalTime) / 30 +
-                                0.1 * NumberofEmptyPlaces / CurrentDriver.capacity
-
-
+                                0.1 * NumberofEmptyPlaces / CurrentDriver.capacity -
+                                0.1 * Math.abs(CurrentRider.rating - CurrentDriver.rating) / 5
 
                         }
 
@@ -406,8 +407,12 @@ module.exports = async function main() {
 
 
                     if (RiderObj.isAssigned === false) {
-                        var WeightFunction = -0.45 * Duration / Riders[indexLastRider].MaxDurationToNormalize - 0.25 * Distance / Riders[indexLastRider].MaxDistanceToNormalize + 0.1 * Trust -
-                            0.04 * diff_minutes(RiderObj.ArrivalTime, Drivers[j].ArrivalTime) / 30
+                        var WeightFunction = -0.45 * Duration / Riders[indexLastRider].MaxDurationToNormalize -
+                            0.25 * Distance / Riders[indexLastRider].MaxDistanceToNormalize +
+                            0.1 * Trust -
+                            0.04 * diff_minutes(RiderObj.ArrivalTime, Drivers[j].ArrivalTime) / 30 -
+                            0.1 * Math.abs(RiderObj.rating - Drivers[j].rating) / 5
+
                         WeightArray.push(WeightFunction)
                         WeightIndex.push(RiderID)
                     } else {
@@ -458,7 +463,8 @@ module.exports = async function main() {
                             0.25 * DistanceFromRider / CurrentRider.MaxDistanceToNormalizeRiders +
                             0.1 * Trust -
                             0.04 * diff_minutes(CurrentRider.ArrivalTime, DriverOfRiderToCheck.ArrivalTime) / 30 +
-                            0.1 * NumberofEmptyPlaces / DriverOfRiderToCheck.capacity
+                            0.1 * NumberofEmptyPlaces / DriverOfRiderToCheck.capacity -
+                            0.1 * Math.abs(CurrentRider.rating - DriverOfRiderToCheck.rating) / 5
 
 
                         WeightArrayForRiders.push(WeightFunctionRider)
@@ -489,7 +495,8 @@ module.exports = async function main() {
                             0.25 * DistanceFromDriver / CurrentRider.MaxDistanceToNormalizeDrivers +
                             0.1 * Trust -
                             0.04 * diff_minutes(CurrentRider.ArrivalTime, CurrentDriver.ArrivalTime) / 30 +
-                            0.1
+                            0.1 -
+                            0.1 * Math.abs(CurrentDriver.rating - CurrentRider.rating) / 5
 
                         WeightArrayForDrivers.push(WeightFunctionDriver)
                         WeightIndexForDrivers.push(DriverToCheckID)

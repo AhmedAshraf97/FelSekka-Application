@@ -550,7 +550,7 @@ router.post('/', async(req, res) => {
                                                 Drivers.push(driver)
 
                                                 var z = await chooseFromAvailableRides();
-                                                var p = await ReturnTripMatchingFare('./routes/api/chooseFromReturnTripsApi')
+                                                var p = await ReturnTripMatchingFare('../routes/api/chooseFromReturnTripsApi')
 
 
                                                 if (Riders[Riders.length - 1].isAssigned === true) {
