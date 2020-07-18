@@ -4,16 +4,19 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 var queue = require('express-queue');
 const graphlib = require('graphlib');
+//const spawn = require("child_process").spawn;
 //const ksp = require('k-shortest-path');
 //const ksp = require('../FelSekka-Application/yenKSP')
-
-
+//var process = spawn('python', ["./authentication.py"]);
+//process.stdout.on('data', data => {
+//  console.log(data.toString())
+//});
 const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
+app.use(express.static('public'));
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
 
 
 //DB connection
@@ -67,8 +70,9 @@ app.use('/api/scheduledtrips', require('./routes/api/scheduled'));
 app.use('/api/searchTrip', require('./routes/api/searchTrip'));
 app.use('/api/matching', require('./routes/api/matchingApi').router);
 app.use('/api/ReturnTripMatch', require('./routes/api/ReturnTripMatchingApi').router);
-app.use('/api/chooseFromAvailableRides', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/chooseFromAvailableRidesApi').router)
-app.use('/api/chooseFromReturnTripsApi', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/chooseFromReturnTripsApi').router)
+//, queue({ activeLimit: 1, queuedLimit: -1 })
+app.use('/api/chooseFromAvailableRides', require('./routes/api/chooseFromAvailableRidesApi').router)
+app.use('/api/chooseFromReturnTripsApi', require('./routes/api/chooseFromReturnTripsApi').router)
 
 
 app.use('/api/cleanrequestsoffers', require('./routes/api/CleanRequests&Offers'));

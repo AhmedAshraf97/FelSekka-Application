@@ -156,6 +156,7 @@ router.post('/', async(req, res) => {
                     text: "Hello " + user.firstname +
                         ",\n Please verify your email address to enroll in " + organizationDetails.name + " organization.\n http://3.81.22.120:3000/api/verify_org/" + decoded.id + "/" + orguser.id
                 };
+
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
                         return console.log(error);

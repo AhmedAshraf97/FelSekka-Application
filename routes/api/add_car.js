@@ -10,11 +10,14 @@ const jwt = require('jsonwebtoken');
 const regex = require('regex');
 const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
-const Op = Sequelize.Op;
-
+const Op = Sequelize.Op
 const ExpiredToken = require('../../models/expiredtokens');
 
-
+//const spawn = require('child_process').spawn
+//var process = spawn('python', ["../../authentication.py"])
+//process.stdout.on('data', data => {
+  //  console.log(data.toString())
+  //});
 
 //Error handler
 const errHandler = err => {
@@ -52,7 +55,7 @@ function validation(brand, model, year, type, plateletters, platenumbers, nation
         message = { error: "Plateletters", message: "plateletters cannot be empty" }
 
     } else if (!(/^[\u0621-\u064A]+$/.test(plateletters))) {
-        message = { error: "Plateletters", message: "plateletters must be letters" }
+        message = { error: "Plateletters", message: "plateletters must be arabic letters" }
         validChecks = false;
     } else if (((platenumbers).trim().length === 0)) {
         validChecks = false

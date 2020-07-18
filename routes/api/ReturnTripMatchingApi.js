@@ -31,7 +31,7 @@ class values {
 
 class Rider {
     constructor(ID, DistanceFromOrganization, DepartureTime, TimeFromOrganizationMinutes,
-        LatestDropOff, ridewith, smoking, fromorgid, date, requestid) {
+        LatestDropOff, ridewith, smoking, fromorgid, date, requestid, rating) {
 
         this.userID = ID
         this.ID = requestid;
@@ -51,6 +51,7 @@ class Rider {
         this.MaxDurationToNormalizeDrivers = Number.NEGATIVE_INFINITY;
 
 
+        this.rating = rating
         this.ExpectedFare = 0
         this.LatestDropOff = LatestDropOff
             //Timing
@@ -66,7 +67,7 @@ class Rider {
 };
 class Driver {
     constructor(ID, DistanceFromOrganization, PoolStartTime, TimeFromOrganizationMinutes, capacity,
-        LatestDropOff, ridewith, smoking, fromorgid, date, offerid, latitude, longitude) {
+        LatestDropOff, ridewith, smoking, fromorgid, date, offerid, latitude, longitude, rating) {
 
         this.userID = ID
         this.ID = offerid;
@@ -86,6 +87,7 @@ class Driver {
         this.status = 0
         this.countDrivers = 0
 
+        this.rating = rating
         this.ExpectedFare = 0
         this.countRiders = 0
             //Timing
@@ -209,8 +211,20 @@ router.post('/', async(req, res) => {
 
         }).catch(errHandler)
 
+
+        const offersusers = await User.findAll({
+            where: {
+                status: "existing",
+                id: {
+                    [Op.in]: OffersArray
+                }
+            }
+
+        }).catch(errHandler)
+
         for (offer of offers) {
             const orguser = orguserObj.find(n => n.orgid === offer.fromorgid && n.userid === offer.userid)
+            const rating = offersusers.find(n => n.id === offer.userid).rating
 
             var driver = new Driver(offer.userid, parseFloat(orguser.distancefromorg), new Date(offer.date + " " + offer.departuretime),
                 Math.round(orguser.timefromorg),
@@ -220,7 +234,7 @@ router.post('/', async(req, res) => {
                 offer.smoking,
                 offer.fromorgid,
                 new Date(offer.date),
-                offer.id, parseFloat(offer.tolatitude), parseFloat(offer.tolongitude))
+                offer.id, parseFloat(offer.tolatitude), parseFloat(offer.tolongitude), rating)
 
             Drivers.push(driver)
         }
@@ -247,8 +261,20 @@ router.post('/', async(req, res) => {
 
             }).catch(errHandler)
 
+            const requestsusers = await User.findAll({
+                where: {
+                    status: "existing",
+                    id: {
+                        [Op.in]: RequestsArray
+                    }
+                }
+
+            }).catch(errHandler)
+
+
             for (request of requests) {
                 const orguser = orguserObj.find(n => n.orgid === request.fromorgid && n.userid === request.userid)
+                const rating = requestsusers.find(n => n.id === request.userid).rating
 
                 var rider = new Rider(request.userid,
                     parseFloat(orguser.distancefromorg),
@@ -259,7 +285,7 @@ router.post('/', async(req, res) => {
                     request.smoking,
                     request.fromorgid,
                     new Date(request.date),
-                    request.id)
+                    request.id, rating)
 
                 Riders.push(rider);
             }

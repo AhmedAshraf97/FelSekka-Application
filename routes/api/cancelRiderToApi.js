@@ -443,7 +443,7 @@ router.post('/', async(req, res) => {
 
 
                     var z = await CancelRiderTo();
-                    var p = await matchingfare('./routes/api/cancelRiderToApi');
+                    var p = await matchingfare('../routes/api/cancelRiderToApi');
 
                     await Trips.update({
                         numberofseats: driver.AssignedRiders.length,
