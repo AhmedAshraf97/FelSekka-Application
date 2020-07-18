@@ -275,7 +275,7 @@ router.post('/', async(req, res) => {
 
             //Insert user 
             const userCreate = await User.create(userData).catch(errHandler)
-            if (1) {
+            if (userCreate) {
                 createdUserID = userCreate.id;
 
                 let transporter = nodeMailer.createTransport({
