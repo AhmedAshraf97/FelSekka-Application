@@ -37,7 +37,7 @@ function validation(brand, model, year, type, plateletters, platenumbers, nation
 
 
     } else if (!(/^([0-9]+)$/.test(year))) {
-        message = { error: "year", message: "year ID must be a number" }
+        message = { error: "year", message: "year must be a number" }
         validChecks = false;
     } else if (!((typeof(type) === 'string') || ((type) instanceof String)) || (type).trim().length === 0) {
         validChecks = false

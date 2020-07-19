@@ -324,7 +324,7 @@ router.post('/', async(req, res) => {
                     where: {
                         userid: decoded.id,
                         status: {
-                            [Op.or]: ["pending", "ongoing"]
+                            [Op.or]: ["pending", "scheduled", "ongoing"]
                         }
                     }
                 }).catch(errHandler)
@@ -353,7 +353,7 @@ router.post('/', async(req, res) => {
                     where: {
                         userid: decoded.id,
                         status: {
-                            [Op.or]: ["pending", "ongoing"]
+                            [Op.or]: ["pending", "scheduled", "ongoing"]
                         }
                     }
                 }).catch(errHandler)
@@ -550,7 +550,7 @@ router.post('/', async(req, res) => {
                                                 Drivers.push(driver)
 
                                                 var z = await chooseFromAvailableRides();
-                                                var p = await ReturnTripMatchingFare('./routes/api/chooseFromReturnTripsApi')
+                                                var p = await ReturnTripMatchingFare('../routes/api/chooseFromReturnTripsApi')
 
 
                                                 if (Riders[Riders.length - 1].isAssigned === true) {

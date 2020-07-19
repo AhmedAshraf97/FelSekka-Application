@@ -317,7 +317,7 @@ router.post('/', async(req, res) => {
                     where: {
                         userid: decoded.id,
                         status: {
-                            [Op.or]: ["pending", "ongoing"]
+                            [Op.or]: ["pending", "scheduled", "ongoing"]
                         }
                     }
                 }).catch(errHandler)
@@ -347,7 +347,7 @@ router.post('/', async(req, res) => {
                     where: {
                         userid: decoded.id,
                         status: {
-                            [Op.or]: ["pending", "ongoing"]
+                            [Op.or]: ["pending", "scheduled", "ongoing"]
                         }
                     }
                 }).catch(errHandler)
@@ -542,7 +542,7 @@ router.post('/', async(req, res) => {
                                                 Drivers.push(driver)
 
                                                 var z = await chooseFromAvailableRides();
-                                                var p = await matchingfare('./routes/api/chooseFromAvailableRidesApi');
+                                                var p = await matchingfare('../routes/api/chooseFromAvailableRidesApi');
                                                 if (Riders[Riders.length - 1].isAssigned === true) {
                                                     await Trips.update({
                                                         numberofseats: driver.AssignedRiders.length,
@@ -619,6 +619,8 @@ router.post('/', async(req, res) => {
 
                                                     }
                                                     res.status(200).send({ message: "You joined this ride" })
+                                                    res.end()
+
                                                 } else {
                                                     res.status(400).send({ error: "Can't join this trip", message: "Your location or earliest time don't match" })
                                                     res.end()
