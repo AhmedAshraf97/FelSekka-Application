@@ -12,12 +12,7 @@ const bcrypt = require('bcrypt')
 var Sequelize = require('sequelize');
 const Op = Sequelize.Op
 const ExpiredToken = require('../../models/expiredtokens');
-
-//const spawn = require('child_process').spawn
-//var process = spawn('python', ["../../authentication.py"])
-//process.stdout.on('data', data => {
-  //  console.log(data.toString())
-  //});
+const {spawn} = require('child_process');
 
 //Error handler
 const errHandler = err => {
@@ -113,7 +108,6 @@ router.post('/', async(req, res) => {
         res.status(401).send({ message: "You aren't authorized" })
         res.end();
     }
-
     await ExpiredToken.findOne({
         where: {
             token: req.headers["authorization"]
@@ -125,7 +119,6 @@ router.post('/', async(req, res) => {
             res.end();
         }
     }).catch(errHandler)
-
     await User.findOne({ where: { id: decoded.id, status: 'existing' } }).then(user => {
         if (!user) {
             validChecks1 = false;
@@ -133,12 +126,7 @@ router.post('/', async(req, res) => {
             res.end()
         }
     }).catch(errHandler);
-
-
-
     if (validChecks1) {
-
-
         await User.findOne({
             where: {
                 id: decoded.id,
@@ -146,6 +134,15 @@ router.post('/', async(req, res) => {
             }
         }).then(user => {
             if (user) {
+                var pythonresult;
+                const python = spawn('python', ["../../authentication.py",
+                req.body.plateletters,
+                req.body.platenumbers,
+                req.body.carlicensefront
+                ]);
+                python.stdout.on('data', function (data) {
+                pythonresult=data.toString();
+                });
                 var result = validation(req.body.brand, req.body.model, req.body.year,
                     req.body.type, req.body.plateletters, req.body.platenumbers, req.body.nationalid,
                     req.body.carlicensefront, req.body.carlicenseback, req.body.driverlicensefront,
