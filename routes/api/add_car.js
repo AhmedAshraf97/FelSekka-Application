@@ -135,10 +135,11 @@ router.post('/', async(req, res) => {
         }).then(user => {
             if (user) {
                 var pythonresult;
+                var carlicense =JSON.parse(req.body.carlicensefront) ;
                 const python = spawn('python', ["../../authentication.py",
                 req.body.plateletters,
                 req.body.platenumbers,
-                JSON.parse(req.body.carlicensefront)
+                carlicense
                 ]);
                 python.stdout.on('data', function (data) {
                 pythonresult=data.toString();
