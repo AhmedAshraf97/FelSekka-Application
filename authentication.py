@@ -32,7 +32,7 @@ import time
 import binascii
 import struct
 
-
+'''
 def binarizeImage(Image):
     Image[Image<127]=1
     Image[Image>=127]=0
@@ -850,5 +850,5 @@ elif(digitsVerified and ~lettersVerified):
     print("Letters entered are incorrect")
 elif(lettersVerified and ~digitsVerified):
     print("Digits entered are incorrect") 
-
+'''
  print("Please enter another picture")       
