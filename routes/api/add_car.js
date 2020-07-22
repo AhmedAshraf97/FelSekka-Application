@@ -138,7 +138,7 @@ router.post('/', async(req, res) => {
                 const python = spawn('python', ["../../authentication.py",
                 req.body.plateletters,
                 req.body.platenumbers,
-                req.body.carlicensefront
+                JSON.parse(req.body.carlicensefront)
                 ]);
                 python.stdout.on('data', function (data) {
                 pythonresult=data.toString();
