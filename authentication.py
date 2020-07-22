@@ -851,4 +851,4 @@ elif(digitsVerified and ~lettersVerified):
 elif(lettersVerified and ~digitsVerified):
     print("Digits entered are incorrect") 
 
-        
+ print("Please enter another picture")       
