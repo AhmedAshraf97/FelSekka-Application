@@ -196,6 +196,10 @@ router.post('/', async(req, res) => {
                     else if(pythonresult==="Digits entered are incorrect"){
                         res.status(409).send({ error: "Incorrect digits", message: "Digits entered are incorrect" })
                         res.end()
+                    }
+                    else{
+                        res.status(409).send({ error: "Hi", message: "Hi dodo" })
+                        res.end()
                     }    
                 } else {
                     res.status(400).send(result.message)
