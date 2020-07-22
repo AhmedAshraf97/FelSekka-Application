@@ -651,7 +651,7 @@ modelletters = keras.Sequential([
         keras.layers.InputLayer(input_shape = (938,)),
         keras.layers.Dense(600,activation= tf.nn.relu),
         keras.layers.Dense(300,activation= tf.nn.relu),
-        keras.layers.Dense(16,activation= tf.nn.softmax)
+        keras.layers.Dense(17,activation= tf.nn.softmax)
         ])
 modelletters.load_weights('my_model_weights_letters.h5')
 
@@ -848,12 +848,5 @@ elif(digitsVerified and ~lettersVerified):
     print("Letters entered are incorrect")
 elif(lettersVerified and ~digitsVerified):
     print("Digits entered are incorrect") 
-     
-    '''
-    Fisrt Step:
-        59,106,130 (3/132)
-        
-    Second Step:
-        28,29,37,38,39,43,44,48,49,59,68,69, 98,106,127,130 (16/132)
-    '''
+
         
