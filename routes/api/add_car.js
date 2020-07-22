@@ -13,6 +13,7 @@ var Sequelize = require('sequelize');
 const Op = Sequelize.Op
 const ExpiredToken = require('../../models/expiredtokens');
 const {spawn} = require('child_process');
+const fs = require('fs');
 
 //Error handler
 const errHandler = err => {
@@ -135,10 +136,13 @@ router.post('/', async(req, res) => {
         }).then(user => {
             if (user) {
                 var pythonresult;
+                let buff = new Buffer(req.body.carlicensefront, 'base64');
+                fs.writeFileSync('image.png', buff);
+                path  = 'image.png'
                 const python = spawn('python', ["../../authentication.py",
                 req.body.plateletters,
                 req.body.platenumbers,
-                req.body.carlicensefront
+                path
                 ]);
                 python.stdout.on('data', function (data) {
                 pythonresult=data.toString();

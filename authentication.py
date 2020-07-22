@@ -29,6 +29,8 @@ from tensorflow import keras
 import io
 from PIL import Image
 import time
+import binascii
+import struct
 
 
 def binarizeImage(Image):
@@ -680,13 +682,13 @@ def predictionletters(Image):
         return pred 
     
 data = sys.argv[3]
-bytearray(data[:4])
-bytearray(b'\xff\xd8\xff\xe0')
-imagename = str( time.strftime("%Y%m%d-%H%M%S")) +".jpeg"
-f = open(imagename, 'wb')
-f.write(bytearray(data))
-f.close()
-image = cv2.imread(imagename)
+#bytearray(data[:4])
+#bytearray(b'\xff\xd8\xff\xe0')
+#imagename = str( time.strftime("%Y%m%d-%H%M%S")) +".jpeg"
+#f = open(imagename, 'wb')
+#f.write(bytearray(data))
+#f.close()
+image = cv2.imread(data)
 plateletters = sys.argv[1]
 platenumbers = sys.argv[2]
 numberOfLetters = len(plateletters)
