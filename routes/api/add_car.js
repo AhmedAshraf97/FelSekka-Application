@@ -148,6 +148,7 @@ router.post('/', async(req, res) => {
                     req.body.carlicensefront, req.body.carlicenseback, req.body.driverlicensefront,
                     req.body.driverlicenseback, req.body.color, req.body.numberofseats)
                 if (result.validChecks) {
+                   
                     if(pythonresult==="Letters and digits entered are correct"){
                         Car.findOne({
                             where: {
