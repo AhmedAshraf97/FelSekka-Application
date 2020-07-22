@@ -139,13 +139,9 @@ router.post('/', async(req, res) => {
                 let buff = new Buffer(req.body.carlicensefront, 'base64');
                 fs.writeFileSync('image.png', buff);
                 path  = 'image.png'
-                const python = spawn('python', ["../../authentication.py",
-                req.body.plateletters,
-                req.body.platenumbers,
-                path
-                ]);
-                python.stdout.on('data', function (data) {
-                pythonresult=data.toString();
+                const process = spawn('python', ["../../authentication.py"]);
+                process.stdout.on('data', data => {
+                      pythonresult = data.toString()
                 });
                 var result = validation(req.body.brand, req.body.model, req.body.year,
                     req.body.type, req.body.plateletters, req.body.platenumbers, req.body.nationalid,
