@@ -148,43 +148,55 @@ router.post('/', async(req, res) => {
                     req.body.carlicensefront, req.body.carlicenseback, req.body.driverlicensefront,
                     req.body.driverlicenseback, req.body.color, req.body.numberofseats)
                 if (result.validChecks) {
-                    Car.findOne({
-                        where: {
-                            plateletters: req.body.plateletters,
-                            platenumbers: req.body.platenumbers,
-                            status: "existing"
-                        }
-                    }).then(
-                        car => {
-                            if (car) {
-                                res.status(409).send({ error: "Car information", message: "This Car already exists with same platenumbers and letters" });
-                                res.end();
-                            } else {
-                                Car.create({
-                                    userid: user.id,
-                                    brand: req.body.brand,
-                                    model: req.body.model,
-                                    year: parseInt(req.body.year),
-                                    type: req.body.type,
-                                    plateletters: req.body.plateletters,
-                                    platenumbers: req.body.platenumbers,
-                                    nationalid: parseInt(req.body.nationalid),
-                                    carlicensefront: req.body.carlicensefront,
-                                    carlicenseback: req.body.carlicenseback,
-                                    driverlicensefront: req.body.driverlicensefront,
-                                    driverlicenseback: req.body.driverlicenseback,
-                                    color: req.body.color,
-                                    numberofseats: parseInt(req.body.numberofseats),
-                                    status: 'existing'
-                                }).then(created => {
-                                    res.status(200).send({ message: "Car is created" })
-                                    res.end()
-                                }).catch(errHandler)
+                    if(pythonresult==="Letters and digits entered are correct"){
+                        Car.findOne({
+                            where: {
+                                plateletters: req.body.plateletters,
+                                platenumbers: req.body.platenumbers,
+                                status: "existing"
                             }
-
-                        }
-
-                    ).catch(errHandler)
+                        }).then(
+                            car => {
+                                if (car) {
+                                    res.status(409).send({ error: "Car information", message: "This Car already exists with same platenumbers and letters" });
+                                    res.end();
+                                } else {
+                                    Car.create({
+                                        userid: user.id,
+                                        brand: req.body.brand,
+                                        model: req.body.model,
+                                        year: parseInt(req.body.year),
+                                        type: req.body.type,
+                                        plateletters: req.body.plateletters,
+                                        platenumbers: req.body.platenumbers,
+                                        nationalid: parseInt(req.body.nationalid),
+                                        carlicensefront: req.body.carlicensefront,
+                                        carlicenseback: req.body.carlicenseback,
+                                        driverlicensefront: req.body.driverlicensefront,
+                                        driverlicenseback: req.body.driverlicenseback,
+                                        color: req.body.color,
+                                        numberofseats: parseInt(req.body.numberofseats),
+                                        status: 'existing'
+                                    }).then(created => {
+                                        res.status(200).send({ message: "Car is created" })
+                                        res.end()
+                                    }).catch(errHandler)
+                                }
+                            }
+                        ).catch(errHandler)
+                    }
+                    else if(pythonresult==="Please enter another picture"){
+                        res.status(409).send({ error: "Incorrect picture", message: "Please upload another picture" })
+                        res.end()
+                    }
+                    else if(pythonresult==="Letters entered are incorrect"){
+                        res.status(409).send({ error: "Incorrect letters", message: "Letters entered are incorrect" })
+                        res.end()
+                    }
+                    else if(pythonresult==="Digits entered are incorrect"){
+                        res.status(409).send({ error: "Incorrect digits", message: "Digits entered are incorrect" })
+                        res.end()
+                    }    
                 } else {
                     res.status(400).send(result.message)
                     res.end()
