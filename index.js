@@ -4,20 +4,25 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 var queue = require('express-queue');
 const graphlib = require('graphlib');
-//const spawn = require("child_process").spawn;
 //const ksp = require('k-shortest-path');
-//const ksp = require('../FelSekka-Application/yenKSP')
-//var process = spawn('python', ["./authentication.py"]);
-//process.stdout.on('data', data => {
-//  console.log(data.toString())
-//});
+///const ksp = require('../FelSekka-Application/yenKSP')
 const API_KEY = "AIzaSyCso0RkjKJy74V2LcmnR1Ek5UpB6yvw2Ts";
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
-//DB connection
+//var resultdata=""
+//const spawn = require('child_process').spawn
+  //      const py    = spawn('python', ['authentication.py',10])
+    //    py.stdout.on('data', function(data){
+      //    resultdata += data.toString();
+       // });
+        //py.stdout.on('end',function  (data){
+          // console.log(resultdata)     
+        //});
+        
+//DB connection 
 require("./database/connection");
 //Uers API route
 app.use('/api/signup', queue({ activeLimit: 1, queuedLimit: -1 }), require('./routes/api/sign_up').router);
@@ -46,6 +51,7 @@ app.use('/api/gettrackinglocation', require('./routes/api/gettrackinglocation'))
 app.use('/api/getcreditcardinfo', require('./routes/api/getcreditcardinfo'));
 app.use('/api/addcreditcardinfo', require('./routes/api/addcreditcardinfo'));
 app.use('/api/newtoken', require('./routes/api/newtoken'));
+app.use('/api/validatelicense', require('./routes/api/validatelicense'));
 
 app.use('/api/editprofile', require('./routes/api/editprofile').router);
 app.use('/api/changepassword', require('./routes/api/changepassword'));

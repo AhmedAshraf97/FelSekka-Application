@@ -1,5 +1,5 @@
 
-
+from scipy.signal import convolve2d
 import skimage.io as io
 from pylab import rcParams
 import matplotlib.pyplot as plt
@@ -15,7 +15,7 @@ import math
 
 
 # Convolution:
-from scipy.signal import convolve2d
+
 from scipy import fftpack
 import math
 

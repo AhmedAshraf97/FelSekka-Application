@@ -135,21 +135,11 @@ router.post('/', async(req, res) => {
             }
         }).then(user => {
             if (user) {
-                var pythonresult;
-                let buff = new Buffer(req.body.carlicensefront, 'base64');
-                fs.writeFileSync('image.png', buff);
-                path  = 'image.png'
-                const process = spawn('python', ["../../authentication.py"]);
-                process.stdout.on('data', data => {
-                      pythonresult = data.toString()
-                });
                 var result = validation(req.body.brand, req.body.model, req.body.year,
                     req.body.type, req.body.plateletters, req.body.platenumbers, req.body.nationalid,
                     req.body.carlicensefront, req.body.carlicenseback, req.body.driverlicensefront,
                     req.body.driverlicenseback, req.body.color, req.body.numberofseats)
                 if (result.validChecks) {
-                   
-                    if(pythonresult==="Letters and digits entered are correct"){
                         Car.findOne({
                             where: {
                                 plateletters: req.body.plateletters,
@@ -185,23 +175,7 @@ router.post('/', async(req, res) => {
                                 }
                             }
                         ).catch(errHandler)
-                    }
-                    else if(pythonresult==="Please enter another picture"){
-                        res.status(409).send({ error: "Incorrect picture", message: "Please upload another picture" })
-                        res.end()
-                    }
-                    else if(pythonresult==="Letters entered are incorrect"){
-                        res.status(409).send({ error: "Incorrect letters", message: "Letters entered are incorrect" })
-                        res.end()
-                    }
-                    else if(pythonresult==="Digits entered are incorrect"){
-                        res.status(409).send({ error: "Incorrect digits", message: "Digits entered are incorrect" })
-                        res.end()
-                    }
-                    else{
-                        res.status(409).send({ error: "Hi", message: "Hi dodo" })
-                        res.end()
-                    }    
+                       
                 } else {
                     res.status(400).send(result.message)
                     res.end()
