@@ -25,7 +25,7 @@
         "date-and-time": "^0.13.1",
         "deep-cleaner": "^1.2.1",
         "express": "^4.17.1",
-        "express-jwt": "^5.3.3",
+        "express-jwt": "^6.0.0",
         "express-jwt-blacklist": "^1.1.0",
         "express-queue": "0.0.12",
         "express-validator": "^6.4.0",
